@@ -38,3 +38,6 @@ HEADERS += \
 FORMS += \
         mainwindow.ui \
     noteinfo.ui
+
+RESOURCES += \
+    res.qrc

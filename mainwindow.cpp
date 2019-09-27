@@ -69,7 +69,6 @@ void MainWindow::saveParameter()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     saveParameter();
-    qDebug() << "end";
 }
 
 void MainWindow::on_actionNote_triggered()

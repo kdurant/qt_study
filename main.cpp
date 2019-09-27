@@ -4,6 +4,7 @@
 #include <QMessageBox>
 #include <QHostInfo>
 #include <QDebug>
+#include <QFile>
 
 int main(int argc, char *argv[])
 {
