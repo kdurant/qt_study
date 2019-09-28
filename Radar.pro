@@ -28,12 +28,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     noteinfo.cpp \
-    udpserver.cpp
+    udpserver.cpp \
+    protocol.cpp
 
 HEADERS += \
         mainwindow.h \
     noteinfo.h \
-    udpserver.h
+    udpserver.h \
+    protocol.h
 
 FORMS += \
         mainwindow.ui \
