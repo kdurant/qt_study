@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT       += network
+QT       += charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -29,13 +30,16 @@ SOURCES += \
         mainwindow.cpp \
     noteinfo.cpp \
     udpserver.cpp \
-    protocol.cpp
+    protocol.cpp \
+    radarchart.cpp
 
 HEADERS += \
         mainwindow.h \
     noteinfo.h \
     udpserver.h \
-    protocol.h
+    protocol.h \
+    bsp_config.h \
+    radarchart.h
 
 FORMS += \
         mainwindow.ui \

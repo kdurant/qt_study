@@ -30,8 +30,8 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-14</y>
-         <width>281</width>
+         <y>0</y>
+         <width>290</width>
          <height>897</height>
         </rect>
        </property>
@@ -234,7 +234,7 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_5">
            <item row="2" column="1">
-            <widget class="QLineEdit" name="lineEdit_14"/>
+            <widget class="QLineEdit" name="lineEdit_firstStartPos"/>
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label_16">
@@ -244,10 +244,10 @@
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QLineEdit" name="lineEdit_13"/>
+            <widget class="QLineEdit" name="lineEdit_sampleRate"/>
            </item>
            <item row="3" column="1">
-            <widget class="QLineEdit" name="lineEdit_15"/>
+            <widget class="QLineEdit" name="lineEdit_firstLen"/>
            </item>
            <item row="6" column="0">
             <widget class="QLabel" name="label_22">
@@ -257,7 +257,11 @@
             </widget>
            </item>
            <item row="4" column="1">
-            <widget class="QLineEdit" name="lineEdit_16"/>
+            <widget class="QLineEdit" name="lineEdit_secondStartPos">
+             <property name="toolTip">
+              <string>第二段起始位置需要大于第一段提取位置和提取长度之和</string>
+             </property>
+            </widget>
            </item>
            <item row="7" column="0">
             <widget class="QLabel" name="label_23">
@@ -267,27 +271,24 @@
             </widget>
            </item>
            <item row="8" column="1">
-            <widget class="QPushButton" name="pushButton_5">
+            <widget class="QPushButton" name="pushButton_sampleEnable">
              <property name="text">
-              <string>使能采集</string>
-             </property>
-            </widget>
-           </item>
-           <item row="8" column="0">
-            <widget class="QPushButton" name="pushButton_4">
-             <property name="text">
-              <string>设置</string>
+              <string>开始采集</string>
              </property>
             </widget>
            </item>
            <item row="6" column="1">
-            <widget class="QLineEdit" name="lineEdit_18"/>
+            <widget class="QLineEdit" name="lineEdit_sumThreshold"/>
            </item>
            <item row="7" column="1">
-            <widget class="QLineEdit" name="lineEdit_19"/>
+            <widget class="QLineEdit" name="lineEdit_subThreshold"/>
            </item>
            <item row="5" column="1">
-            <widget class="QLineEdit" name="lineEdit_17"/>
+            <widget class="QLineEdit" name="lineEdit_secondLen">
+             <property name="toolTip">
+              <string/>
+             </property>
+            </widget>
            </item>
            <item row="5" column="0">
             <widget class="QLabel" name="label_21">
@@ -304,7 +305,7 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEdit_12"/>
+            <widget class="QLineEdit" name="lineEdit_sampleLen"/>
            </item>
            <item row="2" column="0">
             <widget class="QLabel" name="label_17">
@@ -324,6 +325,13 @@
             <widget class="QLabel" name="label_20">
              <property name="text">
               <string>第二段提取位置：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QPushButton" name="pushButton_setPreviewPara">
+             <property name="text">
+              <string>设置</string>
              </property>
             </widget>
            </item>

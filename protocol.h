@@ -3,6 +3,7 @@
 #include <QString>
 #include <QByteArray>
 #include <QVector>
+#include <QDebug>
 
 class Protocol
 {
@@ -18,7 +19,8 @@ public:
     Protocol();
     ~Protocol();
 
-    QByteArray encode(qint32 command, qint32 data_len, QVector<int> &data);
+    QByteArray encode(qint32 command, qint32 data_len, qint32 data);
+
 
 
 };
