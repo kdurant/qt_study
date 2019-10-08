@@ -1,13 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent),
+      ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->graphicsView->hide();
+    chart = new RadarChart();
+    ui->horizontalLayout->addWidget(chart);
+
     initParameter();
-//    chart = new RadarChart();
 
     udpBind();
 
@@ -19,14 +22,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
 void MainWindow::initParameter()
 {
-
-    QString localHostName = QHostInfo::localHostName();
-    QHostInfo info = QHostInfo::fromName(localHostName);
+    QString   localHostName = QHostInfo::localHostName();
+    QHostInfo info          = QHostInfo::fromName(localHostName);
     ui->lineEdit_localIP->setText(info.addresses()[1].toString());
-
 
     QSettings *configIni = new QSettings("../Radar/config.ini", QSettings::IniFormat);
     //configIni->setValue("Laser/freq", 1000);
@@ -54,18 +54,17 @@ void MainWindow::initParameter()
     else if(configIni->value("System/radarType").toString() == "land")
         ui->rBtn_land->setChecked(true);
 
-
-    int data;
+    int         data;
     QScrollBar *verBar = ui->scrollArea->verticalScrollBar();
-    data = verBar->minimum();
-    data = verBar->maximum();
+    data               = verBar->minimum();
+    data               = verBar->maximum();
 }
 
 void MainWindow::saveParameter()
 {
     QSettings *configIni = new QSettings("../Radar/config.ini", QSettings::IniFormat);
-//    configIni->setValue("System/RadarType", "land");
-//    configIni->setValue("Laser/freq", 1000);
+    //    configIni->setValue("System/RadarType", "land");
+    //    configIni->setValue("Laser/freq", 1000);
 }
 
 void MainWindow::udpBind()
@@ -78,21 +77,20 @@ void MainWindow::udpBind()
 void MainWindow::processPendingDatagram()
 {
     QByteArray datagram;
-    int len;
-    while (udpSocket->hasPendingDatagrams())
+    int        len;
+    while(udpSocket->hasPendingDatagrams())
     {
         len = udpSocket->pendingDatagramSize();
         datagram.resize(len);
         udpSocket->readDatagram(datagram.data(), datagram.size());
-        udp_data.push_back(datagram);
-        qDebug() << udp_data.size();
+        ad_data.push_back(datagram);
+        qDebug() << ad_data.size();
     }
 }
 
-
 void MainWindow::initSignalSlot()
 {
-//    connect(this, &QUdpSocket::readyRead, udpSocket, udpSocket::
+    //    connect(this, &QUdpSocket::readyRead, udpSocket, udpSocket::
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagram()));
 }
 
@@ -109,9 +107,9 @@ void MainWindow::on_actionNote_triggered()
 
 void MainWindow::on_pushButton_setPreviewPara_clicked()
 {
-    QByteArray frame;
+    QByteArray   frame;
     QHostAddress addr;
-    quint16 port;
+    quint16      port;
 
     if(ui->rBtn_ocean->isChecked())
     {
@@ -124,38 +122,37 @@ void MainWindow::on_pushButton_setPreviewPara_clicked()
         port = ui->lineEdit_landPort->text().toInt();
     }
 
-
     frame = p.encode(SAMPLELEN, 4, ui->lineEdit_sampleLen->text().toInt());
-    udpSocket->writeDatagram(frame.data(),frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
 
     frame = p.encode(SAMPLERATE, 4, ui->lineEdit_sampleRate->text().toInt());
-    udpSocket->writeDatagram(frame.data(),frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
 
     frame = p.encode(FIRSTSTARTPOS, 4, ui->lineEdit_firstStartPos->text().toInt());
-    udpSocket->writeDatagram(frame.data(),frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
 
     frame = p.encode(FIRSTLEN, 4, ui->lineEdit_firstLen->text().toInt());
-    udpSocket->writeDatagram(frame.data(),frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
 
     frame = p.encode(SECONDLEN, 4, ui->lineEdit_secondLen->text().toInt());
-    udpSocket->writeDatagram(frame.data(),frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
 
     frame = p.encode(SECONDSTARTPOS, 4, ui->lineEdit_secondStartPos->text().toInt());
-    udpSocket->writeDatagram(frame.data(),frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
 
     frame = p.encode(SUMTHRESHOLD, 4, ui->lineEdit_sumThreshold->text().toInt());
-    udpSocket->writeDatagram(frame.data(),frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
 
     frame = p.encode(SUBTHRESHOLD, 4, ui->lineEdit_subThreshold->text().toInt());
-    udpSocket->writeDatagram(frame.data(),frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
 }
 
 void MainWindow::on_pushButton_sampleEnable_clicked()
 {
-    QByteArray frame;
+    QByteArray   frame;
     QHostAddress addr;
-    quint16 port;
-    quint32 status;
+    quint16      port;
+    quint32      status;
     if(ui->rBtn_ocean->isChecked())
     {
         addr = QHostAddress(ui->lineEdit_oceanIP->text());
@@ -178,5 +175,5 @@ void MainWindow::on_pushButton_sampleEnable_clicked()
         ui->pushButton_sampleEnable->setText("开始采集");
     }
     frame = p.encode(SAMPLEENABLE, 4, status);
-    udpSocket->writeDatagram(frame.data(),frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
 }

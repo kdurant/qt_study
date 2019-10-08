@@ -23,7 +23,8 @@
 #include <QQueue>
 #include <QByteArray>
 
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 
@@ -56,13 +57,12 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    QUdpSocket *udpSocket;
+    QUdpSocket *    udpSocket;
 
-    QQueue<QByteArray> udp_data;
+    QQueue<QByteArray> ad_data;
 
-    Protocol p;
+    Protocol    p;
     RadarChart *chart;
-
 };
 
-#endif // MAINWINDOW_H
+#endif  // MAINWINDOW_H

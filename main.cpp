@@ -13,16 +13,17 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    QFile qss("../Radar/qss/basic.qss");
-//    QFile qss("basic.qss");
+    //    QFile qss("../Radar/qss/basic.qss");
+    QFile qss(":/qss/basic.qss");
+    //    QFile qss("basic.qss");
     qss.open(QFile::ReadOnly);
     a.setStyleSheet(qss.readAll());
 
     MainWindow w;
     w.show();
 
-//    RadarChart c;
-//    c.show();
+    //    RadarChart c;
+    //    c.show();
 
     return a.exec();
 }

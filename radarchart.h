@@ -11,18 +11,22 @@ class RadarChart : public QWidget
 {
     Q_OBJECT
 
-    QLineSeries *channal0;
-    QChart *chart;
-    QChartView *chartView;
+    QLineSeries *channal1;
+    QLineSeries *channal2;
+    QLineSeries *channal3;
+    QLineSeries *channal4;
+    QChart *     chart;
+    QChartView * chartView;
     QVBoxLayout *mainLayout;
 
 public:
     explicit RadarChart(QWidget *parent = nullptr);
     void initChart();
+    void updateChart();
 
 signals:
 
 public slots:
 };
 
-#endif // RADARCHART_H
+#endif  // RADARCHART_H
