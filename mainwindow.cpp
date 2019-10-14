@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+QQueue<QByteArray> adOrigData;
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
       ui(new Ui::MainWindow)
@@ -28,8 +30,7 @@ void MainWindow::initParameter()
     QHostInfo info          = QHostInfo::fromName(localHostName);
     ui->lineEdit_localIP->setText(info.addresses()[1].toString());
 
-    QSettings *configIni = new QSettings("../Radar/config.ini", QSettings::IniFormat);
-    //configIni->setValue("Laser/freq", 1000);
+    QSettings *configIni = new QSettings(":/config/config.ini", QSettings::IniFormat);
     //configIni->setValue("System/RadarType", "land");
     ui->lineEdit_laser_freq->setText(configIni->value("Laser/freq").toString());
 
@@ -62,9 +63,11 @@ void MainWindow::initParameter()
 
 void MainWindow::saveParameter()
 {
-    QSettings *configIni = new QSettings("../Radar/config.ini", QSettings::IniFormat);
-    //    configIni->setValue("System/RadarType", "land");
-    //    configIni->setValue("Laser/freq", 1000);
+    QSettings *configIni = new QSettings(":/config/config.ini", QSettings::IniFormat);
+       configIni->setValue("System/RadarType", "land");
+//    configIni->setValue("Laser/freq", ui->lineEdit_laser_freq->text().toInt());
+    configIni->setValue("Laser/freq", 1111);
+    qDebug() << "save parameter";
 }
 
 void MainWindow::udpBind()
@@ -83,8 +86,9 @@ void MainWindow::processPendingDatagram()
         len = udpSocket->pendingDatagramSize();
         datagram.resize(len);
         udpSocket->readDatagram(datagram.data(), datagram.size());
-        ad_data.push_back(datagram);
-        qDebug() << ad_data.size();
+        // 需要先判断数据内容，不是AD数据直接解析
+        adOrigData.push_back(datagram);
+        qDebug() << adOrigData.size();
     }
 }
 

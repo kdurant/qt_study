@@ -16,8 +16,10 @@ int main(int argc, char *argv[])
     //    QFile qss("../Radar/qss/basic.qss");
     QFile qss(":/qss/basic.qss");
     //    QFile qss("basic.qss");
-    qss.open(QFile::ReadOnly);
-    a.setStyleSheet(qss.readAll());
+    if(qss.open(QFile::ReadOnly))
+        a.setStyleSheet(qss.readAll());
+    else
+        QMessageBox::warning(NULL, "warning", "没有主题文件");
 
     MainWindow w;
     w.show();
