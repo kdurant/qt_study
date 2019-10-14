@@ -1,5 +1,7 @@
 #include "radarchart.h"
 
+QT_CHARTS_USE_NAMESPACE
+
 RadarChart::RadarChart(QWidget *parent)
     : QWidget(parent)
 {
@@ -7,18 +9,19 @@ RadarChart::RadarChart(QWidget *parent)
     mainLayout = new QVBoxLayout();
     mainLayout->addWidget(chartView);
     setLayout(mainLayout);
+
+    connectMarkers();
 }
 
 void RadarChart::initChart()
 {
     channal1 = new QLineSeries;
     channal1->setName("channal0");
-    channal1->append(0, 6);
-    channal1->append(2, 4);
-    channal1->append(3, 8);
-    channal1->append(7, 4);
-    channal1->append(10, 5);
-    *channal1 << QPointF(11, 1) << QPointF(13, 3) << QPointF(17, 6) << QPointF(18, 3) << QPointF(20, 2);
+    channal1->append(1, 1);
+    channal1->append(2, 2);
+    channal1->append(3, 3);
+    channal1->append(4, 4);
+    channal1->append(5, 5);
 
     channal2 = new QLineSeries;
     channal2->setName("channal2");
@@ -32,10 +35,103 @@ void RadarChart::initChart()
     chart->addSeries(channal2);
     chart->addSeries(channal3);
     chart->addSeries(channal4);
+
     chart->createDefaultAxes();
     chart->setTitle("雷达实时数据");
+    chart->legend()->setVisible(true);
+    chart->legend()->setAlignment(Qt::AlignBottom);
 
     chartView = new QChartView();
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->setChart(chart);
+}
+
+void RadarChart::updateChart()
+{
+    channal1->clear();
+    *channal1 << QPointF(1, 5) << QPointF(2, 4) << QPointF(3, 3) << QPointF(4, 2) << QPointF(5, 1);
+}
+
+void RadarChart::connectMarkers()
+{
+    //![1]
+    // Connect all markers to handler
+    foreach(QLegendMarker *marker, chart->legend()->markers())
+    {
+        // Disconnect possible existing connection to avoid multiple connections
+        QObject::disconnect(marker, SIGNAL(clicked()), this, SLOT(handleMarkerClicked()));
+        QObject::connect(marker, SIGNAL(clicked()), this, SLOT(handleMarkerClicked()));
+    }
+    //![1]
+}
+
+void RadarChart::disconnectMarkers()
+{
+    //![2]
+    foreach(QLegendMarker *marker, chart->legend()->markers())
+    {
+        QObject::disconnect(marker, SIGNAL(clicked()), this, SLOT(handleMarkerClicked()));
+    }
+    //![2]
+}
+
+void RadarChart::handleMarkerClicked()
+{
+    //![3]
+    QLegendMarker *marker = qobject_cast<QLegendMarker *>(sender());
+    Q_ASSERT(marker);
+    //![3]
+
+    //![4]
+    switch(marker->type())
+    //![4]
+    {
+        case QLegendMarker::LegendMarkerTypeXY:
+        {
+            //![5]
+            // Toggle visibility of series
+            marker->series()->setVisible(!marker->series()->isVisible());
+
+            // Turn legend marker back to visible, since hiding series also hides the marker
+            // and we don't want it to happen now.
+            marker->setVisible(true);
+            //![5]
+
+            //![6]
+            // Dim the marker, if series is not visible
+            qreal alpha = 1.0;
+
+            if(!marker->series()->isVisible())
+            {
+                alpha = 0.5;
+            }
+
+            QColor color;
+            QBrush brush = marker->labelBrush();
+            color        = brush.color();
+            color.setAlphaF(alpha);
+            brush.setColor(color);
+            marker->setLabelBrush(brush);
+
+            brush = marker->brush();
+            color = brush.color();
+            color.setAlphaF(alpha);
+            brush.setColor(color);
+            marker->setBrush(brush);
+
+            QPen pen = marker->pen();
+            color    = pen.color();
+            color.setAlphaF(alpha);
+            pen.setColor(color);
+            marker->setPen(pen);
+
+            //![6]
+            break;
+        }
+        default:
+        {
+            qDebug() << "Unknown marker type";
+            break;
+        }
+    }
 }

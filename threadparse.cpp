@@ -13,7 +13,7 @@ void threadparse::run()
         if(data.mid(32, 8).toInt(Q_NULLPTR, 16) == 0)
         {
             data = adOrigData.dequeue();
-            adSingleData =
+            //            adSingleData =
         }
     }
 }

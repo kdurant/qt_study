@@ -20,11 +20,10 @@
 #include <QHostInfo>
 #include <QDebug>
 
-#include <QQueue>
-#include <QByteArray>
+#include <QThread>
 
-extern QQueue<QByteArray> adOrigData;       // 原始数据流
-extern QQueue<QVector<int>> adSingleData;   // 处理好的单次可显示数据
+extern QQueue<QByteArray>   adOrigData;    // 原始数据流
+extern QQueue<QVector<int>> adSingleData;  // 处理好的单次可显示数据
 
 namespace Ui
 {
@@ -50,6 +49,7 @@ protected:
     void closeEvent(QCloseEvent *event);
 
 private slots:
+
     void processPendingDatagram();
 
     void on_actionNote_triggered();
@@ -58,10 +58,11 @@ private slots:
 
     void on_pushButton_sampleEnable_clicked();
 
+    void on_pushButton_laserInfo_clicked();
+
 private:
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;
-
 
     Protocol    p;
     RadarChart *chart;

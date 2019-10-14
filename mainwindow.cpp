@@ -64,8 +64,8 @@ void MainWindow::initParameter()
 void MainWindow::saveParameter()
 {
     QSettings *configIni = new QSettings(":/config/config.ini", QSettings::IniFormat);
-       configIni->setValue("System/RadarType", "land");
-//    configIni->setValue("Laser/freq", ui->lineEdit_laser_freq->text().toInt());
+    configIni->setValue("System/RadarType", "land");
+    //    configIni->setValue("Laser/freq", ui->lineEdit_laser_freq->text().toInt());
     configIni->setValue("Laser/freq", 1111);
     qDebug() << "save parameter";
 }
@@ -180,4 +180,11 @@ void MainWindow::on_pushButton_sampleEnable_clicked()
     }
     frame = p.encode(SAMPLEENABLE, 4, status);
     udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
+}
+
+void MainWindow::on_pushButton_laserInfo_clicked()
+{
+    //    chart->channal1->clear();
+    chart->updateChart();
+    qDebug() << "update chart";
 }
