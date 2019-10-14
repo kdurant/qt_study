@@ -44,6 +44,7 @@ void RadarChart::initChart()
     chartView = new QChartView();
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->setChart(chart);
+    chartView->setRubberBand(QChartView::RectangleRubberBand);
 }
 
 void RadarChart::updateChart()
