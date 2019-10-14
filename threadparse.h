@@ -8,12 +8,14 @@ class threadparse : public QThread
 {
     Q_OBJECT
 
-    QByteArray data;
-    qint8 index;
+    QString data;
+    qint8   index;
+
 public:
     threadparse();
+
 protected:
     void run();
 };
 
-#endif // THREADPARSE_H
+#endif  // THREADPARSE_H

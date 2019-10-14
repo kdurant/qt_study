@@ -22,7 +22,7 @@
 
 #include <QThread>
 
-extern QQueue<QByteArray>   adOrigData;    // 原始数据流
+extern QQueue<QString>      adOrigData;    // 原始数据流
 extern QQueue<QVector<int>> adSingleData;  // 处理好的单次可显示数据
 
 namespace Ui
@@ -64,7 +64,7 @@ private:
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;
 
-    Protocol    p;
+    Protocol    protocol;
     RadarChart *chart;
 };
 

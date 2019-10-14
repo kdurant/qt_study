@@ -11,4 +11,11 @@
 #define SUMTHRESHOLD 0x00000026
 #define SUBTHRESHOLD 0x00000027
 
+#define PCK_NUMER_POS 32
+#define PCK_NUMBER_LEN 8
+#define VALID_LEN_POS 40
+#define VALID_LEN_LEN 8
+
+#define AD_DATA_POS 48
+
 #endif  // BSP_CONFIG_H
