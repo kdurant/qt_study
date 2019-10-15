@@ -32,27 +32,21 @@ void RadarChart::initChart()
 
     chart = new QChart();
 
-    QValueAxis *axis_x = new QValueAxis;
-    QValueAxis *axis_y = new QValueAxis;
-    axis_x->setTickCount(1);
-    axis_x->setRange(0, 10);
-    axis_y->setTickCount(1);
-    axis_y->setRange(0, 10);
-    chart->setAxisX(axis_x);
-    chart->setAxisY(axis_y);
-
     chart->addSeries(channal1);
     chart->addSeries(channal2);
     chart->addSeries(channal3);
     chart->addSeries(channal4);
-    //    chart->createDefaultAxes();
+    chart->createDefaultAxes();
+
+    chart->axisX()->setRange(0, 300);
+    chart->axisY()->setRange(0, 1000);
+
     chart->setTitle("雷达实时数据");
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignBottom);
 
-    chartView = new QChartView();
+    chartView = new QChartView(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->setChart(chart);
     chartView->setRubberBand(QChartView::RectangleRubberBand);
 }
 
@@ -61,15 +55,15 @@ void RadarChart::updateChart(AD_Data &data)
     qint32 x = 0, y = 0;
     channal1->clear();
 
-    *channal1 << QPointF(1, 5) << QPointF(2, 4) << QPointF(3, 3) << QPointF(4, 2) << QPointF(5, 1);
+    //    *channal1 << QPointF(1, 5) << QPointF(2, 4) << QPointF(3, 3) << QPointF(4, 2) << QPointF(5, 1);
 
-    //    x = data.first_start_pos;
-    //    for(int i = 0; i < data.first_data.size(); i += 4)
-    //    {
-    //        y = data.first_data.mid(i, 4).toInt(nullptr, 16);
-    //        channal1->append(x, y);
-    //        x++;
-    //    }
+    x = data.first_start_pos;
+    for(int i = 0; i < data.first_data.size(); i += 4)
+    {
+        y = data.first_data.mid(i, 4).toInt(nullptr, 16);
+        channal1->append(x, y);
+        x++;
+    }
 }
 
 void RadarChart::connectMarkers()
