@@ -13,6 +13,9 @@
 #include <QtCharts/QChartGlobal>
 #include <QtCharts/QLegendMarker>
 #include <QtCharts/QXYLegendMarker>
+#include <QtCharts/QValueAxis>
+
+#include <protocol.h>
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -31,7 +34,7 @@ class RadarChart : public QWidget
 public:
     explicit RadarChart(QWidget *parent = nullptr);
     void initChart();
-    void updateChart();
+    void updateChart(AD_Data &data);
 
 public slots:
     void connectMarkers();

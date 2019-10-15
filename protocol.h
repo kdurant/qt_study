@@ -42,7 +42,7 @@ public:
 
     // 从队列里找出一次采集的数据，存放到一起
     QString &get_single_ad_data(QQueue<QString> &frame);
-    QString &get_channal_data(qint32 number);
+    AD_Data &get_channal_data(qint32 number);
 };
 
 #endif  // PROTOCOL_H

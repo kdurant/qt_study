@@ -82,3 +82,41 @@ QString &Protocol::get_single_ad_data(QQueue<QString> &frame)
     }
     return ad_single_data;
 }
+
+AD_Data &Protocol::get_channal_data(qint32 number)
+{
+    qint32 idx = 0;
+
+    switch(number)
+    {
+        case 0:
+            idx = ad_single_data.indexOf(CHANNAL_0_FLAG) + 12;
+            break;
+        case 1:
+            idx = ad_single_data.indexOf(CHANNAL_1_FLAG) + 12;
+            break;
+        case 2:
+            idx = ad_single_data.indexOf(CHANNAL_2_FLAG) + 12;
+            break;
+        case 3:
+            idx = ad_single_data.indexOf(CHANNAL_3_FLAG) + 12;
+            break;
+    }
+    ad_data[number].first_start_pos = ad_single_data.mid(idx, 4).toInt(nullptr, 16);
+    idx += 4;
+
+    ad_data[number].first_len = ad_single_data.mid(idx, 4).toInt(nullptr, 16);
+    idx += 4;
+
+    ad_data[number].first_data = ad_single_data.mid(idx, ad_data[number].first_len * 4);
+    idx += ad_data[number].first_len * 4;
+
+    if(ad_single_data.mid(idx, 8) == "eb90a55a")
+    {
+        // 计算第二段数据
+        ad_data[number].second_start_pos = ad_single_data.mid(idx, 4).toInt(nullptr, 16);
+        idx += 4;
+    }
+
+    return ad_data[number];
+}

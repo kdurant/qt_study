@@ -18,4 +18,9 @@
 
 #define AD_DATA_POS 48
 
+#define CHANNAL_0_FLAG "eb90a55a0000"
+#define CHANNAL_1_FLAG "eb90a55a0f0f"
+#define CHANNAL_2_FLAG "eb90a55af0f0"
+#define CHANNAL_3_FLAG "eb90a55affff"
+
 #endif  // BSP_CONFIG_H
