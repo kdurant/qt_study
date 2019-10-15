@@ -149,3 +149,32 @@ void RadarChart::handleMarkerClicked()
         }
     }
 }
+
+void RadarChart::keyPressEvent(QKeyEvent *event)
+{
+    switch(event->key())
+    {
+        case Qt::Key_Plus:
+            chartView->chart()->zoomIn();
+            break;
+        case Qt::Key_Minus:
+            chartView->chart()->zoomOut();
+            break;
+            //![1]
+        case Qt::Key_Left:
+            chartView->chart()->scroll(-10, 0);
+            break;
+        case Qt::Key_Right:
+            chartView->chart()->scroll(10, 0);
+            break;
+        case Qt::Key_Up:
+            chartView->chart()->scroll(0, 10);
+            break;
+        case Qt::Key_Down:
+            chartView->chart()->scroll(0, -10);
+            break;
+        default:
+            QWidget::keyPressEvent(event);
+            break;
+    }
+}

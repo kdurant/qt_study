@@ -41,6 +41,9 @@ public slots:
     void disconnectMarkers();
     void handleMarkerClicked();
 
+protected:
+    void keyPressEvent(QKeyEvent *event);
+
 signals:
 
 public slots:
