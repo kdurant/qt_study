@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "radarchart.h"
 #include "udpserver.h"
 
 #include <QApplication>

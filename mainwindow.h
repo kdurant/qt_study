@@ -5,7 +5,6 @@
 
 #include "bsp_config.h"
 #include "noteinfo.h"
-#include "radarchart.h"
 #include "protocol.h"
 
 #include <QCloseEvent>
@@ -64,8 +63,7 @@ private:
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;
 
-    Protocol    protocol;
-    RadarChart *chart;
+    Protocol protocol;
 };
 
 #endif  // MAINWINDOW_H

@@ -8,9 +8,6 @@ MainWindow::MainWindow(QWidget *parent)
       ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->graphicsView->hide();
-    chart = new RadarChart();
-    ui->horizontalLayout->addWidget(chart);
 
     initParameter();
 
@@ -213,6 +210,5 @@ void MainWindow::on_pushButton_laserInfo_clicked()
 
     protocol.get_single_ad_data(adOrigData);
 
-    //    chart->channal1->clear();
-    chart->updateChart(protocol.get_channal_data(0));
+    ui->graphicsView->updateChart(protocol.get_channal_data(0));
 }

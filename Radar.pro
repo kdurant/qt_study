@@ -31,8 +31,8 @@ SOURCES += \
     noteinfo.cpp \
     udpserver.cpp \
     protocol.cpp \
-    radarchart.cpp \
-    threadparse.cpp
+    threadparse.cpp \
+    src/chartview.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -40,8 +40,8 @@ HEADERS += \
     udpserver.h \
     protocol.h \
     bsp_config.h \
-    radarchart.h \
-    threadparse.h
+    threadparse.h \
+    inc/chartview.h
 
 FORMS += \
         mainwindow.ui \
