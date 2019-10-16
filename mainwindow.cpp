@@ -84,8 +84,14 @@ void MainWindow::processPendingDatagram()
         datagram.resize(len);
         udpSocket->readDatagram(datagram.data(), datagram.size());
         // 需要先判断数据内容，不是AD数据直接解析
-        adOrigData.push_back(datagram);
-        qDebug() << adOrigData.size();
+        if(datagram.mid(COMMAND_POS, COMMAND_POS).toHex() == "80000006")
+            adOrigData.push_back(datagram);
+
+        if(adOrigData.size() >= 100)
+        {
+            protocol.get_single_ad_data(adOrigData);
+            ui->graphicsView->updateChart(protocol.get_channal_data(0));
+        }
     }
 }
 
