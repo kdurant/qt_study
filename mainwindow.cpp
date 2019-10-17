@@ -27,7 +27,13 @@ void MainWindow::initParameter()
 {
     QString   localHostName = QHostInfo::localHostName();
     QHostInfo info          = QHostInfo::fromName(localHostName);
-    ui->lineEdit_localIP->setText(info.addresses()[1].toString());
+    if(info.addresses()[1].toString().startsWith("192.168.1"))
+        ui->lineEdit_localIP->setText(info.addresses()[1].toString());
+    else
+    {
+        ui->lineEdit_localIP->setText("请更改本机IP地址为：192.168.1.xxx");
+        ui->lineEdit_localIP->setStyleSheet("color:red");
+    }
 
     radarType = configIni->value("System/radarType").toString();
 
