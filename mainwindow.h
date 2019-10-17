@@ -39,6 +39,7 @@ public:
 
     void initParameter();
     void saveParameter();
+    void uiConfig();
 
     void udpBind();
 

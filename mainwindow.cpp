@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     initParameter();
+    uiConfig();
 
     udpBind();
 
@@ -58,6 +59,7 @@ void MainWindow::initParameter()
     QScrollBar *verBar = ui->scrollArea->verticalScrollBar();
     data               = verBar->minimum();
     data               = verBar->maximum();
+
 }
 
 void MainWindow::saveParameter()
@@ -67,6 +69,22 @@ void MainWindow::saveParameter()
     //    configIni->setValue("Laser/freq", ui->lineEdit_laser_freq->text().toInt());
     configIni->setValue("Laser/freq", 1111);
     qDebug() << "--------------------------------run end----------------------------------------------";
+}
+
+void MainWindow::uiConfig()
+{
+    QSettings *configIni = new QSettings(":/config/config.ini", QSettings::IniFormat);
+    if(configIni->value("System/radarType").toString() == "760")
+    {
+        ui->label_secondStartPos->hide();
+        ui->label_secondLen->hide();
+        ui->label_subThreshold->hide();
+        ui->label_sumThreshold->hide();
+        ui->lineEdit_secondStartPos->hide();
+        ui->lineEdit_secondLen->hide();
+        ui->lineEdit_subThreshold->hide();
+        ui->lineEdit_sumThreshold->hide();
+    }
 }
 
 void MainWindow::udpBind()
