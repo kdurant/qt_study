@@ -51,6 +51,8 @@ void MainWindow::initParameter()
         ui->rBtn_ocean->setChecked(true);
     else if(configIni->value("System/radarType").toString() == "land")
         ui->rBtn_land->setChecked(true);
+    else if(configIni->value("System/radarType").toString() == "760")
+        ui->rBtn_760->setChecked(true);
 
     int         data;
     QScrollBar *verBar = ui->scrollArea->verticalScrollBar();
@@ -126,7 +128,7 @@ void MainWindow::on_pushButton_setPreviewPara_clicked()
     QHostAddress addr;
     quint16      port;
 
-    if(ui->rBtn_ocean->isChecked())
+    if(ui->rBtn_ocean->isChecked() || ui->rBtn_760->isChecked())
     {
         addr = QHostAddress(ui->lineEdit_oceanIP->text());
         port = ui->lineEdit_oceanPort->text().toInt();
@@ -136,17 +138,19 @@ void MainWindow::on_pushButton_setPreviewPara_clicked()
         addr = QHostAddress(ui->lineEdit_landIP->text());
         port = ui->lineEdit_landPort->text().toInt();
     }
+    if(ui->rBtn_760->isChecked())
+    {
+        frame = protocol.encode(SAMPLERATE, 4, ui->lineEdit_sampleRate->text().toInt());
+        udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
 
+        frame = protocol.encode(FIRSTSTARTPOS, 4, ui->lineEdit_firstStartPos->text().toInt());
+        udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
+
+        frame = protocol.encode(FIRSTLEN, 4, ui->lineEdit_firstLen->text().toInt());
+        udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
+    }
+    /*
     frame = protocol.encode(SAMPLELEN, 4, ui->lineEdit_sampleLen->text().toInt());
-    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
-
-    frame = protocol.encode(SAMPLERATE, 4, ui->lineEdit_sampleRate->text().toInt());
-    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
-
-    frame = protocol.encode(FIRSTSTARTPOS, 4, ui->lineEdit_firstStartPos->text().toInt());
-    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
-
-    frame = protocol.encode(FIRSTLEN, 4, ui->lineEdit_firstLen->text().toInt());
     udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
 
     frame = protocol.encode(SECONDLEN, 4, ui->lineEdit_secondLen->text().toInt());
@@ -160,6 +164,7 @@ void MainWindow::on_pushButton_setPreviewPara_clicked()
 
     frame = protocol.encode(SUBTHRESHOLD, 4, ui->lineEdit_subThreshold->text().toInt());
     udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
+    */
 }
 
 void MainWindow::on_pushButton_sampleEnable_clicked()
@@ -168,7 +173,7 @@ void MainWindow::on_pushButton_sampleEnable_clicked()
     QHostAddress addr;
     quint16      port;
     quint32      status;
-    if(ui->rBtn_ocean->isChecked())
+    if(ui->rBtn_ocean->isChecked() || ui->rBtn_760->isChecked())
     {
         addr = QHostAddress(ui->lineEdit_oceanIP->text());
         port = ui->lineEdit_oceanPort->text().toInt();

@@ -19,7 +19,7 @@ QByteArray Protocol::encode(qint32 command, qint32 data_len, qint32 data)
     origin.append(QByteArray::number(command, 16).rightJustified(8, '0'));
     origin.append(QByteArray::number(pck_num, 16).rightJustified(8, '0'));
     origin.append(QByteArray::number(data_len, 16).rightJustified(8, '0'));
-    origin.append(QByteArray::number(data, 16).leftJustified(512, '0'));
+    origin.append(QByteArray::number(data, 16).rightJustified(8, '0').append(504,'0'));
     origin.append(QByteArray::number(checksum, 16).rightJustified(8, '0'));
     frame = QByteArray::fromHex(origin);
 
