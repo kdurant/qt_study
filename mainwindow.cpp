@@ -47,11 +47,6 @@ void MainWindow::initParameter()
     ui->lineEdit_laser_freq->setText(configIni->value("Laser/freq").toString());
 
     ui->lineEdit_localPort->setText(configIni->value("System/localPort").toString());
-    ui->lineEdit_oceanIP->setText(configIni->value("System/oceanIP").toString());
-    ui->lineEdit_oceanPort->setText(configIni->value("System/oceanPort").toString());
-
-    ui->lineEdit_landIP->setText(configIni->value("System/landIP").toString());
-    ui->lineEdit_landPort->setText(configIni->value("System/landPort").toString());
 
     ui->lineEdit_sampleLen->setText(configIni->value("Preview/sampleLen").toString());
     ui->lineEdit_sampleRate->setText(configIni->value("Preview/sampleRate").toString());
