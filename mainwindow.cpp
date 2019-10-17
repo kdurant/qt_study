@@ -59,7 +59,6 @@ void MainWindow::initParameter()
     QScrollBar *verBar = ui->scrollArea->verticalScrollBar();
     data               = verBar->minimum();
     data               = verBar->maximum();
-
 }
 
 void MainWindow::saveParameter()
@@ -97,7 +96,7 @@ void MainWindow::udpBind()
 void MainWindow::processPendingDatagram()
 {
     QByteArray datagram;
-    QString data;
+    QString    data;
     int        len;
     while(udpSocket->hasPendingDatagrams())
     {
@@ -110,14 +109,14 @@ void MainWindow::processPendingDatagram()
         if(data.mid(COMMAND_POS, COMMAND_LEN) == "80000006")
             adOrigData.push_back(data);
 
-        if(adOrigData.size() >= 20)
+        if(adOrigData.size() > 10 && data.mid(PCK_NUMER_POS, PCK_NUMBER_LEN).toInt(nullptr, 16) == 0)
         {
-//            while(1)
+            //            while(1)
             {
                 protocol.get_single_ad_data(adOrigData);
-//                protocol.get_channal_data(0);
+                //                protocol.get_channal_data(0);
                 ui->graphicsView->updateChart(protocol.get_channal_data(0));
-//                QThread::sleep(1);
+                //                QThread::sleep(1);
             }
         }
     }
@@ -145,6 +144,7 @@ void MainWindow::on_pushButton_setPreviewPara_clicked()
     QByteArray   frame;
     QHostAddress addr;
     quint16      port;
+    qint32       data;
 
     if(ui->rBtn_ocean->isChecked() || ui->rBtn_760->isChecked())
     {
@@ -156,15 +156,27 @@ void MainWindow::on_pushButton_setPreviewPara_clicked()
         addr = QHostAddress(ui->lineEdit_landIP->text());
         port = ui->lineEdit_landPort->text().toInt();
     }
+    else
+    {
+        addr = QHostAddress(ui->lineEdit_oceanIP->text());
+        port = ui->lineEdit_oceanPort->text().toInt();
+    }
+
     if(ui->rBtn_760->isChecked())
     {
-        frame = protocol.encode(SAMPLERATE, 4, ui->lineEdit_sampleRate->text().toInt());
+        data  = ui->lineEdit_sampleRate->text().toInt();
+        data  = (data / 8) * 8;
+        frame = protocol.encode(SAMPLERATE, 4, data);
         udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
 
-        frame = protocol.encode(FIRSTSTARTPOS, 4, ui->lineEdit_firstStartPos->text().toInt());
+        data  = ui->lineEdit_firstStartPos->text().toInt();
+        data  = (data / 8) * 8;
+        frame = protocol.encode(FIRSTSTARTPOS, 4, data);
         udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
 
-        frame = protocol.encode(FIRSTLEN, 4, ui->lineEdit_firstLen->text().toInt());
+        data  = ui->lineEdit_firstLen->text().toInt();
+        data  = (data / 8) * 8;
+        frame = protocol.encode(FIRSTLEN, 4, data);
         udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
     }
     /*
