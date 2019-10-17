@@ -121,6 +121,7 @@ void ChartView::initChart()
     charting->setTitle("雷达实时数据");
     charting->legend()->setVisible(true);
     charting->legend()->setAlignment(Qt::AlignBottom);
+    charting->setTheme(QChart::ChartThemeBlueCerulean);
 
     setChart(charting);
     setRenderHint(QPainter::Antialiasing);
