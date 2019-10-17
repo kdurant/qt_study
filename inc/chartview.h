@@ -21,10 +21,10 @@ private:
     QPoint endPoint;    //选择矩形区的终点
 
 protected:
-    void mousePressEvent(QMouseEvent *event);    //鼠标左键按下
-    void mouseMoveEvent(QMouseEvent *event);     //鼠标移动
-    void mouseReleaseEvent(QMouseEvent *event);  //鼠标释放左键
-    void keyPressEvent(QKeyEvent *event);        //按键事件
+    //    void mousePressEvent(QMouseEvent *event);    //鼠标左键按下
+    //    void mouseMoveEvent(QMouseEvent *event);     //鼠标移动
+    //    void mouseReleaseEvent(QMouseEvent *event);  //鼠标释放左键
+    void keyPressEvent(QKeyEvent *event);  //按键事件
 
 public:
     explicit ChartView(QWidget *parent = 0);
