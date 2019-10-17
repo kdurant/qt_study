@@ -8,13 +8,14 @@ MainWindow::MainWindow(QWidget *parent)
       ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle(tr("雷达控制软件"));
 
     configIni = new QSettings(":/config/config.ini", QSettings::IniFormat);
+
     initParameter();
     uiConfig();
 
     udpBind();
-
     initSignalSlot();
 }
 
@@ -88,6 +89,8 @@ void MainWindow::uiConfig()
         ui->lineEdit_subThreshold->hide();
         ui->lineEdit_sumThreshold->hide();
     }
+    labelVer = new QLabel(SOFTWARE_VER);
+    ui->statusBar->addPermanentWidget(labelVer);
 }
 
 void MainWindow::udpBind()
@@ -95,6 +98,8 @@ void MainWindow::udpBind()
     udpSocket = new QUdpSocket(this);
     if(!udpSocket->bind(QHostAddress(ui->lineEdit_localIP->text()), ui->lineEdit_localPort->text().toInt()))
         QMessageBox::warning(NULL, "警告", "雷达连接失败");
+    else
+        ui->statusBar->showMessage(tr("连接设备成功"), 0);
 }
 
 void MainWindow::processPendingDatagram()

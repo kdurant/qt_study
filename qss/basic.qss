@@ -5,7 +5,6 @@ QMainWindow
 
 QStatusBar
 {
-    background-color: #123456;
     border-left: 2px solid #323232;
     border-right: 2px solid #323232;
     border-bottom: 2px solid #323232;

@@ -69,6 +69,8 @@ private:
     QString      radarType;
     QHostAddress deviceIP;
     quint16      devicePort;
+
+    QLabel *labelVer;
 };
 
 #endif  // MAINWINDOW_H

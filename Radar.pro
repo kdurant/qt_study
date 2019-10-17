@@ -49,3 +49,5 @@ FORMS += \
 
 RESOURCES += \
     res.qrc
+
+RC_ICONS = ./qss/radar_icon.ico
