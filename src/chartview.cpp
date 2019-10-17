@@ -71,6 +71,31 @@ void ChartView::keyPressEvent(QKeyEvent *event)
     //    QGraphicsView::keyPressEvent(event);
 }
 
+void ChartView::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton)
+        this->chart()->zoomReset();
+}
+
+void ChartView::wheelEvent(QWheelEvent *event)
+{
+    qreal factor;
+    if(event->delta() > 0)
+        factor = 2.0;
+    else
+        factor = 0.5;
+
+    QRectF  r        = QRectF(chart()->plotArea().left(), chart()->plotArea().top(),
+                      chart()->plotArea().width() / factor, chart()->plotArea().height() / factor);
+    QPointF mousePos = mapFromGlobal(QCursor::pos());
+    r.moveCenter(mousePos);
+    chart()->zoomIn(r);
+    QPointF delta = chart()->plotArea().center() - mousePos;
+    chart()->scroll(delta.x(), -delta.y());
+
+    QChartView::wheelEvent(event);
+}
+
 ChartView::ChartView(QWidget *parent)
     : QChartView(parent)
 {

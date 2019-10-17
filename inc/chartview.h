@@ -25,6 +25,8 @@ protected:
     //    void mouseMoveEvent(QMouseEvent *event);     //鼠标移动
     //    void mouseReleaseEvent(QMouseEvent *event);  //鼠标释放左键
     void keyPressEvent(QKeyEvent *event);  //按键事件
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent *event);
 
 public:
     explicit ChartView(QWidget *parent = 0);
