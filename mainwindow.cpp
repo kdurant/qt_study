@@ -31,6 +31,18 @@ void MainWindow::initParameter()
 
     radarType = configIni->value("System/radarType").toString();
 
+    configIni->setValue("Laser/freq", 1111);
+    if(radarType == RADAR_TYPE_760 || radarType == RADAR_TYPE_OCEAN)
+    {
+        deviceIP   = QHostAddress(configIni->value("System/oceanIP").toString());
+        devicePort = configIni->value("System/oceanPort").toInt();
+    }
+    else if(radarType == RADAR_TYPE_LAND)
+    {
+        deviceIP   = QHostAddress(configIni->value("System/landIP").toString());
+        devicePort = configIni->value("System/landPort").toInt();
+    }
+
     //configIni->setValue("System/RadarType", "land");
     ui->lineEdit_laser_freq->setText(configIni->value("Laser/freq").toString());
 
@@ -50,17 +62,8 @@ void MainWindow::initParameter()
     ui->lineEdit_sumThreshold->setText(configIni->value("Preview/sumThreshold").toString());
     ui->lineEdit_subThreshold->setText(configIni->value("Preview/subThreshold").toString());
 
-    if(radarType == RADAR_TYPE_OCEAN)
-        ui->rBtn_ocean->setChecked(true);
-    else if(radarType == RADAR_TYPE_LAND)
-        ui->rBtn_land->setChecked(true);
-    else if(radarType == RADAR_TYPE_760)
-        ui->rBtn_760->setChecked(true);
-
-    int         data;
-    QScrollBar *verBar = ui->scrollArea->verticalScrollBar();
-    data               = verBar->minimum();
-    data               = verBar->maximum();
+    ui->rBtn_radarType->setChecked(true);
+    ui->rBtn_radarType->setText(radarType + "雷达");
 }
 
 void MainWindow::saveParameter()
@@ -141,78 +144,48 @@ void MainWindow::on_actionNote_triggered()
 
 void MainWindow::on_pushButton_setPreviewPara_clicked()
 {
-    QByteArray   frame;
-    QHostAddress addr;
-    quint16      port;
-    qint32       data;
-
-    if(radarType == RADAR_TYPE_760 || radarType == RADAR_TYPE_OCEAN)
-    {
-        addr = QHostAddress(ui->lineEdit_oceanIP->text());
-        port = ui->lineEdit_oceanPort->text().toInt();
-    }
-    else if(radarType == RADAR_TYPE_LAND)
-    {
-        addr = QHostAddress(ui->lineEdit_landIP->text());
-        port = ui->lineEdit_landPort->text().toInt();
-    }
-    else
-    {
-        addr = QHostAddress(ui->lineEdit_oceanIP->text());
-        port = ui->lineEdit_oceanPort->text().toInt();
-    }
+    QByteArray frame;
+    qint32     data;
 
     if(radarType == RADAR_TYPE_760)
     {
         data  = ui->lineEdit_sampleRate->text().toInt();
         data  = (data / 8) * 8;
         frame = protocol.encode(SAMPLERATE, 4, data);
-        udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
+        udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
         data  = ui->lineEdit_firstStartPos->text().toInt();
         data  = (data / 8) * 8;
         frame = protocol.encode(FIRSTSTARTPOS, 4, data);
-        udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
+        udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
         data  = ui->lineEdit_firstLen->text().toInt();
         data  = (data / 8) * 8;
         frame = protocol.encode(FIRSTLEN, 4, data);
-        udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
+        udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
     }
     /*
     frame = protocol.encode(SAMPLELEN, 4, ui->lineEdit_sampleLen->text().toInt());
-    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
     frame = protocol.encode(SECONDLEN, 4, ui->lineEdit_secondLen->text().toInt());
-    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
     frame = protocol.encode(SECONDSTARTPOS, 4, ui->lineEdit_secondStartPos->text().toInt());
-    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
     frame = protocol.encode(SUMTHRESHOLD, 4, ui->lineEdit_sumThreshold->text().toInt());
-    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
     frame = protocol.encode(SUBTHRESHOLD, 4, ui->lineEdit_subThreshold->text().toInt());
-    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
     */
 }
 
 void MainWindow::on_pushButton_sampleEnable_clicked()
 {
-    QByteArray   frame;
-    QHostAddress addr;
-    quint16      port;
-    quint32      status;
-    if(radarType == RADAR_TYPE_760 || radarType == RADAR_TYPE_OCEAN)
-    {
-        addr = QHostAddress(ui->lineEdit_oceanIP->text());
-        port = ui->lineEdit_oceanPort->text().toInt();
-    }
-    else if(radarType == RADAR_TYPE_LAND)
-    {
-        addr = QHostAddress(ui->lineEdit_landIP->text());
-        port = ui->lineEdit_landPort->text().toInt();
-    }
+    QByteArray frame;
+    quint32    status;
 
     if(ui->pushButton_sampleEnable->text() == "开始采集")
     {
@@ -225,7 +198,7 @@ void MainWindow::on_pushButton_sampleEnable_clicked()
         ui->pushButton_sampleEnable->setText("开始采集");
     }
     frame = protocol.encode(SAMPLEENABLE, 4, status);
-    udpSocket->writeDatagram(frame.data(), frame.size(), addr, port);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }
 
 void MainWindow::on_pushButton_laserInfo_clicked()

@@ -63,10 +63,12 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;
+    QSettings *     configIni;
+    Protocol        protocol;
 
-    QString    radarType;
-    QSettings *configIni;
-    Protocol   protocol;
+    QString      radarType;
+    QHostAddress deviceIP;
+    quint16      devicePort;
 };
 
 #endif  // MAINWINDOW_H
