@@ -30,12 +30,102 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-259</y>
+         <y>0</y>
          <width>325</width>
          <height>919</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QGroupBox" name="groupBox_7">
+          <property name="title">
+           <string>系统参数</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_9">
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="lineEdit_localIP"/>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_43">
+             <property name="text">
+              <string>陆地雷达IP地址：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="lineEdit_landIP"/>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="lineEdit_localPort"/>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="lineEdit_oceanPort"/>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEdit_oceanIP"/>
+           </item>
+           <item row="6" column="0">
+            <widget class="QRadioButton" name="rBtn_ocean">
+             <property name="text">
+              <string>海洋雷达</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QRadioButton" name="rBtn_land">
+             <property name="text">
+              <string>陆地雷达</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_47">
+             <property name="text">
+              <string>本机IP地址：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_46">
+             <property name="text">
+              <string>陆地雷达端口号：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_41">
+             <property name="text">
+              <string>海洋雷达IP地址：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_42">
+             <property name="text">
+              <string>海洋雷达端口号：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="lineEdit_landPort"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_44">
+             <property name="text">
+              <string>本机端口号：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QRadioButton" name="rBtn_760">
+             <property name="text">
+              <string>760雷达</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
         <item>
          <widget class="QGroupBox" name="groupBox_2">
           <property name="title">
@@ -389,96 +479,6 @@
             <widget class="QPushButton" name="pushButton_7">
              <property name="text">
               <string>详细信息</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_7">
-          <property name="title">
-           <string>系统参数</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_9">
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEdit_localIP"/>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_43">
-             <property name="text">
-              <string>陆地雷达IP地址：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QLineEdit" name="lineEdit_landIP"/>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="lineEdit_localPort"/>
-           </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="lineEdit_oceanPort"/>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="lineEdit_oceanIP"/>
-           </item>
-           <item row="6" column="0">
-            <widget class="QRadioButton" name="rBtn_ocean">
-             <property name="text">
-              <string>海洋雷达</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="1">
-            <widget class="QRadioButton" name="rBtn_land">
-             <property name="text">
-              <string>陆地雷达</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_47">
-             <property name="text">
-              <string>本机IP地址：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="label_46">
-             <property name="text">
-              <string>陆地雷达端口号：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_41">
-             <property name="text">
-              <string>海洋雷达IP地址：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_42">
-             <property name="text">
-              <string>海洋雷达端口号：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QLineEdit" name="lineEdit_landPort"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_44">
-             <property name="text">
-              <string>本机端口号：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <widget class="QRadioButton" name="rBtn_760">
-             <property name="text">
-              <string>760雷达</string>
              </property>
             </widget>
            </item>

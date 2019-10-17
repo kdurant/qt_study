@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    configIni = new QSettings(":/config/config.ini", QSettings::IniFormat);
     initParameter();
     uiConfig();
 
@@ -28,7 +29,8 @@ void MainWindow::initParameter()
     QHostInfo info          = QHostInfo::fromName(localHostName);
     ui->lineEdit_localIP->setText(info.addresses()[1].toString());
 
-    QSettings *configIni = new QSettings(":/config/config.ini", QSettings::IniFormat);
+    radarType = configIni->value("System/radarType").toString();
+
     //configIni->setValue("System/RadarType", "land");
     ui->lineEdit_laser_freq->setText(configIni->value("Laser/freq").toString());
 
@@ -48,11 +50,11 @@ void MainWindow::initParameter()
     ui->lineEdit_sumThreshold->setText(configIni->value("Preview/sumThreshold").toString());
     ui->lineEdit_subThreshold->setText(configIni->value("Preview/subThreshold").toString());
 
-    if(configIni->value("System/radarType").toString() == "ocean")
+    if(radarType == RADAR_TYPE_OCEAN)
         ui->rBtn_ocean->setChecked(true);
-    else if(configIni->value("System/radarType").toString() == "land")
+    else if(radarType == RADAR_TYPE_LAND)
         ui->rBtn_land->setChecked(true);
-    else if(configIni->value("System/radarType").toString() == "760")
+    else if(radarType == RADAR_TYPE_760)
         ui->rBtn_760->setChecked(true);
 
     int         data;
@@ -63,7 +65,6 @@ void MainWindow::initParameter()
 
 void MainWindow::saveParameter()
 {
-    QSettings *configIni = new QSettings(":/config/config.ini", QSettings::IniFormat);
     configIni->setValue("System/RadarType", "land");
     //    configIni->setValue("Laser/freq", ui->lineEdit_laser_freq->text().toInt());
     configIni->setValue("Laser/freq", 1111);
@@ -72,8 +73,7 @@ void MainWindow::saveParameter()
 
 void MainWindow::uiConfig()
 {
-    QSettings *configIni = new QSettings(":/config/config.ini", QSettings::IniFormat);
-    if(configIni->value("System/radarType").toString() == "760")
+    if(radarType == RADAR_TYPE_760)
     {
         ui->label_secondStartPos->hide();
         ui->label_secondLen->hide();
@@ -146,12 +146,12 @@ void MainWindow::on_pushButton_setPreviewPara_clicked()
     quint16      port;
     qint32       data;
 
-    if(ui->rBtn_ocean->isChecked() || ui->rBtn_760->isChecked())
+    if(radarType == RADAR_TYPE_760 || radarType == RADAR_TYPE_OCEAN)
     {
         addr = QHostAddress(ui->lineEdit_oceanIP->text());
         port = ui->lineEdit_oceanPort->text().toInt();
     }
-    else if(ui->rBtn_land->isChecked())
+    else if(radarType == RADAR_TYPE_LAND)
     {
         addr = QHostAddress(ui->lineEdit_landIP->text());
         port = ui->lineEdit_landPort->text().toInt();
@@ -162,7 +162,7 @@ void MainWindow::on_pushButton_setPreviewPara_clicked()
         port = ui->lineEdit_oceanPort->text().toInt();
     }
 
-    if(ui->rBtn_760->isChecked())
+    if(radarType == RADAR_TYPE_760)
     {
         data  = ui->lineEdit_sampleRate->text().toInt();
         data  = (data / 8) * 8;
@@ -203,12 +203,12 @@ void MainWindow::on_pushButton_sampleEnable_clicked()
     QHostAddress addr;
     quint16      port;
     quint32      status;
-    if(ui->rBtn_ocean->isChecked() || ui->rBtn_760->isChecked())
+    if(radarType == RADAR_TYPE_760 || radarType == RADAR_TYPE_OCEAN)
     {
         addr = QHostAddress(ui->lineEdit_oceanIP->text());
         port = ui->lineEdit_oceanPort->text().toInt();
     }
-    else if(ui->rBtn_land->isChecked())
+    else if(radarType == RADAR_TYPE_LAND)
     {
         addr = QHostAddress(ui->lineEdit_landIP->text());
         port = ui->lineEdit_landPort->text().toInt();

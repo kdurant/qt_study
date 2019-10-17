@@ -64,7 +64,9 @@ private:
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;
 
-    Protocol protocol;
+    QString    radarType;
+    QSettings *configIni;
+    Protocol   protocol;
 };
 
 #endif  // MAINWINDOW_H
