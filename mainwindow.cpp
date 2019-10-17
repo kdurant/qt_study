@@ -64,7 +64,7 @@ void MainWindow::saveParameter()
     configIni->setValue("System/RadarType", "land");
     //    configIni->setValue("Laser/freq", ui->lineEdit_laser_freq->text().toInt());
     configIni->setValue("Laser/freq", 1111);
-    qDebug() << "save parameter";
+    qDebug() << "--------------------------------run end----------------------------------------------";
 }
 
 void MainWindow::udpBind()
@@ -77,20 +77,28 @@ void MainWindow::udpBind()
 void MainWindow::processPendingDatagram()
 {
     QByteArray datagram;
+    QString data;
     int        len;
     while(udpSocket->hasPendingDatagrams())
     {
         len = udpSocket->pendingDatagramSize();
         datagram.resize(len);
         udpSocket->readDatagram(datagram.data(), datagram.size());
-        // 需要先判断数据内容，不是AD数据直接解析
-        if(datagram.mid(COMMAND_POS, COMMAND_POS).toHex() == "80000006")
-            adOrigData.push_back(datagram);
 
-        if(adOrigData.size() >= 100)
+        data = datagram.toHex();
+        // 需要先判断数据内容，不是AD数据直接解析
+        if(data.mid(COMMAND_POS, COMMAND_LEN) == "80000006")
+            adOrigData.push_back(data);
+
+        if(adOrigData.size() >= 20)
         {
-            protocol.get_single_ad_data(adOrigData);
-            ui->graphicsView->updateChart(protocol.get_channal_data(0));
+//            while(1)
+            {
+                protocol.get_single_ad_data(adOrigData);
+//                protocol.get_channal_data(0);
+                ui->graphicsView->updateChart(protocol.get_channal_data(0));
+//                QThread::sleep(1);
+            }
         }
     }
 }

@@ -66,6 +66,8 @@ QString &Protocol::get_single_ad_data(QQueue<QString> &frame)
     qint32  expect_index   = 0;
     qint32  valid_data_len = 0;
 
+    ad_single_data.clear();
+
     // 找到包序号为0的数据帧
     while(frame.head().mid(PCK_NUMER_POS, PCK_NUMBER_LEN).toInt(nullptr, 16) != 0 && frame.empty() != true)
     {
@@ -80,6 +82,7 @@ QString &Protocol::get_single_ad_data(QQueue<QString> &frame)
         ad_single_data += data.mid(AD_DATA_POS, valid_data_len);
         expect_index++;
     }
+    qDebug() << "single all data: " << ad_single_data;
     return ad_single_data;
 }
 
@@ -117,6 +120,7 @@ AD_Data &Protocol::get_channal_data(qint32 number)
         ad_data[number].second_start_pos = ad_single_data.mid(idx, 4).toInt(nullptr, 16);
         idx += 4;
     }
-
+    qDebug() << "channal 0 first data: " << ad_data[0].first_data;
+//    memset(&ad_data[0], 0x00, sizeof(ad_data[0]));
     return ad_data[number];
 }

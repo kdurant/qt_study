@@ -12,7 +12,7 @@
 #define SUBTHRESHOLD 0x00000027
 
 #define COMMAND_POS 24
-#define COMMAND_LEN 24
+#define COMMAND_LEN 8
 #define PCK_NUMER_POS 32
 #define PCK_NUMBER_LEN 8
 #define VALID_LEN_POS 40
