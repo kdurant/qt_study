@@ -20,14 +20,6 @@ private:
     QPoint beginPoint;  //选择矩形区的起点
     QPoint endPoint;    //选择矩形区的终点
 
-protected:
-    //    void mousePressEvent(QMouseEvent *event);    //鼠标左键按下
-    //    void mouseMoveEvent(QMouseEvent *event);     //鼠标移动
-    //    void mouseReleaseEvent(QMouseEvent *event);  //鼠标释放左键
-    void keyPressEvent(QKeyEvent *event);  //按键事件
-    void mouseDoubleClickEvent(QMouseEvent *event);
-    void wheelEvent(QWheelEvent *event);
-
 public:
     explicit ChartView(QWidget *parent = 0);
     ~ChartView();
@@ -35,13 +27,15 @@ public:
     void initChart();
     void updateChart(AD_Data &data);
 
+protected:
+    void keyPressEvent(QKeyEvent *event);  //按键事件
+    void mouseDoubleClickEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent *event);
+
 public slots:
     void connectMarkers();
     void disconnectMarkers();
     void handleMarkerClicked();
-
-signals:
-    void mouseMovePoint(QPoint point);  //鼠标移动信号，在mouseMoveEvent()事件中触发
 };
 
 #endif  // CHARTVIEW_H

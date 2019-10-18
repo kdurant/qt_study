@@ -3,36 +3,23 @@
 
 QT_CHARTS_USE_NAMESPACE
 
-// void ChartView::mousePressEvent(QMouseEvent *event)
-// {  //鼠标左键按下，记录beginPoint
-//     if(event->button() == Qt::LeftButton)
-//         beginPoint = event->pos();
-//     QChartView::mousePressEvent(event);
-// }
-//
-// void ChartView::mouseMoveEvent(QMouseEvent *event)
-// {  //鼠标移动事件
-//     QPoint point;
-//     point = event->pos();
-//
-//     emit mouseMovePoint(point);
-//     QChartView::mouseMoveEvent(event);
-// }
-//
-// void ChartView::mouseReleaseEvent(QMouseEvent *event)
-// {
-//     if(event->button() == Qt::LeftButton)
-//     {  //鼠标左键释放，获取矩形框的endPoint,进行缩放
-//         endPoint = event->pos();
-//         QRectF rectF;
-//         rectF.setTopLeft(this->beginPoint);
-//         rectF.setBottomRight(this->endPoint);
-//         this->chart()->zoomIn(rectF);
-//     }
-//     else if(event->button() == Qt::RightButton)
-//         this->chart()->zoomReset();  //鼠标右键释放，resetZoom
-//     QChartView::mouseReleaseEvent(event);
-// }
+ChartView::ChartView(QWidget *parent)
+    : QChartView(parent)
+{
+    this->setDragMode(QGraphicsView::RubberBandDrag);
+    this->setMouseTracking(true);  //必须开启此功能
+    //    this->setRubberBand(QChartView::RectangleRubberBand);//设置为矩形选择方式
+    //    this->setRubberBand(QChartView::VerticalRubberBand);
+    //    this->setRubberBand(QChartView::HorizontalRubberBand);
+
+    initChart();
+    connectMarkers();
+}
+
+ChartView::~ChartView()
+{
+    // 必须保留此函数
+}
 
 void ChartView::keyPressEvent(QKeyEvent *event)
 {  //按键控制
@@ -96,23 +83,73 @@ void ChartView::wheelEvent(QWheelEvent *event)
     QChartView::wheelEvent(event);
 }
 
-ChartView::ChartView(QWidget *parent)
-    : QChartView(parent)
+void ChartView::connectMarkers()
 {
-    this->setDragMode(QGraphicsView::RubberBandDrag);
-    //    this->setRubberBand(QChartView::RectangleRubberBand);//设置为矩形选择方式
-    //    this->setRubberBand(QChartView::VerticalRubberBand);
-    //    this->setRubberBand(QChartView::HorizontalRubberBand);
-
-    this->setMouseTracking(true);  //必须开启此功能
-
-    initChart();
-    connectMarkers();
+    // Connect all markers to handler
+    foreach(QLegendMarker *marker, charting->legend()->markers())
+    {
+        // Disconnect possible existing connection to avoid multiple connections
+        QObject::disconnect(marker, SIGNAL(clicked()), this, SLOT(handleMarkerClicked()));
+        QObject::connect(marker, SIGNAL(clicked()), this, SLOT(handleMarkerClicked()));
+    }
 }
 
-ChartView::~ChartView()
+void ChartView::disconnectMarkers()
 {
-    // 必须保留此函数
+    foreach(QLegendMarker *marker, charting->legend()->markers())
+    {
+        QObject::disconnect(marker, SIGNAL(clicked()), this, SLOT(handleMarkerClicked()));
+    }
+}
+
+void ChartView::handleMarkerClicked()
+{
+    QLegendMarker *marker = qobject_cast<QLegendMarker *>(sender());
+    Q_ASSERT(marker);
+
+    switch(marker->type())
+    {
+        case QLegendMarker::LegendMarkerTypeXY:
+        {
+            // Toggle visibility of series
+            marker->series()->setVisible(!marker->series()->isVisible());
+            marker->setVisible(true);
+
+            // Dim the marker, if series is not visible
+            qreal alpha = 1.0;
+
+            if(!marker->series()->isVisible())
+            {
+                alpha = 0.5;
+            }
+
+            QColor color;
+            QBrush brush = marker->labelBrush();
+            color        = brush.color();
+            color.setAlphaF(alpha);
+            brush.setColor(color);
+            marker->setLabelBrush(brush);
+
+            brush = marker->brush();
+            color = brush.color();
+            color.setAlphaF(alpha);
+            brush.setColor(color);
+            marker->setBrush(brush);
+
+            QPen pen = marker->pen();
+            color    = pen.color();
+            color.setAlphaF(alpha);
+            pen.setColor(color);
+            marker->setPen(pen);
+
+            break;
+        }
+        default:
+        {
+            qDebug() << "Unknown marker type";
+            break;
+        }
+    }
 }
 
 void ChartView::initChart()
@@ -181,88 +218,4 @@ void ChartView::updateChart(AD_Data &data)
     y_max *= 1.1;
     charting->axisX()->setRange(x_min, x_max);
     charting->axisY()->setRange(y_min, y_max);
-}
-
-void ChartView::connectMarkers()
-{
-    //![1]
-    // Connect all markers to handler
-    foreach(QLegendMarker *marker, charting->legend()->markers())
-    {
-        // Disconnect possible existing connection to avoid multiple connections
-        QObject::disconnect(marker, SIGNAL(clicked()), this, SLOT(handleMarkerClicked()));
-        QObject::connect(marker, SIGNAL(clicked()), this, SLOT(handleMarkerClicked()));
-    }
-    //![1]
-}
-
-void ChartView::disconnectMarkers()
-{
-    //![2]
-    foreach(QLegendMarker *marker, charting->legend()->markers())
-    {
-        QObject::disconnect(marker, SIGNAL(clicked()), this, SLOT(handleMarkerClicked()));
-    }
-    //![2]
-}
-
-void ChartView::handleMarkerClicked()
-{
-    //![3]
-    QLegendMarker *marker = qobject_cast<QLegendMarker *>(sender());
-    Q_ASSERT(marker);
-    //![3]
-
-    //![4]
-    switch(marker->type())
-    //![4]
-    {
-        case QLegendMarker::LegendMarkerTypeXY:
-        {
-            //![5]
-            // Toggle visibility of series
-            marker->series()->setVisible(!marker->series()->isVisible());
-
-            // Turn legend marker back to visible, since hiding series also hides the marker
-            // and we don't want it to happen now.
-            marker->setVisible(true);
-            //![5]
-
-            //![6]
-            // Dim the marker, if series is not visible
-            qreal alpha = 1.0;
-
-            if(!marker->series()->isVisible())
-            {
-                alpha = 0.5;
-            }
-
-            QColor color;
-            QBrush brush = marker->labelBrush();
-            color        = brush.color();
-            color.setAlphaF(alpha);
-            brush.setColor(color);
-            marker->setLabelBrush(brush);
-
-            brush = marker->brush();
-            color = brush.color();
-            color.setAlphaF(alpha);
-            brush.setColor(color);
-            marker->setBrush(brush);
-
-            QPen pen = marker->pen();
-            color    = pen.color();
-            color.setAlphaF(alpha);
-            pen.setColor(color);
-            marker->setPen(pen);
-
-            //![6]
-            break;
-        }
-        default:
-        {
-            qDebug() << "Unknown marker type";
-            break;
-        }
-    }
 }
