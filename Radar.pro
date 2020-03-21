@@ -29,23 +29,23 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     noteinfo.cpp \
-    udpserver.cpp \
     protocol.cpp \
     threadparse.cpp \
     src/ChartView/chartview.cpp \
     src/Protocol/DoubleWaveProtocol.cpp \
-    src/Protocol/RadarProtocolBasic.cpp
+    src/Protocol/RadarProtocolBasic.cpp \
+    src/UdpProcess/udpserver.cpp
 
 HEADERS += \
         mainwindow.h \
     noteinfo.h \
-    udpserver.h \
     protocol.h \
     bsp_config.h \
     threadparse.h \
     src/ChartView/chartview.h \
     src/Protocol/DoubleWaveProtocol.h \
-    src/Protocol/RadarProtocolBasic.h
+    src/Protocol/RadarProtocolBasic.h \
+    src/UdpProcess/udpserver.h
 
 FORMS += \
         mainwindow.ui \
