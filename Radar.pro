@@ -32,7 +32,7 @@ SOURCES += \
     udpserver.cpp \
     protocol.cpp \
     threadparse.cpp \
-    src/chartview.cpp
+    src/ChartView/chartview.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -41,7 +41,7 @@ HEADERS += \
     protocol.h \
     bsp_config.h \
     threadparse.h \
-    inc/chartview.h
+    src/ChartView/chartview.h
 
 FORMS += \
         mainwindow.ui \
