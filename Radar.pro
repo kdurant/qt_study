@@ -32,7 +32,9 @@ SOURCES += \
     udpserver.cpp \
     protocol.cpp \
     threadparse.cpp \
-    src/ChartView/chartview.cpp
+    src/ChartView/chartview.cpp \
+    src/Protocol/DoubleWaveProtocol.cpp \
+    src/Protocol/RadarProtocolBasic.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -41,7 +43,9 @@ HEADERS += \
     protocol.h \
     bsp_config.h \
     threadparse.h \
-    src/ChartView/chartview.h
+    src/ChartView/chartview.h \
+    src/Protocol/DoubleWaveProtocol.h \
+    src/Protocol/RadarProtocolBasic.h
 
 FORMS += \
         mainwindow.ui \

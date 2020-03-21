@@ -1,4 +1,4 @@
-#include "./inc/chartview.h"
+#include "chartview.h"
 #include <QChartView>
 
 QT_CHARTS_USE_NAMESPACE
