@@ -30,7 +30,6 @@ SOURCES += \
         mainwindow.cpp \
     noteinfo.cpp \
     protocol.cpp \
-    threadparse.cpp \
     src/ChartView/chartview.cpp \
     src/Protocol/DoubleWaveProtocol.cpp \
     src/Protocol/RadarProtocolBasic.cpp \
@@ -41,7 +40,6 @@ HEADERS += \
     noteinfo.h \
     protocol.h \
     bsp_config.h \
-    threadparse.h \
     src/ChartView/chartview.h \
     src/Protocol/DoubleWaveProtocol.h \
     src/Protocol/RadarProtocolBasic.h \

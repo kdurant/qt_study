@@ -21,6 +21,9 @@
 
 #include <QThread>
 
+#include "./src/Protocol/RadarProtocolBasic.h"
+#include "./src/Protocol/DoubleWaveProtocol.h"
+
 extern QQueue<QString>      adOrigData;    // 原始数据流
 extern QQueue<QVector<int>> adSingleData;  // 处理好的单次可显示数据
 
@@ -64,13 +67,14 @@ private:
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;
     QSettings *     configIni;
-    Protocol        protocol;
 
     QString      radarType;
     QHostAddress deviceIP;
     quint16      devicePort;
 
     QLabel *labelVer;
+
+    DoubleWaveProtocol *protocol;
 };
 
 #endif  // MAINWINDOW_H

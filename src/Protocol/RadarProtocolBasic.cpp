@@ -8,4 +8,46 @@ RadarProtocolBasic::RadarProtocolBasic()
     packetNum    = 0;
     validDataLen = 0;
     data         = {256, 0};
+
+    processFlag = 0;
+}
+
+/**
+ * @brief 命令数据和采样波形数据分开存放
+ * processFlag = 1时，处理命令数据
+ * processFlag = 2时，处理采样数据
+ * @param originFrame
+ */
+void RadarProtocolBasic::setDataFrame(QByteArray &originFrame)
+{
+    QByteArray ba = originFrame.mid(COMMAND_POS, COMMAND_LEN);
+    qDebug() << (ba == QByteArray::fromHex("00000013"));
+
+    if(originFrame.mid(COMMAND_POS, COMMAND_LEN) == QByteArray::fromHex("80000006"))
+    {
+        waveFrame.push_back(originFrame);
+        processFlag = 2;
+    }
+    else
+    {
+        commandFrame = originFrame;
+        processFlag  = 1;
+    }
+}
+
+QByteArray RadarProtocolBasic::encode(qint32 command, qint32 data_len, qint32 data)
+{
+    QByteArray frame;
+    QByteArray origin;
+    qint32     checksum = 0xeeeeffff;
+    origin.append("AA555AA5AA555AA5");
+    origin.append(QByteArray::number(cmdNum++, 16).rightJustified(8, '0'));
+    origin.append(QByteArray::number(cmdData, 16).rightJustified(8, '0'));
+    origin.append(QByteArray::number(packetNum, 16).rightJustified(8, '0'));
+    origin.append(QByteArray::number(validDataLen, 16).rightJustified(8, '0'));
+    origin.append(QByteArray::number(data, 16).rightJustified(8, '0').append(504, '0'));
+    origin.append(QByteArray::number(checksum, 16).rightJustified(8, '0'));
+    frame = QByteArray::fromHex(origin);
+
+    return frame;
 }

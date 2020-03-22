@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "udpserver.h"
 
 #include <QApplication>
 
@@ -59,7 +58,6 @@ int main(int argc, char *argv[])
         QMessageBox::warning(NULL, "warning", "没有主题文件");
     MainWindow w;
     w.show();
-    qDebug() << "test";
 
     //    RadarChart c;
     //    c.show();
