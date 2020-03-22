@@ -3,7 +3,6 @@
 
 #include <QUdpSocket>
 
-
 class UdpServer
 {
 public:
@@ -14,7 +13,6 @@ public:
     void initSocket(QHostAddress &addr, quint16 port);
 
     void processPendingDatagram();
-
 };
 
-#endif // UDPSERVER_H
+#endif  // UDPSERVER_H

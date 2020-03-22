@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle(tr("雷达控制软件"));
 
-    configIni = new QSettings(":/config/config.ini", QSettings::IniFormat);
+    configIni = new QSettings("./config.ini", QSettings::IniFormat);
 
     initParameter();
     uiConfig();
@@ -31,10 +31,12 @@ void MainWindow::initParameter()
     //    if(info.addresses()[1].toString().startsWith("192.168.1"))
     //        ui->lineEdit_localIP->setText(info.addresses()[1].toString());
     //    else
-    {
-        ui->lineEdit_localIP->setText("请更改本机IP地址为：192.168.1.xxx");
-        ui->lineEdit_localIP->setStyleSheet("color:red");
-    }
+    //    {
+    //        ui->lineEdit_localIP->setText("请更改本机IP地址为：192.168.1.xxx");
+    //        ui->lineEdit_localIP->setStyleSheet("color:red");
+    //    }
+    ui->lineEdit_localIP->setText(configIni->value("System/localIP").toString());
+    ui->lineEdit_localPort->setText(configIni->value("System/localPort").toString());
 
     radarType = configIni->value("System/radarType").toString();
 
@@ -52,8 +54,6 @@ void MainWindow::initParameter()
 
     //configIni->setValue("System/RadarType", "land");
     ui->lineEdit_laser_freq->setText(configIni->value("Laser/freq").toString());
-
-    ui->lineEdit_localPort->setText(configIni->value("System/localPort").toString());
 
     ui->lineEdit_sampleLen->setText(configIni->value("Preview/sampleLen").toString());
     ui->lineEdit_sampleRate->setText(configIni->value("Preview/sampleRate").toString());
@@ -112,6 +112,7 @@ void MainWindow::processPendingDatagram()
         len = udpSocket->pendingDatagramSize();
         datagram.resize(len);
         udpSocket->readDatagram(datagram.data(), datagram.size());
+        qDebug() << datagram.data();
 
         data = datagram.toHex();
         // 需要先判断数据内容，不是AD数据直接解析
