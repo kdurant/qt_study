@@ -94,10 +94,6 @@ void MainWindow::uiConfig()
         ui->lineEdit_subThreshold->hide();
         ui->lineEdit_sumThreshold->hide();
     }
-    ui->gb_laser->hide();
-    ui->gb_motor->hide();
-    ui->gb_volt->hide();
-    //    ui->gb_preview->hide();
     labelVer = new QLabel(SOFTWARE_VER);
     ui->statusBar->addPermanentWidget(labelVer);
 }

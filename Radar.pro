@@ -32,7 +32,8 @@ SOURCES += \
     src/ChartView/chartview.cpp \
     src/Protocol/DoubleWaveProtocol.cpp \
     src/Protocol/RadarProtocolBasic.cpp \
-    src/UdpProcess/udpserver.cpp
+    src/UdpProcess/udpserver.cpp \
+    save.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -41,11 +42,13 @@ HEADERS += \
     src/ChartView/chartview.h \
     src/Protocol/DoubleWaveProtocol.h \
     src/Protocol/RadarProtocolBasic.h \
-    src/UdpProcess/udpserver.h
+    src/UdpProcess/udpserver.h \
+    save.h
 
 FORMS += \
         mainwindow.ui \
-    noteinfo.ui
+    noteinfo.ui \
+    save.ui
 
 RESOURCES += \
     res.qrc
