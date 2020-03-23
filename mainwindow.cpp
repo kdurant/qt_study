@@ -127,7 +127,7 @@ void MainWindow::processPendingDatagram()
         //        }
         if(para.cmdData == QByteArray::fromHex("80000005"))
         {
-            ui->lineEdit_fpgaVer->setText("V" + para.data.mid(4));
+            ui->lineEdit_fpgaVer->setText("V" + para.sys_para.mid(4));
         }
 
         //                ui->graphicsView->updateChart(protocol.get_channal_data(0));

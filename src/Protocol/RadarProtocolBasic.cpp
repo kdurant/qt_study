@@ -8,18 +8,22 @@
  */
 void RadarProtocolBasic::setDataFrame(QByteArray &originFrame)
 {
-    QByteArray ba = originFrame.mid(COMMAND_POS, COMMAND_LEN);
+    quint32 number;
 
     if(originFrame.mid(COMMAND_POS, COMMAND_LEN) == QByteArray::fromHex("80000006"))
     {
         waveFrame.push_back(originFrame);
-        waveFlag = true;
+
+        number = originFrame.mid(PCK_NUM_POS, PCK_NUM_LEN).toInt(nullptr, 16);
+        waveCntCur++;
+        if(waveCntCur == 0 && waveCntLast > 0)
+            waveFrameCnt++;
+
+        waveCntLast++;
     }
     else
     {
         commandFrame = originFrame;
-        if(waveFlag)
-            processFlag |= 0x02;
         processFlag |= 0x01;
     }
 }
@@ -30,14 +34,13 @@ QByteArray RadarProtocolBasic::encode(qint32 command, qint32 data_len, qint32 da
     QByteArray origin;
     qint32     checksum = 0xeeeeffff;
     origin.append("AA555AA5AA555AA5");
-    origin.append(QByteArray::number(cmdNum, 16).rightJustified(8, '0'));
+    origin.append(QByteArray::number(cmdNum++, 16).rightJustified(8, '0'));
     origin.append(QByteArray::number(command, 16).rightJustified(8, '0'));
     origin.append(QByteArray::number(packetNum, 16).rightJustified(8, '0'));
     origin.append(QByteArray::number(data_len, 16).rightJustified(8, '0'));
     origin.append(QByteArray::number(data, 16).rightJustified(8, '0').append(504, '0'));
     origin.append(QByteArray::number(checksum, 16).rightJustified(8, '0'));
     frame = QByteArray::fromHex(origin);
-    //    cmdNum++;
 
     return frame;
 }
@@ -47,8 +50,9 @@ ProtocolResult RadarProtocolBasic::getFPGAInfo()
     ProtocolResult res;
     if(processFlag & 0x01)
     {
-        res.cmdData = commandFrame.mid(COMMAND_POS, COMMAND_LEN);
-        res.data    = commandFrame.mid(272, 8);
+        res.cmdData  = commandFrame.mid(COMMAND_POS, COMMAND_LEN);
+        res.sys_para = commandFrame.mid(272, 8);
+        processFlag  = 0x00;
     }
 
     return res;
