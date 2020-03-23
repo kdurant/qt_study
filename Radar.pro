@@ -29,7 +29,6 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     noteinfo.cpp \
-    protocol.cpp \
     src/ChartView/chartview.cpp \
     src/Protocol/DoubleWaveProtocol.cpp \
     src/Protocol/RadarProtocolBasic.cpp \
@@ -38,7 +37,6 @@ SOURCES += \
 HEADERS += \
         mainwindow.h \
     noteinfo.h \
-    protocol.h \
     bsp_config.h \
     src/ChartView/chartview.h \
     src/Protocol/DoubleWaveProtocol.h \

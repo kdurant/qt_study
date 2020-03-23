@@ -5,7 +5,6 @@
 
 #include "bsp_config.h"
 #include "noteinfo.h"
-#include "protocol.h"
 
 #include <QCloseEvent>
 #include <QUdpSocket>

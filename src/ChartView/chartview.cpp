@@ -190,32 +190,32 @@ void ChartView::initChart()
     setRubberBand(QChartView::RectangleRubberBand);
 }
 
-void ChartView::updateChart(AD_Data &data)
-{
-    channal1->clear();
-    qint32 x = 0, y = 0;
-    qint32 x_min, x_max;
-    qint32 y_min = data.first_data.mid(0, 4).toInt(nullptr, 16);
-    qint32 y_max = data.first_data.mid(0, 4).toInt(nullptr, 16);
+//void ChartView::updateChart(AD_Data &data)
+//{
+//    channal1->clear();
+//    qint32 x = 0, y = 0;
+//    qint32 x_min, x_max;
+//    qint32 y_min = data.first_data.mid(0, 4).toInt(nullptr, 16);
+//    qint32 y_max = data.first_data.mid(0, 4).toInt(nullptr, 16);
 
-    x     = data.first_start_pos;
-    x_min = data.first_start_pos;
-    for(int i = 0; i < data.first_data.size(); i += 4)
-    {
-        y = data.first_data.mid(i, 4).toInt(nullptr, 16);
-        channal1->append(x, y);
-        if(y > y_max)
-            y_max = y;
-        if(y < y_min)
-            y_min = y;
-        x++;
-    }
-    x_max = x;
+//    x     = data.first_start_pos;
+//    x_min = data.first_start_pos;
+//    for(int i = 0; i < data.first_data.size(); i += 4)
+//    {
+//        y = data.first_data.mid(i, 4).toInt(nullptr, 16);
+//        channal1->append(x, y);
+//        if(y > y_max)
+//            y_max = y;
+//        if(y < y_min)
+//            y_min = y;
+//        x++;
+//    }
+//    x_max = x;
 
-    x_min *= 0.9;
-    x_max *= 1.1;
-    y_min *= 0.9;
-    y_max *= 1.1;
-    charting->axisX()->setRange(x_min, x_max);
-    charting->axisY()->setRange(y_min, y_max);
-}
+//    x_min *= 0.9;
+//    x_max *= 1.1;
+//    y_min *= 0.9;
+//    y_max *= 1.1;
+//    charting->axisX()->setRange(x_min, x_max);
+//    charting->axisY()->setRange(y_min, y_max);
+//}

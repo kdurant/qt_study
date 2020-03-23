@@ -51,6 +51,11 @@ void MainWindow::initParameter()
         deviceIP   = QHostAddress(configIni->value("System/landIP").toString());
         devicePort = configIni->value("System/landPort").toInt();
     }
+    else
+    {
+        deviceIP   = QHostAddress(configIni->value("System/oceanIP").toString());
+        devicePort = configIni->value("System/oceanPort").toInt();
+    }
 
     //configIni->setValue("System/RadarType", "land");
     ui->lineEdit_laser_freq->setText(configIni->value("Laser/freq").toString());
@@ -89,6 +94,10 @@ void MainWindow::uiConfig()
         ui->lineEdit_subThreshold->hide();
         ui->lineEdit_sumThreshold->hide();
     }
+    ui->gb_laser->hide();
+    ui->gb_motor->hide();
+    ui->gb_volt->hide();
+    //    ui->gb_preview->hide();
     labelVer = new QLabel(SOFTWARE_VER);
     ui->statusBar->addPermanentWidget(labelVer);
 }

@@ -1,7 +1,6 @@
 #ifndef CHARTVIEW_H
 #define CHARTVIEW_H
 
-#include <protocol.h>
 #include <QtCharts>  //必须这么设置
 
 QT_CHARTS_USE_NAMESPACE
@@ -25,7 +24,7 @@ public:
     ~ChartView();
 
     void initChart();
-    void updateChart(AD_Data &data);
+    //    void updateChart(AD_Data &data);
 
 protected:
     void keyPressEvent(QKeyEvent *event);  //按键事件

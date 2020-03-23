@@ -39,10 +39,11 @@ typedef struct __ProtocolResult
 
 class RadarProtocolBasic
 {
-private:
+protected:
     QQueue<QByteArray> waveFrame;     // 存放采样数据原始数据帧
     QByteArray         commandFrame;  // 存放控制命令原始数据帧
     quint8             processFlag;   // 本次数据是否需要处理
+    bool               waveFlag;
 
     QVector<quint8>  dataFrame;
     QVector<quint8>  head;
