@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle(tr("雷达控制软件"));
 
-    configIni = new QSettings("./config.ini", QSettings::IniFormat);
+    configIni = new QSettings("../Radar/config.ini", QSettings::IniFormat);
 
     initParameter();
     uiConfig();
@@ -243,4 +243,12 @@ void MainWindow::on_pushButton_laserInfo_clicked()
     //    protocol.get_single_ad_data(adOrigData);
 
     //    ui->graphicsView->updateChart(protocol.get_channal_data(0));
+}
+
+void MainWindow::on_pushButton_ReadInfo_clicked()
+{
+    QByteArray frame;
+
+    frame = protocol->encode(READ_SYS_INFO, 4, 0x00000001);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }

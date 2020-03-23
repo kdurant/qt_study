@@ -25,6 +25,7 @@ enum SendCommandSet
 
 enum RecvCommandSet
 {
+    READ_SYS_INFO  = 0x80000001,
     AD_SAMPLE_DATA = 0x80000006
 };
 

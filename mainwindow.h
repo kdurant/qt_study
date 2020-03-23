@@ -62,6 +62,8 @@ private slots:
 
     void on_pushButton_laserInfo_clicked();
 
+    void on_pushButton_ReadInfo_clicked();
+
 private:
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;
