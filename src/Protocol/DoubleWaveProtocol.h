@@ -6,6 +6,7 @@ class DoubleWaveProtocol : public RadarProtocolBasic
 {
 public:
     DoubleWaveProtocol()
+        : RadarProtocolBasic()
     {
     }
     virtual ~DoubleWaveProtocol()

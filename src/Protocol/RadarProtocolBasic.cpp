@@ -1,18 +1,5 @@
 #include "RadarProtocolBasic.h"
 
-RadarProtocolBasic::RadarProtocolBasic()
-{
-    head         = {0xAA, 0x55, 0x5A, 0xA5, 0xAA, 0x55, 0x5A, 0xA5};
-    cmdNum       = 0;
-    cmdData      = 0;
-    packetNum    = 0;
-    validDataLen = 0;
-    data         = {256, 0};
-
-    processFlag = 0;
-    waveFlag    = false;
-}
-
 /**
  * @brief 命令数据和采样波形数据分开存放
  * processFlag[0] = 1时，处理命令数据
@@ -44,13 +31,14 @@ QByteArray RadarProtocolBasic::encode(qint32 command, qint32 data_len, qint32 da
     QByteArray origin;
     qint32     checksum = 0xeeeeffff;
     origin.append("AA555AA5AA555AA5");
-    origin.append(QByteArray::number(cmdNum++, 16).rightJustified(8, '0'));
+    origin.append(QByteArray::number(cmdNum, 16).rightJustified(8, '0'));
     origin.append(QByteArray::number(command, 16).rightJustified(8, '0'));
     origin.append(QByteArray::number(packetNum, 16).rightJustified(8, '0'));
     origin.append(QByteArray::number(data_len, 16).rightJustified(8, '0'));
     origin.append(QByteArray::number(data, 16).rightJustified(8, '0').append(504, '0'));
     origin.append(QByteArray::number(checksum, 16).rightJustified(8, '0'));
     frame = QByteArray::fromHex(origin);
+    //    cmdNum++;
 
     return frame;
 }

@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowTitle(tr("雷达控制软件"));
+    protocol = new DoubleWaveProtocol();
 
     configIni = new QSettings("../Radar/config.ini", QSettings::IniFormat);
 
@@ -249,6 +250,6 @@ void MainWindow::on_pushButton_ReadInfo_clicked()
 {
     QByteArray frame;
 
-    frame = protocol->encode(READ_SYS_INFO, 4, 0x00000001);
+    frame = protocol->encode(PC_READ_SYS_INFO, 4, 0x00000001);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }

@@ -15,9 +15,10 @@
 
 enum SendCommandSet
 {
-    LASER_DOWN_DATA = 0x000000001,
-    LASER_FREQ      = 0x000000002,
-    MOTOR_DOWN_DATA = 0x000000003,
+    LASER_DOWN_DATA  = 0x00000001,
+    LASER_FREQ       = 0x00000002,
+    MOTOR_DOWN_DATA  = 0x00000003,
+    PC_READ_SYS_INFO = 0x00000013,
     SET_DAC,
     READ_ADC,
     RESERVE_UART1
@@ -56,7 +57,18 @@ protected:
     quint32          checksum;
 
 public:
-    RadarProtocolBasic();
+    RadarProtocolBasic()
+    {
+        head         = {0xAA, 0x55, 0x5A, 0xA5, 0xAA, 0x55, 0x5A, 0xA5};
+        cmdNum       = 0;
+        cmdData      = 0;
+        packetNum    = 0;
+        validDataLen = 0;
+        data         = {256, 0};
+
+        processFlag = 0;
+        waveFlag    = false;
+    }
     virtual ~RadarProtocolBasic()
     {
     }
@@ -65,7 +77,7 @@ public:
     quint32                  getCmdNum(QVector<quint8> &dataFrame);
     quint32                  getCmdData(QVector<quint8> &dataFrame);
     QByteArray               encode(qint32 command, qint32 data_len, qint32 data);
-    virtual QVector<quint16> getSignalWave(QVector<quint8>) const = 0;
+    virtual QVector<quint16> getSignalWave(QVector<quint8>) = 0;
 };
 
 #endif  // RADARPROTOCOLBASIC_H

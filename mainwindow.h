@@ -76,6 +76,7 @@ private:
     QLabel *labelVer;
 
     DoubleWaveProtocol *protocol;
+    //    DoubleWaveProtocol  rotocol;
 };
 
 #endif  // MAINWINDOW_H
