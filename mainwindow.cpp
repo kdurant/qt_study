@@ -76,10 +76,10 @@ void MainWindow::initParameter()
 
 void MainWindow::saveParameter()
 {
-    configIni->setValue("System/RadarType", "land");
+    //    configIni->setValue("System/RadarType", "land");
     //    configIni->setValue("Laser/freq", ui->lineEdit_laser_freq->text().toInt());
     configIni->setValue("Laser/freq", 1111);
-    qDebug() << "--------------------------------run end----------------------------------------------";
+    //    qDebug() << "--------------------------------run end----------------------------------------------";
 }
 
 void MainWindow::uiConfig()
@@ -208,8 +208,8 @@ void MainWindow::on_pushButton_sampleEnable_clicked()
         status = 0;
         ui->pushButton_sampleEnable->setText("开始采集");
     }
-    //    frame = protocol.encode(SAMPLEENABLE, 4, status);
-    //    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+    frame = protocol->encode(PC_SET_PREVIEW_ENABLE, 4, status);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }
 
 void MainWindow::on_pushButton_laserInfo_clicked()
