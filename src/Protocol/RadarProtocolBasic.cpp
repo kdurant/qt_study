@@ -9,7 +9,6 @@
 void RadarProtocolBasic::setDataFrame(QByteArray &originFrame)
 {
     QByteArray ba = originFrame.mid(COMMAND_POS, COMMAND_LEN);
-    qDebug() << (ba == QByteArray::fromHex("00000013"));
 
     if(originFrame.mid(COMMAND_POS, COMMAND_LEN) == QByteArray::fromHex("80000006"))
     {
@@ -41,4 +40,16 @@ QByteArray RadarProtocolBasic::encode(qint32 command, qint32 data_len, qint32 da
     //    cmdNum++;
 
     return frame;
+}
+
+ProtocolResult RadarProtocolBasic::getFPGAInfo()
+{
+    ProtocolResult res;
+    if(processFlag & 0x01)
+    {
+        res.cmdData = commandFrame.mid(COMMAND_POS, COMMAND_LEN);
+        res.data    = commandFrame.mid(272, 8);
+    }
+
+    return res;
 }

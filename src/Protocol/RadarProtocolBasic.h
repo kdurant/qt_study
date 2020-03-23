@@ -33,8 +33,8 @@ enum RecvCommandSet
  */
 typedef struct __ProtocolResult
 {
-    quint32 cmdData;
-    quint32 data;
+    QByteArray cmdData;
+    QByteArray data;
 } ProtocolResult;
 
 class RadarProtocolBasic
@@ -75,6 +75,7 @@ public:
     quint32                  getCmdNum(QVector<quint8> &dataFrame);
     quint32                  getCmdData(QVector<quint8> &dataFrame);
     QByteArray               encode(qint32 command, qint32 data_len, qint32 data);
+    ProtocolResult           getFPGAInfo();
     virtual QVector<quint16> getSignalWave(QVector<quint8>) = 0;
 };
 

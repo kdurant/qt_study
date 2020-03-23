@@ -119,20 +119,18 @@ void MainWindow::processPendingDatagram()
         datagram.resize(len);
         udpSocket->readDatagram(datagram.data(), datagram.size());
         protocol->setDataFrame(datagram);
-        //        protocol
+        para = protocol->getFPGAInfo();
 
-        data = datagram.toHex();
-        // 需要先判断数据内容，不是AD数据直接解析
-        //        if(data.mid(COMMAND_POS, COMMAND_LEN) == "80000006")
-        //            adOrigData.push_back(data);
-
-        //        if(adOrigData.size() > 10 && data.mid(PCK_NUMER_POS, PCK_NUMBER_LEN).toInt(nullptr, 16) == 0)
+        //        switch(para.cmdData)
         //        {
-        //            {
-        //                protocol.get_single_ad_data(adOrigData);
-        //                ui->graphicsView->updateChart(protocol.get_channal_data(0));
-        //            }
+        //            case QByteArray::fromHex("80000005"):
         //        }
+        if(para.cmdData == QByteArray::fromHex("80000005"))
+        {
+            ui->lineEdit_fpgaVer->setText("V" + para.data.mid(4));
+        }
+
+        //                ui->graphicsView->updateChart(protocol.get_channal_data(0));
     }
 }
 

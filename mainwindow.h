@@ -76,6 +76,7 @@ private:
     QLabel *labelVer;
 
     DoubleWaveProtocol *protocol;
+    ProtocolResult      para;
     //    DoubleWaveProtocol  rotocol;
 };
 
