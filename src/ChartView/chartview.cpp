@@ -154,27 +154,27 @@ void ChartView::handleMarkerClicked()
 
 void ChartView::initChart()
 {
-    channal1 = new QLineSeries;
-    channal1->setName("channal0");
-    channal1->append(1, 1);
-    channal1->append(2, 2);
-    channal1->append(3, 3);
-    channal1->append(4, 4);
-    channal1->append(5, 0);
+    ch[0] = new QLineSeries;
+    ch[0]->setName("channal0");
+    ch[0]->append(1, 1);
+    ch[0]->append(2, 2);
+    ch[0]->append(3, 3);
+    ch[0]->append(4, 4);
+    ch[0]->append(5, 0);
 
-    channal2 = new QLineSeries;
-    channal2->setName("channal2");
-    channal3 = new QLineSeries;
-    channal3->setName("channal3");
-    channal4 = new QLineSeries;
-    channal4->setName("channal4");
+    ch[1] = new QLineSeries;
+    ch[1]->setName("channal2");
+    ch[2] = new QLineSeries;
+    ch[2]->setName("channal3");
+    ch[3] = new QLineSeries;
+    ch[3]->setName("channal4");
 
     charting = new QChart();
 
-    charting->addSeries(channal1);
-    charting->addSeries(channal2);
-    charting->addSeries(channal3);
-    charting->addSeries(channal4);
+    charting->addSeries(ch[0]);
+    charting->addSeries(ch[1]);
+    charting->addSeries(ch[2]);
+    charting->addSeries(ch[3]);
     charting->createDefaultAxes();
 
     charting->axisX()->setRange(0, 300);
@@ -194,30 +194,16 @@ void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data
 {
     //    qint32 x = 0, y = 0;
     //    qint32 x_min, x_max;
-    //    qint32 y_min = data.mid(0, 4).toInt(nullptr, 16);
-    //    qint32 y_max = data.mid(0, 4).toInt(nullptr, 16);
-    //    switch(chNum)
-    //    {
-    //        case 0:
-    //            for(int i = 0; i < data.size(); i++)
-    //                channal1->append(coor[i], data[i]);
-    //            break;
-
-    //        case 1:
-    //            for(int i = 0; i < data.size(); i++)
-    //                channal2->append(coor[i], data[i]);
-    //            break;
-    //        case 2:
-    //            for(int i = 0; i < data.size(); i++)
-    //                channal3->append(coor[i], data[i]);
-    //            break;
-    //        case 3:
-    //            for(int i = 0; i < data.size(); i++)
-    //                channal4->append(coor[i], data[i]);
-    //            break;
-    //        default:
-    //            break;
-    //    }
+    //    qint32 y_min = data.mid(0, 4).toHex().toInt(nullptr, 16);
+    //    qint32 y_max = data.mid(0, 4).toHex().toInt(nullptr, 16);
+    qDebug() << coor.size();
+    qDebug() << data.size();
+    int len = data.size();
+    int i   = 0;
+    for(i = 0; i < len; i++)
+        qDebug() << coor[i];
+    //        ch[chNum]->append(coor[i], i * 2);
+    //        ch[chNum]->append(coor[i], data.mid(i * 2, 2).toHex().toInt(nullptr, 16));
 }
 
 //void ChartView::updateChart(AD_Data &data)

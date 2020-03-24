@@ -26,9 +26,11 @@ WaveData DoubleWaveProtocol::getSignalWave()
         return data;
     }
 
-    qint32     last    = 0;
-    qint32     cur     = 0;
-    qint32     dataLen = 0;
+    qint32     last          = 0;
+    qint32     cur           = 0;
+    qint32     dataLen       = 0;
+    qint32     compressLen   = 0;
+    qint32     compressRatio = 0;
     QByteArray all_ch;
     QByteArray ch0, ch1, ch2, ch3;
 
@@ -48,7 +50,9 @@ WaveData DoubleWaveProtocol::getSignalWave()
             last++;
         }
     }
-    all_ch = all_ch.mid(88);  // 丢掉前面的GPS等信息
+    compressLen   = all_ch.mid(84, 2).toHex().toInt(nullptr, 16);
+    compressRatio = all_ch.mid(86, 2).toHex().toInt(nullptr, 16);
+    all_ch        = all_ch.mid(88);  // 丢掉前面的GPS等信息
 
     qint32 size = all_ch.size() / 4;
     ch0         = all_ch.mid(size * 0, size);
@@ -71,7 +75,7 @@ WaveData DoubleWaveProtocol::getSignalWave()
     data.ch[2].Data = removeChNeedlessInfo(ch2);
     data.ch[3].Data = removeChNeedlessInfo(ch3);
 
-    for(int i = 0; i < firstLen + secondLen; i++)
+    for(int i = 0; i < firstLen + compressLen / 8 + (secondLen - compressLen); i++)
     {
         for(int j = 0; j < 4; j++)
         {

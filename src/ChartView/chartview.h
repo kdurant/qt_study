@@ -8,12 +8,12 @@ QT_CHARTS_USE_NAMESPACE
 class ChartView : public QChartView
 {
     Q_OBJECT
-
-    QLineSeries *channal1;
-    QLineSeries *channal2;
-    QLineSeries *channal3;
-    QLineSeries *channal4;
-    QChart *     charting;
+    QLineSeries *ch[4];
+    //    QLineSeries *channal1;
+    //    QLineSeries *channal2;
+    //    QLineSeries *channal3;
+    //    QLineSeries *channal4;
+    QChart *charting;
 
 private:
     QPoint beginPoint;  //选择矩形区的起点

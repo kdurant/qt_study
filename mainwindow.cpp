@@ -130,10 +130,17 @@ void MainWindow::processPendingDatagram()
 
         if(chData.isEmpty == false)
         {
+            QVector<int> coor;
+            QByteArray   data;
             for(qint8 i = 0; i < 4; i++)
             {
-                ui->graphicsView->updateChart(i, chData.ch[i].Coor, chData.ch[i].Data);
+                //                ui->graphicsView->updateChart(i, chData.ch[i].Coor, chData.ch[i].Data);
+                coor = chData.ch[i].Coor;
+                data = chData.ch[i].Data;
+                ui->graphicsView->updateChart(i, coor, data);
+                //                ui->graphicsView->updateChart(i, chData.ch[i].Coor, chData.ch[i].Data);
             }
+            chData.isEmpty = true;
         }
     }
 }

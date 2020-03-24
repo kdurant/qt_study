@@ -58,7 +58,7 @@ typedef struct __ProtocolResult
 typedef struct __OneChData
 {
     QVector<qint32> Coor;
-    QByteArray      Data;
+    QByteArray      Data;  // 坐标的2倍长度
 } OneChData;
 
 typedef struct __WaveData
