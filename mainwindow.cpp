@@ -112,6 +112,7 @@ void MainWindow::processPendingDatagram()
 {
     QByteArray datagram;
     QString    data;
+    WaveData   chData;
     int        len;
     while(udpSocket->hasPendingDatagrams())
     {
@@ -119,18 +120,21 @@ void MainWindow::processPendingDatagram()
         datagram.resize(len);
         udpSocket->readDatagram(datagram.data(), datagram.size());
         protocol->setDataFrame(datagram);
-        para = protocol->getFPGAInfo();
+        para   = protocol->getFPGAInfo();
+        chData = protocol->getSignalWave();
 
-        //        switch(para.cmdData)
-        //        {
-        //            case QByteArray::fromHex("80000005"):
-        //        }
         if(para.cmdData == QByteArray::fromHex("80000005"))
         {
             ui->lineEdit_fpgaVer->setText("V" + para.sys_para.mid(4));
         }
 
-        //                ui->graphicsView->updateChart(protocol.get_channal_data(0));
+        if(chData.isEmpty == false)
+        {
+            for(qint8 i = 0; i < 4; i++)
+            {
+                ui->graphicsView->updateChart(i, chData.ch[i].Coor, chData.ch[i].Data);
+            }
+        }
     }
 }
 

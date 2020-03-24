@@ -24,7 +24,7 @@ public:
     ~ChartView();
 
     void initChart();
-    //    void updateChart(AD_Data &data);
+    void updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data);
 
 protected:
     void keyPressEvent(QKeyEvent *event);  //按键事件

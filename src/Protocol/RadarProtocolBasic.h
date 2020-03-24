@@ -50,6 +50,21 @@ typedef struct __ProtocolResult
     QByteArray sys_para;
 } ProtocolResult;
 
+/**
+  包括数据，和坐标点信息
+  */
+typedef struct __OneChData
+{
+    QVector<qint32> Coor;
+    QByteArray      Data;
+} OneChData;
+
+typedef struct __WaveData
+{
+    bool      isEmpty;
+    OneChData ch[4];
+} WaveData;
+
 class RadarProtocolBasic
 {
 protected:
@@ -88,12 +103,13 @@ public:
     {
     }
 
-    void                     setDataFrame(QByteArray &originFrame);
-    quint32                  getCmdNum(QVector<quint8> &dataFrame);
-    quint32                  getCmdData(QVector<quint8> &dataFrame);
-    QByteArray               encode(qint32 command, qint32 data_len, qint32 data);
-    ProtocolResult           getFPGAInfo();
-    virtual QVector<quint16> getSignalWave(QVector<quint8>) = 0;
+    void                setDataFrame(QByteArray &originFrame);
+    quint32             getCmdNum(QVector<quint8> &dataFrame);
+    quint32             getCmdData(QVector<quint8> &dataFrame);
+    QByteArray          encode(qint32 command, qint32 data_len, qint32 data);
+    ProtocolResult      getFPGAInfo();
+    virtual QByteArray &removeChNeedlessInfo(QByteArray &data) = 0;
+    virtual WaveData    getSignalWave()                        = 0;
 };
 
 #endif  // RADARPROTOCOLBASIC_H

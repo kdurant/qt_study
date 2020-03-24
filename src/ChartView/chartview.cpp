@@ -190,6 +190,24 @@ void ChartView::initChart()
     setRubberBand(QChartView::RectangleRubberBand);
 }
 
+void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data)
+{
+    switch(chNum)
+    {
+        case 0:
+            break;
+
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        default:
+            break;
+    }
+}
+
 //void ChartView::updateChart(AD_Data &data)
 //{
 //    channal1->clear();

@@ -12,7 +12,8 @@ public:
     virtual ~DoubleWaveProtocol()
     {
     }
-    virtual QVector<quint16> getSignalWave(QVector<quint8>);
+    virtual QByteArray& removeChNeedlessInfo(QByteArray& data);
+    virtual WaveData    getSignalWave();
 };
 
 #endif  // DOUBLEWAVEPROTOCOL_H

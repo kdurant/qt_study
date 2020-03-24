@@ -54,6 +54,10 @@ ProtocolResult RadarProtocolBasic::getFPGAInfo()
         res.sys_para = commandFrame.mid(272, 8);
         processFlag  = 0x00;
     }
+    else
+    {
+        res.cmdData = 0x00;
+    }
 
     return res;
 }
