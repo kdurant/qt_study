@@ -2,18 +2,10 @@
 
 QByteArray& DoubleWaveProtocol::removeChNeedlessInfo(QByteArray& data)
 {
-    qint32 firstPos  = 0;
-    qint32 firstLen  = 0;
-    qint32 secondPos = 0;
-    qint32 secondLen = 0;
+    qint32 firstLen = data.mid(8, 2).toHex().toInt(nullptr, 16);
 
-    firstPos  = data.mid(6, 2).toInt(nullptr, 16);
-    firstLen  = data.mid(8, 2).toInt(nullptr, 16);
-    secondPos = data.mid(10 + firstLen * 2, 2).toInt(nullptr, 16);
-    secondLen = data.mid(12 + firstLen * 2, 2).toInt(nullptr, 16);
-
-    data = data.mid(10);       // 去掉 帧头(4)，通道号(2)，第一段起始位置(2)，第一段长度(2)
-    data.remove(firstLen, 4);  // 去掉 第二段起始位置(2)，第二段长度(2)
+    data = data.mid(10);           // 去掉 帧头(4)，通道号(2)，第一段起始位置(2)，第一段长度(2)
+    data.remove(firstLen * 2, 4);  // 去掉 第二段起始位置(2)，第二段长度(2)
     return data;
 }
 
