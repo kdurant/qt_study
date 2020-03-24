@@ -9,11 +9,7 @@ class ChartView : public QChartView
 {
     Q_OBJECT
     QLineSeries *ch[4];
-    //    QLineSeries *channal1;
-    //    QLineSeries *channal2;
-    //    QLineSeries *channal3;
-    //    QLineSeries *channal4;
-    QChart *charting;
+    QChart *     charting;
 
 private:
     QPoint beginPoint;  //选择矩形区的起点

@@ -156,12 +156,6 @@ void ChartView::initChart()
 {
     ch[0] = new QLineSeries;
     ch[0]->setName("channal0");
-    ch[0]->append(1, 1);
-    ch[0]->append(2, 2);
-    ch[0]->append(3, 3);
-    ch[0]->append(4, 4);
-    ch[0]->append(5, 0);
-
     ch[1] = new QLineSeries;
     ch[1]->setName("channal2");
     ch[2] = new QLineSeries;
@@ -192,41 +186,22 @@ void ChartView::initChart()
 
 void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data)
 {
-    //    qint32 x = 0, y = 0;
-    //    qint32 x_min, x_max;
-    //    qint32 y_min = data.mid(0, 4).toHex().toInt(nullptr, 16);
-    //    qint32 y_max = data.mid(0, 4).toHex().toInt(nullptr, 16);
+    int x_min, x_max;
+    int y_min, y_max;
+    int y_data;
 
+    x_min = 0;
+    x_max = coor.last() * 1.1;
     for(int i = 0; i < coor.size(); i++)
-        ch[chNum]->append(coor[i], data.mid(i * 2, 2).toHex().toInt(nullptr, 16));
+    {
+        y_data = data.mid(i * 2, 2).toHex().toInt(nullptr, 16);
+        ch[chNum]->append(coor[i], y_data);
+        if(y_data >= y_max)
+            y_max = y_data;
+    }
+    y_min = 0;
+
+    y_max *= 1.1;
+    charting->axisX()->setRange(x_min, x_max);
+    charting->axisY()->setRange(y_min, y_max);
 }
-
-//void ChartView::updateChart(AD_Data &data)
-//{
-//    channal1->clear();
-//    qint32 x = 0, y = 0;
-//    qint32 x_min, x_max;
-//    qint32 y_min = data.first_data.mid(0, 4).toInt(nullptr, 16);
-//    qint32 y_max = data.first_data.mid(0, 4).toInt(nullptr, 16);
-
-//    x     = data.first_start_pos;
-//    x_min = data.first_start_pos;
-//    for(int i = 0; i < data.first_data.size(); i += 4)
-//    {
-//        y = data.first_data.mid(i, 4).toInt(nullptr, 16);
-//        channal1->append(x, y);
-//        if(y > y_max)
-//            y_max = y;
-//        if(y < y_min)
-//            y_min = y;
-//        x++;
-//    }
-//    x_max = x;
-
-//    x_min *= 0.9;
-//    x_max *= 1.1;
-//    y_min *= 0.9;
-//    y_max *= 1.1;
-//    charting->axisX()->setRange(x_min, x_max);
-//    charting->axisY()->setRange(y_min, y_max);
-//}
