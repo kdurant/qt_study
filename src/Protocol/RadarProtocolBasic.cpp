@@ -8,18 +8,20 @@
  */
 void RadarProtocolBasic::setDataFrame(QByteArray &originFrame)
 {
-    quint32 number;
+    qint32 number;
 
     if(originFrame.mid(COMMAND_POS, COMMAND_LEN) == QByteArray::fromHex("80000006"))
     {
         waveFrame.push_back(originFrame);
 
-        number = originFrame.mid(PCK_NUM_POS, PCK_NUM_LEN).toInt(nullptr, 16);
-        waveCntCur++;
-        if(waveCntCur == 0 && waveCntLast > 0)
+        number = originFrame.mid(PCK_NUM_POS, PCK_NUM_LEN).toHex().toInt(nullptr, 16);
+        if(number == 0 && waveCntLast > 0)
+        {
             waveFrameCnt++;
-
-        waveCntLast++;
+            waveCntLast = 0;
+        }
+        else
+            waveCntLast++;
     }
     else
     {

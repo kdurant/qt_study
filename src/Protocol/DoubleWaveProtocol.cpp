@@ -26,14 +26,16 @@ WaveData DoubleWaveProtocol::getSignalWave()
         return data;
     }
 
-    qint32     last = 0;
-    qint32     cur  = 0;
+    qint32     last    = 0;
+    qint32     cur     = 0;
+    qint32     dataLen = 0;
     QByteArray all_ch;
     QByteArray ch0, ch1, ch2, ch3;
 
     while(waveFrame.isEmpty() == false)  // 队列里有数据
     {
-        cur = waveFrame.head().mid(PCK_NUM_POS, PCK_NUM_LEN).toInt(nullptr, 16);
+        cur     = waveFrame.head().mid(PCK_NUM_POS, PCK_NUM_LEN).toHex().toInt(nullptr, 16);
+        dataLen = waveFrame.head().mid(VALID_DATA_LEN_POS, VALID_DATA_LEN_LEN).toHex().toInt(nullptr, 16);
         if((cur == 0) && (last > 0))  // 一帧数据已经全部找到
         {
             cur  = 0;
@@ -42,7 +44,7 @@ WaveData DoubleWaveProtocol::getSignalWave()
         }
         else
         {
-            all_ch.append(waveFrame.dequeue());
+            all_ch.append(waveFrame.dequeue().mid(24, dataLen));
             last++;
         }
     }
@@ -59,10 +61,10 @@ WaveData DoubleWaveProtocol::getSignalWave()
     qint32 secondPos = 0;
     qint32 secondLen = 0;
 
-    firstPos  = ch0.mid(6, 2).toInt(nullptr, 16);
-    firstLen  = ch0.mid(8, 2).toInt(nullptr, 16);
-    secondPos = ch0.mid(10 + firstLen * 2, 2).toInt(nullptr, 16);
-    secondLen = ch0.mid(12 + firstLen * 2, 2).toInt(nullptr, 16);
+    firstPos  = ch0.mid(6, 2).toHex().toInt(nullptr, 16);
+    firstLen  = ch0.mid(8, 2).toHex().toInt(nullptr, 16);
+    secondPos = ch0.mid(10 + firstLen * 2, 2).toHex().toInt(nullptr, 16);
+    secondLen = ch0.mid(12 + firstLen * 2, 2).toHex().toInt(nullptr, 16);
 
     data.ch[0].Data = removeChNeedlessInfo(ch0);
     data.ch[1].Data = removeChNeedlessInfo(ch1);

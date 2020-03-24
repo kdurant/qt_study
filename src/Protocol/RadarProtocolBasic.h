@@ -20,6 +20,8 @@
 #define COMMAND_LEN 4
 #define PCK_NUM_POS 16
 #define PCK_NUM_LEN 4
+#define VALID_DATA_LEN_POS 20
+#define VALID_DATA_LEN_LEN 4
 
 //#define PCK_NUMER_POS 32
 //#define PCK_NUMBER_LEN 8
@@ -95,9 +97,10 @@ public:
         validDataLen = 0;
         data         = {256, 0};
 
-        waveCntLast = 0;
-        waveCntCur  = 0;
-        processFlag = 0;
+        waveCntLast  = 0;
+        waveCntCur   = 0;
+        waveFrameCnt = 0;
+        processFlag  = 0;
     }
     virtual ~RadarProtocolBasic()
     {

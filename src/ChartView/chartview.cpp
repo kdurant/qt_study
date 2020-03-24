@@ -192,20 +192,32 @@ void ChartView::initChart()
 
 void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data)
 {
-    switch(chNum)
-    {
-        case 0:
-            break;
+    //    qint32 x = 0, y = 0;
+    //    qint32 x_min, x_max;
+    //    qint32 y_min = data.mid(0, 4).toInt(nullptr, 16);
+    //    qint32 y_max = data.mid(0, 4).toInt(nullptr, 16);
+    //    switch(chNum)
+    //    {
+    //        case 0:
+    //            for(int i = 0; i < data.size(); i++)
+    //                channal1->append(coor[i], data[i]);
+    //            break;
 
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        default:
-            break;
-    }
+    //        case 1:
+    //            for(int i = 0; i < data.size(); i++)
+    //                channal2->append(coor[i], data[i]);
+    //            break;
+    //        case 2:
+    //            for(int i = 0; i < data.size(); i++)
+    //                channal3->append(coor[i], data[i]);
+    //            break;
+    //        case 3:
+    //            for(int i = 0; i < data.size(); i++)
+    //                channal4->append(coor[i], data[i]);
+    //            break;
+    //        default:
+    //            break;
+    //    }
 }
 
 //void ChartView::updateChart(AD_Data &data)
