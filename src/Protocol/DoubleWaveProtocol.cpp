@@ -34,19 +34,20 @@ WaveData DoubleWaveProtocol::getSignalWave()
     QByteArray all_ch;
     QByteArray ch0, ch1, ch2, ch3;
 
-    while(waveFrame.isEmpty() == false)  // 队列里有数据
+    while(originWaveFrame.isEmpty() == false)  // 队列里有数据
     {
-        cur     = waveFrame.head().mid(PCK_NUM_POS, PCK_NUM_LEN).toHex().toInt(nullptr, 16);
-        dataLen = waveFrame.head().mid(VALID_DATA_LEN_POS, VALID_DATA_LEN_LEN).toHex().toInt(nullptr, 16);
+        cur     = originWaveFrame.head().mid(PCK_NUM_POS, PCK_NUM_LEN).toHex().toInt(nullptr, 16);
+        dataLen = originWaveFrame.head().mid(VALID_DATA_LEN_POS, VALID_DATA_LEN_LEN).toHex().toInt(nullptr, 16);
         if((cur == 0) && (last > 0))  // 一帧数据已经全部找到
         {
+            waveFrameCnt--;
             cur  = 0;
             last = 0;
             break;
         }
         else
         {
-            all_ch.append(waveFrame.dequeue().mid(24, dataLen));
+            all_ch.append(originWaveFrame.dequeue().mid(24, dataLen));
             last++;
         }
     }

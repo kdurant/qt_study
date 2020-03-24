@@ -70,13 +70,12 @@ typedef struct __WaveData
 class RadarProtocolBasic
 {
 protected:
-    QQueue<QByteArray> waveFrame;     // 存放采样数据原始数据帧
-    quint32            waveCntLast;   // 上次收到采样数据的包序号
-    quint32            waveCntCur;    // 本次收到采样数据的包序号
-    quint32            waveFrameCnt;  // 队列里存放了几个完整的采样数据帧
+    QQueue<QByteArray> originWaveFrame;  // 存放采样数据原始数据帧
+    quint32            waveCntLast;      // 上次收到采样数据的包序号
+    quint32            waveFrameCnt;     // 队列里存放了几个完整的采样数据帧
 
-    QByteArray commandFrame;  // 存放控制命令原始数据帧
-    quint8     processFlag;   // 本次数据是否需要处理
+    QByteArray commandFrame;     // 存放控制命令原始数据帧
+    quint8     hasCommandFrame;  // 本次数据是否需要处理
 
     QVector<quint8>  dataFrame;
     QVector<quint8>  head;
@@ -97,16 +96,16 @@ public:
         validDataLen = 0;
         data         = {256, 0};
 
-        waveCntLast  = 0;
-        waveCntCur   = 0;
-        waveFrameCnt = 0;
-        processFlag  = 0;
+        waveCntLast     = 0;
+        waveFrameCnt    = 0;
+        hasCommandFrame = 0;
     }
     virtual ~RadarProtocolBasic()
     {
     }
 
     void                setDataFrame(QByteArray &originFrame);
+    int                 getWaveFrameCnt();
     quint32             getCmdNum(QVector<quint8> &dataFrame);
     quint32             getCmdData(QVector<quint8> &dataFrame);
     QByteArray          encode(qint32 command, qint32 data_len, qint32 data);

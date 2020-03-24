@@ -183,7 +183,7 @@ void ChartView::initChart()
     charting->setTitle("雷达实时数据");
     charting->legend()->setVisible(true);
     charting->legend()->setAlignment(Qt::AlignBottom);
-    charting->setTheme(QChart::ChartThemeBlueCerulean);
+    charting->setTheme(QChart::ChartThemeLight);
 
     setChart(charting);
     setRenderHint(QPainter::Antialiasing);
@@ -196,14 +196,9 @@ void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data
     //    qint32 x_min, x_max;
     //    qint32 y_min = data.mid(0, 4).toHex().toInt(nullptr, 16);
     //    qint32 y_max = data.mid(0, 4).toHex().toInt(nullptr, 16);
-    qDebug() << coor.size();
-    qDebug() << data.size();
-    int len = data.size();
-    int i   = 0;
-    for(i = 0; i < len; i++)
-        qDebug() << coor[i];
-    //        ch[chNum]->append(coor[i], i * 2);
-    //        ch[chNum]->append(coor[i], data.mid(i * 2, 2).toHex().toInt(nullptr, 16));
+
+    for(int i = 0; i < coor.size(); i++)
+        ch[chNum]->append(coor[i], data.mid(i * 2, 2).toHex().toInt(nullptr, 16));
 }
 
 //void ChartView::updateChart(AD_Data &data)

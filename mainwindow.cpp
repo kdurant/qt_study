@@ -120,27 +120,26 @@ void MainWindow::processPendingDatagram()
         datagram.resize(len);
         udpSocket->readDatagram(datagram.data(), datagram.size());
         protocol->setDataFrame(datagram);
-        para   = protocol->getFPGAInfo();
-        chData = protocol->getSignalWave();
+        para = protocol->getFPGAInfo();
+
+        if(protocol->getWaveFrameCnt() > 0)
+        {
+            chData = protocol->getSignalWave();
+            //            if(chData.isEmpty == false)
+            {
+                QVector<int> coor;
+                QByteArray   data;
+                for(qint8 i = 0; i < 4; i++)
+                {
+                    ui->graphicsView->updateChart(i, chData.ch[i].Coor, chData.ch[i].Data);
+                }
+                //                chData.isEmpty = true;
+            }
+        }
 
         if(para.cmdData == QByteArray::fromHex("80000005"))
         {
             ui->lineEdit_fpgaVer->setText("V" + para.sys_para.mid(4));
-        }
-
-        if(chData.isEmpty == false)
-        {
-            QVector<int> coor;
-            QByteArray   data;
-            for(qint8 i = 0; i < 4; i++)
-            {
-                //                ui->graphicsView->updateChart(i, chData.ch[i].Coor, chData.ch[i].Data);
-                coor = chData.ch[i].Coor;
-                data = chData.ch[i].Data;
-                ui->graphicsView->updateChart(i, coor, data);
-                //                ui->graphicsView->updateChart(i, chData.ch[i].Coor, chData.ch[i].Data);
-            }
-            chData.isEmpty = true;
         }
     }
 }
