@@ -154,21 +154,15 @@ void ChartView::handleMarkerClicked()
 
 void ChartView::initChart()
 {
-    ch[0] = new QLineSeries;
-    ch[0]->setName("channal0");
-    ch[1] = new QLineSeries;
-    ch[1]->setName("channal2");
-    ch[2] = new QLineSeries;
-    ch[2]->setName("channal3");
-    ch[3] = new QLineSeries;
-    ch[3]->setName("channal4");
-
     charting = new QChart();
+    for(int i = 0; i < 4; i++)
+    {
+        ch[i] = new QLineSeries;
+        ch[0]->setName("channal" + QString::number(i));
+        //        ch[i]->setPointsVisible(true);
+        charting->addSeries(ch[i]);
+    }
 
-    charting->addSeries(ch[0]);
-    charting->addSeries(ch[1]);
-    charting->addSeries(ch[2]);
-    charting->addSeries(ch[3]);
     charting->createDefaultAxes();
 
     charting->axisX()->setRange(0, 300);
@@ -192,6 +186,7 @@ void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data
 
     x_min = 0;
     x_max = coor.last() * 1.1;
+    //    qDebug() << "x_max is " << x_max;
     for(int i = 0; i < coor.size(); i++)
     {
         y_data = data.mid(i * 2, 2).toHex().toInt(nullptr, 16);

@@ -131,7 +131,11 @@ void MainWindow::processPendingDatagram()
                 QByteArray   data;
                 for(qint8 i = 0; i < 4; i++)
                 {
+                    QTime time;
+                    time.start();
                     ui->graphicsView->updateChart(i, chData.ch[i].Coor, chData.ch[i].Data);
+
+                    qDebug() << time.elapsed() / 1000.0 << "s";
                 }
                 //                chData.isEmpty = true;
             }
