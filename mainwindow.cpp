@@ -69,6 +69,8 @@ void MainWindow::initParameter()
     ui->lineEdit_secondLen->setText(configIni->value("Preview/secondLen").toString());
     ui->lineEdit_sumThreshold->setText(configIni->value("Preview/sumThreshold").toString());
     ui->lineEdit_subThreshold->setText(configIni->value("Preview/subThreshold").toString());
+    ui->lineEdit_compressLen->setText(configIni->value("Preview/compressLen").toString());
+    ui->lineEdit_compressRatio->setText(configIni->value("Preview/compressRatio").toString());
 
     ui->rBtn_radarType->setChecked(true);
     ui->rBtn_radarType->setText(radarType + "雷达");
@@ -95,6 +97,15 @@ void MainWindow::uiConfig()
         ui->lineEdit_subThreshold->hide();
         ui->lineEdit_sumThreshold->hide();
     }
+    else if(radarType == RADAR_TYPE_DOUBLE)
+    {
+        ui->label_subThreshold->hide();
+        ui->lineEdit_subThreshold->hide();
+
+        ui->label_sumThreshold->hide();
+        ui->lineEdit_sumThreshold->hide();
+    }
+
     labelVer = new QLabel(SOFTWARE_VER);
     ui->statusBar->addPermanentWidget(labelVer);
 }
@@ -167,42 +178,55 @@ void MainWindow::on_actionNote_triggered()
 
 void MainWindow::on_pushButton_setPreviewPara_clicked()
 {
-    //    QByteArray frame;
+    QByteArray frame;
     //    qint32     data;
 
-    //    if(radarType == RADAR_TYPE_760)
-    //    {
-    //        data  = ui->lineEdit_sampleRate->text().toInt();
-    //        data  = (data / 8) * 8;
-    //        frame = protocol.encode(SAMPLERATE, 4, data);
-    //        udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+    int totalSampleLen = ui->lineEdit_sampleLen->text().toInt();
+    int firstPos       = ui->lineEdit_firstStartPos->text().toInt();
+    int firstLen       = ui->lineEdit_firstLen->text().toInt();
+    int secondPos      = ui->lineEdit_secondStartPos->text().toInt();
+    int secondLen      = ui->lineEdit_secondLen->text().toInt();
+    int compressLen    = ui->lineEdit_compressLen->text().toInt();
+    int compressRatio  = ui->lineEdit_compressRatio->text().toInt();
 
-    //        data  = ui->lineEdit_firstStartPos->text().toInt();
-    //        data  = (data / 8) * 8;
-    //        frame = protocol.encode(FIRSTSTARTPOS, 4, data);
-    //        udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-
-    //        data  = ui->lineEdit_firstLen->text().toInt();
-    //        data  = (data / 8) * 8;
-    //        frame = protocol.encode(FIRSTLEN, 4, data);
-    //        udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-    //    }
-    /*
-    frame = protocol.encode(SAMPLELEN, 4, ui->lineEdit_sampleLen->text().toInt());
+    if(secondPos < firstPos + firstLen)
+    {
+        QMessageBox::critical(NULL, "错误", "第二段起始位置需要小于第一段起始位置+第一段采样长度");
+        return;
+    }
+    if(compressLen >= secondLen)
+    {
+        QMessageBox::critical(NULL, "错误", "压缩长度需要小于第二段长度");
+        return;
+    }
+    if(secondPos + secondLen >= totalSampleLen)
+    {
+        QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
+        return;
+    }
+    frame = protocol->encode(PC_SET_SAMPLE_LEN, 4, totalSampleLen);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
-    frame = protocol.encode(SECONDLEN, 4, ui->lineEdit_secondLen->text().toInt());
+    frame = protocol->encode(PC_SET_PREVIEW_RATIO, 4, ui->lineEdit_sampleRate->text().toInt());
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
-    frame = protocol.encode(SECONDSTARTPOS, 4, ui->lineEdit_secondStartPos->text().toInt());
+    frame = protocol->encode(PC_SET_FIRST_POS, 4, firstPos);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
-    frame = protocol.encode(SUMTHRESHOLD, 4, ui->lineEdit_sumThreshold->text().toInt());
+    frame = protocol->encode(PC_SET_FIRST_LEN, 4, firstLen);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
-    frame = protocol.encode(SUBTHRESHOLD, 4, ui->lineEdit_subThreshold->text().toInt());
+    frame = protocol->encode(PC_SET_SECOND_POS, 4, secondPos);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-    */
+
+    frame = protocol->encode(PC_SET_SECOND_LEN, 4, secondLen);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+
+    frame = protocol->encode(PC_SET_COMPRESS_LEN, 4, compressLen);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+
+    frame = protocol->encode(PC_SET_COMPRESS_RATIO, 4, compressRatio);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }
 
 void MainWindow::on_pushButton_sampleEnable_clicked()
