@@ -148,11 +148,11 @@ void MainWindow::processPendingDatagram()
 
             for(qint8 i = 0; i < 1; i++)
             {
-                //                QTime time;
-                //                time.start();
+                QTime time;
+                time.start();
                 ui->graphicsView->updateChart(i, chData.ch[i].Coor, chData.ch[i].Data);
 
-                //                qDebug() << "data num : " << chData.ch[i].Coor.size() << "elapse time: " << time.elapsed() << " ms";
+                qDebug() << "data num : " << chData.ch[i].Coor.size() << "elapse time: " << time.elapsed() << " ms";
             }
         }
 

@@ -69,7 +69,7 @@ WaveData DoubleWaveProtocol::getSignalWave()
     data.ch[2].Data = removeChNeedlessInfo(ch2);
     data.ch[3].Data = removeChNeedlessInfo(ch3);
 
-    for(int i = 0; i < firstLen + compressLen / 8 + (secondLen - compressLen); i++)
+    for(int i = 0; i < firstLen + compressLen / compressRatio + (secondLen - compressLen); i++)
     {
         for(int j = 0; j < 4; j++)
         {
