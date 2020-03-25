@@ -158,8 +158,9 @@ void ChartView::initChart()
     for(int i = 0; i < 4; i++)
     {
         ch[i] = new QLineSeries;
-        ch[0]->setName("channal" + QString::number(i));
+        ch[i]->setName("channal" + QString::number(i));
         //        ch[i]->setPointsVisible(true);
+        ch[i]->setUseOpenGL(true);
         charting->addSeries(ch[i]);
     }
 
@@ -186,6 +187,10 @@ void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data
 
     x_min = 0;
     x_max = coor.last() * 1.1;
+
+    y_min = 0;
+    y_max = 0;
+    ch[chNum]->clear();
     //    qDebug() << "x_max is " << x_max;
     for(int i = 0; i < coor.size(); i++)
     {
@@ -194,9 +199,9 @@ void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data
         if(y_data >= y_max)
             y_max = y_data;
     }
-    y_min = 0;
 
     y_max *= 1.1;
+    qDebug() << "y_max is " << y_max;
     charting->axisX()->setRange(x_min, x_max);
     charting->axisY()->setRange(y_min, y_max);
 }
