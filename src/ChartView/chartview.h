@@ -14,12 +14,18 @@ class ChartView : public QChartView
 private:
     QPoint beginPoint;  //选择矩形区的起点
     QPoint endPoint;    //选择矩形区的终点
+    bool   autoZoomFlag;
 
 public:
     explicit ChartView(QWidget *parent = 0);
     ~ChartView();
 
     void initChart();
+    void setZoomFlag(bool state = false)
+    {
+        autoZoomFlag = state;
+    }
+
     void updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data);
 
 protected:

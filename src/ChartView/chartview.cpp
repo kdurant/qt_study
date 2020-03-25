@@ -11,7 +11,7 @@ ChartView::ChartView(QWidget *parent)
     //    this->setRubberBand(QChartView::RectangleRubberBand);//设置为矩形选择方式
     //    this->setRubberBand(QChartView::VerticalRubberBand);
     //    this->setRubberBand(QChartView::HorizontalRubberBand);
-
+    autoZoomFlag = false;
     initChart();
     connectMarkers();
 }
@@ -204,6 +204,9 @@ void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data
     ch[chNum]->replace(wave);
 
     y_max *= 1.1;
-    charting->axisX()->setRange(x_min, x_max);
-    charting->axisY()->setRange(y_min, y_max);
+    if(autoZoomFlag)
+    {
+        charting->axisX()->setRange(x_min, x_max);
+        charting->axisY()->setRange(y_min, y_max);
+    }
 }

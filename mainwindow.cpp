@@ -299,3 +299,11 @@ void MainWindow::on_pushButton_ReadInfo_clicked()
     frame = protocol->encode(PC_READ_SYS_INFO, 4, 0x00000001);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }
+
+void MainWindow::on_checkBox_autoZoom_stateChanged(int arg1)
+{
+    if(arg1 == Qt::Checked)
+        ui->graphicsView->setZoomFlag(true);
+    else
+        ui->graphicsView->setZoomFlag(false);
+}
