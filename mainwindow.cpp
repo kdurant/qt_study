@@ -117,6 +117,7 @@ void MainWindow::udpBind()
         QMessageBox::warning(NULL, "警告", "雷达连接失败");
     else
         ui->statusBar->showMessage(tr("连接设备成功"), 0);
+    udpSocket->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, 1024 * 1024 * 1);
 }
 
 void MainWindow::processPendingDatagram()
@@ -130,25 +131,22 @@ void MainWindow::processPendingDatagram()
         len = udpSocket->pendingDatagramSize();
         datagram.resize(len);
         udpSocket->readDatagram(datagram.data(), datagram.size());
+        //        qDebug() << datagram.toHex();
         protocol->setDataFrame(datagram);
+
         para = protocol->getFPGAInfo();
 
         if(protocol->getWaveFrameCnt() > 0)
         {
             chData = protocol->getSignalWave();
-            //            if(chData.isEmpty == false)
-            {
-                QVector<int> coor;
-                QByteArray   data;
-                for(qint8 i = 0; i < 4; i++)
-                {
-                    QTime time;
-                    time.start();
-                    ui->graphicsView->updateChart(i, chData.ch[i].Coor, chData.ch[i].Data);
 
-                    qDebug() << time.elapsed() / 1000.0 << "s";
-                }
-                //                chData.isEmpty = true;
+            for(qint8 i = 0; i < 1; i++)
+            {
+                //                QTime time;
+                //                time.start();
+                ui->graphicsView->updateChart(i, chData.ch[i].Coor, chData.ch[i].Data);
+
+                //                qDebug() << "data num : " << chData.ch[i].Coor.size() << "elapse time: " << time.elapsed() << " ms";
             }
         }
 

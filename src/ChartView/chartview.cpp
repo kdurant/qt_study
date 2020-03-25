@@ -191,7 +191,6 @@ void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data
     y_min = 0;
     y_max = 0;
     ch[chNum]->clear();
-    //    qDebug() << "x_max is " << x_max;
     for(int i = 0; i < coor.size(); i++)
     {
         y_data = data.mid(i * 2, 2).toHex().toInt(nullptr, 16);
@@ -201,7 +200,6 @@ void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data
     }
 
     y_max *= 1.1;
-    qDebug() << "y_max is " << y_max;
     charting->axisX()->setRange(x_min, x_max);
     charting->axisY()->setRange(y_min, y_max);
 }

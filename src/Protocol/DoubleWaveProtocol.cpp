@@ -43,6 +43,7 @@ WaveData DoubleWaveProtocol::getSignalWave()
             last++;
         }
     }
+    qDebug() << "all data size is : " << all_ch.size();
     compressLen   = all_ch.mid(84, 2).toHex().toInt(nullptr, 16);
     compressRatio = all_ch.mid(86, 2).toHex().toInt(nullptr, 16);
     all_ch        = all_ch.mid(88);  // 丢掉前面的GPS等信息
