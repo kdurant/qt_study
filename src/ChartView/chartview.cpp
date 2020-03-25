@@ -191,13 +191,17 @@ void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data
     y_min = 0;
     y_max = 0;
     ch[chNum]->clear();
+
+    QVector<QPointF> wave;
+
     for(int i = 0; i < coor.size(); i++)
     {
         y_data = data.mid(i * 2, 2).toHex().toInt(nullptr, 16);
-        ch[chNum]->append(coor[i], y_data);
+        wave.append(QPointF(coor[i], y_data));
         if(y_data >= y_max)
             y_max = y_data;
     }
+    ch[chNum]->replace(wave);
 
     y_max *= 1.1;
     charting->axisX()->setRange(x_min, x_max);

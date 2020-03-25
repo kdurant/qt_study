@@ -146,7 +146,7 @@ void MainWindow::processPendingDatagram()
         {
             chData = protocol->getSignalWave();
 
-            for(qint8 i = 0; i < 1; i++)
+            for(qint8 i = 0; i < 4; i++)
             {
                 QTime time;
                 time.start();
