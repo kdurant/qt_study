@@ -80,8 +80,14 @@ void MainWindow::saveParameter()
 {
     //    configIni->setValue("System/RadarType", "land");
     //    configIni->setValue("Laser/freq", ui->lineEdit_laser_freq->text().toInt());
-    configIni->setValue("Laser/freq", 1111);
-    //    qDebug() << "--------------------------------run end----------------------------------------------";
+    configIni->setValue("Preview/sampleLen", ui->lineEdit_sampleLen->text().toInt());
+    configIni->setValue("Preview/sampleRate", ui->lineEdit_sampleRate->text().toInt());
+    configIni->setValue("Preview/firstStartPos", ui->lineEdit_firstStartPos->text().toInt());
+    configIni->setValue("Preview/firstLen", ui->lineEdit_firstLen->text().toInt());
+    configIni->setValue("Preview/secondStartPos", ui->lineEdit_secondStartPos->text().toInt());
+    configIni->setValue("Preview/secondLen", ui->lineEdit_secondLen->text().toInt());
+    configIni->setValue("Preview/compressLen", ui->lineEdit_compressLen->text().toInt());
+    configIni->setValue("Preview/compressRatio", ui->lineEdit_compressRatio->text().toInt());
 }
 
 void MainWindow::uiConfig()
@@ -200,6 +206,12 @@ void MainWindow::on_pushButton_setPreviewPara_clicked()
     if(secondPos + secondLen >= totalSampleLen)
     {
         QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
+        return;
+    }
+
+    if(compressLen % compressRatio != 0)
+    {
+        QMessageBox::critical(NULL, "错误", "压缩长度需要是压缩比的整数倍");
         return;
     }
     frame = protocol->encode(PC_SET_SAMPLE_LEN, 4, totalSampleLen);
