@@ -53,4 +53,6 @@ FORMS += \
 RESOURCES += \
     res.qrc
 
+VERSION = 1.0.1
+
 RC_ICONS = ./qss/radar_icon.ico
