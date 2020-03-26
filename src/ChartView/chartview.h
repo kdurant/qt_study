@@ -8,7 +8,7 @@ QT_CHARTS_USE_NAMESPACE
 class ChartView : public QChartView
 {
     Q_OBJECT
-    QLineSeries *ch[4];
+    QLineSeries *ch[8];
     QChart *     charting;
 
 private:

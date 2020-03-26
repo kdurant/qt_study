@@ -155,17 +155,24 @@ void ChartView::handleMarkerClicked()
 void ChartView::initChart()
 {
     charting = new QChart();
-    for(int i = 0; i < 4; i++)
+    for(int i = 0; i < 8; i++)
     {
         ch[i] = new QLineSeries;
-        ch[i]->setName("channal" + QString::number(i));
+        ch[i]->setName("ch" + QString::number(i) + ((i % 2 == 0) ? " first" : " second"));
         //        ch[i]->setPointsVisible(true);
         ch[i]->setUseOpenGL(true);
         charting->addSeries(ch[i]);
     }
+    ch[0]->setColor(QColor(0, 0, 255));
+    ch[1]->setColor(QColor(0, 0, 255));
+    ch[2]->setColor(QColor(0, 255, 255));
+    ch[3]->setColor(QColor(0, 255, 255));
+    ch[4]->setColor(QColor(255, 0, 255));
+    ch[5]->setColor(QColor(255, 0, 255));
+    ch[6]->setColor(QColor(255, 0, 0));
+    ch[7]->setColor(QColor(255, 0, 0));
 
     charting->createDefaultAxes();
-
     charting->axisX()->setRange(0, 300);
     charting->axisY()->setRange(0, 1000);
 
@@ -190,18 +197,46 @@ void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data
 
     y_min = 0;
     y_max = 0;
+    chNum *= 2;
     ch[chNum]->clear();
+    ch[chNum + 1]->clear();
+
+    QVector<qint32> x_coor;
+    QByteArray      y_origin_data;
+    int             x_len = coor.size();
+    auto            split = [](QVector<qint32> &coor, int &x_len) -> int {
+        for(int x = 0; x < x_len; x++)
+        {
+            if(coor[x + 1] - coor[x] > 1)
+                return x + 1;
+        }
+        return -1;
+    };
+    int result = split(coor, x_len);
 
     QVector<QPointF> wave;
-
-    for(int i = 0; i < coor.size(); i++)
+    x_coor        = coor.mid(0, result);
+    y_origin_data = data.mid(0, result * 2);
+    for(int i = 0; i < x_coor.size(); i++)
     {
-        y_data = data.mid(i * 2, 2).toHex().toInt(nullptr, 16);
-        wave.append(QPointF(coor[i], y_data));
+        y_data = y_origin_data.mid(i * 2, 2).toHex().toInt(nullptr, 16);
+        wave.append(QPointF(x_coor[i], y_data));
         if(y_data >= y_max)
             y_max = y_data;
     }
     ch[chNum]->replace(wave);
+
+    wave.clear();
+    x_coor        = coor.mid(result);
+    y_origin_data = data.mid(result * 2);
+    for(int i = 0; i < x_coor.size(); i++)
+    {
+        y_data = y_origin_data.mid(i * 2, 2).toHex().toInt(nullptr, 16);
+        wave.append(QPointF(x_coor[i], y_data));
+        if(y_data >= y_max)
+            y_max = y_data;
+    }
+    ch[chNum + 1]->replace(wave);
 
     y_max *= 1.1;
     if(autoZoomFlag)

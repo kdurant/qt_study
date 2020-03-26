@@ -106,9 +106,9 @@ def sendPreview():
     s.sendto(msg, address)
 
 sendPreview()
-#sendPreview()
+sendPreview()
 
-upDevPara()
+#upDevPara()
 
 s.close()
 

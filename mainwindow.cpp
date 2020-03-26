@@ -109,7 +109,7 @@ void MainWindow::uiConfig()
         ui->label_sumThreshold->hide();
         ui->lineEdit_sumThreshold->hide();
     }
-
+    ui->checkBox_autoZoom->setChecked(true);
     labelVer = new QLabel(SOFTWARE_VER);
     ui->statusBar->addPermanentWidget(labelVer);
 }
@@ -149,7 +149,6 @@ void MainWindow::processPendingDatagram()
                 QTime time;
                 time.start();
                 ui->graphicsView->updateChart(i, chData.ch[i].Coor, chData.ch[i].Data);
-
                 qDebug() << "data num : " << chData.ch[i].Coor.size() << "elapse time: " << time.elapsed() << " ms";
             }
         }
