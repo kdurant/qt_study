@@ -56,6 +56,11 @@ int main(int argc, char *argv[])
         a.setStyleSheet(qss.readAll());
     else
         QMessageBox::warning(NULL, "warning", "没有主题文件");
+
+    QFont font;
+    font.setPixelSize(15);
+    a.setFont(font);
+
     MainWindow w;
     w.show();
 
