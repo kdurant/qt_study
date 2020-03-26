@@ -33,7 +33,8 @@ SOURCES += \
     src/Protocol/DoubleWaveProtocol.cpp \
     src/Protocol/RadarProtocolBasic.cpp \
     src/UdpProcess/udpserver.cpp \
-    save.cpp
+    save.cpp \
+    src/DevInfo/DevInfo.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -43,7 +44,8 @@ HEADERS += \
     src/Protocol/DoubleWaveProtocol.h \
     src/Protocol/RadarProtocolBasic.h \
     src/UdpProcess/udpserver.h \
-    save.h
+    save.h \
+    src/DevInfo/DevInfo.h
 
 FORMS += \
         mainwindow.ui \

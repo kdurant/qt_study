@@ -61,8 +61,6 @@ private slots:
 
     void on_pushButton_ReadInfo_clicked();
 
-    void on_checkBox_autoZoom_toggled(bool checked);
-
     void on_checkBox_autoZoom_stateChanged(int arg1);
 
 private:
