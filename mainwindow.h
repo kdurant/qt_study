@@ -23,9 +23,6 @@
 #include "./src/Protocol/RadarProtocolBasic.h"
 #include "./src/Protocol/DoubleWaveProtocol.h"
 
-extern QQueue<QString>      adOrigData;    // 原始数据流
-extern QQueue<QVector<int>> adSingleData;  // 处理好的单次可显示数据
-
 namespace Ui
 {
 class MainWindow;
