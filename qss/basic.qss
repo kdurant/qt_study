@@ -20,6 +20,20 @@ QToolTip
 }
 QScrollArea {
 }
+QLabel{
+    color:#386487;
+    border:1px solid #C0DCF2;
+    background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #DEF0FE,stop:1 #C0DEF6);
+}
+
+QLineEdit{
+    border:1px solid #C0DCF2;
+    border-radius:3px;
+    padding:2px;
+    background:none;
+    selection-background-color:#00BB9E;
+    selection-color:#FFFFFF;
+}
 
 QPushButton {
     background-color: palegoldenrod;
