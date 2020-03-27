@@ -220,6 +220,10 @@ void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data
     for(int i = 0; i < x_coor.size(); i++)
     {
         y_data = y_origin_data.mid(i * 2, 2).toHex().toInt(nullptr, 16);
+        if(chNum == 0)
+        {
+            y_data = ((y_data >> 14) & 0x03) * 64;
+        }
         wave.append(QPointF(x_coor[i], y_data));
         if(y_data >= y_max)
             y_max = y_data;
@@ -232,6 +236,10 @@ void ChartView::updateChart(qint8 chNum, QVector<qint32> &coor, QByteArray &data
     for(int i = 0; i < x_coor.size(); i++)
     {
         y_data = y_origin_data.mid(i * 2, 2).toHex().toInt(nullptr, 16);
+        if(chNum == 0)
+        {
+            y_data = ((y_data >> 14) & 0x03) * 64;
+        }
         wave.append(QPointF(x_coor[i], y_data));
         if(y_data >= y_max)
             y_max = y_data;
