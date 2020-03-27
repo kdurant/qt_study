@@ -211,28 +211,28 @@ void MainWindow::on_pushButton_setPreviewPara_clicked()
         QMessageBox::critical(NULL, "错误", "压缩长度需要是压缩比的整数倍");
         return;
     }
-    frame = protocol->encode(PC_SET_SAMPLE_LEN, 4, totalSampleLen);
+    frame = protocol->encode(MASTER_SET::SAMPLE_LEN, 4, totalSampleLen);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
-    frame = protocol->encode(PC_SET_PREVIEW_RATIO, 4, ui->lineEdit_sampleRate->text().toInt());
+    frame = protocol->encode(MASTER_SET::PREVIEW_RATIO, 4, ui->lineEdit_sampleRate->text().toInt());
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
-    frame = protocol->encode(PC_SET_FIRST_POS, 4, firstPos);
+    frame = protocol->encode(MASTER_SET::FIRST_POS, 4, firstPos);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
-    frame = protocol->encode(PC_SET_FIRST_LEN, 4, firstLen);
+    frame = protocol->encode(MASTER_SET::FIRST_LEN, 4, firstLen);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
-    frame = protocol->encode(PC_SET_SECOND_POS, 4, secondPos);
+    frame = protocol->encode(MASTER_SET::SECOND_POS, 4, secondPos);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
-    frame = protocol->encode(PC_SET_SECOND_LEN, 4, secondLen);
+    frame = protocol->encode(MASTER_SET::SECOND_LEN, 4, secondLen);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
-    frame = protocol->encode(PC_SET_COMPRESS_LEN, 4, compressLen);
+    frame = protocol->encode(MASTER_SET::COMPRESS_LEN, 4, compressLen);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
-    frame = protocol->encode(PC_SET_COMPRESS_RATIO, 4, compressRatio);
+    frame = protocol->encode(MASTER_SET::COMPRESS_RATIO, 4, compressRatio);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }
 
@@ -251,7 +251,7 @@ void MainWindow::on_pushButton_sampleEnable_clicked()
         status = 0;
         ui->pushButton_sampleEnable->setText("开始采集");
     }
-    frame = protocol->encode(PC_SET_PREVIEW_ENABLE, 4, status);
+    frame = protocol->encode(MASTER_SET::PREVIEW_ENABLE, 4, status);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }
 
@@ -259,7 +259,7 @@ void MainWindow::on_pushButton_ReadInfo_clicked()
 {
     QByteArray frame;
 
-    frame = protocol->encode(PC_READ_SYS_INFO, 4, 0x00000001);
+    frame = protocol->encode(MASTER_SET::SYS_INFO, 4, 0x00000001);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }
 

@@ -27,32 +27,35 @@
 //#define PCK_NUMBER_LEN 8
 //#define VALID_LEN_POS 40
 //#define VALID_LEN_LEN 8
-
-enum SendCommandSet
+class MASTER_SET
 {
-    PC_SET_PREVIEW_ENABLE = 0x0000000C,
-    PC_READ_SYS_INFO      = 0x00000013,
+public:
+    enum send
+    {
+        PREVIEW_ENABLE = 0x0000000C,
+        SYS_INFO       = 0x00000013,
 
-    PC_SET_SAMPLE_LEN     = 0x00000008,
-    PC_SET_PREVIEW_RATIO  = 0x00000009,
-    PC_SET_FIRST_POS      = 0x00000029,
-    PC_SET_FIRST_LEN      = 0x0000002a,
-    PC_SET_SECOND_POS     = 0x0000002e,
-    PC_SET_SECOND_LEN     = 0x00000030,
-    PC_SET_SUM_THRE       = 0x0000002b,
-    PC_SET_MAX_THRE       = 0x0000002c,
-    PC_SET_COMPRESS_LEN   = 0x00200001,
-    PC_SET_COMPRESS_RATIO = 0x00200002,
-
-    SET_DAC,
-    READ_ADC,
-    RESERVE_UART1
+        SAMPLE_LEN     = 0x00000008,
+        PREVIEW_RATIO  = 0x00000009,
+        FIRST_POS      = 0x00000029,
+        FIRST_LEN      = 0x0000002a,
+        SECOND_POS     = 0x0000002e,
+        SECOND_LEN     = 0x00000030,
+        SUM_THRE       = 0x0000002b,
+        MAX_THRE       = 0x0000002c,
+        COMPRESS_LEN   = 0x00200001,
+        COMPRESS_RATIO = 0x00200002,
+    };
 };
 
-enum RecvCommandSet
+class SLAVE_UP
 {
-    READ_SYS_INFO  = 0x80000001,
-    AD_SAMPLE_DATA = 0x80000006
+public:
+    enum recv
+    {
+        SYS_INFO     = 0x80000001,
+        PREVIEW_DATA = 0x80000006
+    };
 };
 
 /*
