@@ -57,8 +57,6 @@ private slots:
 
     void on_pushButton_sampleEnable_clicked();
 
-    void on_pushButton_laserInfo_clicked();
-
     void on_pushButton_ReadInfo_clicked();
 
     void on_checkBox_autoZoom_stateChanged(int arg1);

@@ -158,17 +158,17 @@ void ChartView::initChart()
     for(int i = 0; i < 8; i++)
     {
         ch[i] = new QLineSeries;
-        ch[i]->setName("ch" + QString::number(i) + ((i % 2 == 0) ? " first" : " second"));
+        ch[i]->setName("[ch" + QString::number((int)(i / 2)) + "]" + ((i % 2 == 0) ? "1" : "2"));
         //        ch[i]->setPointsVisible(true);
         ch[i]->setUseOpenGL(true);
         charting->addSeries(ch[i]);
     }
-    ch[0]->setColor(QColor(0, 0, 255));
-    ch[1]->setColor(QColor(0, 0, 255));
+    ch[0]->setColor(QColor(255, 0, 255));
+    ch[1]->setColor(QColor(255, 0, 255));
     ch[2]->setColor(QColor(0, 255, 255));
     ch[3]->setColor(QColor(0, 255, 255));
-    ch[4]->setColor(QColor(255, 0, 255));
-    ch[5]->setColor(QColor(255, 0, 255));
+    ch[4]->setColor(QColor(0, 0, 255));
+    ch[5]->setColor(QColor(0, 0, 255));
     ch[6]->setColor(QColor(255, 0, 0));
     ch[7]->setColor(QColor(255, 0, 0));
 
