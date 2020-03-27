@@ -37,7 +37,8 @@ SOURCES += \
     src/Protocol/RadarProtocolBasic.cpp \
     src/UdpProcess/udpserver.cpp \
     save.cpp \
-    src/DevInfo/DevInfo.cpp
+    src/DevInfo/DevInfo.cpp \
+    src/UpdateBin/UpdateBin.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -48,7 +49,8 @@ HEADERS += \
     src/Protocol/RadarProtocolBasic.h \
     src/UdpProcess/udpserver.h \
     save.h \
-    src/DevInfo/DevInfo.h
+    src/DevInfo/DevInfo.h \
+    src/UpdateBin/UpdateBin.h
 
 FORMS += \
         mainwindow.ui \
