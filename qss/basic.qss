@@ -118,3 +118,8 @@ QGroupBox::title {
     padding:03px;
     background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0#FFEECE, stop: 1 #FFFFFF);
 }
+
+
+QTabBar::tab:disabled {
+    width: 0; color: transparent;
+}

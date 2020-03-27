@@ -108,6 +108,10 @@ void MainWindow::uiConfig()
 
         ui->label_sumThreshold->hide();
         ui->lineEdit_sumThreshold->hide();
+        ui->tabWidget->setTabEnabled(2, false);
+        ui->tabWidget->setTabEnabled(3, false);
+        ui->tabWidget->setTabEnabled(4, false);
+        ui->tabWidget->setTabEnabled(5, false);
     }
     ui->checkBox_autoZoom->setChecked(true);
     labelVer = new QLabel(SOFTWARE_VER);
