@@ -33,24 +33,28 @@ SOURCES += \
         mainwindow.cpp \
     noteinfo.cpp \
     src/ChartView/chartview.cpp \
-    src/Protocol/DoubleWaveProtocol.cpp \
-    src/Protocol/RadarProtocolBasic.cpp \
+#    src/Protocol/DoubleWaveProtocol.cpp \
+#    src/Protocol/RadarProtocolBasic.cpp \
     src/UdpProcess/udpserver.cpp \
     save.cpp \
     src/DevInfo/DevInfo.cpp \
-    src/UpdateBin/UpdateBin.cpp
+    src/UpdateBin/UpdateBin.cpp \
+    src/Protocol/ProtocolDispatch.cpp \
+    src/Protocol/PreviewProcess.cpp
 
 HEADERS += \
         mainwindow.h \
     noteinfo.h \
     bsp_config.h \
     src/ChartView/chartview.h \
-    src/Protocol/DoubleWaveProtocol.h \
-    src/Protocol/RadarProtocolBasic.h \
+#    src/Protocol/DoubleWaveProtocol.h \
+#    src/Protocol/RadarProtocolBasic.h \
     src/UdpProcess/udpserver.h \
     save.h \
     src/DevInfo/DevInfo.h \
-    src/UpdateBin/UpdateBin.h
+    src/UpdateBin/UpdateBin.h \
+    src/Protocol/ProtocolDispatch.h \
+    src/Protocol/PreviewProcess.h
 
 FORMS += \
         mainwindow.ui \

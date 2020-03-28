@@ -20,8 +20,8 @@
 
 #include <QThread>
 
-#include "./src/Protocol/RadarProtocolBasic.h"
-#include "./src/Protocol/DoubleWaveProtocol.h"
+#include "./src/Protocol/ProtocolDispatch.h"
+#include "./src/Protocol/PreviewProcess.h"
 
 namespace Ui
 {
@@ -50,6 +50,15 @@ protected:
 private slots:
 
     void processPendingDatagram();
+    /**
+     * @brief processPreview
+     * 已经收到了一个完整的预览数据包，需要显示了
+     */
+    void processPreview();
+
+    void writeUdpatagram(qint32 command, qint32 data_len, qint32 data);
+
+    void changeUIInfo(int command, QByteArray &data);
 
     void on_actionNote_triggered();
 
@@ -72,9 +81,8 @@ private:
 
     QLabel *labelVer;
 
-    DoubleWaveProtocol *protocol;
-    ProtocolResult      para;
-    //    DoubleWaveProtocol  rotocol;
+    ProtocolDispatch *dispatch;
+    PreviewProcess *  preview;
 };
 
 #endif  // MAINWINDOW_H

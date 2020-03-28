@@ -7,7 +7,9 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setWindowTitle(tr("雷达控制软件"));
-    protocol = new DoubleWaveProtocol();
+
+    dispatch = new ProtocolDispatch();
+    preview  = new PreviewProcess();
 
     configIni = new QSettings("../Radar/config.ini", QSettings::IniFormat);
 
@@ -131,43 +133,57 @@ void MainWindow::udpBind()
 void MainWindow::processPendingDatagram()
 {
     QByteArray datagram;
-    QString    data;
-    WaveData   chData;
     int        len;
     while(udpSocket->hasPendingDatagrams())
     {
         len = udpSocket->pendingDatagramSize();
         datagram.resize(len);
         udpSocket->readDatagram(datagram.data(), datagram.size());
-        //        qDebug() << datagram.toHex();
-        protocol->setDataFrame(datagram);
 
-        para = protocol->getFPGAInfo();
+        dispatch->dipatchData(datagram);
+    }
+}
 
-        if(protocol->getWaveFrameCnt() > 0)
-        {
-            chData = protocol->getSignalWave();
+void MainWindow::processPreview()
+{
+    WaveData chData = preview->getSignalWave();
+    for(qint8 i = 0; i < 4; i++)
+    {
+        QTime time;
+        time.start();
+        ui->graphicsView->updateChart(i, chData.ch[i].coor, chData.ch[i].data);
+        qDebug() << "data num : " << chData.ch[i].coor.size() << "elapse time: " << time.elapsed() << " ms";
+    }
+}
 
-            for(qint8 i = 0; i < 4; i++)
-            {
-                QTime time;
-                time.start();
-                ui->graphicsView->updateChart(i, chData.ch[i].Coor, chData.ch[i].Data);
-                qDebug() << "data num : " << chData.ch[i].Coor.size() << "elapse time: " << time.elapsed() << " ms";
-            }
-        }
+void MainWindow::writeUdpatagram(qint32 command, qint32 data_len, qint32 data)
+{
+    QByteArray frame = dispatch->encode(command, data_len, data);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+}
 
-        if(para.cmdData == QByteArray::fromHex("80000005"))
-        {
-            ui->lineEdit_fpgaVer->setText("V" + para.sys_para.mid(4));
-        }
+void MainWindow::changeUIInfo(int command, QByteArray &data)
+{
+    switch(command)
+    {
+        case SlaveUp::SYS_INFO:
+            ui->lineEdit_fpgaVer->setText("V" + data.mid(280, 4));
+            break;
+        default:
+            break;
     }
 }
 
 void MainWindow::initSignalSlot()
 {
-    //    connect(this, &QUdpSocket::readyRead, udpSocket, udpSocket::
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagram()));
+
+    connect(dispatch, SIGNAL(previewDataReady(QByteArray &)), preview, SLOT(setDataFrame(QByteArray &)));
+
+    connect(preview, SIGNAL(previewReadyShow()), this, SLOT(processPreview()));
+
+    connect(preview, SIGNAL(previewParaReadySet(qint32, qint32, qint32)), this, SLOT(writeUdpatagram(qint32, qint32, qint32)));
+    connect(dispatch, SIGNAL(infoDataReady(int, QByteArray &)), this, SLOT(changeUIInfo(int, QByteArray &)));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -183,10 +199,8 @@ void MainWindow::on_actionNote_triggered()
 
 void MainWindow::on_pushButton_setPreviewPara_clicked()
 {
-    QByteArray frame;
-    //    qint32     data;
-
     int totalSampleLen = ui->lineEdit_sampleLen->text().toInt();
+    int previewRatio   = ui->lineEdit_sampleRate->text().toInt();
     int firstPos       = ui->lineEdit_firstStartPos->text().toInt();
     int firstLen       = ui->lineEdit_firstLen->text().toInt();
     int secondPos      = ui->lineEdit_secondStartPos->text().toInt();
@@ -215,29 +229,15 @@ void MainWindow::on_pushButton_setPreviewPara_clicked()
         QMessageBox::critical(NULL, "错误", "压缩长度需要是压缩比的整数倍");
         return;
     }
-    frame = protocol->encode(MASTER_SET::SAMPLE_LEN, 4, totalSampleLen);
-    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
-    frame = protocol->encode(MASTER_SET::PREVIEW_RATIO, 4, ui->lineEdit_sampleRate->text().toInt());
-    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-
-    frame = protocol->encode(MASTER_SET::FIRST_POS, 4, firstPos);
-    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-
-    frame = protocol->encode(MASTER_SET::FIRST_LEN, 4, firstLen);
-    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-
-    frame = protocol->encode(MASTER_SET::SECOND_POS, 4, secondPos);
-    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-
-    frame = protocol->encode(MASTER_SET::SECOND_LEN, 4, secondLen);
-    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-
-    frame = protocol->encode(MASTER_SET::COMPRESS_LEN, 4, compressLen);
-    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-
-    frame = protocol->encode(MASTER_SET::COMPRESS_RATIO, 4, compressRatio);
-    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+    preview->setTotalSampleLen(totalSampleLen);
+    preview->setPreviewRatio(previewRatio);
+    preview->setFirstPos(firstPos);
+    preview->setFirstLen(firstLen);
+    preview->setSecondPos(secondPos);
+    preview->setSecondLen(secondLen);
+    preview->setCompressLen(compressLen);
+    preview->setCompressRatio(compressRatio);
 }
 
 void MainWindow::on_pushButton_sampleEnable_clicked()
@@ -255,15 +255,14 @@ void MainWindow::on_pushButton_sampleEnable_clicked()
         status = 0;
         ui->pushButton_sampleEnable->setText("开始采集");
     }
-    frame = protocol->encode(MASTER_SET::PREVIEW_ENABLE, 4, status);
-    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+    preview->setPreviewEnable(status);
 }
 
 void MainWindow::on_pushButton_ReadInfo_clicked()
 {
     QByteArray frame;
 
-    frame = protocol->encode(MASTER_SET::SYS_INFO, 4, 0x00000001);
+    frame = dispatch->encode(MasterSet::SYS_INFO, 4, 0x00000001);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }
 
