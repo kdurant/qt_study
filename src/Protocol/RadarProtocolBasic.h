@@ -16,12 +16,19 @@
  * @brief
  */
 
-#define COMMAND_POS 12
-#define COMMAND_LEN 4
-#define PCK_NUM_POS 16
-#define PCK_NUM_LEN 4
-#define VALID_DATA_LEN_POS 20
-#define VALID_DATA_LEN_LEN 4
+class FrameField
+{
+public:
+    enum fieldOffset
+    {
+        COMMAND_POS        = 12,
+        COMMAND_LEN        = 4,
+        PCK_NUM_POS        = 16,
+        PCK_NUM_LEN        = 4,
+        VALID_DATA_LEN_POS = 20,
+        VALID_DATA_LEN_LEN = 4
+    };
+};
 
 //#define PCK_NUMER_POS 32
 //#define PCK_NUMBER_LEN 8

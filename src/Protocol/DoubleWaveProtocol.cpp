@@ -28,8 +28,8 @@ WaveData DoubleWaveProtocol::getSignalWave()
 
     while(originWaveFrame.isEmpty() == false)  // 队列里有数据
     {
-        cur     = originWaveFrame.head().mid(PCK_NUM_POS, PCK_NUM_LEN).toHex().toInt(nullptr, 16);
-        dataLen = originWaveFrame.head().mid(VALID_DATA_LEN_POS, VALID_DATA_LEN_LEN).toHex().toInt(nullptr, 16);
+        cur     = originWaveFrame.head().mid(FrameField::PCK_NUM_POS, FrameField::PCK_NUM_LEN).toHex().toInt(nullptr, 16);
+        dataLen = originWaveFrame.head().mid(FrameField::VALID_DATA_LEN_POS, FrameField::VALID_DATA_LEN_LEN).toHex().toInt(nullptr, 16);
         if((cur == 0) && (last > 0))  // 一帧数据已经全部找到
         {
             waveFrameCnt--;

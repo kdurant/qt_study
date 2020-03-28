@@ -10,11 +10,11 @@ void RadarProtocolBasic::setDataFrame(QByteArray &originFrame)
 {
     qint32 number;
 
-    if(originFrame.mid(COMMAND_POS, COMMAND_LEN) == QByteArray::fromHex("80000006"))
+    if(originFrame.mid(FrameField::COMMAND_POS, FrameField::COMMAND_LEN) == QByteArray::fromHex("80000006"))
     {
         originWaveFrame.push_back(originFrame);
 
-        number = originFrame.mid(PCK_NUM_POS, PCK_NUM_LEN).toHex().toInt(nullptr, 16);
+        number = originFrame.mid(FrameField::PCK_NUM_POS, FrameField::PCK_NUM_LEN).toHex().toInt(nullptr, 16);
         if(number == 0 && waveCntLast > 0)
         {
             waveFrameCnt++;  // 记录已经存放了几个完整的预览数据
@@ -57,7 +57,7 @@ ProtocolResult RadarProtocolBasic::getFPGAInfo()
     ProtocolResult res;
     if(hasCommandFrame & 0x01)
     {
-        res.cmdData     = commandFrame.mid(COMMAND_POS, COMMAND_LEN);
+        res.cmdData     = commandFrame.mid(FrameField::COMMAND_POS, FrameField::COMMAND_LEN);
         res.sys_para    = commandFrame.mid(272, 8);
         hasCommandFrame = 0x00;
     }
