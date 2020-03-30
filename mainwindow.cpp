@@ -162,12 +162,12 @@ void MainWindow::writeUdpatagram(qint32 command, qint32 data_len, qint32 data)
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }
 
-void MainWindow::changeUIInfo(int command, QByteArray &data)
+void MainWindow::changeUIInfo(uint32_t command, QByteArray &data)
 {
     switch(command)
     {
         case SlaveUp::SYS_INFO:
-            ui->lineEdit_fpgaVer->setText("V" + data.mid(280, 4));
+            ui->lineEdit_fpgaVer->setText("V" + data.mid(276, 4));
             break;
         default:
             break;
@@ -183,7 +183,7 @@ void MainWindow::initSignalSlot()
     connect(preview, SIGNAL(previewReadyShow()), this, SLOT(processPreview()));
 
     connect(preview, SIGNAL(previewParaReadySet(qint32, qint32, qint32)), this, SLOT(writeUdpatagram(qint32, qint32, qint32)));
-    connect(dispatch, SIGNAL(infoDataReady(int, QByteArray &)), this, SLOT(changeUIInfo(int, QByteArray &)));
+    connect(dispatch, SIGNAL(infoDataReady(uint32_t, QByteArray &)), this, SLOT(changeUIInfo(uint32_t, QByteArray &)));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

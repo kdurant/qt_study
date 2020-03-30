@@ -5,12 +5,13 @@ quint32 ProtocolDispatch::cmdNum = 0;
 
 void ProtocolDispatch::dipatchData(QByteArray &data)
 {
-    uint32_t   command = getCommand(data);
-    QByteArray ba      = data.mid(24, 284);
+    uint32_t command = getCommand(data);
     switch(command)
     {
         case SlaveUp::SYS_INFO:
-            emit infoDataReady(command, ba);
+            emit infoDataReady(command, data);
+            break;
+        case SlaveUp::COMMAND_CNT:
             break;
         case SlaveUp::PREVIEW_DATA:
             //        case MasterSet::PREVIEW_ENABLE:

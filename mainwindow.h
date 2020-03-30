@@ -58,7 +58,7 @@ private slots:
 
     void writeUdpatagram(qint32 command, qint32 data_len, qint32 data);
 
-    void changeUIInfo(int command, QByteArray &data);
+    void changeUIInfo(uint32_t command, QByteArray &data);
 
     void on_actionNote_triggered();
 

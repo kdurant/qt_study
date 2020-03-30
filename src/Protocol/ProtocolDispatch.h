@@ -44,7 +44,8 @@ class SlaveUp
 public:
     enum recv
     {
-        SYS_INFO     = 0x80000001,
+        SYS_INFO     = 0x80000005,
+        COMMAND_CNT  = 0x80000001,
         PREVIEW_DATA = 0x80000006
     };
 };
@@ -69,7 +70,7 @@ public:
 
     static uint32_t getCommand(QByteArray &data)
     {
-        return (uint32_t)data.mid(FrameField::COMMAND_POS, FrameField::COMMAND_LEN).toHex().toLong(nullptr, 16);
+        return data.mid(FrameField::COMMAND_POS, FrameField::COMMAND_LEN).toHex().toUInt(nullptr, 16);
     }
     static int getPckNum(QByteArray &data)
     {
@@ -88,7 +89,7 @@ signals:
      * @brief 系统状态不转发，直接返回
      * @param data
      */
-    void infoDataReady(int para, QByteArray &data);
+    void infoDataReady(uint32_t para, QByteArray &data);
 
     /**
      * @brief 通过信号将数据传递给预览数据处理模块
