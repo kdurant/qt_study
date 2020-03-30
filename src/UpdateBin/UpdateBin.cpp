@@ -22,5 +22,6 @@ QByteArray UpdateBin::int2ba(uint32_t data)
     ba[2] = static_cast<int8_t>((0x0000ff00 & data) >> 8);
     ba[1] = static_cast<int8_t>((0x00ff0000 & data) >> 16);
     ba[0] = static_cast<int8_t>((0xff000000 & data) >> 24);
+    //    QByteArray::fromHex(QByteArray::number(data, 16))
     return ba;
 }

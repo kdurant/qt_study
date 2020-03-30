@@ -51,6 +51,7 @@ public:
 
 public:
     QByteArray encode(qint32 command, qint32 data_len, qint32 data);
+    QByteArray encode(qint32 command, qint32 data_len, QByteArray &data);
 
 signals:
     /**

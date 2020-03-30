@@ -33,16 +33,28 @@ void ProtocolDispatch::dipatchData(QByteArray &data)
 QByteArray ProtocolDispatch::encode(qint32 command, qint32 data_len, qint32 data)
 {
     QByteArray frame;
-    QByteArray origin;
-    qint32     checksum = 0xeeeeffff;
-    origin.append("AA555AA5AA555AA5");
-    origin.append(QByteArray::number(cmdNum++, 16).rightJustified(8, '0'));
-    origin.append(QByteArray::number(command, 16).rightJustified(8, '0'));
-    origin.append(QByteArray::number(packetNum, 16).rightJustified(8, '0'));
-    origin.append(QByteArray::number(data_len, 16).rightJustified(8, '0'));
-    origin.append(QByteArray::number(data, 16).rightJustified(8, '0').append(504, '0'));
-    origin.append(QByteArray::number(checksum, 16).rightJustified(8, '0'));
-    frame = QByteArray::fromHex(origin);
+    uint32_t   checksum = 0xeeeeffff;
 
+    frame.append(QByteArray::fromHex("AA555AA5AA555AA5"));
+    frame.append(QByteArray::fromHex(QByteArray::number(cmdNum++, 16).rightJustified(8, '0')));
+    frame.append(QByteArray::fromHex(QByteArray::number(command, 16).rightJustified(8, '0')));
+    frame.append(QByteArray::fromHex(QByteArray::number(packetNum, 16).rightJustified(8, '0')));
+    frame.append(QByteArray::fromHex(QByteArray::number(data_len, 16).rightJustified(8, '0')));
+    frame.append(QByteArray::fromHex(QByteArray::number(data, 16).rightJustified(8, '0').append(504, '0')));
+    frame.append(QByteArray::fromHex(QByteArray::number(checksum, 16).rightJustified(8, '0')));
+    return frame;
+}
+
+QByteArray ProtocolDispatch::encode(qint32 command, qint32 data_len, QByteArray &data)
+{
+    QByteArray frame;
+    uint32_t   checksum = 0xeeeeffff;
+    frame.append(QByteArray::fromHex("AA555AA5AA555AA5"));
+    frame.append(QByteArray::fromHex(QByteArray::number(cmdNum++, 16).rightJustified(8, '0')));
+    frame.append(QByteArray::fromHex(QByteArray::number(command, 16).rightJustified(8, '0')));
+    frame.append(QByteArray::fromHex(QByteArray::number(packetNum, 16).rightJustified(8, '0')));
+    frame.append(QByteArray::fromHex(QByteArray::number(data_len, 16).rightJustified(8, '0')));
+    frame.append(data);
+    frame.append(QByteArray::fromHex(QByteArray::number(checksum, 16).rightJustified(8, '0')));
     return frame;
 }
