@@ -53,6 +53,7 @@ HEADERS += \
     save.h \
     src/DevInfo/DevInfo.h \
     src/UpdateBin/UpdateBin.h \
+    src/Protocol/protocol.h \
     src/Protocol/ProtocolDispatch.h \
     src/Protocol/PreviewProcess.h
 

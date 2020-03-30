@@ -2,7 +2,7 @@
 #define PROTOCOL_DISPATCH_H
 
 #include <QtCore>
-//#include "RadarProtocolBasic.h"
+#include "protocol.h"
 
 class FrameField
 {
@@ -15,38 +15,6 @@ public:
         PCK_NUM_LEN        = 4,
         VALID_DATA_LEN_POS = 20,
         VALID_DATA_LEN_LEN = 4
-    };
-};
-
-class MasterSet
-{
-public:
-    enum preview
-    {
-        PREVIEW_ENABLE = 0x0000000C,
-        SYS_INFO       = 0x00000013,
-
-        SAMPLE_LEN     = 0x00000008,
-        PREVIEW_RATIO  = 0x00000009,
-        FIRST_POS      = 0x00000029,
-        FIRST_LEN      = 0x0000002a,
-        SECOND_POS     = 0x0000002e,
-        SECOND_LEN     = 0x00000030,
-        SUM_THRE       = 0x0000002b,
-        MAX_THRE       = 0x0000002c,
-        COMPRESS_LEN   = 0x00200001,
-        COMPRESS_RATIO = 0x00200002,
-    };
-};
-
-class SlaveUp
-{
-public:
-    enum recv
-    {
-        SYS_INFO     = 0x80000005,
-        COMMAND_CNT  = 0x80000001,
-        PREVIEW_DATA = 0x80000006
     };
 };
 

@@ -2,39 +2,111 @@
 #define UPDATE_BIN_H
 
 #include <QtCore>
-#include <QUdpSocket>
+#include "src/Protocol/protocol.h"
 
-class UpdateBin
+class UpdateBin : public QObject
 {
+    Q_OBJECT
 public:
-    enum command
+    enum
     {
-        ERASE_BLOCK      = 0x00100000,
-        READ_BLOCK       = 0x00100001,
-        WRITE_BLOCK_ADDR = 0x00100002,
-        WRITE_BLOCK_DATA = 0x00100003,
-        WRITE_BLOCK_RUN  = 0x00100004,
-
-        RES_FLASH_DATA = 0x80100002
+        BYTES_PER_WRITE  = 128,
+        FLASH_BLOCK_SIZE = 0x10000
     };
-
-    UpdateBin(QUdpSocket* s)
-        : udpSocked(s)
+    UpdateBin()
     {
+        isRecvFlashData = false;
     }
     ~UpdateBin()
     {
     }
+    void setFlashAddr(uint32_t addr)
+    {
+        opFlashAddr = addr;
+    }
 
-    bool       eraseFlase(int addr);
-    QByteArray readFlash(int addr);
-    bool       writeFlash(int addr, QByteArray& data);
-    bool       updateBin(QFile& filePath);
+    void flashErase(uint32_t addr)
+    {
+        QByteArray ba = int2ba(addr);
+        emit       flashCommandReadySet(MasterSet::ERASE_ADDR, 4, ba);
+    }
+
+    QByteArray flashRead(uint32_t addr)
+    {
+        QByteArray ba = int2ba(addr);
+        emit       flashCommandReadySet(MasterSet::READ_ADDR, 4, ba);
+        QEventLoop waitLoop;
+        connect(this, SIGNAL(recvFlashData()), &waitLoop, SLOT(quit()));
+        waitLoop.exec();
+        isRecvFlashData = false;
+        return readData;
+    }
+    /**
+     * @brief writeFlash
+     * 需要依次完成发送flash地址， 要写入flash的数据，启动flash写操作
+     * @param addr
+     * @param data
+     */
+    void flashWrite(uint32_t addr, QByteArray& data)
+    {
+        writeData     = data;
+        QByteArray ba = int2ba(addr);
+        emit       flashCommandReadySet(MasterSet::WRITE_ADDR, 4, ba);
+        emit       flashCommandReadySet(MasterSet::WRITE_DATA, data.size(), data);
+        ba = int2ba(0x11111111);
+        emit flashCommandReadySet(MasterSet::WRITE_RUN, 4, ba);
+    }
+
+    bool flashUpdate(QString& filePath)
+    {
+        QFile file(filePath);
+        file.open(QIODevice::ReadOnly);
+        uint32_t   hasWriteBytes = 0;
+        QByteArray writeData;
+        QByteArray secondData;
+
+        while(!file.atEnd())
+        {
+            writeData = file.read(UpdateBin::BYTES_PER_WRITE);
+            if(hasWriteBytes % UpdateBin::FLASH_BLOCK_SIZE == 0)
+            {
+                //            flashErase(hasWriteBytes);
+            }
+
+            flashWrite(hasWriteBytes, writeData);
+            secondData = flashRead(hasWriteBytes);
+
+            // 只有最后一次才会出现这种情况
+            if(hasWriteBytes != UpdateBin::BYTES_PER_WRITE)
+            {
+                return writeData == readData.mid(0, UpdateBin::BYTES_PER_WRITE);
+            }
+            else
+            {
+                if(writeData != readData)
+                    return false;
+            }
+        }
+        return true;
+    }
+
+public slots:
+    void setDataFrame(QByteArray& frame);
+
+signals:
+    void flashCommandReadySet(uint32_t command, uint32_t data_len, QByteArray& data);
+    void flashCommandReadySet1();
+    void recvFlashData();
 
 private:
-    QUdpSocket* udpSocked;
-    QByteArray  readData;
-    QByteArray  writeData;
+    QByteArray frame;
+    bool       isRecvFlashData;
+    uint32_t   opFlashAddr;  // 读、写、擦除  共用一个地址
+
+    QByteArray readData;
+    QByteArray writeData;
+
+    QByteArray int2ba(uint32_t data);
 };
 
 #endif

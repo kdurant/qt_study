@@ -1,6 +1,7 @@
 #ifndef PREVIEW_PROCESS_H
 #define PREVIEW_PROCESS_H
 #include <QtCore>
+#include "protocol.h"
 #include "ProtocolDispatch.h"
 
 typedef struct __OneChData
