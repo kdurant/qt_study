@@ -110,9 +110,10 @@ def sendPreview():
     msg = binascii.a2b_hex(msg)
     s.sendto(msg, address)
 
-sendPreview()
-sendPreview()
+#sendPreview()
+#sendPreview()
 
+upFlashData()
 #upDevPara()
 
 s.close()

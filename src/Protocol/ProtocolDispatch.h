@@ -14,7 +14,9 @@ public:
         PCK_NUM_POS        = 16,
         PCK_NUM_LEN        = 4,
         VALID_DATA_LEN_POS = 20,
-        VALID_DATA_LEN_LEN = 4
+        VALID_DATA_LEN_LEN = 4,
+        DATA_POS           = 24,
+        DATA_LEN           = 256
     };
 };
 
@@ -65,6 +67,7 @@ signals:
      * @param data
      */
     void previewDataReady(QByteArray &data);
+    void flashDataReady(QByteArray &data);
 
     void remoteUpdateDataReady(QByteArray data);
 

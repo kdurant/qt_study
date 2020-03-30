@@ -8,8 +8,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle(tr("雷达控制软件"));
 
-    dispatch = new ProtocolDispatch();
-    preview  = new PreviewProcess();
+    dispatch    = new ProtocolDispatch();
+    preview     = new PreviewProcess();
+    updateFlash = new UpdateBin();
 
     configIni = new QSettings("../Radar/config.ini", QSettings::IniFormat);
 
@@ -162,6 +163,12 @@ void MainWindow::writeUdpatagram(qint32 command, qint32 data_len, qint32 data)
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }
 
+void MainWindow::writeUdpatagram(uint32_t command, uint32_t data_len, QByteArray &data)
+{
+    QByteArray frame = dispatch->encode(command, data_len, data);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+}
+
 void MainWindow::changeUIInfo(uint32_t command, QByteArray &data)
 {
     switch(command)
@@ -179,11 +186,13 @@ void MainWindow::initSignalSlot()
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagram()));
 
     connect(dispatch, SIGNAL(previewDataReady(QByteArray &)), preview, SLOT(setDataFrame(QByteArray &)));
+    connect(dispatch, SIGNAL(flashDataReady(QByteArray &)), updateFlash, SLOT(setDataFrame(QByteArray &)));
 
     connect(preview, SIGNAL(previewReadyShow()), this, SLOT(processPreview()));
-
     connect(preview, SIGNAL(previewParaReadySet(qint32, qint32, qint32)), this, SLOT(writeUdpatagram(qint32, qint32, qint32)));
     connect(dispatch, SIGNAL(infoDataReady(uint32_t, QByteArray &)), this, SLOT(changeUIInfo(uint32_t, QByteArray &)));
+
+    connect(updateFlash, SIGNAL(flashCommandReadySet(uint32_t, uint32_t, QByteArray &)), SLOT(writeUdpatagram(uint32_t, uint32_t, QByteArray &)));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -264,6 +273,8 @@ void MainWindow::on_pushButton_ReadInfo_clicked()
 
     frame = dispatch->encode(MasterSet::SYS_INFO, 4, 0x00000001);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+
+    //    updateFlash->flashRead(0x00);
 }
 
 void MainWindow::on_checkBox_autoZoom_stateChanged(int arg1)

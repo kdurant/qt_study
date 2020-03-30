@@ -8,7 +8,8 @@ void UpdateBin::setDataFrame(QByteArray &frame)
     if(ProtocolDispatch::getCommand(frame) == SlaveUp::FLASH_DATA)
     {
         isRecvFlashData = true;
-        readData        = frame;
+        readData        = frame.mid(FrameField::DATA_POS, FrameField::DATA_LEN);
+        emit recvFlashData();
     }
     else
         isRecvFlashData = false;

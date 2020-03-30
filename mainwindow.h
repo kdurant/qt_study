@@ -22,6 +22,7 @@
 
 #include "./src/Protocol/ProtocolDispatch.h"
 #include "./src/Protocol/PreviewProcess.h"
+#include "./src/UpdateBin/UpdateBin.h"
 
 namespace Ui
 {
@@ -57,6 +58,7 @@ private slots:
     void processPreview();
 
     void writeUdpatagram(qint32 command, qint32 data_len, qint32 data);
+    void writeUdpatagram(uint32_t command, uint32_t data_len, QByteArray &data);
 
     void changeUIInfo(uint32_t command, QByteArray &data);
 
@@ -83,6 +85,7 @@ private:
 
     ProtocolDispatch *dispatch;
     PreviewProcess *  preview;
+    UpdateBin *       updateFlash;
 };
 
 #endif  // MAINWINDOW_H

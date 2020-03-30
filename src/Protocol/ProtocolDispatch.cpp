@@ -24,6 +24,9 @@ void ProtocolDispatch::dipatchData(QByteArray &data)
             //        case MasterSet::COMPRESS_RATIO:
             emit previewDataReady(data);
             break;
+        case SlaveUp::FLASH_DATA:
+            emit flashDataReady(data);
+            break;
         default:
             QMessageBox::critical(NULL, "错误", "接受到错误的UDP数据包");
             break;
