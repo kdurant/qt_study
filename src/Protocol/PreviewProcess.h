@@ -29,14 +29,14 @@ public:
         previewEnable = data;
         emit previewParaReadySet(MasterSet::PREVIEW_ENABLE, 4, data);
     }
-    void setPreviewRatio(int data)
-    {
-        previewRatio = data;
-        emit previewParaReadySet(MasterSet::SAMPLE_LEN, 4, data);
-    }
     void setTotalSampleLen(int data)
     {
         totalSampleLen = data;
+        emit previewParaReadySet(MasterSet::SAMPLE_LEN, 4, data);
+    }
+    void setPreviewRatio(int data)
+    {
+        previewRatio = data;
         emit previewParaReadySet(MasterSet::PREVIEW_RATIO, 4, data);
     }
     void setFirstPos(int data)
