@@ -1,4 +1,4 @@
-QMainWindow 
+QMainWindow
 {
     border: 2px solid #323232;
 }
@@ -18,16 +18,14 @@ QToolTip
      border-radius: 3px;
      opacity: 100;
 }
-QScrollArea {
-}
-QLabel{
-    color:#386487;
-    border:1px solid #C0DCF2;
-    background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #DEF0FE,stop:1 #C0DEF6);
+QScrollArea
+{
+
 }
 
-QLineEdit{
-    border:1px solid #C0DCF2;
+QLineEdit
+{
+    border:2px solid #C0DCF2;
     border-radius:3px;
     padding:2px;
     background:none;
@@ -35,7 +33,17 @@ QLineEdit{
     selection-color:#FFFFFF;
 }
 
-QPushButton {
+/* QLable*/
+QLabel
+{
+    color:#386487;
+    border:0px solid #C0DCF2;
+    background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #DEF0FE,stop:1 #C0DEF6);
+}
+
+
+QPushButton
+{
     background-color: palegoldenrod;
     border-width: 2px;
     border-color: darkkhaki;
@@ -46,30 +54,33 @@ QPushButton {
     min-height: 4ex;
 }
 
-QPushButton:hover {
+QPushButton:hover
+{
    background-color: green;
 }
 
 /* Increase the padding, so the text is shifted when the button is
    pressed. */
-QPushButton:pressed {
+QPushButton:pressed
+{
     padding-left: 5px;
     padding-top: 5px;
     background-color: #d0d67c;
 }
 
-
-
-QRadioButton:enabled:checked{
+QRadioButton:enabled:checked
+{
     color: rgb(128, 128, 255);
 }
 
-QRadioButton::indicator {
+QRadioButton::indicator
+{
     width:48;
     height:24;
 }
 
-QRadioButton#singleRadioBtn::indicator {
+QRadioButton#singleRadioBtn::indicator
+{
     width:100;
     height:32;
 }
@@ -88,11 +99,11 @@ QComboBox
     border: 1px solid green;
     /*background: green;*/
 }
-QComboBox:editable 
+QComboBox:editable
 {
     background: cyan;
 }
-QComboBox:!editable,QComboBox::drop-down:editable 
+QComboBox:!editable,QComboBox::drop-down:editable
 {
     background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
     stop:0#E1E1E1, stop: 0.4 #DDDDDD,
@@ -120,6 +131,19 @@ QGroupBox::title {
 }
 
 
-QTabBar::tab:disabled {
+QTabBar::tab:disabled
+{
     width: 0; color: transparent;
 }
+
+QTabBar::tab:selected
+{
+    background-color: #d0d67c;
+}
+
+QTabBar::tab:hover
+{
+    background-color: #4fccb1;
+}
+
+
