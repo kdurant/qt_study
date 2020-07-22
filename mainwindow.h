@@ -72,6 +72,12 @@ private slots:
 
     void on_checkBox_autoZoom_stateChanged(int arg1);
 
+    void on_btnNorFlashRead_clicked();
+
+    void on_btnNorFlashErase_clicked();
+
+    void on_btnNorFlasshReadFile_clicked();
+
 private:
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;

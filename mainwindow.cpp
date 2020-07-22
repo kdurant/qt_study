@@ -284,3 +284,41 @@ void MainWindow::on_checkBox_autoZoom_stateChanged(int arg1)
     else
         ui->graphicsView->setZoomFlag(false);
 }
+
+void MainWindow::on_btnNorFlashRead_clicked()
+{
+    uint32_t addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+    ui->plain_NorDebugInfo->setPlainText(updateFlash->flashRead(addr));
+}
+
+void MainWindow::on_btnNorFlashErase_clicked()
+{
+    uint32_t addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+    updateFlash->flashErase(addr);
+}
+
+void MainWindow::on_btnNorFlasshReadFile_clicked()
+{
+    uint32_t startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+    uint32_t endAddr   = ui->lineEdit_NorFlashEndAddr->text().toInt(nullptr, 16);
+
+    uint32_t needNum = ((endAddr - startAddr) / 256);
+    ui->pBarNorFlashRead->setValue(0);
+    ui->pBarNorFlashRead->setMaximum(needNum - 1);
+
+    uint32_t   currentAddr;
+    QByteArray ba;
+
+    QFile file("origin.bin");
+    file.open(QIODevice::ReadWrite);
+
+    for(uint32_t i = 0; i < needNum; i++)
+    {
+        ui->pBarNorFlashRead->setValue(i);
+
+        currentAddr = needNum * i;
+        //        updateFlash->flashRead(currentAddr);
+        file.write(updateFlash->flashRead(currentAddr));
+    }
+    file.close();
+}

@@ -29,8 +29,16 @@ public:
     {
         QByteArray ba = int2ba(addr);
         emit       flashCommandReadySet(MasterSet::ERASE_ADDR, 4, ba);
+        QEventLoop loop;
+        QTimer::singleShot(1000, &loop, SLOT(quit()));
+        loop.exec();
     }
 
+    /**
+     * @brief 读取起始地址后的256个字节数据
+     * @param addr
+     * @return
+     */
     QByteArray flashRead(uint32_t addr)
     {
         QByteArray ba = int2ba(addr);
