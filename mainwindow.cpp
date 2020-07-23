@@ -350,7 +350,7 @@ void MainWindow::on_btnNorFlasshReadFile_clicked()
     {
         ui->pBarNorFlashRead->setValue(i);
 
-        currentAddr = 256 * i;
+        currentAddr = startAddr + 256 * i;
         //        updateFlash->flashRead(currentAddr);
         QByteArray data = updateFlash->flashRead(currentAddr);
         file.write(data);
