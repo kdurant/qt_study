@@ -18,6 +18,8 @@ GTAGS*
 
 
 #######################qt###########################
+Debug
+Release
 # C++ objects and libs
 *.slo
 *.lo

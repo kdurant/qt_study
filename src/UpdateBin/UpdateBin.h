@@ -47,7 +47,6 @@ public:
         connect(this, SIGNAL(recvFlashData()), &waitLoop, SLOT(quit()));
         waitLoop.exec();
         isRecvFlashData = false;
-        qDebug() << readData;
         return readData;
     }
     /**

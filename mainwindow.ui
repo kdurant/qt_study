@@ -617,6 +617,24 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_5">
                <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_7">
+                 <item>
+                  <widget class="QRadioButton" name="rBtnDecAddr">
+                   <property name="text">
+                    <string>10进制地址</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QRadioButton" name="rBtnHexAddr">
+                   <property name="text">
+                    <string>16进制地址</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_4">
                  <item>
                   <widget class="QLabel" name="label_2">
@@ -626,7 +644,11 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_NorFlashStartAddr"/>
+                  <widget class="QLineEdit" name="lineEdit_NorFlashStartAddr">
+                   <property name="text">
+                    <string>0</string>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </item>
@@ -640,7 +662,11 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_NorFlashEndAddr"/>
+                  <widget class="QLineEdit" name="lineEdit_NorFlashEndAddr">
+                   <property name="text">
+                    <string>1024</string>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </item>

@@ -116,6 +116,15 @@ void MainWindow::uiConfig()
         ui->tabWidget->setTabEnabled(4, false);
         ui->tabWidget->setTabEnabled(5, false);
     }
+    else
+    {
+        ui->tabWidget->setTabEnabled(1, false);
+        ui->tabWidget->setTabEnabled(2, false);
+        ui->tabWidget->setTabEnabled(3, false);
+        ui->tabWidget->setTabEnabled(4, false);
+        ui->tabWidget->setTabEnabled(5, false);
+    }
+    ui->rBtnDecAddr->setChecked(true);
     ui->checkBox_autoZoom->setChecked(true);
     labelVer = new QLabel(SOFTWARE_VER);
     ui->statusBar->addPermanentWidget(labelVer);
@@ -174,7 +183,7 @@ void MainWindow::changeUIInfo(uint32_t command, QByteArray &data)
     switch(command)
     {
         case SlaveUp::SYS_INFO:
-            ui->lineEdit_fpgaVer->setText("V" + data.mid(276, 4));
+            ui->lineEdit_fpgaVer->setText(data.mid(272, 8));
             break;
         default:
             break;
@@ -287,20 +296,45 @@ void MainWindow::on_checkBox_autoZoom_stateChanged(int arg1)
 
 void MainWindow::on_btnNorFlashRead_clicked()
 {
-    uint32_t addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+    uint32_t addr;
+    if(ui->rBtnDecAddr->isChecked())
+    {
+        addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
+    }
+    else
+    {
+        addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+    }
     ui->plain_NorDebugInfo->setPlainText(updateFlash->flashRead(addr));
 }
 
 void MainWindow::on_btnNorFlashErase_clicked()
 {
-    uint32_t addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+    uint32_t addr;
+    if(ui->rBtnDecAddr->isChecked())
+    {
+        addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
+    }
+    else
+    {
+        addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+    }
     updateFlash->flashErase(addr);
 }
 
 void MainWindow::on_btnNorFlasshReadFile_clicked()
 {
-    uint32_t startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
-    uint32_t endAddr   = ui->lineEdit_NorFlashEndAddr->text().toInt(nullptr, 16);
+    uint32_t startAddr, endAddr;
+    if(ui->rBtnDecAddr->isChecked())
+    {
+        startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
+        endAddr   = ui->lineEdit_NorFlashEndAddr->text().toInt(nullptr, 10);
+    }
+    else
+    {
+        startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+        endAddr   = ui->lineEdit_NorFlashEndAddr->text().toInt(nullptr, 16);
+    }
 
     uint32_t needNum = ((endAddr - startAddr) / 256);
     ui->pBarNorFlashRead->setValue(0);
@@ -316,9 +350,10 @@ void MainWindow::on_btnNorFlasshReadFile_clicked()
     {
         ui->pBarNorFlashRead->setValue(i);
 
-        currentAddr = needNum * i;
+        currentAddr = 256 * i;
         //        updateFlash->flashRead(currentAddr);
-        file.write(updateFlash->flashRead(currentAddr));
+        QByteArray data = updateFlash->flashRead(currentAddr);
+        file.write(data);
     }
     file.close();
 }

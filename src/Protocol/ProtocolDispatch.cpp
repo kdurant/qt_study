@@ -58,6 +58,8 @@ QByteArray ProtocolDispatch::encode(qint32 command, qint32 data_len, QByteArray 
     frame.append(QByteArray::fromHex(QByteArray::number(packetNum, 16).rightJustified(8, '0')));
     frame.append(QByteArray::fromHex(QByteArray::number(data_len, 16).rightJustified(8, '0')));
     frame.append(data);
+    if(data.size() == 4)
+        frame.append(256 - 4, 0);
     frame.append(QByteArray::fromHex(QByteArray::number(checksum, 16).rightJustified(8, '0')));
     return frame;
 }

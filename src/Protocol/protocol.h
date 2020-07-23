@@ -41,7 +41,7 @@ public:
     };
     enum recv_update
     {
-        FLASH_DATA = 0x80100002
+        FLASH_DATA = 0x80100001
     };
 };
 
