@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     udpBind();
     initSignalSlot();
+    thread = new QThread();
 }
 
 MainWindow::~MainWindow()
@@ -75,6 +76,8 @@ void MainWindow::initParameter()
 
     ui->rBtn_radarType->setChecked(true);
     ui->rBtn_radarType->setText(radarType + "雷达");
+
+    sampleFrameNumber = 0;
 }
 
 void MainWindow::saveParameter()
@@ -201,7 +204,11 @@ void MainWindow::initSignalSlot()
     connect(preview, SIGNAL(previewParaReadySet(qint32, qint32, qint32)), this, SLOT(writeUdpatagram(qint32, qint32, qint32)));
     connect(dispatch, SIGNAL(infoDataReady(uint32_t, QByteArray &)), this, SLOT(changeUIInfo(uint32_t, QByteArray &)));
 
-    connect(updateFlash, SIGNAL(flashCommandReadySet(uint32_t, uint32_t, QByteArray &)), SLOT(writeUdpatagram(uint32_t, uint32_t, QByteArray &)));
+    connect(updateFlash,
+            SIGNAL(flashCommandReadySet(uint32_t, uint32_t, QByteArray &)),
+            SLOT(writeUdpatagram(uint32_t, uint32_t, QByteArray &)));
+
+    connect(ui->bt_selectShowFile, SIGNAL(clicked()), this, SLOT(on_bt_selectShowFile_clicked()));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -355,5 +362,34 @@ void MainWindow::on_btnNorFlasshReadFile_clicked()
         QByteArray data = updateFlash->flashRead(currentAddr);
         file.write(data);
     }
+    file.close();
+}
+
+void MainWindow::on_bt_selectShowFile_clicked()
+{
+    showFileName = QFileDialog::getOpenFileName(this, tr(""), "", tr("*.bin")); //选择路径
+    ui->lineEdit_selectShowFile->setText(showFileName);
+
+    getFrameNumber();
+    //    this->moveToThread(thread);
+    //    connect(thread, SIGNAL(started()), this, SLOT(getFrameNumber()));
+    //    thread->start();
+}
+
+void MainWindow::getFrameNumber()
+{
+    QFile file(showFileName);
+    file.open(QIODevice::ReadOnly);
+    int length = 0;
+    char buffer[4] = {0};
+    while ((length = file.read(buffer, 4)) != 0) {
+        if (buffer[0] == 0x01 && buffer[1] == 0x23 && buffer[2] == 0x45 && buffer[3] == 0x67) {
+            sampleFrameNumber++;
+            if (sampleFrameNumber % 1000 == 0) {
+                ui->lineEdit_validFrameNum->setText(QString::number(sampleFrameNumber));
+            }
+        }
+    }
+    ui->lineEdit_validFrameNum->setText(QString::number(sampleFrameNumber));
     file.close();
 }

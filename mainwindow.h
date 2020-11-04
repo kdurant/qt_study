@@ -14,9 +14,10 @@
 #include <QSettings>
 #include <QScrollBar>
 
-#include <QMessageBox>
-#include <QHostInfo>
 #include <QDebug>
+#include <QFile>
+#include <QHostInfo>
+#include <QMessageBox>
 
 #include <QThread>
 
@@ -78,6 +79,9 @@ private slots:
 
     void on_btnNorFlasshReadFile_clicked();
 
+    void on_bt_selectShowFile_clicked();
+    void getFrameNumber();
+
 private:
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;
@@ -92,6 +96,10 @@ private:
     ProtocolDispatch *dispatch;
     PreviewProcess *  preview;
     UpdateBin *       updateFlash;
+    QThread *thread;
+
+    quint32 sampleFrameNumber;
+    QString showFileName;
 };
 
 #endif  // MAINWINDOW_H

@@ -51,6 +51,7 @@ HEADERS += \
 #    src/Protocol/DoubleWaveProtocol.h \
 #    src/Protocol/RadarProtocolBasic.h \
     src/QCustomPlot/qcustomplot.h \
+    src/ShowWave/waveData.h \
     src/UdpProcess/udpserver.h \
     save.h \
     src/DevInfo/DevInfo.h \
