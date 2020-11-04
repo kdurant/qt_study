@@ -42,16 +42,6 @@
            <string>系统参数</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_9">
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="lineEdit_localPort"/>
-           </item>
-           <item row="2" column="0">
-            <widget class="QRadioButton" name="rBtn_radarType">
-             <property name="text">
-              <string>海洋雷达</string>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="0">
             <widget class="QLabel" name="label_47">
              <property name="text">
@@ -59,8 +49,15 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="lineEdit_localIP"/>
+           <item row="2" column="0">
+            <widget class="QRadioButton" name="rBtn_radarType">
+             <property name="text">
+              <string>海洋雷达</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label_44">
@@ -68,6 +65,26 @@
               <string>本机端口号：</string>
              </property>
             </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QRadioButton" name="radioButton_3">
+             <property name="text">
+              <string>陆地雷达</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QRadioButton" name="radioButton_4">
+             <property name="text">
+              <string>大光斑</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" colspan="2">
+            <widget class="QLineEdit" name="lineEdit_localIP"/>
+           </item>
+           <item row="1" column="1" colspan="2">
+            <widget class="QLineEdit" name="lineEdit_localPort"/>
            </item>
           </layout>
          </widget>
@@ -120,6 +137,135 @@
              </spacer>
             </item>
            </layout>
+          </widget>
+          <widget class="QWidget" name="tab_6">
+           <attribute name="title">
+            <string>show</string>
+           </attribute>
+           <widget class="QPushButton" name="pushButton_5">
+            <property name="geometry">
+             <rect>
+              <x>20</x>
+              <y>30</y>
+              <width>75</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>选择文件</string>
+            </property>
+           </widget>
+           <widget class="QLineEdit" name="lineEdit_2">
+            <property name="geometry">
+             <rect>
+              <x>120</x>
+              <y>30</y>
+              <width>113</width>
+              <height>20</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="QScrollBar" name="horizontalScrollBar">
+            <property name="geometry">
+             <rect>
+              <x>60</x>
+              <y>180</y>
+              <width>160</width>
+              <height>16</height>
+             </rect>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+           <widget class="QSlider" name="horizontalSlider">
+            <property name="geometry">
+             <rect>
+              <x>70</x>
+              <y>220</y>
+              <width>160</width>
+              <height>22</height>
+             </rect>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_4">
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>70</y>
+              <width>54</width>
+              <height>12</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_5">
+            <property name="geometry">
+             <rect>
+              <x>130</x>
+              <y>70</y>
+              <width>54</width>
+              <height>12</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+           <widget class="QLabel" name="label_6">
+            <property name="geometry">
+             <rect>
+              <x>30</x>
+              <y>100</y>
+              <width>54</width>
+              <height>12</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>预览间隔：</string>
+            </property>
+           </widget>
+           <widget class="QLineEdit" name="lineEdit_3">
+            <property name="geometry">
+             <rect>
+              <x>110</x>
+              <y>100</y>
+              <width>113</width>
+              <height>20</height>
+             </rect>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="pushButton_8">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>140</y>
+              <width>111</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>开始</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="pushButton_10">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>140</y>
+              <width>111</width>
+              <height>23</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>停止</string>
+            </property>
+           </widget>
           </widget>
           <widget class="QWidget" name="tab_4">
            <attribute name="title">
