@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,1">
     <item>
      <widget class="QScrollArea" name="scrollArea">
       <property name="sizePolicy">
