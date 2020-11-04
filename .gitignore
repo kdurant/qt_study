@@ -18,6 +18,7 @@ GTAGS*
 
 
 #######################qt###########################
+*.bin
 Debug
 Release
 # C++ objects and libs

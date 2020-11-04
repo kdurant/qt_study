@@ -31,6 +31,7 @@ QLineEdit
     background:none;
     selection-background-color:#00BB9E;
     selection-color:#FFFFFF;
+    min-height: 3ex;
 }
 
 /* QLable*/
@@ -45,13 +46,13 @@ QLabel
 QPushButton
 {
     background-color: palegoldenrod;
-    border-width: 2px;
+    border-width: 1px;
     border-color: darkkhaki;
     border-style: solid;
-    border-radius: 5;
+    border-radius: 3;
     padding: 3px;
     min-width: 15ex;
-    min-height: 4ex;
+    min-height: 3ex;
 }
 
 QPushButton:hover
