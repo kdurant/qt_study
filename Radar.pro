@@ -35,6 +35,7 @@ SOURCES += \
     src/ChartView/chartview.cpp \
 #    src/Protocol/DoubleWaveProtocol.cpp \
 #    src/Protocol/RadarProtocolBasic.cpp \
+    src/QCustomPlot/qcustomplot.cpp \
     src/UdpProcess/udpserver.cpp \
     save.cpp \
     src/DevInfo/DevInfo.cpp \
@@ -49,6 +50,7 @@ HEADERS += \
     src/ChartView/chartview.h \
 #    src/Protocol/DoubleWaveProtocol.h \
 #    src/Protocol/RadarProtocolBasic.h \
+    src/QCustomPlot/qcustomplot.h \
     src/UdpProcess/udpserver.h \
     save.h \
     src/DevInfo/DevInfo.h \
