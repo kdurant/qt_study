@@ -161,7 +161,7 @@ void MainWindow::processPreview()
     {
         QTime time;
         time.start();
-        ui->graphicsView->updateChart(i, chData.ch[i].coor, chData.ch[i].data);
+        //        ui->graphicsView->updateChart(i, chData.ch[i].coor, chData.ch[i].data);
         qDebug() << "data num : " << chData.ch[i].coor.size() << "elapse time: " << time.elapsed() << " ms";
     }
 }
@@ -288,10 +288,10 @@ void MainWindow::on_pushButton_ReadInfo_clicked()
 
 void MainWindow::on_checkBox_autoZoom_stateChanged(int arg1)
 {
-    if(arg1 == Qt::Checked)
-        ui->graphicsView->setZoomFlag(true);
-    else
-        ui->graphicsView->setZoomFlag(false);
+    //    if(arg1 == Qt::Checked)
+    //        ui->graphicsView->setZoomFlag(true);
+    //    else
+    //        ui->graphicsView->setZoomFlag(false);
 }
 
 void MainWindow::on_btnNorFlashRead_clicked()

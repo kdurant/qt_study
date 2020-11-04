@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,1">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QScrollArea" name="scrollArea">
       <property name="sizePolicy">
@@ -128,64 +128,20 @@
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
              <layout class="QGridLayout" name="gridLayout_3">
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_15">
+              <item row="6" column="1">
+               <widget class="QLineEdit" name="lineEdit_sumThreshold"/>
+              </item>
+              <item row="9" column="0">
+               <widget class="QLabel" name="label_subThreshold_3">
                 <property name="text">
-                 <string>采样长度：</string>
+                 <string>压缩比：</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="lineEdit_sampleLen"/>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_16">
+              <item row="7" column="0">
+               <widget class="QLabel" name="label_subThreshold">
                 <property name="text">
-                 <string>抽样率：</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QLineEdit" name="lineEdit_sampleRate"/>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_17">
-                <property name="text">
-                 <string>第一段提取位置：</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QLineEdit" name="lineEdit_firstStartPos"/>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_18">
-                <property name="text">
-                 <string>第一段提取长度：</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1">
-               <widget class="QLineEdit" name="lineEdit_firstLen"/>
-              </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_secondStartPos">
-                <property name="text">
-                 <string>第二段提取位置：</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="1">
-               <widget class="QLineEdit" name="lineEdit_secondStartPos">
-                <property name="toolTip">
-                 <string>第二段起始位置需要大于第一段提取位置和提取长度之和</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_secondLen">
-                <property name="text">
-                 <string>第二段提取长度：</string>
+                 <string>值阈值：</string>
                 </property>
                </widget>
               </item>
@@ -196,6 +152,12 @@
                 </property>
                </widget>
               </item>
+              <item row="7" column="1">
+               <widget class="QLineEdit" name="lineEdit_subThreshold"/>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="lineEdit_sampleLen"/>
+              </item>
               <item row="6" column="0">
                <widget class="QLabel" name="label_sumThreshold">
                 <property name="text">
@@ -203,18 +165,22 @@
                 </property>
                </widget>
               </item>
-              <item row="6" column="1">
-               <widget class="QLineEdit" name="lineEdit_sumThreshold"/>
-              </item>
-              <item row="7" column="0">
-               <widget class="QLabel" name="label_subThreshold">
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_16">
                 <property name="text">
-                 <string>值阈值：</string>
+                 <string>抽样率：</string>
                 </property>
                </widget>
               </item>
-              <item row="7" column="1">
-               <widget class="QLineEdit" name="lineEdit_subThreshold"/>
+              <item row="4" column="0">
+               <widget class="QLabel" name="label_secondStartPos">
+                <property name="text">
+                 <string>第二段提取位置：</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="lineEdit_sampleRate"/>
               </item>
               <item row="8" column="0">
                <widget class="QLabel" name="label_subThreshold_2">
@@ -223,18 +189,52 @@
                 </property>
                </widget>
               </item>
-              <item row="8" column="1">
-               <widget class="QLineEdit" name="lineEdit_compressLen"/>
+              <item row="3" column="1">
+               <widget class="QLineEdit" name="lineEdit_firstLen"/>
               </item>
-              <item row="9" column="0">
-               <widget class="QLabel" name="label_subThreshold_3">
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_18">
                 <property name="text">
-                 <string>压缩比：</string>
+                 <string>第一段提取长度：</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_17">
+                <property name="text">
+                 <string>第一段提取位置：</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_secondLen">
+                <property name="text">
+                 <string>第二段提取长度：</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_15">
+                <property name="text">
+                 <string>采样长度：</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="lineEdit_firstStartPos"/>
+              </item>
+              <item row="4" column="1">
+               <widget class="QLineEdit" name="lineEdit_secondStartPos">
+                <property name="toolTip">
+                 <string>第二段起始位置需要大于第一段提取位置和提取长度之和</string>
                 </property>
                </widget>
               </item>
               <item row="9" column="1">
                <widget class="QLineEdit" name="lineEdit_compressRatio"/>
+              </item>
+              <item row="8" column="1">
+               <widget class="QLineEdit" name="lineEdit_compressLen"/>
               </item>
              </layout>
             </item>
@@ -728,7 +728,7 @@
      </widget>
     </item>
     <item>
-     <widget class="ChartView" name="graphicsView"/>
+     <widget class="QCustomPlot" name="widget" native="true"/>
     </item>
    </layout>
   </widget>
@@ -803,9 +803,10 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>ChartView</class>
-   <extends>QGraphicsView</extends>
-   <header location="global">./src/ChartView/chartview.h</header>
+   <class>QCustomPlot</class>
+   <extends>QWidget</extends>
+   <header location="global">./src/QCustomPlot/qcustomplot.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

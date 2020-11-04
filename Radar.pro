@@ -32,7 +32,7 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     noteinfo.cpp \
-    src/ChartView/chartview.cpp \
+#    src/ChartView/chartview.cpp \
 #    src/Protocol/DoubleWaveProtocol.cpp \
 #    src/Protocol/RadarProtocolBasic.cpp \
     src/QCustomPlot/qcustomplot.cpp \
@@ -47,7 +47,7 @@ HEADERS += \
         mainwindow.h \
     noteinfo.h \
     bsp_config.h \
-    src/ChartView/chartview.h \
+#    src/ChartView/chartview.h \
 #    src/Protocol/DoubleWaveProtocol.h \
 #    src/Protocol/RadarProtocolBasic.h \
     src/QCustomPlot/qcustomplot.h \
