@@ -2,6 +2,8 @@
 #define WAVE_DATA_H
 #include <QtCore>
 
+//struct
+
 class WaveData : public QObject
 {
     Q_OBJECT

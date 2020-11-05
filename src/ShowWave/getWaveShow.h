@@ -22,7 +22,8 @@ signals:
     void finishSampleFrameNumber();
 
 private:
-    QString waveFile;
-    qint32  sampleFrameNumber;
+    QString         waveFile;
+    qint32          sampleFrameNumber;
+    QVector<qint32> frameStartPos;
 };
 #endif

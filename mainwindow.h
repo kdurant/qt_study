@@ -24,7 +24,7 @@
 #include "./src/Protocol/ProtocolDispatch.h"
 #include "./src/Protocol/PreviewProcess.h"
 #include "./src/UpdateBin/UpdateBin.h"
-#include "./src/ShowWave/waveShow.h"
+#include "./src/ShowWave/getWaveShow.h"
 
 namespace Ui
 {
