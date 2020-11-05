@@ -24,6 +24,7 @@
 #include "./src/Protocol/ProtocolDispatch.h"
 #include "./src/Protocol/PreviewProcess.h"
 #include "./src/UpdateBin/UpdateBin.h"
+#include "./src/ShowWave/waveShow.h"
 
 namespace Ui
 {
@@ -63,6 +64,8 @@ private slots:
 
     void changeUIInfo(uint32_t command, QByteArray &data);
 
+    void updateFrameNumber(qint32 number);
+
     void on_actionNote_triggered();
 
     void on_pushButton_setPreviewPara_clicked();
@@ -80,7 +83,6 @@ private slots:
     void on_btnNorFlasshReadFile_clicked();
 
     void on_bt_selectShowFile_clicked();
-    void getFrameNumber();
 
 private:
     Ui::MainWindow *ui;
@@ -96,10 +98,12 @@ private:
     ProtocolDispatch *dispatch;
     PreviewProcess *  preview;
     UpdateBin *       updateFlash;
-    QThread *thread;
+    QThread *         thread;
 
     quint32 sampleFrameNumber;
     QString showFileName;
+
+    WaveShow *waveShow;
 };
 
 #endif  // MAINWINDOW_H

@@ -36,6 +36,8 @@ SOURCES += \
 #    src/Protocol/DoubleWaveProtocol.cpp \
 #    src/Protocol/RadarProtocolBasic.cpp \
     src/QCustomPlot/qcustomplot.cpp \
+    src/ShowWave/waveData.cpp \
+    src/ShowWave/waveShow.cpp \
     src/UdpProcess/udpserver.cpp \
     save.cpp \
     src/DevInfo/DevInfo.cpp \
@@ -52,6 +54,7 @@ HEADERS += \
 #    src/Protocol/RadarProtocolBasic.h \
     src/QCustomPlot/qcustomplot.h \
     src/ShowWave/waveData.h \
+    src/ShowWave/waveShow.h \
     src/UdpProcess/udpserver.h \
     save.h \
     src/DevInfo/DevInfo.h \

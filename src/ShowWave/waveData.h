@@ -2,14 +2,16 @@
 #define WAVE_DATA_H
 #include <QtCore>
 
-//class WaveData : public QObject
-//{
-//    Q_OBJECT
+class WaveData : public QObject
+{
+    Q_OBJECT
 
-//public:
-//    WaveData() {}
+public:
+    WaveData()
+    {
+    }
 
-//private:
-//    QVector<int> ch0;
-//};
+private:
+    QVector<int> ch0;
+};
 #endif

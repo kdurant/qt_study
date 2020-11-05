@@ -8,9 +8,18 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     setWindowTitle(tr("雷达控制软件"));
 
+    thread      = new QThread();
     dispatch    = new ProtocolDispatch();
     preview     = new PreviewProcess();
     updateFlash = new UpdateBin();
+    waveShow    = new WaveShow();
+
+    waveShow->moveToThread(thread);
+    connect(thread, SIGNAL(started()), waveShow, SLOT(getFrameNumber()));
+    connect(waveShow, SIGNAL(finishSampleFrameNumber()), thread, SLOT(quit()));
+
+    connect(waveShow, SIGNAL(finishSampleFrameNumber()), waveShow, SLOT(deleteLater()));
+    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
     configIni = new QSettings("../Radar/config.ini", QSettings::IniFormat);
 
@@ -19,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     udpBind();
     initSignalSlot();
-    thread = new QThread();
 }
 
 MainWindow::~MainWindow()
@@ -193,6 +201,11 @@ void MainWindow::changeUIInfo(uint32_t command, QByteArray &data)
     }
 }
 
+void MainWindow::updateFrameNumber(qint32 number)
+{
+    ui->lineEdit_validFrameNum->setText(QString::number(number));
+}
+
 void MainWindow::initSignalSlot()
 {
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagram()));
@@ -208,7 +221,16 @@ void MainWindow::initSignalSlot()
             SIGNAL(flashCommandReadySet(uint32_t, uint32_t, QByteArray &)),
             SLOT(writeUdpatagram(uint32_t, uint32_t, QByteArray &)));
 
-    connect(ui->bt_selectShowFile, SIGNAL(clicked()), this, SLOT(on_bt_selectShowFile_clicked()));
+    connect(ui->bt_selectShowFile, SIGNAL(pressed()), this, SLOT(on_bt_selectShowFile_clicked()));
+
+    //    connect(waveShow, SIGNAL(sendSampleFrameNumber(qint32 number)), this, SLOT([=](qint32 number) {
+    //                ui->lineEdit_validFrameNum->setText(QString::number(number));
+    //            };));
+    connect(waveShow, SIGNAL(sendSampleFrameNumber(qint32)), this, SLOT(updateFrameNumber(qint32)));
+
+    //    auto xx = [=](qint32 number) {
+    //        ui->lineEdit_validFrameNum->setText(QString::number(number));
+    //    };
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -367,29 +389,12 @@ void MainWindow::on_btnNorFlasshReadFile_clicked()
 
 void MainWindow::on_bt_selectShowFile_clicked()
 {
-    showFileName = QFileDialog::getOpenFileName(this, tr(""), "", tr("*.bin")); //选择路径
+    showFileName = QFileDialog::getOpenFileName(this, tr(""), "", tr("*.bin"));  //选择路径
     ui->lineEdit_selectShowFile->setText(showFileName);
+    waveShow->setWaveFile(showFileName);
+    thread->start();
 
-    getFrameNumber();
     //    this->moveToThread(thread);
     //    connect(thread, SIGNAL(started()), this, SLOT(getFrameNumber()));
     //    thread->start();
-}
-
-void MainWindow::getFrameNumber()
-{
-    QFile file(showFileName);
-    file.open(QIODevice::ReadOnly);
-    int length = 0;
-    char buffer[4] = {0};
-    while ((length = file.read(buffer, 4)) != 0) {
-        if (buffer[0] == 0x01 && buffer[1] == 0x23 && buffer[2] == 0x45 && buffer[3] == 0x67) {
-            sampleFrameNumber++;
-            if (sampleFrameNumber % 1000 == 0) {
-                ui->lineEdit_validFrameNum->setText(QString::number(sampleFrameNumber));
-            }
-        }
-    }
-    ui->lineEdit_validFrameNum->setText(QString::number(sampleFrameNumber));
-    file.close();
 }
