@@ -63,6 +63,8 @@ HEADERS += \
     src/Protocol/ProtocolDispatch.h \
     src/Protocol/PreviewProcess.h
 
+INCLUDEPATH += ./src/Protocol
+
 FORMS += \
         mainwindow.ui \
     noteinfo.ui \
