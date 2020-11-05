@@ -84,6 +84,8 @@ private slots:
 
     void on_bt_selectShowFile_clicked();
 
+    void on_bt_showWave_clicked();
+
 private:
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;

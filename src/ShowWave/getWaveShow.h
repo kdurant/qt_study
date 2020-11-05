@@ -13,6 +13,7 @@ public:
     {
     }
     void setWaveFile(QString file);
+    QVector<qint32> getFrameData(qint32 number);
 
 public slots:
     qint32 getFrameNumber();

@@ -228,9 +228,7 @@ void MainWindow::initSignalSlot()
     //            };));
     connect(waveShow, SIGNAL(sendSampleFrameNumber(qint32)), this, SLOT(updateFrameNumber(qint32)));
 
-    //    auto xx = [=](qint32 number) {
-    //        ui->lineEdit_validFrameNum->setText(QString::number(number));
-    //    };
+    connect(ui->bt_showWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -393,8 +391,15 @@ void MainWindow::on_bt_selectShowFile_clicked()
     ui->lineEdit_selectShowFile->setText(showFileName);
     waveShow->setWaveFile(showFileName);
     thread->start();
+}
 
-    //    this->moveToThread(thread);
-    //    connect(thread, SIGNAL(started()), this, SLOT(getFrameNumber()));
-    //    thread->start();
+void MainWindow::on_bt_showWave_clicked()
+{
+    int total = ui->lineEdit_validFrameNum->text().toInt();
+    int interval_num = ui->lineEdit_previewFrameInterval->text().toInt();
+    int interval_time = ui->lineEdit_previewTimeInterval->text().toInt();
+    //    for (int i = 0; i < total; i += interval_num) {
+    //        //        waveShow->getFrameData(i);
+    //        QThread::sleep(interval_time);
+    //    }
 }
