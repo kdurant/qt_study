@@ -28,6 +28,20 @@ MainWindow::MainWindow(QWidget *parent)
 
     udpBind();
     initSignalSlot();
+    ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    ui->plot->legend->setVisible(true);  //右上角指示曲线的缩略框
+    ui->plot->xAxis->setLabel(QStringLiteral("时间：ns"));
+    ui->plot->yAxis->setLabel(QStringLiteral("AD采样值"));
+    ui->plot->addGraph();
+    ui->plot->addGraph();
+    ui->plot->graph(0)->setPen(QPen(Qt::red));
+    ui->plot->graph(1)->setPen(QPen(Qt::blue));
+    for(int i = 0; i < 100; i++)
+    {
+        ui->plot->graph(0)->addData(i, i % 10);
+        ui->plot->graph(1)->addData(i, (double)i / 10.0);
+    }
+    ui->plot->rescaleAxes();
 }
 
 MainWindow::~MainWindow()
@@ -404,12 +418,23 @@ void MainWindow::on_bt_showWave_clicked()
     int total         = ui->lineEdit_validFrameNum->text().toInt();
     int interval_num  = ui->lineEdit_previewFrameInterval->text().toInt();
     int interval_time = ui->lineEdit_previewTimeInterval->text().toInt();
-    for(int i = 0; i < total; i += interval_num)
+
+    QPushButton *btn = qobject_cast<QPushButton *>(sender());
+    if(btn->objectName() == "bt_showWave")
     {
-        waveShow->getFrameData(i);
-        if(interval_time == 0)
-            continue;
-        else
-            QThread::msleep(interval_time);
+        for(int i = 0; i < total; i += interval_num)
+        {
+            qDebug() << btn->objectName();
+            waveShow->getFrameData(i);
+            if(interval_time == 0)
+                continue;
+            else
+                QThread::msleep(interval_time);
+        }
+    }
+    else
+    {
+        qDebug() << btn->objectName();
+        return;
     }
 }
