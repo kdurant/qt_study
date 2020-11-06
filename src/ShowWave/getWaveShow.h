@@ -26,5 +26,6 @@ private:
     QString         waveFile;
     qint32          sampleFrameNumber;
     QVector<qint32> frameStartPos;
+    QVector<qint32> frameData;
 };
 #endif

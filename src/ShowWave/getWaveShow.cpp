@@ -7,8 +7,8 @@ void WaveShow::setWaveFile(QString &file)
 
 QVector<qint32> WaveShow::getFrameData(qint32 number)
 {
-    QVector<qint32> ret;
-    QFile           file(waveFile);
+    frameData.clear();
+    QFile file(waveFile);
     if(file.open(QIODevice::ReadOnly))
     {
         file.seek(frameStartPos[number]);
@@ -17,10 +17,10 @@ QVector<qint32> WaveShow::getFrameData(qint32 number)
         file.read(buff, len);
         for(int i = 0; i < len; i++)
         {
-            ret.append(buff[i]);
+            frameData.append(buff[i]);
         }
         delete[] buff;
-        return ret;
+        return frameData;
     }
 }
 
