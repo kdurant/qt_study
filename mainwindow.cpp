@@ -223,10 +223,14 @@ void MainWindow::initSignalSlot()
 
     connect(ui->bt_selectShowFile, SIGNAL(pressed()), this, SLOT(on_bt_selectShowFile_clicked()));
 
-    //    connect(waveShow, SIGNAL(sendSampleFrameNumber(qint32 number)), this, SLOT([=](qint32 number) {
-    //                ui->lineEdit_validFrameNum->setText(QString::number(number));
-    //            };));
-    connect(waveShow, SIGNAL(sendSampleFrameNumber(qint32)), this, SLOT(updateFrameNumber(qint32)));
+    connect(waveShow, &WaveShow::sendSampleFrameNumber, this, [this](qint32 number) {
+        ui->lineEdit_validFrameNum->setText(QString::number(number));
+    });
+
+    // qt5 信号槽格式, 不需要显示声明参数
+    //    connect(waveShow, &WaveShow::sendSampleFrameNumber, this, &MainWindow::updateFrameNumber);
+    // qt4信号槽格式
+    //    connect(waveShow, SIGNAL(sendSampleFrameNumber(qint32)), this, SLOT(updateFrameNumber(qint32)));
 
     connect(ui->bt_showWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
 }
@@ -395,8 +399,8 @@ void MainWindow::on_bt_selectShowFile_clicked()
 
 void MainWindow::on_bt_showWave_clicked()
 {
-    int total = ui->lineEdit_validFrameNum->text().toInt();
-    int interval_num = ui->lineEdit_previewFrameInterval->text().toInt();
+    int total         = ui->lineEdit_validFrameNum->text().toInt();
+    int interval_num  = ui->lineEdit_previewFrameInterval->text().toInt();
     int interval_time = ui->lineEdit_previewTimeInterval->text().toInt();
     //    for (int i = 0; i < total; i += interval_num) {
     //        //        waveShow->getFrameData(i);
