@@ -31,8 +31,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>346</width>
-         <height>638</height>
+         <width>347</width>
+         <height>625</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -92,7 +92,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>7</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -145,128 +145,119 @@
            <widget class="QWidget" name="">
             <property name="geometry">
              <rect>
-              <x>10</x>
-              <y>170</y>
-              <width>291</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,3">
-             <item>
-              <widget class="QSpinBox" name="spin_framePos">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSlider" name="slider_framePos">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="">
-            <property name="geometry">
-             <rect>
               <x>9</x>
               <y>9</y>
-              <width>301</width>
-              <height>101</height>
+              <width>311</width>
+              <height>211</height>
              </rect>
             </property>
-            <layout class="QGridLayout" name="gridLayout_10">
-             <item row="0" column="0">
-              <widget class="QPushButton" name="bt_selectShowFile">
-               <property name="text">
-                <string>选择文件</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="lineEdit_selectShowFile"/>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="lable_validFrameNum">
-               <property name="text">
-                <string>有效采样帧个数:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLineEdit" name="lineEdit_validFrameNum"/>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_6">
-               <property name="text">
-                <string>预览帧间隔：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QLineEdit" name="lineEdit_previewFrameInterval">
-               <property name="text">
-                <string>1</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_19">
-               <property name="text">
-                <string>预览时间间隔(ms)：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="QLineEdit" name="lineEdit_previewTimeInterval">
-               <property name="text">
-                <string>100</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-           <widget class="QWidget" name="">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>120</y>
-              <width>291</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <layout class="QHBoxLayout" name="horizontalLayout">
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <property name="sizeConstraint">
+              <enum>QLayout::SetMinAndMaxSize</enum>
+             </property>
              <item>
-              <widget class="QPushButton" name="bt_showWave">
-               <property name="text">
-                <string>开始</string>
-               </property>
-              </widget>
+              <layout class="QGridLayout" name="gridLayout_10">
+               <item row="0" column="0">
+                <widget class="QPushButton" name="bt_selectShowFile">
+                 <property name="text">
+                  <string>选择文件</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="lineEdit_selectShowFile"/>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="lable_validFrameNum">
+                 <property name="text">
+                  <string>有效采样帧个数:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="lineEdit_validFrameNum"/>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>预览帧间隔：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLineEdit" name="lineEdit_previewFrameInterval">
+                 <property name="text">
+                  <string>1</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_19">
+                 <property name="text">
+                  <string>预览时间间隔(ms)：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QLineEdit" name="lineEdit_previewTimeInterval">
+                 <property name="text">
+                  <string>100</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
-              <widget class="QPushButton" name="btn_suspendShowWave">
-               <property name="text">
-                <string>halt</string>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <item>
+                <widget class="QPushButton" name="bt_showWave">
+                 <property name="text">
+                  <string>开始</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btn_suspendShowWave">
+                 <property name="text">
+                  <string>暂停</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="btn_stopShowWave">
+                 <property name="text">
+                  <string>结束</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
              <item>
-              <widget class="QPushButton" name="btn_stopShowWave">
-               <property name="text">
-                <string>停止</string>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,3">
+               <item>
+                <widget class="QSpinBox" name="spin_framePos">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSlider" name="slider_framePos">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>
@@ -419,7 +410,7 @@
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap resource="res.qrc">:/qss/ch_pos.png</pixmap>
+               <pixmap resource="../res.qrc">:/qss/ch_pos.png</pixmap>
               </property>
              </widget>
             </item>
@@ -888,7 +879,7 @@
      <x>0</x>
      <y>0</y>
      <width>1259</width>
-     <height>23</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -960,7 +951,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="res.qrc"/>
+  <include location="../res.qrc"/>
  </resources>
  <connections/>
 </ui>
