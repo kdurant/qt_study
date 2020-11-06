@@ -66,9 +66,9 @@ HEADERS += \
 INCLUDEPATH += ./src/Protocol
 
 FORMS += \
-        mainwindow.ui \
-    noteinfo.ui \
-    save.ui
+        ui/mainwindow.ui \
+    ui/noteinfo.ui \
+    ui/save.ui
 
 RESOURCES += \
     res.qrc
