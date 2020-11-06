@@ -404,8 +404,12 @@ void MainWindow::on_bt_showWave_clicked()
     int total         = ui->lineEdit_validFrameNum->text().toInt();
     int interval_num  = ui->lineEdit_previewFrameInterval->text().toInt();
     int interval_time = ui->lineEdit_previewTimeInterval->text().toInt();
-    //    for (int i = 0; i < total; i += interval_num) {
-    //        //        waveShow->getFrameData(i);
-    //        QThread::sleep(interval_time);
-    //    }
+    for(int i = 0; i < total; i += interval_num)
+    {
+        waveShow->getFrameData(i);
+        if(interval_time == 0)
+            continue;
+        else
+            QThread::msleep(interval_time);
+    }
 }

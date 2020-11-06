@@ -17,7 +17,7 @@ QVector<qint32> WaveShow::getFrameData(qint32 number)
         file.read(buff, len);
         for(int i = 0; i < len; i++)
         {
-            ret[i] = buff[i];
+            ret.append(buff[i]);
         }
         delete[] buff;
         return ret;
