@@ -429,7 +429,11 @@ void MainWindow::on_bt_showWave_clicked()
             if(interval_time == 0)
                 continue;
             else
-                QThread::msleep(interval_time);
+            {
+                QEventLoop eventloop;
+                QTimer::singleShot(interval_time, &eventloop, SLOT(quit()));
+                eventloop.exec();
+            }
         }
     }
     else
