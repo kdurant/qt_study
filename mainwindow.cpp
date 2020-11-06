@@ -18,8 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(thread, SIGNAL(started()), waveShow, SLOT(getFrameNumber()));
     connect(waveShow, SIGNAL(finishSampleFrameNumber()), thread, SLOT(quit()));
 
-    connect(waveShow, SIGNAL(finishSampleFrameNumber()), waveShow, SLOT(deleteLater()));
-    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
+    //    connect(waveShow, SIGNAL(finishSampleFrameNumber()), waveShow, SLOT(deleteLater()));
+    //    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
     configIni = new QSettings("../Radar/config.ini", QSettings::IniFormat);
 
@@ -391,7 +391,9 @@ void MainWindow::on_btnNorFlasshReadFile_clicked()
 
 void MainWindow::on_bt_selectShowFile_clicked()
 {
-    showFileName = QFileDialog::getOpenFileName(this, tr(""), "", tr("*.bin"));  //选择路径
+    QString showFileName = QFileDialog::getOpenFileName(this, tr(""), "", tr("*.bin"));  //选择路径
+    if(showFileName.size() == 0)
+        return;
     ui->lineEdit_selectShowFile->setText(showFileName);
     waveShow->setWaveFile(showFileName);
     thread->start();

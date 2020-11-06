@@ -12,7 +12,7 @@ public:
         : sampleFrameNumber(0)
     {
     }
-    void setWaveFile(QString file);
+    void            setWaveFile(QString &file);
     QVector<qint32> getFrameData(qint32 number);
 
 public slots:

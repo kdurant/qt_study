@@ -1,6 +1,6 @@
 #include "getWaveShow.h"
 
-void WaveShow::setWaveFile(QString file)
+void WaveShow::setWaveFile(QString &file)
 {
     waveFile = file;
 }
@@ -8,13 +8,15 @@ void WaveShow::setWaveFile(QString file)
 QVector<qint32> WaveShow::getFrameData(qint32 number)
 {
     QVector<qint32> ret;
-    QFile file(waveFile);
-    if (file.open(QIODevice::ReadOnly)) {
+    QFile           file(waveFile);
+    if(file.open(QIODevice::ReadOnly))
+    {
         file.seek(frameStartPos[number]);
-        int len = frameStartPos[number + 1] - frameStartPos[number];
+        int   len  = frameStartPos[number + 1] - frameStartPos[number];
         char *buff = new char[len + 1];
         file.read(buff, len);
-        for (int i = 0; i < len; i++) {
+        for(int i = 0; i < len; i++)
+        {
             ret[i] = buff[i];
         }
         delete[] buff;

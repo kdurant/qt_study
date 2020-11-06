@@ -103,7 +103,6 @@ private:
     QThread *         thread;
 
     quint32 sampleFrameNumber;
-    QString showFileName;
 
     WaveShow *waveShow;
 };
