@@ -241,6 +241,23 @@ void MainWindow::initSignalSlot()
         ui->lineEdit_validFrameNum->setText(QString::number(number));
     });
 
+    connect(waveShow, &WaveShow::sendSampleFrameNumber, this, [this](qint32 number) {
+        ui->slider_framePos->setMaximum(number);
+        ui->spin_framePos->setMaximum(number);
+    });
+    connect(ui->spin_framePos,
+            static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+            ui->slider_framePos,
+            &QSlider::setValue);
+
+    connect(ui->slider_framePos,
+            static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged),
+            ui->spin_framePos,
+            &QSpinBox::setValue);
+
+    //    connect(ui->spin_framePos, SIGNAL(valueChanged(int)), ui->slider_framePos, SLOT(setValue(int)));
+    //    connect(ui->slider_framePos, SIGNAL(valueChanged(int)), ui->spin_framePos, SLOT(setValue(int)));
+
     // qt5 信号槽格式, 不需要显示声明参数
     //    connect(waveShow, &WaveShow::sendSampleFrameNumber, this, &MainWindow::updateFrameNumber);
     // qt4信号槽格式

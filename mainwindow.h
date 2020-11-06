@@ -18,6 +18,8 @@
 #include <QFile>
 #include <QHostInfo>
 #include <QMessageBox>
+#include <QSlider>
+#include <QSpinBox>
 
 #include <QThread>
 
