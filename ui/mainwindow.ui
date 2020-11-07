@@ -142,7 +142,7 @@
            <attribute name="title">
             <string>show</string>
            </attribute>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>9</x>
@@ -165,7 +165,11 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_selectShowFile"/>
+                <widget class="QLineEdit" name="lineEdit_selectShowFile">
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="lable_validFrameNum">
@@ -175,7 +179,14 @@
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QLineEdit" name="lineEdit_validFrameNum"/>
+                <widget class="QLineEdit" name="lineEdit_validFrameNum">
+                 <property name="text">
+                  <string>0</string>
+                 </property>
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
                <item row="2" column="0">
                 <widget class="QLabel" name="label_6">
@@ -188,6 +199,9 @@
                 <widget class="QLineEdit" name="lineEdit_previewFrameInterval">
                  <property name="text">
                   <string>1</string>
+                 </property>
+                 <property name="readOnly">
+                  <bool>false</bool>
                  </property>
                 </widget>
                </item>
@@ -217,16 +231,9 @@
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="btn_suspendShowWave">
-                 <property name="text">
-                  <string>暂停</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QPushButton" name="btn_stopShowWave">
                  <property name="text">
-                  <string>结束</string>
+                  <string>停止</string>
                  </property>
                 </widget>
                </item>

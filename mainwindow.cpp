@@ -264,6 +264,7 @@ void MainWindow::initSignalSlot()
     //    connect(waveShow, SIGNAL(sendSampleFrameNumber(qint32)), this, SLOT(updateFrameNumber(qint32)));
 
     connect(ui->bt_showWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
+    connect(ui->btn_stopShowWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -433,29 +434,33 @@ void MainWindow::on_bt_selectShowFile_clicked()
 void MainWindow::on_bt_showWave_clicked()
 {
     int total         = ui->lineEdit_validFrameNum->text().toInt();
-    int interval_num  = ui->lineEdit_previewFrameInterval->text().toInt();
+    if (total == 0)
+        QMessageBox::warning(this, "warning", "没有有效数据");
+    int start_index = ui->spin_framePos->value();
+    int interval_num = ui->lineEdit_previewFrameInterval->text().toInt();
     int interval_time = ui->lineEdit_previewTimeInterval->text().toInt();
 
     QPushButton *btn = qobject_cast<QPushButton *>(sender());
-    if(btn->objectName() == "bt_showWave")
-    {
-        for(int i = 0; i < total; i += interval_num)
-        {
+    if (btn->objectName() == "bt_showWave")
+        running = true;
+    else {
+        running = false;
+    }
+    for (int i = start_index; i < total; i += interval_num) {
+        if (running) {
             qDebug() << btn->objectName();
+            ui->spin_framePos->setValue(i);
             waveShow->getFrameData(i);
-            if(interval_time == 0)
+            if (interval_time == 0)
                 continue;
-            else
-            {
+            else {
                 QEventLoop eventloop;
                 QTimer::singleShot(interval_time, &eventloop, SLOT(quit()));
                 eventloop.exec();
             }
+        } else {
+            QMessageBox::warning(this, "warning", "结束");
+            return;
         }
-    }
-    else
-    {
-        qDebug() << btn->objectName();
-        return;
     }
 }

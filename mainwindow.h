@@ -107,6 +107,7 @@ private:
     quint32 sampleFrameNumber;
 
     WaveShow *waveShow;
+    bool running;
 };
 
 #endif  // MAINWINDOW_H
