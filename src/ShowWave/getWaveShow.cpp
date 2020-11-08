@@ -1,5 +1,25 @@
 #include "getWaveShow.h"
 
+bool WaveShow::isChDataHead(int offset)
+{
+    return (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90
+            && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a);
+}
+
+int WaveShow::getChNumber(int offset)
+{
+    int number;
+    if (frameData.at(offset + 0) == 0 && frameData.at(offset + 1) == 0)
+        number = 0;
+    else if (frameData.at(offset + 0) == 0x0f && frameData.at(offset + 1) == 0x0f)
+        number = 1;
+    else if (frameData.at(offset + 0) == 0xf0 && frameData.at(offset + 1) == 0xf0)
+        number = 2;
+    else
+        number = 3;
+    return number;
+}
+
 void WaveShow::setWaveFile(QString &file)
 {
     waveFile = file;
@@ -30,29 +50,30 @@ int WaveShow::getChData(QVector<ChInfo> &allCh)
     ChInfo ch;
     int offset = 88;
 
-    if (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90
-        && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a)
-        offset += 4;
-    else
-        return ret;
+    while (offset < frameData.size()) {
+        if (isChDataHead(offset))
+            offset += 4;
+        else
+            return ret;
 
-    if (frameData.at(offset + 0) == 0 && frameData.at(offset + 1) == 0) {
+        ch.number = getChNumber(offset);
         offset += 8;
-        ch.number = 0;
-    } else
-        return ret;
 
-    int start_pos = (frameData.at(offset) << 8) + frameData.at(offset + 1);
-    offset += 2;
-    int len = (frameData.at(offset) << 8) + frameData.at(offset + 1);
-    offset += 2;
-
-    for (int i = 0; i < len; i++) {
-        ch.key.append(i + start_pos);
-        ch.value.append((frameData.at(offset + 0) << 8) + frameData.at(offset + 1));
+        int start_pos = (frameData.at(offset) << 8) + frameData.at(offset + 1);
         offset += 2;
+        int len = (frameData.at(offset) << 8) + frameData.at(offset + 1);
+        offset += 2;
+
+        for (int i = 0; i < len; i++) {
+            ch.key.append(i + start_pos);
+            ch.value.append((frameData.at(offset + 0) << 8) + frameData.at(offset + 1));
+            offset += 2;
+        }
+        allCh.append(ch);
+        ch.key.clear();
+        ch.value.clear();
     }
-    allCh.append(ch);
+
     return ret;
 }
 

@@ -34,28 +34,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->plot->yAxis->setLabel(QStringLiteral("AD采样值"));
     ui->plot->addGraph();
     ui->plot->addGraph();
+    ui->plot->addGraph();
     ui->plot->graph(0)->setPen(QPen(Qt::red));
     ui->plot->graph(1)->setPen(QPen(Qt::blue));
-    //    for(int i = 0; i < 100; i++)
-    //    {
-    //        ui->plot->graph(0)->addData(i, i % 10);
-    //        ui->plot->graph(1)->addData(i, (double)i / 10.0);
-    //    }
-
-    //    QVector<double> temp;
-    //    for (int var = 0; var < 25; ++var) {
-    //        if (rand() % 2) {
-    //            temp.append(var);
-    //        } else {
-    //            temp.append(20);
-    //        }
-    //    }
-    //    QVector<double> time;
-    //    for (int var = 0; var < 25; ++var) {
-    //        time.append(var);
-    //    }
-    //    ui->plot->graph(0)->setData(time, temp);
-    //        ui->plot->rescaleAxes();
+    ui->plot->graph(2)->setPen(QPen(Qt::yellow));
 }
 
 MainWindow::~MainWindow()
@@ -469,7 +451,9 @@ void MainWindow::on_bt_showWave_clicked()
 
             QVector<ChInfo> allCh;
             waveShow->getChData(allCh);
-            ui->plot->graph(0)->setData(allCh[0].key, allCh[0].value);
+            for (int n = 0; n < allCh.size(); n++) {
+                ui->plot->graph(n)->setData(allCh[n].key, allCh[n].value);
+            }
             ui->plot->rescaleAxes();
 
             if (interval_time == 0)
