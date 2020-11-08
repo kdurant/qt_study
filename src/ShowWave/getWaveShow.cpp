@@ -5,7 +5,7 @@ void WaveShow::setWaveFile(QString &file)
     waveFile = file;
 }
 
-QVector<qint32> WaveShow::getFrameData(qint32 number)
+QVector<quint8> WaveShow::getFrameData(qint32 number)
 {
     frameData.clear();
     QFile file(waveFile);
@@ -22,6 +22,38 @@ QVector<qint32> WaveShow::getFrameData(qint32 number)
         delete[] buff;
         return frameData;
     }
+}
+
+QVector<ChInfo> WaveShow::getChData()
+{
+    QVector<ChInfo> ret = {{0, {0}, {0}}};
+    ChInfo ch;
+    int offset = 88;
+
+    if (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90
+        && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a)
+        offset += 4;
+    else
+        return ret;
+
+    if (frameData.at(offset + 0) == 0 && frameData.at(offset + 1) == 0) {
+        offset += 8;
+        ch.number = 0;
+    } else
+        return ret;
+
+    int start_pos = (frameData.at(offset) << 8) + frameData.at(offset + 1);
+    offset += 2;
+    int len = (frameData.at(offset) << 8) + frameData.at(offset + 1);
+    offset += 2;
+
+    for (int i = 0; i < len; i++) {
+        ch.key.append(i + start_pos);
+        ch.value.append((frameData.at(offset + 0) << 8) + frameData.at(offset + 1));
+        offset += 2;
+    }
+    ret.append(ch);
+    return ret;
 }
 
 qint32 WaveShow::getFrameNumber()

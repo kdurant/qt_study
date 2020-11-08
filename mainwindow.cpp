@@ -36,12 +36,26 @@ MainWindow::MainWindow(QWidget *parent)
     ui->plot->addGraph();
     ui->plot->graph(0)->setPen(QPen(Qt::red));
     ui->plot->graph(1)->setPen(QPen(Qt::blue));
-    for(int i = 0; i < 100; i++)
-    {
-        ui->plot->graph(0)->addData(i, i % 10);
-        ui->plot->graph(1)->addData(i, (double)i / 10.0);
-    }
-    ui->plot->rescaleAxes();
+    //    for(int i = 0; i < 100; i++)
+    //    {
+    //        ui->plot->graph(0)->addData(i, i % 10);
+    //        ui->plot->graph(1)->addData(i, (double)i / 10.0);
+    //    }
+
+    //    QVector<double> temp;
+    //    for (int var = 0; var < 25; ++var) {
+    //        if (rand() % 2) {
+    //            temp.append(var);
+    //        } else {
+    //            temp.append(20);
+    //        }
+    //    }
+    //    QVector<double> time;
+    //    for (int var = 0; var < 25; ++var) {
+    //        time.append(var);
+    //    }
+    //    ui->plot->graph(0)->setData(time, temp);
+    //        ui->plot->rescaleAxes();
 }
 
 MainWindow::~MainWindow()
@@ -451,6 +465,26 @@ void MainWindow::on_bt_showWave_clicked()
             qDebug() << btn->objectName();
             ui->spin_framePos->setValue(i);
             waveShow->getFrameData(i);
+            //            waveShow->getChData();
+
+            QVector<ChInfo> ch = waveShow->getChData();
+            ui->plot->graph(0)->setData(ch[1].key, ch[1].value);
+
+            //            QVector<double> temp;
+            //            for (int var = 0; var < 25; ++var) {
+            //                if (rand() % 2) {
+            //                    temp.append(var);
+            //                } else {
+            //                    temp.append(20);
+            //                }
+            //            }
+            //            QVector<double> time;
+            //            for (int var = 0; var < 25; ++var) {
+            //                time.append(var);
+            //            }
+            //            ui->plot->graph(0)->setData(time, temp);
+            ui->plot->rescaleAxes();
+
             if (interval_time == 0)
                 continue;
             else {

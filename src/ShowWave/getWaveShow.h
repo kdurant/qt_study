@@ -3,6 +3,14 @@
 #include <QtCore>
 #include <QFile>
 
+class ChInfo
+{
+public:
+    qint32 number;
+    QVector<double> key;
+    QVector<double> value;
+};
+
 class WaveShow : public QObject
 {
     Q_OBJECT
@@ -13,7 +21,8 @@ public:
     {
     }
     void            setWaveFile(QString &file);
-    QVector<qint32> getFrameData(qint32 number);
+    QVector<quint8> getFrameData(qint32 number); // 获得一次采样完整的数据
+    QVector<ChInfo> getChData();
 
 public slots:
     qint32 getFrameNumber();
@@ -26,6 +35,6 @@ private:
     QString         waveFile;
     qint32          sampleFrameNumber;
     QVector<qint32> frameStartPos;
-    QVector<qint32> frameData;
+    QVector<quint8> frameData;
 };
 #endif
