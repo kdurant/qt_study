@@ -467,22 +467,9 @@ void MainWindow::on_bt_showWave_clicked()
             waveShow->getFrameData(i);
             //            waveShow->getChData();
 
-            QVector<ChInfo> ch = waveShow->getChData();
-            ui->plot->graph(0)->setData(ch[1].key, ch[1].value);
-
-            //            QVector<double> temp;
-            //            for (int var = 0; var < 25; ++var) {
-            //                if (rand() % 2) {
-            //                    temp.append(var);
-            //                } else {
-            //                    temp.append(20);
-            //                }
-            //            }
-            //            QVector<double> time;
-            //            for (int var = 0; var < 25; ++var) {
-            //                time.append(var);
-            //            }
-            //            ui->plot->graph(0)->setData(time, temp);
+            QVector<ChInfo> allCh;
+            waveShow->getChData(allCh);
+            ui->plot->graph(0)->setData(allCh[0].key, allCh[0].value);
             ui->plot->rescaleAxes();
 
             if (interval_time == 0)

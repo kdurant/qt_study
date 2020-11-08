@@ -22,7 +22,7 @@ public:
     }
     void            setWaveFile(QString &file);
     QVector<quint8> getFrameData(qint32 number); // 获得一次采样完整的数据
-    QVector<ChInfo> getChData();
+    int getChData(QVector<ChInfo> &ret);
 
 public slots:
     qint32 getFrameNumber();

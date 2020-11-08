@@ -24,9 +24,9 @@ QVector<quint8> WaveShow::getFrameData(qint32 number)
     }
 }
 
-QVector<ChInfo> WaveShow::getChData()
+int WaveShow::getChData(QVector<ChInfo> &allCh)
 {
-    QVector<ChInfo> ret = {{0, {0}, {0}}};
+    int ret = 0;
     ChInfo ch;
     int offset = 88;
 
@@ -52,7 +52,7 @@ QVector<ChInfo> WaveShow::getChData()
         ch.value.append((frameData.at(offset + 0) << 8) + frameData.at(offset + 1));
         offset += 2;
     }
-    ret.append(ch);
+    allCh.append(ch);
     return ret;
 }
 
