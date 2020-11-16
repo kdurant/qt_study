@@ -30,7 +30,7 @@ public:
         QByteArray ba = int2ba(addr);
         emit       flashCommandReadySet(MasterSet::ERASE_ADDR, 4, ba);
         QEventLoop loop;
-        QTimer::singleShot(1000, &loop, SLOT(quit()));
+        QTimer::singleShot(2000, &loop, SLOT(quit()));
         loop.exec();
     }
 
@@ -60,10 +60,15 @@ public:
     {
         writeData     = data;
         QByteArray ba = int2ba(addr);
-        emit       flashCommandReadySet(MasterSet::WRITE_ADDR, 4, ba);
+
         emit       flashCommandReadySet(MasterSet::WRITE_DATA, data.size(), data);
-        ba = int2ba(0x11111111);
-        emit flashCommandReadySet(MasterSet::WRITE_RUN, 4, ba);
+        QEventLoop waitLoop;
+        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
+        waitLoop.exec();
+
+        emit flashCommandReadySet(MasterSet::WRITE_ADDR, 4, ba);
+        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
+        waitLoop.exec();
     }
 
     bool flashUpdate(QString& filePath)

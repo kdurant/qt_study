@@ -254,7 +254,11 @@ void MainWindow::initSignalSlot()
         {
             data.append(i);
         }
+        ui->btnNorFlashWrite->setEnabled(false);
+        updateFlash->flashErase(addr);
+
         updateFlash->flashWrite(addr, data);
+        ui->btnNorFlashWrite->setEnabled(true);
     });
 }
 
