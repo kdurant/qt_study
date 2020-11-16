@@ -372,19 +372,18 @@ void MainWindow::on_btnNorFlashErase_clicked()
 
 void MainWindow::on_btnNorFlasshReadFile_clicked()
 {
-    uint32_t startAddr, endAddr;
+    uint32_t startAddr, needNum;
     if(ui->rBtnDecAddr->isChecked())
     {
         startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
-        endAddr   = ui->lineEdit_NorFlashEndAddr->text().toInt(nullptr, 10);
+        needNum   = ui->lineEdit_NorFlashReadLen->text().toInt(nullptr, 10) / 256;
     }
     else
     {
         startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
-        endAddr   = ui->lineEdit_NorFlashEndAddr->text().toInt(nullptr, 16);
+        needNum   = ui->lineEdit_NorFlashReadLen->text().toInt(nullptr, 16) / 256;
     }
 
-    uint32_t needNum = ((endAddr - startAddr) / 256);
     ui->pBarNorFlashRead->setValue(0);
     ui->pBarNorFlashRead->setMaximum(needNum - 1);
 

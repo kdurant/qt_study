@@ -103,7 +103,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>7</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -816,12 +816,12 @@
                  <item>
                   <widget class="QLabel" name="label_3">
                    <property name="text">
-                    <string>结束地址:</string>
+                    <string>数据长度:</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="lineEdit_NorFlashEndAddr">
+                  <widget class="QLineEdit" name="lineEdit_NorFlashReadLen">
                    <property name="text">
                     <string>1024</string>
                    </property>
