@@ -45,6 +45,7 @@ public:
         emit       flashCommandReadySet(MasterSet::READ_ADDR, 4, ba);
         QEventLoop waitLoop;
         connect(this, SIGNAL(recvFlashData()), &waitLoop, SLOT(quit()));
+        QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
         waitLoop.exec();
         isRecvFlashData = false;
         return readData;

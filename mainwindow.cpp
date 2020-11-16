@@ -342,8 +342,6 @@ void MainWindow::on_pushButton_ReadInfo_clicked()
 
     frame = dispatch->encode(MasterSet::SYS_INFO, 4, 0x00000001);
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-
-    //    updateFlash->flashRead(0x00);
 }
 
 void MainWindow::on_checkBox_autoZoom_stateChanged(int arg1)
@@ -410,8 +408,7 @@ void MainWindow::on_btnNorFlasshReadFile_clicked()
     {
         ui->pBarNorFlashRead->setValue(i);
 
-        currentAddr = startAddr + 256 * i;
-        //        updateFlash->flashRead(currentAddr);
+        currentAddr     = startAddr + 256 * i;
         QByteArray data = updateFlash->flashRead(currentAddr);
         file.write(data);
     }
