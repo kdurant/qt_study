@@ -202,7 +202,6 @@ void MainWindow::initSignalSlot()
 
     connect(preview, SIGNAL(previewReadyShow()), this, SLOT(processPreview()));
     connect(preview, SIGNAL(previewParaReadySet(qint32, qint32, qint32)), this, SLOT(writeUdpatagram(qint32, qint32, qint32)));
-    connect(dispatch, SIGNAL(infoDataReady(uint32_t, QByteArray &)), this, SLOT(changeUIInfo(uint32_t, QByteArray &)));
 
     connect(updateFlash,
             SIGNAL(flashCommandReadySet(uint32_t, uint32_t, QByteArray &)),
