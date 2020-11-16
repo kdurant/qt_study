@@ -62,22 +62,15 @@ void MainWindow::initParameter()
     radarType = configIni->value("System/radarType").toString();
 
     configIni->setValue("Laser/freq", 1111);
-    if(radarType == RADAR_TYPE_760 || radarType == RADAR_TYPE_OCEAN)
-    {
-        deviceIP   = QHostAddress(configIni->value("System/oceanIP").toString());
-        devicePort = configIni->value("System/oceanPort").toInt();
-    }
-    else if(radarType == RADAR_TYPE_LAND)
-    {
-        deviceIP   = QHostAddress(configIni->value("System/landIP").toString());
-        devicePort = configIni->value("System/landPort").toInt();
-    }
-    else
-    {
-        deviceIP   = QHostAddress(configIni->value("System/oceanIP").toString());
-        devicePort = configIni->value("System/oceanPort").toInt();
-    }
 
+    deviceIP   = QHostAddress(configIni->value("System/radarIP").toString());
+    devicePort = configIni->value("System/radarPort").toInt();
+
+    if(devicePort == 0)
+    {
+        QMessageBox::critical(this, "error", "请在配置文件中指定设备IP地址和端口号");
+        return;
+    }
     //configIni->setValue("System/RadarType", "land");
     ui->lineEdit_laser_freq->setText(configIni->value("Laser/freq").toString());
 

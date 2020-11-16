@@ -44,7 +44,7 @@ public:
         QByteArray ba = int2ba(addr);
         emit       flashCommandReadySet(MasterSet::READ_ADDR, 4, ba);
         QEventLoop waitLoop;
-        connect(this, SIGNAL(recvFlashData()), &waitLoop, SLOT(quit()));
+        connect(this, &UpdateBin::recvFlashData, &waitLoop, &QEventLoop::quit);
         QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
         waitLoop.exec();
         isRecvFlashData = false;
