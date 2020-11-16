@@ -468,6 +468,7 @@ void MainWindow::on_bt_showWave_clicked()
                 ui->plot->graph(n)->setData(allCh[n].key, allCh[n].value);
             }
             ui->plot->rescaleAxes();
+            ui->plot->replot();
 
             if(interval_time == 0)
                 continue;
