@@ -193,11 +193,6 @@ void MainWindow::writeUdpatagram(uint32_t command, uint32_t data_len, QByteArray
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }
 
-void MainWindow::updateFrameNumber(qint32 number)
-{
-    ui->lineEdit_validFrameNum->setText(QString::number(number));
-}
-
 void MainWindow::initSignalSlot()
 {
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagram()));

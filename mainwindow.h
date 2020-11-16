@@ -66,8 +66,6 @@ private slots:
     void writeUdpatagram(qint32 command, qint32 data_len, qint32 data);
     void writeUdpatagram(uint32_t command, uint32_t data_len, QByteArray &data);
 
-    void updateFrameNumber(qint32 number);
-
     void on_actionNote_triggered();
 
     void on_pushButton_setPreviewPara_clicked();
