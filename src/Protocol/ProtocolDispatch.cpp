@@ -7,7 +7,7 @@ quint32 ProtocolDispatch::cmdNum = 0;
  * @brief 根据协议预定好的命令，将收到的信息，发送给指定的模块处理
  * @param data
  */
-void ProtocolDispatch::dipatchData(QByteArray &data)
+void ProtocolDispatch::parserFrame(QByteArray &data)
 {
     uint32_t command = getCommand(data);
     switch(command)

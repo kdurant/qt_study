@@ -20,6 +20,9 @@ public:
     };
 };
 
+/**
+ * @brief ProtocolDispatch, 根据数据帧的命令字段内容，发射相应的信号给具体的处理模块
+ */
 class ProtocolDispatch : public QObject
 {
     Q_OBJECT
@@ -36,7 +39,7 @@ public:
      * @brief 通过信号将收到的数据分发给具体处理的模块
      * @param data
      */
-    void dipatchData(QByteArray &data);
+    void parserFrame(QByteArray &data);
 
     static uint32_t getCommand(QByteArray &data)
     {
@@ -55,10 +58,7 @@ public:
     QByteArray encode(qint32 command, qint32 data_len, qint32 data);
     QByteArray encode(qint32 command, qint32 data_len, QByteArray &data);
 
-    QString getDeviceVersion()
-    {
-        return deviceVersion;
-    }
+    QString getDeviceVersion() { return deviceVersion; }
 
 signals:
     /**
@@ -83,7 +83,7 @@ private:
     quint32          packetNum;
     quint32          validDataLen;
     QVector<quint16> data;
-    quint32          checksum;
+    quint32 checksum;
 
     QString deviceVersion;
 };

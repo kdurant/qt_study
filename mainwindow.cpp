@@ -165,7 +165,7 @@ void MainWindow::processPendingDatagram()
         datagram.resize(len);
         udpSocket->readDatagram(datagram.data(), datagram.size());
 
-        dispatch->dipatchData(datagram);
+        dispatch->parserFrame(datagram);
     }
 }
 
