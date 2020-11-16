@@ -3,12 +3,17 @@
 
 quint32 ProtocolDispatch::cmdNum = 0;
 
+/**
+ * @brief 根据协议预定好的命令，将收到的信息，发送给指定的模块处理
+ * @param data
+ */
 void ProtocolDispatch::dipatchData(QByteArray &data)
 {
     uint32_t command = getCommand(data);
     switch(command)
     {
         case SlaveUp::SYS_INFO:
+            deviceVersion = data.mid(272, 8);
             emit infoDataReady(command, data);
             break;
         case SlaveUp::COMMAND_CNT:

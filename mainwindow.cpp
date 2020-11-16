@@ -193,18 +193,6 @@ void MainWindow::writeUdpatagram(uint32_t command, uint32_t data_len, QByteArray
     udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 }
 
-void MainWindow::changeUIInfo(uint32_t command, QByteArray &data)
-{
-    switch(command)
-    {
-        case SlaveUp::SYS_INFO:
-            ui->lineEdit_fpgaVer->setText(data.mid(272, 8));
-            break;
-        default:
-            break;
-    }
-}
-
 void MainWindow::updateFrameNumber(qint32 number)
 {
     ui->lineEdit_validFrameNum->setText(QString::number(number));
@@ -255,6 +243,22 @@ void MainWindow::initSignalSlot()
 
     connect(ui->bt_showWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
     connect(ui->btn_stopShowWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
+}
+
+void MainWindow::getDeviceVersion(QString &version)
+{
+    QByteArray frame;
+
+    frame = dispatch->encode(MasterSet::SYS_INFO, 4, 0x00000001);
+    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+
+    QEventLoop waitLoop;
+    connect(dispatch, &ProtocolDispatch::infoDataReady, &waitLoop, &QEventLoop::quit);
+    QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
+    waitLoop.exec();
+
+    version = dispatch->getDeviceVersion();
+    ui->lineEdit_fpgaVer->setText(version);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -331,10 +335,8 @@ void MainWindow::on_pushButton_sampleEnable_clicked()
 
 void MainWindow::on_pushButton_ReadInfo_clicked()
 {
-    QByteArray frame;
-
-    frame = dispatch->encode(MasterSet::SYS_INFO, 4, 0x00000001);
-    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+    QString version;
+    getDeviceVersion(version);
 }
 
 void MainWindow::on_checkBox_autoZoom_stateChanged(int arg1)

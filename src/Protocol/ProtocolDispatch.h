@@ -55,6 +55,11 @@ public:
     QByteArray encode(qint32 command, qint32 data_len, qint32 data);
     QByteArray encode(qint32 command, qint32 data_len, QByteArray &data);
 
+    QString getDeviceVersion()
+    {
+        return deviceVersion;
+    }
+
 signals:
     /**
      * @brief 系统状态不转发，直接返回
@@ -79,5 +84,7 @@ private:
     quint32          validDataLen;
     QVector<quint16> data;
     quint32          checksum;
+
+    QString deviceVersion;
 };
 #endif

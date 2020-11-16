@@ -49,6 +49,8 @@ public:
 
     void initSignalSlot();
 
+    void getDeviceVersion(QString &version);
+
 protected:
     void closeEvent(QCloseEvent *event);
 
@@ -63,8 +65,6 @@ private slots:
 
     void writeUdpatagram(qint32 command, qint32 data_len, qint32 data);
     void writeUdpatagram(uint32_t command, uint32_t data_len, QByteArray &data);
-
-    void changeUIInfo(uint32_t command, QByteArray &data);
 
     void updateFrameNumber(qint32 number);
 
@@ -107,7 +107,7 @@ private:
     quint32 sampleFrameNumber;
 
     WaveShow *waveShow;
-    bool running;
+    bool      running;
 };
 
 #endif  // MAINWINDOW_H

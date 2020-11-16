@@ -1,6 +1,10 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
+/*
+ * 声明协议里的一些变量
+ */
+
 class MasterSet
 {
 public:
