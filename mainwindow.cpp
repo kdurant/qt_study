@@ -93,7 +93,7 @@ void MainWindow::initParameter()
     ui->lineEdit_compressRatio->setText(configIni->value("Preview/compressRatio").toString());
 
     ui->rBtn_radarType->setChecked(true);
-    ui->rBtn_radarType->setText(radarType + "雷达");
+    //    ui->rBtn_radarType->setText(radarType + "雷达");
 
     sampleFrameNumber = 0;
 }
@@ -139,11 +139,12 @@ void MainWindow::uiConfig()
     }
     else
     {
+        ui->tabWidget->setTabEnabled(2, false);
         ui->tabWidget->setTabEnabled(3, false);
         ui->tabWidget->setTabEnabled(4, false);
         ui->tabWidget->setTabEnabled(5, false);
         ui->tabWidget->setTabEnabled(6, false);
-        ui->tabWidget->setTabEnabled(7, false);
+        //        ui->tabWidget->setTabEnabled(7, false);
     }
     ui->rBtnDecAddr->setChecked(true);
     ui->checkBox_autoZoom->setChecked(true);
@@ -429,21 +430,24 @@ void MainWindow::on_bt_selectShowFile_clicked()
 
 void MainWindow::on_bt_showWave_clicked()
 {
-    int total         = ui->lineEdit_validFrameNum->text().toInt();
-    if (total == 0)
+    int total = ui->lineEdit_validFrameNum->text().toInt();
+    if(total == 0)
         QMessageBox::warning(this, "warning", "没有有效数据");
-    int start_index = ui->spin_framePos->value();
-    int interval_num = ui->lineEdit_previewFrameInterval->text().toInt();
+    int start_index   = ui->spin_framePos->value();
+    int interval_num  = ui->lineEdit_previewFrameInterval->text().toInt();
     int interval_time = ui->lineEdit_previewTimeInterval->text().toInt();
 
     QPushButton *btn = qobject_cast<QPushButton *>(sender());
-    if (btn->objectName() == "bt_showWave")
+    if(btn->objectName() == "bt_showWave")
         running = true;
-    else {
+    else
+    {
         running = false;
     }
-    for (int i = start_index; i < total; i += interval_num) {
-        if (running) {
+    for(int i = start_index; i < total; i += interval_num)
+    {
+        if(running)
+        {
             qDebug() << btn->objectName();
             ui->spin_framePos->setValue(i);
             waveShow->getFrameData(i);
@@ -451,19 +455,23 @@ void MainWindow::on_bt_showWave_clicked()
 
             QVector<ChInfo> allCh;
             waveShow->getChData(allCh);
-            for (int n = 0; n < allCh.size(); n++) {
+            for(int n = 0; n < allCh.size(); n++)
+            {
                 ui->plot->graph(n)->setData(allCh[n].key, allCh[n].value);
             }
             ui->plot->rescaleAxes();
 
-            if (interval_time == 0)
+            if(interval_time == 0)
                 continue;
-            else {
+            else
+            {
                 QEventLoop eventloop;
                 QTimer::singleShot(interval_time, &eventloop, SLOT(quit()));
                 eventloop.exec();
             }
-        } else {
+        }
+        else
+        {
             QMessageBox::warning(this, "warning", "结束");
             return;
         }
