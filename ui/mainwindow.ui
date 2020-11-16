@@ -833,13 +833,19 @@
                 <layout class="QHBoxLayout" name="horizontalLayout_3">
                  <item>
                   <widget class="QPushButton" name="btnNorFlashErase">
+                   <property name="toolTip">
+                    <string>擦除起始地址所在的扇区</string>
+                   </property>
                    <property name="text">
                     <string>擦除扇区</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_9">
+                  <widget class="QPushButton" name="btnNorFlashWrite">
+                   <property name="toolTip">
+                    <string>在起始地址所在的地址写入256个默认数据</string>
+                   </property>
                    <property name="text">
                     <string>写入扇区</string>
                    </property>

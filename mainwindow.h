@@ -20,6 +20,7 @@
 #include <QMessageBox>
 #include <QSlider>
 #include <QSpinBox>
+#include <QPushButton>
 
 #include <QThread>
 

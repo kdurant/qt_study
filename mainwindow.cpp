@@ -238,6 +238,24 @@ void MainWindow::initSignalSlot()
 
     connect(ui->bt_showWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
     connect(ui->btn_stopShowWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
+
+    connect(ui->btnNorFlashWrite, &QPushButton::pressed, this, [this]() {
+        uint32_t addr;
+        if(ui->rBtnDecAddr->isChecked())
+        {
+            addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
+        }
+        else
+        {
+            addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+        }
+        QByteArray data;
+        for(int i = 0; i < 256; i++)
+        {
+            data.append(i);
+        }
+        updateFlash->flashWrite(addr, data);
+    });
 }
 
 void MainWindow::getDeviceVersion(QString &version)
