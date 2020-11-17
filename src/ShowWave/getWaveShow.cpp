@@ -2,18 +2,17 @@
 
 bool WaveShow::isChDataHead(int offset)
 {
-    return (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90
-            && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a);
+    return (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90 && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a);
 }
 
 int WaveShow::getChNumber(int offset)
 {
     int number;
-    if (frameData.at(offset + 0) == 0 && frameData.at(offset + 1) == 0)
+    if(frameData.at(offset + 0) == 0 && frameData.at(offset + 1) == 0)
         number = 0;
-    else if (frameData.at(offset + 0) == 0x0f && frameData.at(offset + 1) == 0x0f)
+    else if(frameData.at(offset + 0) == 0x0f && frameData.at(offset + 1) == 0x0f)
         number = 1;
-    else if (frameData.at(offset + 0) == 0xf0 && frameData.at(offset + 1) == 0xf0)
+    else if(frameData.at(offset + 0) == 0xf0 && frameData.at(offset + 1) == 0xf0)
         number = 2;
     else
         number = 3;
@@ -46,12 +45,13 @@ QVector<quint8> WaveShow::getFrameData(qint32 number)
 
 int WaveShow::getChData(QVector<ChInfo> &allCh)
 {
-    int ret = 0;
+    int    ret = 0;
     ChInfo ch;
-    int offset = 88;
+    int    offset = 88;
 
-    while (offset < frameData.size()) {
-        if (isChDataHead(offset))
+    while(offset < frameData.size())
+    {
+        if(isChDataHead(offset))
             offset += 4;
         else
             return ret;
@@ -64,7 +64,8 @@ int WaveShow::getChData(QVector<ChInfo> &allCh)
         int len = (frameData.at(offset) << 8) + frameData.at(offset + 1);
         offset += 2;
 
-        for (int i = 0; i < len; i++) {
+        for(int i = 0; i < len; i++)
+        {
             ch.key.append(i + start_pos);
             ch.value.append((frameData.at(offset + 0) << 8) + frameData.at(offset + 1));
             offset += 2;
@@ -90,7 +91,7 @@ qint32 WaveShow::getFrameNumber()
         if(buffer[0] == 0x01 && buffer[1] == 0x23 && buffer[2] == 0x45 && buffer[3] == 0x67)
         {
             frameStartPos.push_back(offset);
-            if(sampleFrameNumber++ % 100000 == 0)
+            if(sampleFrameNumber++ % 3000 == 0)
             {
                 emit sendSampleFrameNumber(sampleFrameNumber);
             }

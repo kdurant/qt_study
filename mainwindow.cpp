@@ -478,7 +478,6 @@ void MainWindow::on_bt_showWave_clicked()
     {
         if(running)
         {
-            qDebug() << btn->objectName();
             ui->spin_framePos->setValue(i);
             waveShow->getFrameData(i);
             //            waveShow->getChData();
@@ -503,7 +502,6 @@ void MainWindow::on_bt_showWave_clicked()
         }
         else
         {
-            QMessageBox::warning(this, "warning", "结束");
             return;
         }
     }
