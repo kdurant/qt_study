@@ -139,7 +139,6 @@ void MainWindow::uiConfig()
         ui->tabWidget->setTabEnabled(6, false);
         //        ui->tabWidget->setTabEnabled(7, false);
     }
-    ui->rBtnDecAddr->setChecked(true);
     ui->checkBox_autoZoom->setChecked(true);
     labelVer = new QLabel(SOFTWARE_VER);
     ui->statusBar->addPermanentWidget(labelVer);
