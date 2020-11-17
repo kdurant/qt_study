@@ -266,6 +266,21 @@ void MainWindow::initSignalSlot()
         ui->lineEdit_updateFilePath->setText(updateFilePath);
         updateFlash->flashUpdate(updateFilePath);
     });
+
+    connect(ui->btn_startUpdate, &QPushButton::pressed, this, [this]() {
+        QString updateFilePath = ui->lineEdit_updateFilePath->text();
+        if(updateFilePath.isEmpty())
+        {
+            QMessageBox::warning(this, "warning", "请先选择文件");
+            return;
+        }
+        ui->pBar_updateBin->setMaximum(QFile(updateFilePath).size() - 1);
+        updateFlash->flashUpdate(updateFilePath);
+    });
+
+    connect(updateFlash, &UpdateBin::updatedBytes, this, [this](qint32 bytes) {
+        ui->pBar_updateBin->setValue(bytes);
+    });
 }
 
 void MainWindow::getDeviceVersion(QString &version)

@@ -80,16 +80,28 @@ public:
         QByteArray writeData;
         QByteArray secondData;
 
-        //        while(!file.atEnd())
+        while(!file.atEnd())
         {
             writeData = file.read(UpdateBin::BYTES_PER_WRITE);
             if(hasWriteBytes % UpdateBin::FLASH_BLOCK_SIZE == 0)
             {
                 flashErase(BIN_FILE_OFFSET + hasWriteBytes);
             }
+            auto swapByteOrder = [&writeData]() {
+                int len = writeData.length();
+                for(int i = 0; i < len; i += 2)
+                {
+                    uint8_t temp;
+                    temp             = writeData[i];
+                    writeData[i]     = writeData[i + 1];
+                    writeData[i + 1] = temp;
+                }
+            };
+            swapByteOrder();
 
             flashWrite(BIN_FILE_OFFSET + hasWriteBytes, writeData);
             secondData = flashRead(BIN_FILE_OFFSET + hasWriteBytes);
+            emit updatedBytes(hasWriteBytes);
 
             // 只有最后一次才会出现这种情况
             if(hasWriteBytes != UpdateBin::BYTES_PER_WRITE)
@@ -112,6 +124,8 @@ signals:
     void flashCommandReadySet(uint32_t command, uint32_t data_len, QByteArray& data);
     void flashCommandReadySet1();
     void recvFlashData();
+    // 已经更新的字节数
+    void updatedBytes(uint32_t bytes);
 
 private:
     QByteArray frame;
