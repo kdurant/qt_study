@@ -265,7 +265,6 @@ void MainWindow::initSignalSlot()
         if(updateFilePath.size() == 0)
             return;
         ui->lineEdit_updateFilePath->setText(updateFilePath);
-        updateFlash->flashUpdate(updateFilePath);
     });
 
     connect(ui->btn_startUpdate, &QPushButton::pressed, this, [this]() {
@@ -280,6 +279,7 @@ void MainWindow::initSignalSlot()
     });
 
     connect(updateFlash, &UpdateBin::updatedBytes, this, [this](qint32 bytes) {
+        qDebug() << "has write " << bytes;
         ui->pBar_updateBin->setValue(bytes);
     });
 }

@@ -52,6 +52,8 @@ public:
 
     void getDeviceVersion(QString &version);
 
+    void adadaf();
+
 protected:
     void closeEvent(QCloseEvent *event);
 
