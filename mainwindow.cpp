@@ -3,12 +3,13 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-      ui(new Ui::MainWindow)
+      ui(new Ui::MainWindow),
+      configIni(new QSettings("../Radar/config.ini", QSettings::IniFormat)),
+      thread(new QThread())
 {
     ui->setupUi(this);
     setWindowTitle(tr("雷达控制软件"));
 
-    thread      = new QThread();
     dispatch    = new ProtocolDispatch();
     preview     = new PreviewProcess();
     updateFlash = new UpdateBin();
@@ -21,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     //    connect(waveShow, SIGNAL(finishSampleFrameNumber()), waveShow, SLOT(deleteLater()));
     //    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
-    configIni = new QSettings("../Radar/config.ini", QSettings::IniFormat);
+    //    configIni = new QSettings("../Radar/config.ini", QSettings::IniFormat);
 
     initParameter();
     uiConfig();
