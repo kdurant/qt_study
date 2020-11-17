@@ -25,9 +25,9 @@
 #include <QThread>
 
 #include "ProtocolDispatch.h"
-#include "./src/Protocol/PreviewProcess.h"
-#include "./src/UpdateBin/UpdateBin.h"
-#include "./src/ShowWave/getWaveShow.h"
+#include "PreviewProcess.h"
+#include "UpdateBin.h"
+#include "getWaveShow.h"
 
 namespace Ui
 {

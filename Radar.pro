@@ -69,6 +69,8 @@ HEADERS += \
     src/Protocol/PreviewProcess.h
 
 INCLUDEPATH += ./src/Protocol
+INCLUDEPATH += ./src/UpdateBin
+INCLUDEPATH += ./src/ShowWave
 
 FORMS += \
         ui/mainwindow.ui \

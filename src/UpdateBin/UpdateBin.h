@@ -1,9 +1,9 @@
 #ifndef UPDATE_BIN_H
 #define UPDATE_BIN_H
 
-#include <QtCore>
+#include "protocol.h"
 #include <QMessageBox>
-#include "src/Protocol/protocol.h"
+#include <QtCore>
 
 class UpdateBin : public QObject
 {
