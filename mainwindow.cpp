@@ -258,6 +258,14 @@ void MainWindow::initSignalSlot()
         updateFlash->flashWrite(addr, data);
         ui->btnNorFlashWrite->setEnabled(true);
     });
+
+    connect(ui->btn_selectUpdateFile, &QPushButton::pressed, this, [this]() {
+        QString updateFilePath = QFileDialog::getOpenFileName(this, tr(""), "", tr("*.bin"));  //选择路径
+        if(updateFilePath.size() == 0)
+            return;
+        ui->lineEdit_updateFilePath->setText(updateFilePath);
+        updateFlash->flashUpdate(updateFilePath);
+    });
 }
 
 void MainWindow::getDeviceVersion(QString &version)

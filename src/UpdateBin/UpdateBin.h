@@ -10,8 +10,9 @@ class UpdateBin : public QObject
 public:
     enum
     {
-        BYTES_PER_WRITE  = 128,
-        FLASH_BLOCK_SIZE = 0x10000
+        BYTES_PER_WRITE  = 256,
+        FLASH_BLOCK_SIZE = 0x10000,
+        BIN_FILE_OFFSET  = 0x4000000
     };
     UpdateBin()
     {
@@ -79,16 +80,16 @@ public:
         QByteArray writeData;
         QByteArray secondData;
 
-        while(!file.atEnd())
+        //        while(!file.atEnd())
         {
             writeData = file.read(UpdateBin::BYTES_PER_WRITE);
             if(hasWriteBytes % UpdateBin::FLASH_BLOCK_SIZE == 0)
             {
-                //            flashErase(hasWriteBytes);
+                flashErase(BIN_FILE_OFFSET + hasWriteBytes);
             }
 
-            flashWrite(hasWriteBytes, writeData);
-            secondData = flashRead(hasWriteBytes);
+            flashWrite(BIN_FILE_OFFSET + hasWriteBytes, writeData);
+            secondData = flashRead(BIN_FILE_OFFSET + hasWriteBytes);
 
             // 只有最后一次才会出现这种情况
             if(hasWriteBytes != UpdateBin::BYTES_PER_WRITE)
