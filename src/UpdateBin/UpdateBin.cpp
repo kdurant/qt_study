@@ -3,6 +3,85 @@
 #include "src/Protocol/ProtocolDispatch.h"
 #include "UpdateBin.h"
 
+void UpdateBin::flashErase(uint32_t addr)
+{
+    QByteArray ba = int2ba(addr);
+    emit flashCommandReadySet(MasterSet::ERASE_ADDR, 4, ba);
+    QEventLoop loop;
+    QTimer::singleShot(2000, &loop, SLOT(quit()));
+    loop.exec();
+}
+
+QByteArray UpdateBin::flashRead(uint32_t addr)
+{
+    QByteArray ba = int2ba(addr);
+    emit flashCommandReadySet(MasterSet::READ_ADDR, 4, ba);
+    QEventLoop waitLoop;
+    connect(this, &UpdateBin::recvFlashData, &waitLoop, &QEventLoop::quit);
+    QTimer::singleShot(5, &waitLoop, &QEventLoop::quit);
+    waitLoop.exec();
+    isRecvFlashData = false;
+    return readData;
+}
+
+void UpdateBin::flashWrite(uint32_t addr, QByteArray &data)
+{
+    writeData = data;
+    QByteArray ba = int2ba(addr);
+
+    emit flashCommandReadySet(MasterSet::WRITE_DATA, data.size(), data);
+    QEventLoop waitLoop;
+    QTimer::singleShot(1, &waitLoop, &QEventLoop::quit);
+    waitLoop.exec();
+
+    emit flashCommandReadySet(MasterSet::WRITE_ADDR, 4, ba);
+    QTimer::singleShot(5, &waitLoop, &QEventLoop::quit);
+    waitLoop.exec();
+}
+
+bool UpdateBin::flashUpdate(QString &filePath)
+
+{
+    QFile file(filePath);
+    file.open(QIODevice::ReadOnly);
+    uint32_t hasWriteBytes = 0;
+    QByteArray writeData;
+    QByteArray secondData;
+
+    while (!file.atEnd()) {
+        writeData = file.read(UpdateBin::BYTES_PER_WRITE);
+        int len = writeData.length();
+        if (hasWriteBytes % UpdateBin::FLASH_BLOCK_SIZE == 0) {
+            flashErase(BIN_FILE_OFFSET + hasWriteBytes);
+        }
+        auto swapByteOrder = [&writeData](int len) {
+            for (int i = 0; i < len; i += 2) {
+                uint8_t temp;
+                temp = writeData[i];
+                writeData[i] = writeData[i + 1];
+                writeData[i + 1] = temp;
+            }
+        };
+        swapByteOrder(len);
+
+        flashWrite(BIN_FILE_OFFSET + hasWriteBytes, writeData);
+        secondData = flashRead(BIN_FILE_OFFSET + hasWriteBytes);
+
+        // 只有最后一次才会出现这种情况
+        if (len != UpdateBin::BYTES_PER_WRITE) {
+            return writeData == readData.mid(0, len);
+        } else {
+            if (writeData != readData) {
+                QMessageBox::critical(NULL, "critical", "写入数据错误");
+                return false;
+            }
+        }
+        hasWriteBytes += len;
+        emit updatedBytes(hasWriteBytes);
+    }
+    return true;
+}
+
 void UpdateBin::setDataFrame(QByteArray &frame)
 {
     if(ProtocolDispatch::getCommand(frame) == SlaveUp::FLASH_DATA)
