@@ -45,7 +45,10 @@ SOURCES += \
     src/DevInfo/DevInfo.cpp \
     src/UpdateBin/UpdateBin.cpp \
     src/Protocol/ProtocolDispatch.cpp \
-    src/Protocol/PreviewProcess.cpp
+    src/Protocol/PreviewProcess.cpp \
+    src/laser/LaserController.cpp \
+    src/motor/MotorController.cpp \
+    src/motor/Epos2Controller.cpp
 
 HEADERS += \
     stable.h \
@@ -64,11 +67,16 @@ HEADERS += \
     src/UpdateBin/UpdateBin.h \
     src/Protocol/protocol.h \
     src/Protocol/ProtocolDispatch.h \
-    src/Protocol/PreviewProcess.h
+    src/Protocol/PreviewProcess.h \
+    src/laser/LaserController.h \
+    src/motor/MotorController.h \
+    src/motor/Epos2Controller.h
 
 INCLUDEPATH += ./src/Protocol
 INCLUDEPATH += ./src/UpdateBin
 INCLUDEPATH += ./src/ShowWave
+INCLUDEPATH += ./src/motor
+INCLUDEPATH += ./src/laser
 
 FORMS += \
         ui/mainwindow.ui \

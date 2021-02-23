@@ -8,7 +8,6 @@ MainWindow::MainWindow(QWidget *parent) :
     thread(new QThread())
 {
     ui->setupUi(this);
-    setWindowTitle(tr("雷达控制软件"));
 
     dispatch    = new ProtocolDispatch();
     preview     = new PreviewProcess();
@@ -107,6 +106,7 @@ void MainWindow::uiConfig()
 {
     if(radarType == RADAR_TYPE_760)
     {
+        setWindowTitle(tr("760雷达控制软件"));
         ui->lineEdit_radarType->setText("760雷达");
         ui->label_secondStartPos->hide();
         ui->label_secondLen->hide();
@@ -119,6 +119,7 @@ void MainWindow::uiConfig()
     }
     else if(radarType == RADAR_TYPE_DOUBLE)
     {
+        setWindowTitle(tr("双波长雷达控制软件"));
         ui->lineEdit_radarType->setText("双波长雷达");
         ui->label_subThreshold->hide();
         ui->lineEdit_subThreshold->hide();
@@ -132,6 +133,7 @@ void MainWindow::uiConfig()
     }
     else
     {
+        setWindowTitle(tr("雷达控制软件"));
         ui->tabWidget->setTabEnabled(2, false);
         ui->tabWidget->setTabEnabled(3, false);
         ui->tabWidget->setTabEnabled(4, false);

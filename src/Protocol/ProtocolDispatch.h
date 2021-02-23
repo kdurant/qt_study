@@ -35,10 +35,6 @@ public:
     {
     }
 
-    /**
-     * @brief 通过信号将收到的数据分发给具体处理的模块
-     * @param data
-     */
     void parserFrame(QByteArray &data);
 
     static uint32_t getCommand(QByteArray &data)
@@ -58,7 +54,10 @@ public:
     QByteArray encode(qint32 command, qint32 data_len, qint32 data);
     QByteArray encode(qint32 command, qint32 data_len, QByteArray &data);
 
-    QString getDeviceVersion() { return deviceVersion; }
+    QString getDeviceVersion()
+    {
+        return deviceVersion;
+    }
 
 signals:
     /**
@@ -83,7 +82,7 @@ private:
     quint32          packetNum;
     quint32          validDataLen;
     QVector<quint16> data;
-    quint32 checksum;
+    quint32          checksum;
 
     QString deviceVersion;
 };
