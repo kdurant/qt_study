@@ -1,11 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    configIni(new QSettings("../Radar/config.ini", QSettings::IniFormat)),
-    thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow),
+      configIni(new QSettings("../Radar/config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
@@ -142,7 +140,9 @@ void MainWindow::uiConfig()
         //        ui->tabWidget->setTabEnabled(7, false);
     }
     ui->checkBox_autoZoom->setChecked(true);
-    labelVer = new QLabel(SOFTWARE_VER);
+    labelVer = new QLabel();
+    labelVer->setText("软件版本：v" + QString(SOFT_VERSION) + "_" + QString(GIT_DATE) + "_"
+                      + QString(GIT_HASH));
     ui->statusBar->addPermanentWidget(labelVer);
 }
 

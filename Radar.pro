@@ -91,3 +91,18 @@ RESOURCES += \
 VERSION = 1.0.1
 
 RC_ICONS = ./qss/radar_icon.ico
+
+GIT_HASH = $$system(git --git-dir $$PWD/.git log -1 --pretty=format:%h)
+DEFINES += GIT_HASH=\\\"$$GIT_HASH\\\"
+
+GIT_DATE = $$system(git --git-dir $$PWD/.git --work-tree $$PWD log -1 --format=%cs )
+DEFINES += GIT_DATE=\\\"$$GIT_DATE\\\"
+
+VERSION = 0.02
+DEFINES += SOFT_VERSION=\"\\\"$$VERSION\\\"\"
+
+TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH
+
+DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
+
+include($$PWD/deploy.pri)
