@@ -73,6 +73,9 @@ signals:
     void previewDataReady(QByteArray &data);
     void flashDataReady(QByteArray &data);
 
+    void laserDataReady(QByteArray &data);
+    void motorDataReady(QByteArray &data);
+
     void remoteUpdateDataReady(QByteArray data);
 
 private:

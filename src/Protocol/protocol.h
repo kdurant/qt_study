@@ -24,13 +24,18 @@ public:
         COMPRESS_LEN   = 0x00200001,
         COMPRESS_RATIO = 0x00200002,
     };
-    enum update
-    {
+    enum laser {
+        LASER_PENETRATE = 0x00000001,
+    };
+    enum motor {
+        MOTOR_PENETRATE = 0x00000003,
+    };
+    enum update {
         ERASE_ADDR = 0x00100000,
-        READ_ADDR  = 0x00100001,
+        READ_ADDR = 0x00100001,
         WRITE_ADDR = 0x00100002,
         WRITE_DATA = 0x00100003,
-        WRITE_RUN  = 0x00100004,
+        WRITE_RUN = 0x00100004,
     };
 };
 
@@ -43,9 +48,14 @@ public:
         COMMAND_CNT  = 0x80000001,
         PREVIEW_DATA = 0x80000006
     };
-    enum recv_update
-    {
-        FLASH_DATA = 0x80100001
+    enum recv_update {
+        FLASH_DATA = 0x80100001,
+    };
+    enum laser {
+        LASER_PENETRATE = 0x00000001,
+    };
+    enum motor {
+        MOTOR_PENETRATE = 0x00000003,
     };
 };
 

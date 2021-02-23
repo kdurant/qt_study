@@ -1,6 +1,7 @@
 #ifndef LASERCONTROLLER_H
 #define LASERCONTROLLER_H
 #include <QtCore>
+
 class LaserController : public QObject
 {
     Q_OBJECT
@@ -14,10 +15,11 @@ public:
 
     LaserController() = default;
 
-    virtual bool setMode(OpenMode mode) const;
-    virtual bool setPower(qint8 power) const;
-    virtual bool open(void) const;
-    virtual bool close(void) const;
+    // API函数准备好控制数据帧
+    virtual bool setMode(OpenMode mode) const { return false; };
+    virtual bool setPower(qint8 power) const { return false; };
+    virtual bool open(void) const { return false; };
+    virtual bool close(void) const { return false; };
 
 signals:
     void sendDataReady(QByteArray& data);

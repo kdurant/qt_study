@@ -29,6 +29,12 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
             //        case MasterSet::COMPRESS_RATIO:
             emit previewDataReady(data);
             break;
+        case SlaveUp::LASER_PENETRATE:
+            emit laserDataReady(data);
+            break;
+        case SlaveUp::MOTOR_PENETRATE:
+            emit motorDataReady(data);
+            break;
         case SlaveUp::FLASH_DATA:
             emit flashDataReady(data);
             break;
