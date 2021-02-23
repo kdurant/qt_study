@@ -973,7 +973,7 @@
   <customwidget>
    <class>QCustomPlot</class>
    <extends>QWidget</extends>
-   <header location="global">./src/QCustomPlot/qcustomplot.h</header>
+   <header location="global">./src/third_lib/QCustomPlot/qcustomplot.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

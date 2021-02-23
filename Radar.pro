@@ -38,7 +38,7 @@ SOURCES += \
 #    src/ChartView/chartview.cpp \
 #    src/Protocol/DoubleWaveProtocol.cpp \
 #    src/Protocol/RadarProtocolBasic.cpp \
-    src/QCustomPlot/qcustomplot.cpp \
+    src/third_lib/QCustomPlot/qcustomplot.cpp \
     src/ShowWave/getWaveData.cpp \
     src/ShowWave/getWaveShow.cpp \
     save.cpp \
@@ -56,7 +56,7 @@ HEADERS += \
 #    src/ChartView/chartview.h \
 #    src/Protocol/DoubleWaveProtocol.h \
 #    src/Protocol/RadarProtocolBasic.h \
-    src/QCustomPlot/qcustomplot.h \
+    src/third_lib/QCustomPlot/qcustomplot.h \
     src/ShowWave/getWaveData.h \
     src/ShowWave/getWaveShow.h \
     save.h \
