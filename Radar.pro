@@ -41,7 +41,6 @@ SOURCES += \
     src/QCustomPlot/qcustomplot.cpp \
     src/ShowWave/getWaveData.cpp \
     src/ShowWave/getWaveShow.cpp \
-    src/UdpProcess/udpserver.cpp \
     save.cpp \
     src/DevInfo/DevInfo.cpp \
     src/UpdateBin/UpdateBin.cpp \
@@ -60,7 +59,6 @@ HEADERS += \
     src/QCustomPlot/qcustomplot.h \
     src/ShowWave/getWaveData.h \
     src/ShowWave/getWaveShow.h \
-    src/UdpProcess/udpserver.h \
     save.h \
     src/DevInfo/DevInfo.h \
     src/UpdateBin/UpdateBin.h \
