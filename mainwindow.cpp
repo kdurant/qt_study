@@ -1,11 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent),
-      ui(new Ui::MainWindow),
-      configIni(new QSettings("../Radar/config.ini", QSettings::IniFormat)),
-      thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow),
+    configIni(new QSettings("../Radar/config.ini", QSettings::IniFormat)),
+    thread(new QThread())
 {
     ui->setupUi(this);
     setWindowTitle(tr("雷达控制软件"));
@@ -86,9 +86,6 @@ void MainWindow::initParameter()
     ui->lineEdit_compressLen->setText(configIni->value("Preview/compressLen").toString());
     ui->lineEdit_compressRatio->setText(configIni->value("Preview/compressRatio").toString());
 
-    ui->rBtn_radarType->setChecked(true);
-    //    ui->rBtn_radarType->setText(radarType + "雷达");
-
     sampleFrameNumber = 0;
 }
 
@@ -96,20 +93,21 @@ void MainWindow::saveParameter()
 {
     //    configIni->setValue("System/RadarType", "land");
     //    configIni->setValue("Laser/freq", ui->lineEdit_laser_freq->text().toInt());
-    configIni->setValue("Preview/sampleLen", ui->lineEdit_sampleLen->text().toInt());
-    configIni->setValue("Preview/sampleRate", ui->lineEdit_sampleRate->text().toInt());
-    configIni->setValue("Preview/firstStartPos", ui->lineEdit_firstStartPos->text().toInt());
-    configIni->setValue("Preview/firstLen", ui->lineEdit_firstLen->text().toInt());
-    configIni->setValue("Preview/secondStartPos", ui->lineEdit_secondStartPos->text().toInt());
-    configIni->setValue("Preview/secondLen", ui->lineEdit_secondLen->text().toInt());
-    configIni->setValue("Preview/compressLen", ui->lineEdit_compressLen->text().toInt());
-    configIni->setValue("Preview/compressRatio", ui->lineEdit_compressRatio->text().toInt());
+    //configIni->setValue("Preview/sampleLen", ui->lineEdit_sampleLen->text().toInt());
+    //configIni->setValue("Preview/sampleRate", ui->lineEdit_sampleRate->text().toInt());
+    //configIni->setValue("Preview/firstStartPos", ui->lineEdit_firstStartPos->text().toInt());
+    //configIni->setValue("Preview/firstLen", ui->lineEdit_firstLen->text().toInt());
+    //configIni->setValue("Preview/secondStartPos", ui->lineEdit_secondStartPos->text().toInt());
+    //configIni->setValue("Preview/secondLen", ui->lineEdit_secondLen->text().toInt());
+    //configIni->setValue("Preview/compressLen", ui->lineEdit_compressLen->text().toInt());
+    //configIni->setValue("Preview/compressRatio", ui->lineEdit_compressRatio->text().toInt());
 }
 
 void MainWindow::uiConfig()
 {
     if(radarType == RADAR_TYPE_760)
     {
+        ui->lineEdit_radarType->setText("760雷达");
         ui->label_secondStartPos->hide();
         ui->label_secondLen->hide();
         ui->label_subThreshold->hide();
@@ -121,6 +119,7 @@ void MainWindow::uiConfig()
     }
     else if(radarType == RADAR_TYPE_DOUBLE)
     {
+        ui->lineEdit_radarType->setText("双波长雷达");
         ui->label_subThreshold->hide();
         ui->lineEdit_subThreshold->hide();
 

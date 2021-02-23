@@ -14,11 +14,11 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout_8">
-    <item row="0" column="0">
+   <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,2">
+    <item>
      <widget class="QScrollArea" name="scrollArea">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -31,7 +31,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>346</width>
+         <width>410</width>
          <height>638</height>
         </rect>
        </property>
@@ -42,13 +42,6 @@
            <string>系统参数</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_9">
-           <item row="2" column="1">
-            <widget class="QRadioButton" name="radioButton_3">
-             <property name="text">
-              <string>陆地雷达</string>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label_44">
              <property name="text">
@@ -56,27 +49,10 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
-            <widget class="QRadioButton" name="radioButton_4">
-             <property name="text">
-              <string>大光斑</string>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="0">
             <widget class="QLabel" name="label_47">
              <property name="text">
               <string>本机IP地址：</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QRadioButton" name="rBtn_radarType">
-             <property name="text">
-              <string>海洋雷达</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -97,13 +73,30 @@
              </property>
             </widget>
            </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>设备类型：</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEdit_radarType">
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="placeholderText">
+              <string>请在配置文件中指定设备类型</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
         </item>
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>7</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -153,129 +146,114 @@
            <attribute name="title">
             <string>show</string>
            </attribute>
-           <widget class="QWidget" name="layoutWidget">
+           <widget class="QWidget" name="">
             <property name="geometry">
              <rect>
-              <x>9</x>
-              <y>9</y>
-              <width>311</width>
+              <x>1</x>
+              <y>11</y>
+              <width>381</width>
               <height>211</height>
              </rect>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_7">
-             <property name="sizeConstraint">
-              <enum>QLayout::SetMinAndMaxSize</enum>
-             </property>
-             <item>
-              <layout class="QGridLayout" name="gridLayout_10">
-               <item row="0" column="0">
-                <widget class="QPushButton" name="bt_selectShowFile">
-                 <property name="text">
-                  <string>选择文件</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_selectShowFile">
-                 <property name="readOnly">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="lable_validFrameNum">
-                 <property name="text">
-                  <string>有效采样帧个数:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QLineEdit" name="lineEdit_validFrameNum">
-                 <property name="text">
-                  <string>0</string>
-                 </property>
-                 <property name="readOnly">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string>预览帧间隔：</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QLineEdit" name="lineEdit_previewFrameInterval">
-                 <property name="text">
-                  <string>1</string>
-                 </property>
-                 <property name="readOnly">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_19">
-                 <property name="text">
-                  <string>预览时间间隔(ms)：</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QLineEdit" name="lineEdit_previewTimeInterval">
-                 <property name="text">
-                  <string>100</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+            <layout class="QGridLayout" name="gridLayout_10">
+             <item row="0" column="0" colspan="2">
+              <widget class="QPushButton" name="bt_selectShowFile">
+               <property name="text">
+                <string>选择文件</string>
+               </property>
+              </widget>
              </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout">
-               <item>
-                <widget class="QPushButton" name="bt_showWave">
-                 <property name="text">
-                  <string>开始</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btn_stopShowWave">
-                 <property name="text">
-                  <string>停止</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+             <item row="0" column="3">
+              <widget class="QLineEdit" name="lineEdit_selectShowFile">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,3">
-               <item>
-                <widget class="QSpinBox" name="spin_framePos">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QSlider" name="slider_framePos">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+             <item row="1" column="0" colspan="3">
+              <widget class="QLabel" name="lable_validFrameNum">
+               <property name="text">
+                <string>有效采样帧个数:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <widget class="QLineEdit" name="lineEdit_validFrameNum">
+               <property name="text">
+                <string>0</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" colspan="2">
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>预览帧间隔：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="3">
+              <widget class="QLineEdit" name="lineEdit_previewFrameInterval">
+               <property name="text">
+                <string>1</string>
+               </property>
+               <property name="readOnly">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0" colspan="3">
+              <widget class="QLabel" name="label_19">
+               <property name="text">
+                <string>预览时间间隔(ms)：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="3">
+              <widget class="QLineEdit" name="lineEdit_previewTimeInterval">
+               <property name="text">
+                <string>100</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="3">
+              <widget class="QPushButton" name="btn_stopShowWave">
+               <property name="text">
+                <string>停止</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0" colspan="3">
+              <widget class="QPushButton" name="bt_showWave">
+               <property name="text">
+                <string>开始</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="2" colspan="2">
+              <widget class="QSlider" name="slider_framePos">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0" colspan="2">
+              <widget class="QSpinBox" name="spin_framePos">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -737,34 +715,30 @@
               <property name="title">
                <string>固件升级</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_4">
-               <item>
-                <layout class="QGridLayout" name="gridLayout_4">
-                 <item row="0" column="0">
-                  <widget class="QPushButton" name="btn_selectUpdateFile">
-                   <property name="text">
-                    <string>选择文件</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QLineEdit" name="lineEdit_updateFilePath"/>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QPushButton" name="btn_startUpdate">
-                   <property name="text">
-                    <string>开始升级</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QProgressBar" name="pBar_updateBin">
-                   <property name="value">
-                    <number>0</number>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+              <layout class="QGridLayout" name="gridLayout_4">
+               <item row="0" column="0">
+                <widget class="QPushButton" name="btn_selectUpdateFile">
+                 <property name="text">
+                  <string>选择文件</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="lineEdit_updateFilePath"/>
+               </item>
+               <item row="1" column="0">
+                <widget class="QPushButton" name="btn_startUpdate">
+                 <property name="text">
+                  <string>开始升级</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QProgressBar" name="pBar_updateBin">
+                 <property name="value">
+                  <number>0</number>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -774,17 +748,17 @@
               <property name="title">
                <string>Nor Flash测试</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_5">
+              <layout class="QVBoxLayout" name="verticalLayout_4">
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_7">
-                 <item>
+                <layout class="QGridLayout" name="gridLayout_8">
+                 <item row="0" column="0" colspan="3">
                   <widget class="QRadioButton" name="rBtnDecAddr">
                    <property name="text">
                     <string>10进制地址</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
+                 <item row="0" column="3" colspan="2">
                   <widget class="QRadioButton" name="rBtnHexAddr">
                    <property name="text">
                     <string>16进制地址</string>
@@ -794,47 +768,35 @@
                    </property>
                   </widget>
                  </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_4">
-                 <item>
+                 <item row="1" column="0">
                   <widget class="QLabel" name="label_2">
                    <property name="text">
                     <string>起始地址:</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
+                 <item row="1" column="1" colspan="4">
                   <widget class="QLineEdit" name="lineEdit_NorFlashStartAddr">
                    <property name="text">
                     <string>3f80000</string>
                    </property>
                   </widget>
                  </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_5">
-                 <item>
+                 <item row="2" column="0">
                   <widget class="QLabel" name="label_3">
                    <property name="text">
                     <string>数据长度:</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
+                 <item row="2" column="1" colspan="4">
                   <widget class="QLineEdit" name="lineEdit_NorFlashReadLen">
                    <property name="text">
                     <string>6e3000</string>
                    </property>
                   </widget>
                  </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_3">
-                 <item>
+                 <item row="3" column="0" colspan="2">
                   <widget class="QPushButton" name="btnNorFlashErase">
                    <property name="toolTip">
                     <string>擦除起始地址所在的扇区</string>
@@ -844,7 +806,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item>
+                 <item row="3" column="2" colspan="2">
                   <widget class="QPushButton" name="btnNorFlashWrite">
                    <property name="toolTip">
                     <string>在起始地址所在的地址写入256个默认数据</string>
@@ -854,25 +816,21 @@
                    </property>
                   </widget>
                  </item>
-                 <item>
+                 <item row="3" column="4">
                   <widget class="QPushButton" name="btnNorFlashRead">
                    <property name="text">
                     <string>读取扇区</string>
                    </property>
                   </widget>
                  </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_6">
-                 <item>
+                 <item row="4" column="0" colspan="2">
                   <widget class="QPushButton" name="btnNorFlasshReadFile">
                    <property name="text">
                     <string>读取文件</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
+                 <item row="4" column="2" colspan="3">
                   <widget class="QProgressBar" name="pBarNorFlashRead">
                    <property name="value">
                     <number>0</number>
@@ -895,7 +853,7 @@
       </widget>
      </widget>
     </item>
-    <item row="0" column="1">
+    <item>
      <widget class="QCustomPlot" name="plot" native="true"/>
     </item>
    </layout>
