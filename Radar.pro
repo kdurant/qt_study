@@ -47,6 +47,7 @@ SOURCES += \
     src/Protocol/ProtocolDispatch.cpp \
     src/Protocol/PreviewProcess.cpp \
     src/laser/LaserController.cpp \
+    src/laser/laserType1.cpp \
     src/motor/MotorController.cpp \
     src/motor/Epos2Controller.cpp
 
@@ -69,6 +70,7 @@ HEADERS += \
     src/Protocol/ProtocolDispatch.h \
     src/Protocol/PreviewProcess.h \
     src/laser/LaserController.h \
+    src/laser/laserType1.h \
     src/motor/MotorController.h \
     src/motor/Epos2Controller.h
 
