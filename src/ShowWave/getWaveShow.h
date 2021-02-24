@@ -16,10 +16,7 @@ class WaveShow : public QObject
     Q_OBJECT
 
 public:
-    WaveShow()
-        : sampleFrameNumber(0)
-    {
-    }
+    WaveShow() : sampleFrameNumber(0) {}
     bool isChDataHead(int offset);
     int getChNumber(int offset);
     void            setWaveFile(QString &file);

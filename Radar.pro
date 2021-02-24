@@ -38,6 +38,7 @@ SOURCES += \
 #    src/ChartView/chartview.cpp \
 #    src/Protocol/DoubleWaveProtocol.cpp \
 #    src/Protocol/RadarProtocolBasic.cpp \
+    src/ShowWave/WaveExtract.cpp \
     src/third_lib/QCustomPlot/qcustomplot.cpp \
     src/ShowWave/getWaveData.cpp \
     src/ShowWave/getWaveShow.cpp \
@@ -52,6 +53,7 @@ SOURCES += \
     src/motor/Epos2Controller.cpp
 
 HEADERS += \
+    src/ShowWave/WaveExtract.h \
     stable.h \
         stable.h \
         mainwindow.h \

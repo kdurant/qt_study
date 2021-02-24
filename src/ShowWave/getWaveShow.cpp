@@ -5,6 +5,11 @@ bool WaveShow::isChDataHead(int offset)
     return (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90 && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a);
 }
 
+/**
+ * @brief 计算某次采样数据中的通道个数
+ * @param offset
+ * @return 
+ */
 int WaveShow::getChNumber(int offset)
 {
     int number;
@@ -24,6 +29,11 @@ void WaveShow::setWaveFile(QString &file)
     waveFile = file;
 }
 
+/**
+ * @brief 获得某次采样的完整数据
+ * @param number
+ * @return 
+ */
 QVector<quint8> WaveShow::getFrameData(qint32 number)
 {
     frameData.clear();
