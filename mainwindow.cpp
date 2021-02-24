@@ -2,8 +2,7 @@
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow),
-      configIni(new QSettings("../Radar/config.ini", QSettings::IniFormat)), thread(new QThread())
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../Radar/config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
@@ -125,24 +124,19 @@ void MainWindow::uiConfig()
         ui->label_sumThreshold->hide();
         ui->lineEdit_sumThreshold->hide();
         ui->tabWidget->setTabEnabled(2, false);
-        ui->tabWidget->setTabEnabled(3, false);
-        ui->tabWidget->setTabEnabled(4, false);
         ui->tabWidget->setTabEnabled(5, false);
     }
     else
     {
         setWindowTitle(tr("雷达控制软件"));
         ui->tabWidget->setTabEnabled(2, false);
-        ui->tabWidget->setTabEnabled(3, false);
-        ui->tabWidget->setTabEnabled(4, false);
         ui->tabWidget->setTabEnabled(5, false);
         ui->tabWidget->setTabEnabled(6, false);
         //        ui->tabWidget->setTabEnabled(7, false);
     }
     ui->checkBox_autoZoom->setChecked(true);
     labelVer = new QLabel();
-    labelVer->setText("软件版本：v" + QString(SOFT_VERSION) + "_" + QString(GIT_DATE) + "_"
-                      + QString(GIT_HASH));
+    labelVer->setText("软件版本：v" + QString(SOFT_VERSION) + "_" + QString(GIT_DATE) + "_" + QString(GIT_HASH));
     ui->statusBar->addPermanentWidget(labelVer);
 }
 
