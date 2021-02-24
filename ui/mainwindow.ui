@@ -96,7 +96,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>5</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -110,13 +110,6 @@
               </property>
               <property name="readOnly">
                <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QPushButton" name="pushButton_ReadInfo">
-              <property name="text">
-               <string>读取系统信息</string>
               </property>
              </widget>
             </item>
@@ -139,6 +132,13 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item row="0" column="0">
+             <widget class="QPushButton" name="pushButton_ReadInfo">
+              <property name="text">
+               <string>读取系统信息</string>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>

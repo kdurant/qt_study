@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../Radar/config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../Radar/config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
@@ -125,6 +125,11 @@ void MainWindow::uiConfig()
         ui->lineEdit_sumThreshold->hide();
         ui->tabWidget->setTabEnabled(2, false);
         ui->tabWidget->setTabEnabled(5, false);
+    }
+    else if(radarType == RADAR_TYPE_OCEAN)
+    {
+        setWindowTitle(tr("海洋控制软件"));
+        //        ui->label
     }
     else
     {

@@ -16,12 +16,24 @@ public:
     LaserController() = default;
 
     // API函数准备好控制数据帧
-    virtual bool setMode(OpenMode mode) const { return false; };
-    virtual bool setPower(qint8 power) const { return false; };
-    virtual bool open(void) const { return false; };
-    virtual bool close(void) const { return false; };
-
+    virtual bool setMode(OpenMode mode)
+    {
+        return false;
+    };
+    virtual bool setPower(qint8 power)
+    {
+        return false;
+    };
+    virtual bool open(void)
+    {
+        return false;
+    };
+    virtual bool close(void)
+    {
+        return false;
+    };
 signals:
-    void sendDataReady(QByteArray& data);
+    void sendDataReady(QByteArray& data);  // 需要发送的数据已经准备好
+    void responseDataReady(void);          // 接收到响应数据
 };
 #endif
