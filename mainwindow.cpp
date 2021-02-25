@@ -2,8 +2,7 @@
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow),
-      configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
@@ -57,8 +56,6 @@ void MainWindow::initParameter()
 
     radarType = configIni->value("System/radarType").toString();
 
-    configIni->setValue("Laser/freq", 1111);
-
     deviceIP   = QHostAddress(configIni->value("System/radarIP").toString());
     devicePort = configIni->value("System/radarPort").toInt();
 
@@ -67,7 +64,6 @@ void MainWindow::initParameter()
         QMessageBox::critical(this, "error", "请在配置文件中指定设备IP地址和端口号");
         return;
     }
-    //configIni->setValue("System/RadarType", "land");
     ui->lineEdit_laser_freq->setText(configIni->value("Laser/freq").toString());
 
     ui->lineEdit_sampleLen->setText(configIni->value("Preview/sampleLen").toString());
@@ -86,16 +82,7 @@ void MainWindow::initParameter()
 
 void MainWindow::saveParameter()
 {
-    //    configIni->setValue("System/RadarType", "land");
-    //    configIni->setValue("Laser/freq", ui->lineEdit_laser_freq->text().toInt());
-    //configIni->setValue("Preview/sampleLen", ui->lineEdit_sampleLen->text().toInt());
-    //configIni->setValue("Preview/sampleRate", ui->lineEdit_sampleRate->text().toInt());
-    //configIni->setValue("Preview/firstStartPos", ui->lineEdit_firstStartPos->text().toInt());
-    //configIni->setValue("Preview/firstLen", ui->lineEdit_firstLen->text().toInt());
-    //configIni->setValue("Preview/secondStartPos", ui->lineEdit_secondStartPos->text().toInt());
-    //configIni->setValue("Preview/secondLen", ui->lineEdit_secondLen->text().toInt());
-    //configIni->setValue("Preview/compressLen", ui->lineEdit_compressLen->text().toInt());
-    //configIni->setValue("Preview/compressRatio", ui->lineEdit_compressRatio->text().toInt());
+    return;
 }
 
 void MainWindow::uiConfig()

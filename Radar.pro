@@ -39,6 +39,7 @@ SOURCES += \
 #    src/Protocol/DoubleWaveProtocol.cpp \
 #    src/Protocol/RadarProtocolBasic.cpp \
     src/ShowWave/WaveExtract.cpp \
+    src/laser/laserType2.cpp \
     src/third_lib/QCustomPlot/qcustomplot.cpp \
     src/ShowWave/getWaveData.cpp \
     src/ShowWave/getWaveShow.cpp \
@@ -54,6 +55,7 @@ SOURCES += \
 
 HEADERS += \
     src/ShowWave/WaveExtract.h \
+    src/laser/laserType2.h \
     stable.h \
         stable.h \
         mainwindow.h \
@@ -103,8 +105,9 @@ DEFINES += GIT_DATE=\\\"$$GIT_DATE\\\"
 VERSION = 0.02
 DEFINES += SOFT_VERSION=\"\\\"$$VERSION\\\"\"
 
-TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH
+#TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH
+TARGET = Radar_$$VERSION
 
-DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
+#DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
 
-include($$PWD/deploy.pri)
+#include($$PWD/deploy.pri)
