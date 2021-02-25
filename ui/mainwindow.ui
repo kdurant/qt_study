@@ -96,7 +96,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -440,34 +440,21 @@
              <number>12</number>
             </property>
             <item row="5" column="1">
-             <widget class="QRadioButton" name="radioButton_2">
+             <widget class="QRadioButton" name="rbtn_triggerOutside">
               <property name="text">
                <string>外触发</string>
               </property>
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QLabel" name="label_9">
+             <widget class="QLabel" name="label_laserPower">
               <property name="text">
                <string>激光功率(W)：</string>
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEdit_laser_freq">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="placeholderText">
-               <string>5000</string>
-              </property>
-             </widget>
-            </item>
             <item row="5" column="0">
-             <widget class="QRadioButton" name="radioButton">
+             <widget class="QRadioButton" name="rbtn_triggerInside">
               <property name="text">
                <string>内触发</string>
               </property>
@@ -487,7 +474,7 @@
              </spacer>
             </item>
             <item row="3" column="0">
-             <widget class="QLabel" name="label_5">
+             <widget class="QLabel" name="label_laserCurrent">
               <property name="text">
                <string>激光电流(mA)：</string>
               </property>
@@ -544,14 +531,14 @@
              </widget>
             </item>
             <item row="4" column="0">
-             <widget class="QLabel" name="label_8">
+             <widget class="QLabel" name="label_triggerMode">
               <property name="text">
                <string>触发方式：</string>
               </property>
              </widget>
             </item>
             <item row="3" column="1">
-             <widget class="QLineEdit" name="lineEdit_laserFreq">
+             <widget class="QLineEdit" name="lineEdit_laserCurrent">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -559,6 +546,9 @@
                </sizepolicy>
               </property>
              </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="comboBox_laserFreq"/>
             </item>
            </layout>
           </widget>

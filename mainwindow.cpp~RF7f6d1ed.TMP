@@ -58,24 +58,10 @@ void MainWindow::initParameter()
     ui->lineEdit_localIP->setText(configIni->value("System/localIP").toString());
     ui->lineEdit_localPort->setText(configIni->value("System/localPort").toString());
 
-    //    radarType = configIni->value("System/radarType").toInt();
+    radarType = configIni->value("System/radarType").toInt();
     switch(configIni->value("System/radarType").toInt())
     {
-        case 0:
-            radarType = BspConfig::RADAR_TPYE_OCEAN;
-            break;
-        case 1:
-            radarType = BspConfig::RADAR_TPYE_LAND;
-            break;
-        case 2:
-            radarType = BspConfig::RADAR_TPYE_760;
-            break;
-        case 3:
-            radarType = BspConfig::RADAR_TPYE_DOUBLE_WAVE;
-            break;
-        default:
-            radarType = BspConfig::RADAR_TPYE_OCEAN;
-            break;
+        case:
     }
 
     deviceIP   = QHostAddress(configIni->value("System/radarIP").toString());
@@ -108,7 +94,7 @@ void MainWindow::saveParameter()
 
 void MainWindow::uiConfig()
 {
-    if(radarType == BspConfig::RADAR_TPYE_760)
+    if(radarType == RADAR_TYPE_760)
     {
         setWindowTitle(tr("760雷达控制软件"));
         ui->lineEdit_radarType->setText("760雷达");
@@ -121,7 +107,7 @@ void MainWindow::uiConfig()
         ui->lineEdit_subThreshold->hide();
         ui->lineEdit_sumThreshold->hide();
     }
-    else if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+    else if(radarType == RADAR_TYPE_DOUBLE)
     {
         setWindowTitle(tr("双波长雷达控制软件"));
         ui->lineEdit_radarType->setText("双波长雷达");
@@ -133,14 +119,14 @@ void MainWindow::uiConfig()
         ui->tabWidget->setTabEnabled(2, false);
         ui->tabWidget->setTabEnabled(5, false);
     }
-    else if(radarType == BspConfig::RADAR_TPYE_OCEAN)
+    else if(radarType == RADAR_TYPE_OCEAN)
     {
         setWindowTitle(tr("海洋控制软件"));
         ui->label_laserCurrent->setVisible(false);
         ui->lineEdit_laserCurrent->setVisible(false);
         //        ui->label
     }
-    else if(radarType == BspConfig::RADAR_TPYE_LAND)
+    else if(radarType == RADAR_TYPE_LAND)
     {
         setWindowTitle(tr("陆地控制软件"));
         ui->label_laserPower->setVisible(false);

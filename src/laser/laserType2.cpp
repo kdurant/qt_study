@@ -8,6 +8,12 @@
  */
 bool LaserType2::open()
 {
+    return false;
+}
+
+bool LaserType2::close()
+{
+    return false;
 }
 
 /**

@@ -29,6 +29,9 @@
 #include "UpdateBin.h"
 #include "getWaveShow.h"
 
+#include "laserType1.h"
+#include "laserType2.h"
+
 namespace Ui
 {
 class MainWindow;
@@ -94,9 +97,9 @@ private:
     QUdpSocket *    udpSocket;
     QSettings *     configIni;
 
-    QString      radarType;
-    QHostAddress deviceIP;
-    quint16      devicePort;
+    BspConfig::RadarType radarType;
+    QHostAddress         deviceIP;
+    quint16              devicePort;
 
     QLabel *labelVer;
 
@@ -109,6 +112,10 @@ private:
 
     WaveShow *waveShow;
     bool      running;
+
+    LaserController *laserDriver;
+    LaserType1 *     laser1Driver;
+    LaserType2 *     laser2Driver;
 };
 
 #endif  // MAINWINDOW_H
