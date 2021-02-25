@@ -23,6 +23,7 @@ public:
 
     bool setFreq(qint32 freq);
     bool setCurrent(qint32 current);
+
 public slots:
 
     void setNewData(QByteArray& data)

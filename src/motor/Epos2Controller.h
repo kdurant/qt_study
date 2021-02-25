@@ -1,18 +1,35 @@
 #ifndef EPOS2_H
 #define EPOS2_H
-#include <QObject>
+#include <QtCore>
+#include "MotorController.h"
 
-class EPOS2 : public QObject
+class EPOS2 : public MontorController
 {
-    Q_OBJECT
 public:
     explicit EPOS2(QObject *parent = 0);
 
 public:
-    quint16          CalcFieldCRC(quint16 *pDataArray, quint16 numberofWords);  //CRC-CCITT
-    QVector<quint16> WordPlusCRC(QVector<quint16> word);
+    bool start(void) override;
+    bool stop(void) override;
+
+private:
+    bool       isRecvNewData;  // 是否收到数据
+    QByteArray recvData;
+
+    void waitResponse(quint16 waitMS)
+    {
+        QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
+        connect(this, &EPOS2::responseDataReady, &waitLoop, &QEventLoop::quit);
+        QTimer::singleShot(waitMS, &waitLoop, &QEventLoop::quit);
+        waitLoop.exec();
+    }
 
 public:
+    quint16          calcFieldCRC(quint16 *pDataArray, quint16 numberofWords);  //CRC-CCITT
+    QVector<quint16> WordPlusCRC(QVector<quint16> word);
+    QByteArray       transmitWord2Byte(QVector<quint16> word);
+    QVector<quint16> receiveByte2Word(QByteArray array);
+
     QByteArray setDisableState();
     QByteArray clearFault();
     QByteArray setShutdown();
@@ -27,7 +44,7 @@ public:
     QByteArray setMaxAcceleration(quint16 value);
 
     QByteArray setTargetVelocity(quint16 velocity);
-    QByteArray getActualVelocity();
+    bool       getActualVelocity();
     quint32    ReadVelocity(QByteArray array);
 
     QByteArray setPositionControlWord();
