@@ -44,7 +44,11 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
     }
 }
 
-QByteArray ProtocolDispatch::encode(qint32 command, qint32 data_len, qint32 data)
+/**
+ * @brief 发送长度固定的系统参数
+ * @return
+ */
+void ProtocolDispatch::encode(qint32 command, qint32 data_len, qint32 data)
 {
     QByteArray frame;
     uint32_t   checksum = 0xeeeeffff;
@@ -56,10 +60,11 @@ QByteArray ProtocolDispatch::encode(qint32 command, qint32 data_len, qint32 data
     frame.append(QByteArray::fromHex(QByteArray::number(data_len, 16).rightJustified(8, '0')));
     frame.append(QByteArray::fromHex(QByteArray::number(data, 16).rightJustified(8, '0').append(504, '0')));
     frame.append(QByteArray::fromHex(QByteArray::number(checksum, 16).rightJustified(8, '0')));
-    return frame;
+
+    emit frameDataReady(frame);
 }
 
-QByteArray ProtocolDispatch::encode(qint32 command, qint32 data_len, QByteArray &data)
+void ProtocolDispatch::encode(qint32 command, qint32 data_len, QByteArray &data)
 {
     QByteArray frame;
     uint32_t   checksum = 0xeeeeffff;
@@ -69,8 +74,10 @@ QByteArray ProtocolDispatch::encode(qint32 command, qint32 data_len, QByteArray 
     frame.append(QByteArray::fromHex(QByteArray::number(packetNum, 16).rightJustified(8, '0')));
     frame.append(QByteArray::fromHex(QByteArray::number(data_len, 16).rightJustified(8, '0')));
     frame.append(data);
-    if(data.size() == 4)
-        frame.append(256 - 4, 0);
+    if(data_len < 256)
+        frame.append(256 - data_len, 0);
+    else
+        QMessageBox::warning(nullptr, "警告", "需要打包的数据过长");
     frame.append(QByteArray::fromHex(QByteArray::number(checksum, 16).rightJustified(8, '0')));
-    return frame;
+    emit frameDataReady(frame);
 }

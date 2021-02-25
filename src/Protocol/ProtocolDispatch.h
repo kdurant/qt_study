@@ -21,7 +21,10 @@ public:
 };
 
 /**
- * @brief ProtocolDispatch, 根据数据帧的命令字段内容，发射相应的信号给具体的处理模块
+ * @brief 功能如下：
+ * 1. 解析数据帧的命令字段内容，发射相应的信号给具体的处理模块
+ * 2. 提供一个槽函数，需要按照协议打包数据的模块，可以通过信号将数据发送进来
+ * 3. 数据打包后，发送信号，通知UDP将数据发送出去
  */
 class ProtocolDispatch : public QObject
 {
@@ -50,10 +53,11 @@ public:
         return data.mid(FrameField::VALID_DATA_LEN_POS, FrameField::VALID_DATA_LEN_LEN).toHex().toInt(nullptr, 16);
     }
 
-public:
-    QByteArray encode(qint32 command, qint32 data_len, qint32 data);
-    QByteArray encode(qint32 command, qint32 data_len, QByteArray &data);
+public slots:
+    void encode(qint32 command, qint32 data_len, qint32 data);
+    void encode(qint32 command, qint32 data_len, QByteArray &data);
 
+public:
     QString getDeviceVersion()
     {
         return deviceVersion;
@@ -77,6 +81,11 @@ signals:
     void motorDataReady(QByteArray &data);
 
     void remoteUpdateDataReady(QByteArray data);
+
+    /**
+     * @brief 数据封包已经完成，可以通过UDP发送出去
+     */
+    void frameDataReady(QByteArray &data);
 
 private:
     QVector<quint8>  head;

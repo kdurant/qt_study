@@ -24,6 +24,12 @@ public:
     {
         return false;
     };
+
+    virtual bool setFreq(qint32 freq)
+    {
+        return false;
+    };
+
     virtual bool open(void)
     {
         return false;
@@ -34,6 +40,9 @@ public:
     };
 signals:
     void sendDataReady(QByteArray& data);  // 需要发送的数据已经准备好
-    void responseDataReady(void);          // 接收到响应数据
+
+    void sendDataReady(qint32 command, qint32 data_len, QByteArray& data);  // 需要发送的数据已经准备好
+
+    void responseDataReady(void);  // 接收到响应数据
 };
 #endif

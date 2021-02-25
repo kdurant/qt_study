@@ -2,6 +2,8 @@
 #define LASERTYPE2_H
 // 陆地雷达激光控制器
 #include "LaserController.h"
+#include "bsp_config.h"
+#include "protocol.h"
 
 class LaserType2 : public LaserController
 {
@@ -18,6 +20,8 @@ public:
     bool open(void) override;
 
     bool close(void) override;
+
+    bool setFreq(qint32 freq);
     bool setCurrent(qint32 current);
 public slots:
 

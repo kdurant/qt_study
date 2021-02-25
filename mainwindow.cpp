@@ -138,6 +138,7 @@ void MainWindow::uiConfig()
         setWindowTitle(tr("海洋控制软件"));
         ui->label_laserCurrent->setVisible(false);
         ui->lineEdit_laserCurrent->setVisible(false);
+        ui->comboBox_laserFreq->addItem("5000");
         //        ui->label
     }
     else if(radarType == BspConfig::RADAR_TPYE_LAND)
@@ -148,6 +149,9 @@ void MainWindow::uiConfig()
         ui->label_triggerMode->setVisible(false);
         ui->rbtn_triggerInside->setVisible(false);
         ui->rbtn_triggerOutside->setVisible(false);
+        ui->comboBox_laserFreq->addItem("100000");
+        ui->comboBox_laserFreq->addItem("200000");
+        ui->comboBox_laserFreq->addItem("400000");
     }
     else
     {
@@ -199,31 +203,26 @@ void MainWindow::processPreview()
     }
 }
 
-void MainWindow::writeUdpatagram(qint32 command, qint32 data_len, qint32 data)
-{
-    QByteArray frame = dispatch->encode(command, data_len, data);
-    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-}
-
-void MainWindow::writeUdpatagram(uint32_t command, uint32_t data_len, QByteArray &data)
-{
-    QByteArray frame = dispatch->encode(command, data_len, data);
-    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-}
-
 void MainWindow::initSignalSlot()
 {
+    // 处理udp接收到的数据
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagram()));
 
+    // 发送已经打包好的数据
+    connect(dispatch, &ProtocolDispatch::frameDataReady, this, [this](QByteArray frame) {
+        udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+    });
+
+    // 具体数据分发
     connect(dispatch, SIGNAL(previewDataReady(QByteArray &)), preview, SLOT(setDataFrame(QByteArray &)));
     connect(dispatch, SIGNAL(flashDataReady(QByteArray &)), updateFlash, SLOT(setDataFrame(QByteArray &)));
 
     connect(preview, SIGNAL(previewReadyShow()), this, SLOT(processPreview()));
-    connect(preview, SIGNAL(previewParaReadySet(qint32, qint32, qint32)), this, SLOT(writeUdpatagram(qint32, qint32, qint32)));
+    //connect(preview, SIGNAL(previewParaReadySet(qint32, qint32, qint32)), this, SLOT(writeUdpatagram(qint32, qint32, qint32)));
 
-    connect(updateFlash,
-            SIGNAL(flashCommandReadySet(uint32_t, uint32_t, QByteArray &)),
-            SLOT(writeUdpatagram(uint32_t, uint32_t, QByteArray &)));
+    //connect(updateFlash,
+    //SIGNAL(flashCommandReadySet(uint32_t, uint32_t, QByteArray &)),
+    //SLOT(writeUdpatagram(uint32_t, uint32_t, QByteArray &)));
 
     connect(ui->bt_selectShowFile, SIGNAL(pressed()), this, SLOT(on_bt_selectShowFile_clicked()));
 
@@ -304,17 +303,49 @@ void MainWindow::initSignalSlot()
     /*
      * 激光器相关处理
      */
-    //    connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]() {
-    //        //        LaserType2
-    //    });
+    connect(laser2Driver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
+
+    connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]() {
+        bool status = false;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                laser2Driver->setFreq(4000);
+                status = laser2Driver->open();
+                break;
+            default:
+                break;
+        }
+        if(!status)
+            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
+    });
+
+    connect(ui->btn_laserClose, &QPushButton::pressed, this, [this]() {
+        bool status = false;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                status = laser2Driver->close();
+                break;
+            default:
+                break;
+        }
+        if(!status)
+            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
+    });
+
+    connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]() {
+        if(!laser2Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt()))
+            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
+    });
 }
 
 void MainWindow::getDeviceVersion(QString &version)
 {
     QByteArray frame;
 
-    frame = dispatch->encode(MasterSet::SYS_INFO, 4, 0x00000001);
-    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+    dispatch->encode(MasterSet::SYS_INFO, 4, 0x00000001);
+    //    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
 
     QEventLoop waitLoop;
     connect(dispatch, &ProtocolDispatch::infoDataReady, &waitLoop, &QEventLoop::quit);
