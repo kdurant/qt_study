@@ -24,6 +24,29 @@ private:
         waitLoop.exec();
     }
 
+    bool isResponse4f(void)
+    {
+        if (isRecvNewData) {
+            isRecvNewData = false;
+            return recvData.length() == 1 && recvData.at(0) == 0x4f;
+        }
+        return false;
+    }
+    bool isResponse4f00(void)
+    {
+        if (isRecvNewData) {
+            isRecvNewData = false;
+            return recvData.length() == 2 && recvData.at(0) == 0x4f && recvData.at(1) == 0x00;
+        }
+        return false;
+    }
+
+    bool send_4f_actively(void)
+    {
+        QByteArray frame(1, 0x4f);
+        emit sendDataReady(MasterSet::MOTOR_PENETRATE, 1, frame);
+    }
+
 public:
     quint16          calcFieldCRC(quint16 *pDataArray, quint16 numberofWords);  //CRC-CCITT
     QVector<quint16> WordPlusCRC(QVector<quint16> word);
@@ -44,7 +67,7 @@ public:
     QByteArray setMaxAcceleration(quint16 value);
 
     QByteArray setTargetVelocity(quint16 velocity);
-    bool       getActualVelocity();
+    qint32 getActualVelocity();
     quint32    ReadVelocity(QByteArray array);
 
     QByteArray setPositionControlWord();

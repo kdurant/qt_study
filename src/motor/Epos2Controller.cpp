@@ -44,7 +44,7 @@ QByteArray EPOS2::transmitWord2Byte(QVector<quint16> word)
     return array;
 }
 
-bool EPOS2::getActualVelocity()
+qint32 EPOS2::getActualVelocity()
 {
     QVector<quint16> word;
     word.append(0x1001);
@@ -52,13 +52,27 @@ bool EPOS2::getActualVelocity()
     word.append(0x0100);
     word = WordPlusCRC(word);
 
+    // step1, send OpCode
     QByteArray frame = transmitWord2Byte(word);
     QByteArray data  = frame.mid(0, 1);
     emit       sendDataReady(MasterSet::MOTOR_PENETRATE, 1, data);
     waitResponse(1000);
-    if(isRecvNewData)
-    {
-        if(recvData.length() == 1 && recvData[0] == 0x4f)
+    if (!isResponse4f())
+        return -1;
+
+    // step2, sendData
+    data = frame.mid(1);
+    emit sendDataReady(MasterSet::MOTOR_PENETRATE, 1, data);
+    waitResponse(1000);
+    if (!isResponse4f00())
+        return -1;
+
+    // step 3
+    send_4f_actively();
+    waitResponse(1000);
+    if (recvData.length() == 0x0b) {
+        recvData.mid(4, 2);
     }
+
     return false;
 }
