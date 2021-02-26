@@ -15,6 +15,7 @@ public:
 private:
     bool       isRecvNewData;  // 是否收到数据
     QByteArray recvData;
+    qint32     waitTime{1000};
 
     void waitResponse(quint16 waitMS)
     {
@@ -26,7 +27,8 @@ private:
 
     bool isResponse4f(void)
     {
-        if (isRecvNewData) {
+        if(isRecvNewData)
+        {
             isRecvNewData = false;
             return recvData.length() == 1 && recvData.at(0) == 0x4f;
         }
@@ -34,7 +36,8 @@ private:
     }
     bool isResponse4f00(void)
     {
-        if (isRecvNewData) {
+        if(isRecvNewData)
+        {
             isRecvNewData = false;
             return recvData.length() == 2 && recvData.at(0) == 0x4f && recvData.at(1) == 0x00;
         }
@@ -44,7 +47,8 @@ private:
     bool send_4f_actively(void)
     {
         QByteArray frame(1, 0x4f);
-        emit sendDataReady(MasterSet::MOTOR_PENETRATE, 1, frame);
+        emit       sendDataReady(MasterSet::MOTOR_PENETRATE, 1, frame);
+        return true;
     }
 
 public:
@@ -54,7 +58,7 @@ public:
     QVector<quint16> receiveByte2Word(QByteArray array);
 
     QByteArray setDisableState();
-    QByteArray clearFault();
+    bool       clearFault();
     QByteArray setShutdown();
     QByteArray setEnableState();
     QByteArray setHalt();
@@ -67,7 +71,7 @@ public:
     QByteArray setMaxAcceleration(quint16 value);
 
     QByteArray setTargetVelocity(quint16 velocity);
-    qint32 getActualVelocity();
+    qint32     getActualVelocity();
     quint32    ReadVelocity(QByteArray array);
 
     QByteArray setPositionControlWord();
