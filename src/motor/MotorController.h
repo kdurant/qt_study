@@ -10,6 +10,11 @@ class MontorController : public QObject
 public:
     MontorController() = default;
 
+    virtual bool init()
+    {
+        return false;
+    };
+
     virtual bool start()
     {
         return false;

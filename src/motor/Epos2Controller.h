@@ -9,6 +9,7 @@ public:
     EPOS2() = default;
 
 public:
+    bool init(void) override;
     bool start(void) override;
     bool stop(void) override;
 
@@ -24,6 +25,9 @@ private:
         QTimer::singleShot(waitMS, &waitLoop, &QEventLoop::quit);
         waitLoop.exec();
     }
+
+    bool sendFrameStep1(QByteArray frame);
+    bool sendFrameStep2(void);
 
     bool isResponse4f(void)
     {
@@ -51,37 +55,37 @@ private:
         return true;
     }
 
- public slots:
+public slots:
 
     void setNewData(QByteArray& data)
     {
-      isRecvNewData = true;
-      recvData      = data;
-      emit responseDataReady();
+        isRecvNewData = true;
+        recvData      = data;
+        emit responseDataReady();
     }
 
 public:
-    quint16          calcFieldCRC(quint16 *pDataArray, quint16 numberofWords);  //CRC-CCITT
+    quint16          calcFieldCRC(quint16* pDataArray, quint16 numberofWords);  //CRC-CCITT
     QVector<quint16> WordPlusCRC(QVector<quint16> word);
     QByteArray       transmitWord2Byte(QVector<quint16> word);
     QVector<quint16> receiveByte2Word(QByteArray array);
 
-    QByteArray setDisableState();
-    bool       clearFault();
-    QByteArray setShutdown();
-    QByteArray setEnableState();
-    QByteArray setHalt();
+    bool setDisableState();
+    bool clearFault();
+    bool setShutdown();
+    bool setEnableState();
+    bool setHalt();
 
-    QByteArray setPorfileVelocityMode();
-    QByteArray setMaximalProfileVelocity(quint16 value);
-    QByteArray setQuickstopDeceleration(quint16 value);
-    QByteArray setProfileAcceleration(quint16 value);
-    QByteArray setProfileDeceleration(quint16 value);
+    bool       setPorfileVelocityMode();
+    bool       setMaximalProfileVelocity(quint16 value);
+    bool       setQuickstopDeceleration(quint16 value);
+    bool       setProfileAcceleration(quint16 value);
+    bool       setProfileDeceleration(quint16 value);
     QByteArray setMaxAcceleration(quint16 value);
 
-    QByteArray setTargetVelocity(quint16 velocity);
-    qint32     getActualVelocity();
-    quint32    ReadVelocity(QByteArray array);
+    bool    setTargetVelocity(quint16 velocity);
+    qint32  getActualVelocity();
+    quint32 ReadVelocity(QByteArray array);
 
     QByteArray setPositionControlWord();
     QByteArray setPorfilePositionMode();

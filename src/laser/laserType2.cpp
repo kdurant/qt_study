@@ -85,12 +85,11 @@ QString LaserType2::getCurrent()
     waitLoop.exec();
     if(isRecvNewData)
     {
-      isRecvNewData = false;
-      if(recvData.contains("LASER2"))
-        return recvData.mid(8, recvData.length()-2-8);
-      else
-        return "error";
+        isRecvNewData = false;
+        if(recvData.contains("LASER2"))
+            return recvData.mid(8, recvData.length() - 2 - 8);
+        else
+            return "error";
     }
-
-
+    return "error";
 }
