@@ -135,7 +135,8 @@ void MainWindow::uiConfig()
     }
     else if(radarType == BspConfig::RADAR_TPYE_OCEAN)
     {
-        setWindowTitle(tr("海洋控制软件"));
+        setWindowTitle(tr("海洋雷达控制软件"));
+        ui->lineEdit_radarType->setText("海洋雷达");
         ui->label_laserCurrent->setVisible(false);
         ui->lineEdit_laserCurrent->setVisible(false);
         ui->comboBox_laserFreq->addItem("5000");
@@ -143,7 +144,8 @@ void MainWindow::uiConfig()
     }
     else if(radarType == BspConfig::RADAR_TPYE_LAND)
     {
-        setWindowTitle(tr("陆地控制软件"));
+        setWindowTitle(tr("陆地雷达控制软件"));
+        ui->lineEdit_radarType->setText("陆地雷达");
         ui->label_laserPower->setVisible(false);
         ui->comboBox_laserPower->setVisible(false);
         ui->label_triggerMode->setVisible(false);
@@ -303,7 +305,10 @@ void MainWindow::initSignalSlot()
     /*
      * 激光器相关处理
      */
+
     connect(laser2Driver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
+
+    connect(dispatch, &ProtocolDispatch::laserDataReady, laser2Driver, &LaserType2::setNewData);
 
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]() {
         bool status = false;
@@ -338,6 +343,15 @@ void MainWindow::initSignalSlot()
         if(!laser2Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt()))
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
+
+    connect(ui->btn_laserReadCurrent, &QPushButton::pressed, this, [this]() {
+      QString text = laser2Driver->getCurrent();
+      ui->lineEdit_laserShowCurrent->setText(text );
+    });
+
+    /*
+     * 电机相关逻辑
+     */
 }
 
 void MainWindow::getDeviceVersion(QString &version)

@@ -6,7 +6,6 @@
 
 QT       += core gui
 QT       += network
-QT       += charts
 
 
 QMAKE_CXXFLAGS += -std=c++11
@@ -16,8 +15,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = Radar
 TEMPLATE = app
 
-CONFIG += precompile_header
-PRECOMPILED_HEADER  = stable.h
+#CONFIG += precompile_header
+#PRECOMPILED_HEADER  = stable.h
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
@@ -96,10 +95,10 @@ VERSION = 1.0.1
 
 RC_ICONS = ./qss/radar_icon.ico
 
-GIT_HASH = $$system(git --git-dir $$PWD/.git log -1 --pretty=format:%h)
+#GIT_HASH = $$system(git --git-dir $$PWD/.git log -1 --pretty=format:%h)
 DEFINES += GIT_HASH=\\\"$$GIT_HASH\\\"
 
-GIT_DATE = $$system(git --git-dir $$PWD/.git --work-tree $$PWD log -1 --format=%cs )
+#GIT_DATE = $$system(git --git-dir $$PWD/.git --work-tree $$PWD log -1 --format=%cs )
 DEFINES += GIT_DATE=\\\"$$GIT_DATE\\\"
 
 VERSION = 0.02

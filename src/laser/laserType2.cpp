@@ -10,6 +10,7 @@ bool LaserType2::open()
 {
     QByteArray frame = BspConfig::int2ba(0x01);
     emit       sendDataReady(MasterSet::LASER_ENABLE, 4, frame);
+    QThread::msleep(1);
     return true;
 }
 
@@ -40,6 +41,7 @@ bool LaserType2::setFreq(qint32 freq)
 {
     QByteArray frame = BspConfig::int2ba(freq);
     emit       sendDataReady(MasterSet::LASER_FREQ, 4, frame);
+    QThread::msleep(1);
     return true;
 }
 
@@ -51,7 +53,7 @@ bool LaserType2::setFreq(qint32 freq)
  */
 bool LaserType2::setCurrent(qint32 current)
 {
-    QByteArray packet{"Acc 2 "};
+    QByteArray packet{"ACC 2 "};
     packet.append(QString::number(current));
     packet.append("\r\n");
     emit sendDataReady(MasterSet::LASER_PENETRATE, packet.length(), packet);
@@ -69,4 +71,26 @@ bool LaserType2::setCurrent(qint32 current)
             return false;
     }
     return false;
+}
+
+QString LaserType2::getCurrent()
+{
+    QByteArray packet{"ACC 2"};
+    packet.append("\r\n");
+    emit sendDataReady(MasterSet::LASER_PENETRATE, packet.length(), packet);
+
+    QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
+    connect(this, &LaserType2::responseDataReady, &waitLoop, &QEventLoop::quit);
+    QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
+    waitLoop.exec();
+    if(isRecvNewData)
+    {
+      isRecvNewData = false;
+      if(recvData.contains("LASER2"))
+        return recvData.mid(8, recvData.length()-2-8);
+      else
+        return "error";
+    }
+
+
 }

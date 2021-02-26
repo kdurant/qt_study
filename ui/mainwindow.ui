@@ -31,8 +31,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>410</width>
-         <height>638</height>
+         <width>408</width>
+         <height>634</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -96,7 +96,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>3</number>
+           <number>4</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -439,6 +439,98 @@
             <property name="verticalSpacing">
              <number>12</number>
             </property>
+            <item row="5" column="1">
+             <widget class="QRadioButton" name="rbtn_triggerOutside">
+              <property name="text">
+               <string>外触发</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="0">
+             <widget class="QLabel" name="label_laserCurrent">
+              <property name="text">
+               <string>激光电流(mA)：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="0">
+             <widget class="QPushButton" name="btn_laserReadFreq">
+              <property name="text">
+               <string>读频率</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QComboBox" name="comboBox_laserFreq"/>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_triggerMode">
+              <property name="text">
+               <string>触发方式：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QRadioButton" name="rbtn_triggerInside">
+              <property name="text">
+               <string>内触发</string>
+              </property>
+             </widget>
+            </item>
+            <item row="7" column="1">
+             <widget class="QLineEdit" name="lineEdit_laserCurrent">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>4000</string>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="0">
+             <widget class="QPushButton" name="btn_laserReadCurrent">
+              <property name="text">
+               <string>读电流</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>激光重频(Hz)：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
+             <widget class="QPushButton" name="btn_laserSetCurrent">
+              <property name="text">
+               <string>设置电流</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="0">
+             <spacer name="verticalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="6" column="1">
+             <widget class="QPushButton" name="btn_laserClose">
+              <property name="text">
+               <string>关闭激光器</string>
+              </property>
+             </widget>
+            </item>
             <item row="2" column="1">
              <widget class="QComboBox" name="comboBox_laserPower">
               <property name="sizeAdjustPolicy">
@@ -461,10 +553,10 @@
               </item>
              </widget>
             </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_7">
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_laserPower">
               <property name="text">
-               <string>激光重频(Hz)：</string>
+               <string>激光功率(W)：</string>
               </property>
              </widget>
             </item>
@@ -475,81 +567,49 @@
               </property>
              </widget>
             </item>
-            <item row="8" column="0">
-             <widget class="QPushButton" name="btn_laserSetCurrent">
-              <property name="text">
-               <string>设置电流</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_triggerMode">
-              <property name="text">
-               <string>触发方式：</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QComboBox" name="comboBox_laserFreq"/>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_laserPower">
-              <property name="text">
-               <string>激光功率(W)：</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="QPushButton" name="btn_laserClose">
-              <property name="text">
-               <string>关闭激光器</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="1">
-             <widget class="QRadioButton" name="rbtn_triggerOutside">
-              <property name="text">
-               <string>外触发</string>
-              </property>
-             </widget>
-            </item>
             <item row="11" column="0">
-             <spacer name="verticalSpacer_4">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="5" column="0">
-             <widget class="QRadioButton" name="rbtn_triggerInside">
+             <widget class="QPushButton" name="btn_laserReadTem">
               <property name="text">
-               <string>内触发</string>
+               <string>读温度</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="label_laserCurrent">
-              <property name="text">
-               <string>激光电流(mA)：</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="1">
-             <widget class="QLineEdit" name="lineEdit_laserCurrent">
+            <item row="9" column="1">
+             <widget class="QLineEdit" name="lineEdit_laserShowCurrent">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="text">
-               <string>4000</string>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="1">
+             <widget class="QLineEdit" name="lineEdit_laserShowFreq">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="1">
+             <widget class="QLineEdit" name="lineEdit_laserShowTemp">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -605,7 +665,7 @@
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QLineEdit" name="lineEdit_motorPosition">
+                <widget class="QLineEdit" name="lineEdit_motorShowPosition">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -665,14 +725,14 @@
                 </widget>
                </item>
                <item row="0" column="0">
-                <widget class="QPushButton" name="pushButton">
+                <widget class="QPushButton" name="btn_motorReadSpeed">
                  <property name="text">
                   <string>读取电机速度</string>
                  </property>
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_motorCurrentSpeed">
+                <widget class="QLineEdit" name="lineEdit_motorShowSpeed">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>

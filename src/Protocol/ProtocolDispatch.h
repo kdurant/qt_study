@@ -91,7 +91,7 @@ private:
     QVector<quint8>  head;
     static quint32   cmdNum;
     quint32          cmdData;
-    quint32          packetNum;
+    quint32          packetNum{0};
     quint32          validDataLen;
     QVector<quint16> data;
     quint32          checksum;
