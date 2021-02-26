@@ -15,6 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
     laser1Driver = new LaserType1();
     laser2Driver = new LaserType2();
 
+    epos2Driver = new EPOS2();
+
     waveShow->moveToThread(thread);
     connect(thread, SIGNAL(started()), waveShow, SLOT(getFrameNumber()));
     connect(waveShow, SIGNAL(finishSampleFrameNumber()), thread, SLOT(quit()));
@@ -352,6 +354,14 @@ void MainWindow::initSignalSlot()
     /*
      * 电机相关逻辑
      */
+    connect(epos2Driver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
+
+    connect(dispatch, &ProtocolDispatch::motorDataReady, epos2Driver, &EPOS2::setNewData);
+    connect(ui->btn_motorReadSpeed, &QPushButton::pressed, this, [this]() {
+        qint32 speed = 0;
+        speed = epos2Driver->getActualVelocity();
+        ui->lineEdit_motorShowSpeed->setText(QString::number(speed, 10));
+    });
 }
 
 void MainWindow::getDeviceVersion(QString &version)

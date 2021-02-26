@@ -8,7 +8,7 @@ class MontorController : public QObject
 {
     Q_OBJECT
 public:
-    explicit MontorController(QObject* parent = 0);
+    MontorController() = default;
 
     virtual bool start()
     {

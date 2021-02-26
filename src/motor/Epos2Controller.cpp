@@ -5,6 +5,16 @@
  * @param word
  * @return
  */
+bool EPOS2::start()
+{
+  return false;
+}
+
+bool EPOS2::stop()
+{
+  return false;
+}
+
 quint16 EPOS2::calcFieldCRC(quint16 *pDataArray, quint16 numberofWords)
 {
     quint16 shifter, c;
@@ -89,6 +99,7 @@ bool EPOS2::clearFault()
 
 qint32 EPOS2::getActualVelocity()
 {
+    qint32 speed = 0;
     QVector<quint16> word;
     word.append(0x1001);
     word.append(0x606C);
@@ -114,12 +125,12 @@ qint32 EPOS2::getActualVelocity()
     send_4f_actively();
     waitResponse(waitTime);
     if(recvData.length() == 0x0b)
-    {
-        return recvData.at(4) + recvData.at(5);
-    }
+        speed =  recvData.at(4) + recvData.at(5);
+    else
+        speed = -1;
 
     // step 4, 再次发送4f，结束
     send_4f_actively();
 
-    return -1;
+    return speed;
 }

@@ -727,7 +727,7 @@
                <item row="0" column="0">
                 <widget class="QPushButton" name="btn_motorReadSpeed">
                  <property name="text">
-                  <string>读取电机速度</string>
+                  <string>读取电机速度(rpm)</string>
                  </property>
                 </widget>
                </item>

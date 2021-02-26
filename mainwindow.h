@@ -32,6 +32,8 @@
 #include "laserType1.h"
 #include "laserType2.h"
 
+#include "Epos2Controller.h"
+
 namespace Ui
 {
 class MainWindow;
@@ -113,6 +115,8 @@ private:
     LaserController *laserDriver;
     LaserType1 *     laser1Driver;
     LaserType2 *     laser2Driver;
+
+    EPOS2 *epos2Driver;
 };
 
 #endif  // MAINWINDOW_H

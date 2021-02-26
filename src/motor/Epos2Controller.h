@@ -6,14 +6,14 @@
 class EPOS2 : public MontorController
 {
 public:
-    explicit EPOS2(QObject *parent = 0);
+    EPOS2() = default;
 
 public:
     bool start(void) override;
     bool stop(void) override;
 
 private:
-    bool       isRecvNewData;  // 是否收到数据
+    bool       isRecvNewData{false};  // 是否收到数据
     QByteArray recvData;
     qint32     waitTime{1000};
 
@@ -49,6 +49,15 @@ private:
         QByteArray frame(1, 0x4f);
         emit       sendDataReady(MasterSet::MOTOR_PENETRATE, 1, frame);
         return true;
+    }
+
+ public slots:
+
+    void setNewData(QByteArray& data)
+    {
+      isRecvNewData = true;
+      recvData      = data;
+      emit responseDataReady();
     }
 
 public:
