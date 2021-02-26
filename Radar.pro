@@ -37,11 +37,11 @@ SOURCES += \
 #    src/ChartView/chartview.cpp \
 #    src/Protocol/DoubleWaveProtocol.cpp \
 #    src/Protocol/RadarProtocolBasic.cpp \
-    src/ShowWave/WaveExtract.cpp \
+    src/wave/OfflineWaveform.cpp \
+    src/wave/WaveExtract.cpp \
     src/laser/laserType2.cpp \
     src/third_lib/QCustomPlot/qcustomplot.cpp \
-    src/ShowWave/getWaveData.cpp \
-    src/ShowWave/getWaveShow.cpp \
+    src/wave/getWaveData.cpp \
     save.cpp \
     src/DevInfo/DevInfo.cpp \
     src/UpdateBin/UpdateBin.cpp \
@@ -53,7 +53,8 @@ SOURCES += \
     src/motor/Epos2Controller.cpp
 
 HEADERS += \
-    src/ShowWave/WaveExtract.h \
+    src/wave/OfflineWaveform.h \
+    src/wave/WaveExtract.h \
     src/laser/laserType2.h \
     stable.h \
         stable.h \
@@ -64,8 +65,7 @@ HEADERS += \
 #    src/Protocol/DoubleWaveProtocol.h \
 #    src/Protocol/RadarProtocolBasic.h \
     src/third_lib/QCustomPlot/qcustomplot.h \
-    src/ShowWave/getWaveData.h \
-    src/ShowWave/getWaveShow.h \
+    src/wave/getWaveData.h \
     save.h \
     src/DevInfo/DevInfo.h \
     src/UpdateBin/UpdateBin.h \
@@ -79,7 +79,7 @@ HEADERS += \
 
 INCLUDEPATH += ./src/Protocol
 INCLUDEPATH += ./src/UpdateBin
-INCLUDEPATH += ./src/ShowWave
+INCLUDEPATH += ./src/wave
 INCLUDEPATH += ./src/motor
 INCLUDEPATH += ./src/laser
 

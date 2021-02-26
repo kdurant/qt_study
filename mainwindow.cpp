@@ -1,15 +1,16 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow),
+      configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
-    dispatch    = new ProtocolDispatch();
-    preview     = new PreviewProcess();
-    updateFlash = new UpdateBin();
-    waveShow    = new WaveShow();
+    dispatch        = new ProtocolDispatch();
+    preview         = new PreviewProcess();
+    updateFlash     = new UpdateBin();
+    offlineWaveForm = new OfflineWaveform();
 
     laserDriver  = new LaserController();
     laser1Driver = new LaserType1();
@@ -17,9 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     epos2Driver = new EPOS2();
 
-    waveShow->moveToThread(thread);
-    connect(thread, SIGNAL(started()), waveShow, SLOT(getFrameNumber()));
-    connect(waveShow, SIGNAL(finishSampleFrameNumber()), thread, SLOT(quit()));
+    offlineWaveForm->moveToThread(thread);
+    connect(thread, SIGNAL(started()), offlineWaveForm, SLOT(getADsampleNumber()));
+    connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), thread, SLOT(quit()));
 
     //    connect(waveShow, SIGNAL(finishSampleFrameNumber()), waveShow, SLOT(deleteLater()));
     //    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
@@ -230,11 +231,11 @@ void MainWindow::initSignalSlot()
 
     connect(ui->bt_selectShowFile, SIGNAL(pressed()), this, SLOT(on_bt_selectShowFile_clicked()));
 
-    connect(waveShow, &WaveShow::sendSampleFrameNumber, this, [this](qint32 number) {
+    connect(offlineWaveForm, &OfflineWaveform::sendSampleFrameNumber, this, [this](qint32 number) {
         ui->lineEdit_validFrameNum->setText(QString::number(number));
     });
 
-    connect(waveShow, &WaveShow::sendSampleFrameNumber, this, [this](qint32 number) {
+    connect(offlineWaveForm, &OfflineWaveform::sendSampleFrameNumber, this, [this](qint32 number) {
         ui->slider_framePos->setMaximum(number);
         ui->spin_framePos->setMaximum(number);
     });
@@ -250,11 +251,6 @@ void MainWindow::initSignalSlot()
 
     //    connect(ui->spin_framePos, SIGNAL(valueChanged(int)), ui->slider_framePos, SLOT(setValue(int)));
     //    connect(ui->slider_framePos, SIGNAL(valueChanged(int)), ui->spin_framePos, SLOT(setValue(int)));
-
-    // qt5 信号槽格式, 不需要显示声明参数
-    //    connect(waveShow, &WaveShow::sendSampleFrameNumber, this, &MainWindow::updateFrameNumber);
-    // qt4信号槽格式
-    //    connect(waveShow, SIGNAL(sendSampleFrameNumber(qint32)), this, SLOT(updateFrameNumber(qint32)));
 
     connect(ui->bt_showWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
     connect(ui->btn_stopShowWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
@@ -347,8 +343,8 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->btn_laserReadCurrent, &QPushButton::pressed, this, [this]() {
-      QString text = laser2Driver->getCurrent();
-      ui->lineEdit_laserShowCurrent->setText(text );
+        QString text = laser2Driver->getCurrent();
+        ui->lineEdit_laserShowCurrent->setText(text);
     });
 
     /*
@@ -359,7 +355,7 @@ void MainWindow::initSignalSlot()
     connect(dispatch, &ProtocolDispatch::motorDataReady, epos2Driver, &EPOS2::setNewData);
     connect(ui->btn_motorReadSpeed, &QPushButton::pressed, this, [this]() {
         qint32 speed = 0;
-        speed = epos2Driver->getActualVelocity();
+        speed        = epos2Driver->getActualVelocity();
         ui->lineEdit_motorShowSpeed->setText(QString::number(speed, 10));
     });
 }
@@ -534,7 +530,7 @@ void MainWindow::on_bt_selectShowFile_clicked()
     if(showFileName.size() == 0)
         return;
     ui->lineEdit_selectShowFile->setText(showFileName);
-    waveShow->setWaveFile(showFileName);
+    offlineWaveForm->setWaveFile(showFileName);
     thread->start();
 }
 
@@ -559,11 +555,11 @@ void MainWindow::on_bt_showWave_clicked()
         if(running)
         {
             ui->spin_framePos->setValue(i);
-            waveShow->getFrameData(i);
+            offlineWaveForm->getFrameData(i);
             //            waveShow->getChData();
 
             QVector<ChInfo> allCh;
-            waveShow->getChData(allCh);
+            offlineWaveForm->getWaveform(allCh);
             for(int n = 0; n < allCh.size(); n++)
             {
                 ui->plot->graph(n)->setData(allCh[n].key, allCh[n].value);

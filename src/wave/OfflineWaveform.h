@@ -3,6 +3,9 @@
 #include <QtCore>
 #include <QFile>
 
+/*
+ * 分析保存成文件的数据
+ */
 class ChInfo
 {
 public:
@@ -11,20 +14,20 @@ public:
     QVector<double> value;
 };
 
-class WaveShow : public QObject
+class OfflineWaveform : public QObject
 {
     Q_OBJECT
 
 public:
-    WaveShow() : sampleFrameNumber(0) {}
+    OfflineWaveform() : sampleFrameNumber(0) {}
     bool isChDataHead(int offset);
     int getChNumber(int offset);
     void            setWaveFile(QString &file);
     QVector<quint8> getFrameData(qint32 number); // 获得一次采样完整的数据
-    int getChData(QVector<ChInfo> &ret);
+    int getWaveform(QVector<ChInfo> &ret);
 
 public slots:
-    qint32 getFrameNumber();
+    qint32 getADsampleNumber();
 
 signals:
     void sendSampleFrameNumber(qint32 number);

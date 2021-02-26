@@ -1,5 +1,6 @@
 #ifndef BSP_CONFIG_H
 #define BSP_CONFIG_H
+#include <QtCore>
 
 class BspConfig
 {

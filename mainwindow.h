@@ -27,7 +27,7 @@
 #include "ProtocolDispatch.h"
 #include "PreviewProcess.h"
 #include "UpdateBin.h"
-#include "getWaveShow.h"
+#include "OfflineWaveform.h"
 
 #include "laserType1.h"
 #include "laserType2.h"
@@ -109,8 +109,8 @@ private:
 
     quint32 sampleFrameNumber;
 
-    WaveShow *waveShow;
-    bool      running;
+    OfflineWaveform *offlineWaveForm;
+    bool running;
 
     LaserController *laserDriver;
     LaserType1 *     laser1Driver;

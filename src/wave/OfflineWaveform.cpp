@@ -1,6 +1,6 @@
-#include "getWaveShow.h"
+#include "OfflineWaveform.h"
 
-bool WaveShow::isChDataHead(int offset)
+bool OfflineWaveform::isChDataHead(int offset)
 {
     return (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90 && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a);
 }
@@ -10,7 +10,7 @@ bool WaveShow::isChDataHead(int offset)
  * @param offset
  * @return 
  */
-int WaveShow::getChNumber(int offset)
+int OfflineWaveform::getChNumber(int offset)
 {
     int number;
     if(frameData.at(offset + 0) == 0 && frameData.at(offset + 1) == 0)
@@ -24,7 +24,7 @@ int WaveShow::getChNumber(int offset)
     return number;
 }
 
-void WaveShow::setWaveFile(QString &file)
+void OfflineWaveform::setWaveFile(QString &file)
 {
     waveFile = file;
 }
@@ -34,7 +34,7 @@ void WaveShow::setWaveFile(QString &file)
  * @param number
  * @return 
  */
-QVector<quint8> WaveShow::getFrameData(qint32 number)
+QVector<quint8> OfflineWaveform::getFrameData(qint32 number)
 {
     frameData.clear();
     QFile file(waveFile);
@@ -53,7 +53,7 @@ QVector<quint8> WaveShow::getFrameData(qint32 number)
     }
 }
 
-int WaveShow::getChData(QVector<ChInfo> &allCh)
+int OfflineWaveform::getWaveform(QVector<ChInfo> &allCh)
 {
     int    ret = 0;
     ChInfo ch;
@@ -89,11 +89,11 @@ int WaveShow::getChData(QVector<ChInfo> &allCh)
 }
 
 /**
- * @brief WaveShow::getFrameNumber, 计算文件中有多少次完整的采样数据
+ * @brief 计算文件中有多少次完整的采样数据
  * 找到数据中0x01234567的位置，并记录下来，算作采样数据的开头
  * @return 
  */
-qint32 WaveShow::getFrameNumber()
+qint32 OfflineWaveform::getADsampleNumber()
 {
     QFile file(waveFile);
     file.open(QIODevice::ReadOnly);
