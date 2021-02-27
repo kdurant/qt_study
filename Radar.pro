@@ -37,6 +37,7 @@ SOURCES += \
 #    src/ChartView/chartview.cpp \
 #    src/Protocol/DoubleWaveProtocol.cpp \
 #    src/Protocol/RadarProtocolBasic.cpp \
+    src/Protocol/AdSampleControl.cpp \
     src/wave/OfflineWaveform.cpp \
     src/wave/OnlineWaveform.cpp \
     src/wave/WaveExtract.cpp \
@@ -46,13 +47,13 @@ SOURCES += \
     src/DevInfo/DevInfo.cpp \
     src/UpdateBin/UpdateBin.cpp \
     src/Protocol/ProtocolDispatch.cpp \
-    src/Protocol/PreviewProcess.cpp \
     src/laser/LaserController.cpp \
     src/laser/laserType1.cpp \
     src/motor/MotorController.cpp \
     src/motor/Epos2Controller.cpp
 
 HEADERS += \
+    src/Protocol/AdSampleControl.h \
     src/wave/OfflineWaveform.h \
     src/wave/OnlineWaveform.h \
     src/wave/WaveExtract.h \
@@ -71,7 +72,6 @@ HEADERS += \
     src/UpdateBin/UpdateBin.h \
     src/Protocol/protocol.h \
     src/Protocol/ProtocolDispatch.h \
-    src/Protocol/PreviewProcess.h \
     src/laser/LaserController.h \
     src/laser/laserType1.h \
     src/motor/MotorController.h \

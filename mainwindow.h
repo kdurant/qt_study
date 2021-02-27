@@ -25,7 +25,7 @@
 #include <QThread>
 
 #include "ProtocolDispatch.h"
-#include "PreviewProcess.h"
+#include "AdSampleControl.h"
 #include "UpdateBin.h"
 #include "OfflineWaveform.h"
 
@@ -65,11 +65,6 @@ protected:
 private slots:
 
     void processPendingDatagram();
-    /**
-     * @brief processPreview
-     * 已经收到了一个完整的预览数据包，需要显示了
-     */
-    void processPreview();
 
     void on_actionNote_triggered();
 
@@ -101,7 +96,7 @@ private:
     QLabel *labelVer;
 
     ProtocolDispatch *dispatch;
-    PreviewProcess *  preview;
+    AdSampleControll *preview;
     UpdateBin *       updateFlash;
     QThread *         thread;
 

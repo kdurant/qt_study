@@ -74,7 +74,7 @@ signals:
      * @brief 通过信号将数据传递给预览数据处理模块
      * @param data
      */
-    void previewDataReady(QByteArray &data);
+    void onlineDataReady(QByteArray &data);
     void flashDataReady(QByteArray &data);
 
     void laserDataReady(QByteArray &data);

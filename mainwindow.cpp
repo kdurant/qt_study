@@ -2,13 +2,12 @@
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow),
-      configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
     dispatch        = new ProtocolDispatch();
-    preview         = new PreviewProcess();
+    preview         = new AdSampleControll();
     updateFlash     = new UpdateBin();
     offlineWaveForm = new OfflineWaveform();
 
@@ -196,18 +195,6 @@ void MainWindow::processPendingDatagram()
     }
 }
 
-void MainWindow::processPreview()
-{
-    WaveData chData = preview->getSignalWave();
-    for(qint8 i = 0; i < 4; i++)
-    {
-        QTime time;
-        time.start();
-        //        ui->graphicsView->updateChart(i, chData.ch[i].coor, chData.ch[i].data);
-        qDebug() << "data num : " << chData.ch[i].coor.size() << "elapse time: " << time.elapsed() << " ms";
-    }
-}
-
 void MainWindow::initSignalSlot()
 {
     // 处理udp接收到的数据
@@ -219,15 +206,7 @@ void MainWindow::initSignalSlot()
     });
 
     // 具体数据分发
-    connect(dispatch, SIGNAL(previewDataReady(QByteArray &)), preview, SLOT(setDataFrame(QByteArray &)));
     connect(dispatch, SIGNAL(flashDataReady(QByteArray &)), updateFlash, SLOT(setDataFrame(QByteArray &)));
-
-    connect(preview, SIGNAL(previewReadyShow()), this, SLOT(processPreview()));
-    //connect(preview, SIGNAL(previewParaReadySet(qint32, qint32, qint32)), this, SLOT(writeUdpatagram(qint32, qint32, qint32)));
-
-    //connect(updateFlash,
-    //SIGNAL(flashCommandReadySet(uint32_t, uint32_t, QByteArray &)),
-    //SLOT(writeUdpatagram(uint32_t, uint32_t, QByteArray &)));
 
     /*
      * 离线显示数据波形
