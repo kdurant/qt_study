@@ -18,16 +18,16 @@ public:
     struct WaveformInfo
     {
         qint32 number;
-        QVector<double> pos;   // 相当于x轴
-        QVector<double> value; // 相当于y轴
+        QVector<double> pos;    // 相当于x轴
+        QVector<double> value;  // 相当于y轴
     };
 
     WaveExtract() = default;
 
     static bool isChDataHead(QVector<quint8> frameData, int offset);
 
-    static int getWaveform(BspConfig::RadarType type,
-                           QVector<quint8> &frameData,
+    static int getWaveform(BspConfig::RadarType   type,
+                           QVector<quint8> &      frameData,
                            QVector<WaveformInfo> &ret);
     static int getWaveform(BspConfig::RadarType type, QByteArray &data, QVector<WaveformInfo> &ret);
 };
