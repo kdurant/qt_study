@@ -6,13 +6,6 @@
 /*
  * 分析保存成文件的数据
  */
-class ChInfo
-{
-public:
-    qint32 number;
-    QVector<double> key;
-    QVector<double> value;
-};
 
 class OfflineWaveform : public QObject
 {
@@ -20,24 +13,21 @@ class OfflineWaveform : public QObject
 
 public:
     OfflineWaveform() : sampleFrameNumber(0) {}
-    bool isChDataHead(int offset);
-    int getChNumber(int offset);
     void setWaveFile(QString &file);
 
     QVector<quint8> getFrameData(qint32 number); // 获得一次采样完整的数据
-    int getWaveform(QVector<ChInfo> &ret);
 
 public slots:
     qint32 getADsampleNumber();
 
 signals:
-    void sendSampleFrameNumber(qint32 number);
-    void finishSampleFrameNumber();
+    void sendSampleFrameNumber(qint32 number); // 用于表示分析大文件的实时进度
+    void finishSampleFrameNumber();            // 大文件分析完成，通知线程退出
 
 private:
     QString         waveFile;
-    qint32          sampleFrameNumber;
-    QVector<qint32> frameStartPos;
+    qint32 sampleFrameNumber;
+    QVector<qint32> frameStartPos; // 单次采样数据开始在文件中的位置
     QVector<quint8> frameData;
 };
 #endif

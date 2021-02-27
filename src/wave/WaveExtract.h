@@ -4,6 +4,7 @@
    接收一次完整的采样数据，分析出波形信息
  */
 
+#include "bsp_config.h"
 #include <QtCore>
 
 class WaveExtract : public QObject
@@ -13,13 +14,6 @@ private:
     QString radarType;
 
 public:
-    enum RadarType {
-        RADAR_OCEAN = 0x00,
-        RADAR_LAND,
-        RADAR_760,
-        RADAR_DOUBLE_WAVE,
-    };
-
     // 存放采样数据中，某个具体通道的具体哪一段数据
     struct WaveformInfo
     {
@@ -29,6 +23,12 @@ public:
     };
 
     WaveExtract() = default;
-    int getFrameData(RadarType type, QVector<WaveformInfo> &ret);
+
+    static bool isChDataHead(QVector<quint8> frameData, int offset);
+
+    static int getWaveform(BspConfig::RadarType type,
+                           QVector<quint8> &frameData,
+                           QVector<WaveformInfo> &ret);
+    static int getWaveform(BspConfig::RadarType type, QByteArray &data, QVector<WaveformInfo> &ret);
 };
 #endif

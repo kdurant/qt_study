@@ -1,29 +1,5 @@
 #include "OfflineWaveform.h"
 
-bool OfflineWaveform::isChDataHead(int offset)
-{
-    return (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90 && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a);
-}
-
-/**
- * @brief 计算某次采样数据中的通道个数
- * @param offset
- * @return 
- */
-int OfflineWaveform::getChNumber(int offset)
-{
-    int number;
-    if(frameData.at(offset + 0) == 0 && frameData.at(offset + 1) == 0)
-        number = 0;
-    else if(frameData.at(offset + 0) == 0x0f && frameData.at(offset + 1) == 0x0f)
-        number = 1;
-    else if(frameData.at(offset + 0) == 0xf0 && frameData.at(offset + 1) == 0xf0)
-        number = 2;
-    else
-        number = 3;
-    return number;
-}
-
 void OfflineWaveform::setWaveFile(QString &file)
 {
     waveFile = file;
@@ -56,40 +32,40 @@ QVector<quint8> OfflineWaveform::getFrameData(qint32 number)
 /*
  * 从一次完整的采样数据中，分析出通道个数以及每个通道具体的波形
  */
-int OfflineWaveform::getWaveform(QVector<ChInfo> &allCh)
-{
-    int    ret = 0;
-    ChInfo ch;
-    int    offset = 88;
+//int OfflineWaveform::getWaveform(QVector<ChInfo> &allCh)
+//{
+//    int    ret = 0;
+//    ChInfo ch;
+//    int    offset = 88;
 
-    while(offset < frameData.size())
-    {
-        if(isChDataHead(offset))
-            offset += 4;
-        else
-            return ret;
+//    while(offset < frameData.size())
+//    {
+//        if(isChDataHead(offset))
+//            offset += 4;
+//        else
+//            return ret;
 
-        ch.number = getChNumber(offset);
-        offset += 8;
+//        ch.number = getChNumber(offset);
+//        offset += 8;
 
-        int start_pos = (frameData.at(offset) << 8) + frameData.at(offset + 1);
-        offset += 2;
-        int len = (frameData.at(offset) << 8) + frameData.at(offset + 1);
-        offset += 2;
+//        int start_pos = (frameData.at(offset) << 8) + frameData.at(offset + 1);
+//        offset += 2;
+//        int len = (frameData.at(offset) << 8) + frameData.at(offset + 1);
+//        offset += 2;
 
-        for(int i = 0; i < len; i++)
-        {
-            ch.key.append(i + start_pos);
-            ch.value.append((frameData.at(offset + 0) << 8) + frameData.at(offset + 1));
-            offset += 2;
-        }
-        allCh.append(ch);
-        ch.key.clear();
-        ch.value.clear();
-    }
+//        for(int i = 0; i < len; i++)
+//        {
+//            ch.key.append(i + start_pos);
+//            ch.value.append((frameData.at(offset + 0) << 8) + frameData.at(offset + 1));
+//            offset += 2;
+//        }
+//        allCh.append(ch);
+//        ch.key.clear();
+//        ch.value.clear();
+//    }
 
-    return ret;
-}
+//    return ret;
+//}
 
 /**
  * @brief 计算文件中有多少次完整的采样数据

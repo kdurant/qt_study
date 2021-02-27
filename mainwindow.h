@@ -24,10 +24,12 @@
 
 #include <QThread>
 
-#include "ProtocolDispatch.h"
 #include "AdSampleControl.h"
-#include "UpdateBin.h"
 #include "OfflineWaveform.h"
+#include "OnlineWaveform.h"
+#include "ProtocolDispatch.h"
+#include "UpdateBin.h"
+#include "WaveExtract.h"
 
 #include "laserType1.h"
 #include "laserType2.h"
@@ -56,6 +58,7 @@ public:
     void initSignalSlot();
 
     void getDeviceVersion(QString &version);
+    void plotSettings(void);
 
     void adadaf();
 

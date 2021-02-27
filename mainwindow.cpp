@@ -2,7 +2,8 @@
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
+    : QMainWindow(parent), ui(new Ui::MainWindow),
+      configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
@@ -29,16 +30,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     udpBind();
     initSignalSlot();
-    ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    ui->plot->legend->setVisible(true);  //右上角指示曲线的缩略框
-    ui->plot->xAxis->setLabel(QStringLiteral("时间：ns"));
-    ui->plot->yAxis->setLabel(QStringLiteral("AD采样值"));
-    ui->plot->addGraph();
-    ui->plot->addGraph();
-    ui->plot->addGraph();
-    ui->plot->graph(0)->setPen(QPen(Qt::red));
-    ui->plot->graph(1)->setPen(QPen(Qt::blue));
-    ui->plot->graph(2)->setPen(QPen(Qt::yellow));
+
+    plotSettings();
 }
 
 MainWindow::~MainWindow()
@@ -362,6 +355,27 @@ void MainWindow::getDeviceVersion(QString &version)
     ui->lineEdit_fpgaVer->setText(version);
 }
 
+void MainWindow::plotSettings()
+{
+    ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    ui->plot->legend->setVisible(true);  //右上角指示曲线的缩略框
+    ui->plot->xAxis->setLabel(QStringLiteral("时间：ns"));
+    ui->plot->yAxis->setLabel(QStringLiteral("AD采样值"));
+    if(radarType == BspConfig::RADAR_TPYE_OCEAN)
+    {
+        for(int i = 0; i < 8; i++)
+            ui->plot->addGraph();
+        ui->plot->graph(0)->setPen(QPen(Qt::red));
+        ui->plot->graph(1)->setPen(QPen(Qt::red));
+        ui->plot->graph(2)->setPen(QPen(Qt::blue));
+        ui->plot->graph(3)->setPen(QPen(Qt::blue));
+        ui->plot->graph(4)->setPen(QPen(Qt::black));
+        ui->plot->graph(5)->setPen(QPen(Qt::black));
+        ui->plot->graph(6)->setPen(QPen(Qt::darkCyan));
+        ui->plot->graph(7)->setPen(QPen(Qt::darkCyan));
+    }
+}
+
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     saveParameter();
@@ -531,14 +545,13 @@ void MainWindow::on_bt_showWave_clicked()
         if(running)
         {
             ui->spin_framePos->setValue(i);
-            offlineWaveForm->getFrameData(i);
-            //            waveShow->getChData();
+            QVector<quint8> sampleData = offlineWaveForm->getFrameData(i);
 
-            QVector<ChInfo> allCh;
-            offlineWaveForm->getWaveform(allCh);
+            QVector<WaveExtract::WaveformInfo> allCh;
+            WaveExtract::getWaveform(radarType, sampleData, allCh);
             for(int n = 0; n < allCh.size(); n++)
             {
-                ui->plot->graph(n)->setData(allCh[n].key, allCh[n].value);
+                ui->plot->graph(n)->setData(allCh[n].pos, allCh[n].value);
             }
             ui->plot->rescaleAxes();
             ui->plot->replot();
