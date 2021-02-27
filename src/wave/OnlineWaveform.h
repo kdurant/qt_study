@@ -1,0 +1,24 @@
+#ifndef ONLINE_WAVEFORM_H
+#define ONLINE_WAVEFORM_H
+#include <QtCore>
+
+/*
+ * 在使能采集后，采集卡会不断的上传采集数据
+ * 本模块的作用是将采集数据流分界，获得一次采样的完整数据后，交给其他模块
+ * 
+ * 1. udp数据帧中的包序号重新计数
+ * 2. 指定时间内没有收到新的数据
+ */
+
+class OnlineWaveform : public QObject
+{
+    Q_OBJECT
+
+public:
+    OnlineWaveform() {}
+
+private:
+    qint32 waitTime{10};
+    QVector<int> ch0;
+};
+#endif

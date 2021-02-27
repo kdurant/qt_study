@@ -21,7 +21,7 @@ public:
     };
 
     // 存放采样数据中，某个具体通道的具体哪一段数据
-    struct ChInfo
+    struct WaveformInfo
     {
         qint32 number;
         QVector<double> pos;   // 相当于x轴
@@ -29,6 +29,6 @@ public:
     };
 
     WaveExtract() = default;
-    int getFrameData(RadarType type, QVector<ChInfo> &ret);
+    int getFrameData(RadarType type, QVector<WaveformInfo> &ret);
 };
 #endif

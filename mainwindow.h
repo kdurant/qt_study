@@ -87,8 +87,6 @@ private slots:
 
     void on_btnNorFlasshReadFile_clicked();
 
-    void on_bt_selectShowFile_clicked();
-
     void on_bt_showWave_clicked();
 
 private:
@@ -110,7 +108,7 @@ private:
     quint32 sampleFrameNumber;
 
     OfflineWaveform *offlineWaveForm;
-    bool running;
+    bool             running;
 
     LaserController *laserDriver;
     LaserType1 *     laser1Driver;

@@ -53,6 +53,9 @@ QVector<quint8> OfflineWaveform::getFrameData(qint32 number)
     }
 }
 
+/*
+ * 从一次完整的采样数据中，分析出通道个数以及每个通道具体的波形
+ */
 int OfflineWaveform::getWaveform(QVector<ChInfo> &allCh)
 {
     int    ret = 0;

@@ -22,7 +22,8 @@ public:
     OfflineWaveform() : sampleFrameNumber(0) {}
     bool isChDataHead(int offset);
     int getChNumber(int offset);
-    void            setWaveFile(QString &file);
+    void setWaveFile(QString &file);
+
     QVector<quint8> getFrameData(qint32 number); // 获得一次采样完整的数据
     int getWaveform(QVector<ChInfo> &ret);
 

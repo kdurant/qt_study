@@ -38,10 +38,10 @@ SOURCES += \
 #    src/Protocol/DoubleWaveProtocol.cpp \
 #    src/Protocol/RadarProtocolBasic.cpp \
     src/wave/OfflineWaveform.cpp \
+    src/wave/OnlineWaveform.cpp \
     src/wave/WaveExtract.cpp \
     src/laser/laserType2.cpp \
     src/third_lib/QCustomPlot/qcustomplot.cpp \
-    src/wave/getWaveData.cpp \
     save.cpp \
     src/DevInfo/DevInfo.cpp \
     src/UpdateBin/UpdateBin.cpp \
@@ -54,6 +54,7 @@ SOURCES += \
 
 HEADERS += \
     src/wave/OfflineWaveform.h \
+    src/wave/OnlineWaveform.h \
     src/wave/WaveExtract.h \
     src/laser/laserType2.h \
     stable.h \
@@ -65,7 +66,6 @@ HEADERS += \
 #    src/Protocol/DoubleWaveProtocol.h \
 #    src/Protocol/RadarProtocolBasic.h \
     src/third_lib/QCustomPlot/qcustomplot.h \
-    src/wave/getWaveData.h \
     save.h \
     src/DevInfo/DevInfo.h \
     src/UpdateBin/UpdateBin.h \

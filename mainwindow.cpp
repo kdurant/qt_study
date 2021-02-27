@@ -229,7 +229,17 @@ void MainWindow::initSignalSlot()
     //SIGNAL(flashCommandReadySet(uint32_t, uint32_t, QByteArray &)),
     //SLOT(writeUdpatagram(uint32_t, uint32_t, QByteArray &)));
 
-    connect(ui->bt_selectShowFile, SIGNAL(pressed()), this, SLOT(on_bt_selectShowFile_clicked()));
+    /*
+     * 离线显示数据波形
+     */
+    connect(ui->btn_selectOfflineFile, &QPushButton::pressed, this, [this]() {
+        QString showFileName = QFileDialog::getOpenFileName(this, tr(""), "", tr("*.bin"));  //选择路径
+        if(showFileName.size() == 0)
+            return;
+        ui->lineEdit_selectShowFile->setText(showFileName);
+        offlineWaveForm->setWaveFile(showFileName);
+        thread->start();
+    });
 
     connect(offlineWaveForm, &OfflineWaveform::sendSampleFrameNumber, this, [this](qint32 number) {
         ui->lineEdit_validFrameNum->setText(QString::number(number));
@@ -248,9 +258,6 @@ void MainWindow::initSignalSlot()
             static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged),
             ui->spin_framePos,
             &QSpinBox::setValue);
-
-    //    connect(ui->spin_framePos, SIGNAL(valueChanged(int)), ui->slider_framePos, SLOT(setValue(int)));
-    //    connect(ui->slider_framePos, SIGNAL(valueChanged(int)), ui->spin_framePos, SLOT(setValue(int)));
 
     connect(ui->bt_showWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
     connect(ui->btn_stopShowWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
@@ -522,16 +529,6 @@ void MainWindow::on_btnNorFlasshReadFile_clicked()
         file.write(data);
     }
     file.close();
-}
-
-void MainWindow::on_bt_selectShowFile_clicked()
-{
-    QString showFileName = QFileDialog::getOpenFileName(this, tr(""), "", tr("*.bin"));  //选择路径
-    if(showFileName.size() == 0)
-        return;
-    ui->lineEdit_selectShowFile->setText(showFileName);
-    offlineWaveForm->setWaveFile(showFileName);
-    thread->start();
 }
 
 void MainWindow::on_bt_showWave_clicked()
