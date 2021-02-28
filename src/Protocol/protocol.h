@@ -54,6 +54,12 @@ public:
         WRITE_DATA = 0x00100003,
         WRITE_RUN  = 0x00100004,
     };
+
+    enum saveData {
+        STORE_FILE_NAME = 0x0000000A, // 硬盘Unit号(4Bytes)，文件名(252Bytes)
+        STORE_FILE_STATUS = 0x0000000B, //使能存储：数据00 00 00 01 停止存储：数据 00 00 00 00
+        READ_SSD_UNIT = 0x00000018,
+    };
 };
 
 class SlaveUp
@@ -76,6 +82,9 @@ public:
     enum motor
     {
         MOTOR_PENETRATE = 0x8000000C,
+    };
+    enum saveData {
+        RESPONSE_SSD_UNIT = 0x8000000A,
     };
 };
 

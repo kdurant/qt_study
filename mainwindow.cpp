@@ -234,6 +234,9 @@ void MainWindow::initSignalSlot()
     connect(ui->bt_showWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
     connect(ui->btn_stopShowWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
 
+    /*
+     * Nor Flash操作，远程更新相关逻辑
+     */
     connect(ui->btnNorFlashWrite, &QPushButton::pressed, this, [this]() {
         uint32_t addr;
         if(ui->rBtnDecAddr->isChecked())
@@ -337,6 +340,10 @@ void MainWindow::initSignalSlot()
         speed        = epos2Driver->getActualVelocity();
         ui->lineEdit_motorShowSpeed->setText(QString::number(speed, 10));
     });
+
+    /*
+     * 采集数据保存相关逻辑
+     */
 }
 
 void MainWindow::getDeviceVersion(QString &version)
