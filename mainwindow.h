@@ -25,6 +25,7 @@
 #include <QThread>
 
 #include "AdSampleControl.h"
+#include "DevInfo.h"
 #include "OfflineWaveform.h"
 #include "OnlineWaveform.h"
 #include "ProtocolDispatch.h"
@@ -59,8 +60,6 @@ public:
 
     void getDeviceVersion(QString &version);
     void plotSettings(void);
-
-    void adadaf();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -113,6 +112,9 @@ private:
     LaserType2 *     laser2Driver;
 
     EPOS2 *epos2Driver;
+
+    DevInfo *                 devInfo;
+    QVector<DevInfo::SysPara> sysParaInfo;
 };
 
 #endif  // MAINWINDOW_H

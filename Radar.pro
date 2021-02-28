@@ -84,6 +84,7 @@ INCLUDEPATH += ./src/UpdateBin
 INCLUDEPATH += ./src/wave
 INCLUDEPATH += ./src/motor
 INCLUDEPATH += ./src/laser
+INCLUDEPATH += ./src/DevInfo
 
 FORMS += \
         ui/mainwindow.ui \
