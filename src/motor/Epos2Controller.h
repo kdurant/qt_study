@@ -12,6 +12,7 @@ public:
     bool init(void) override;
     bool start(void) override;
     bool stop(void) override;
+    bool run(quint16 speed);
 
 private:
     bool       isRecvNewData{false};  // 是否收到数据

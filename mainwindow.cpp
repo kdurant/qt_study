@@ -57,6 +57,8 @@ MainWindow::MainWindow(QWidget *parent)
         item->setFlags(item->flags() & (~Qt::ItemIsEditable));
         ui->tableWidget_sysInfo->setItem(i, 0, item);
     }
+
+
 }
 
 MainWindow::~MainWindow()
@@ -364,6 +366,18 @@ void MainWindow::initSignalSlot()
         qint32 speed = 0;
         speed        = epos2Driver->getActualVelocity();
         ui->lineEdit_motorShowSpeed->setText(QString::number(speed, 10));
+    });
+
+    connect(ui->btn_motorStart, &QPushButton::pressed, this, [this](){
+        quint16 speed =ui->lineEdit_motorTargetSpeed->text().toInt(nullptr, 10);
+
+        epos2Driver->run(speed);
+    });
+
+    connect(ui->btn_motorInit, &QPushButton::pressed, this, [this](){
+      ui->btn_motorInit->setEnabled(false);
+      epos2Driver->init();
+      ui->btn_motorInit->setEnabled(true);
     });
 
     /*

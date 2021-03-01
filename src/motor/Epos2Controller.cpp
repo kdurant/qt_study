@@ -6,10 +6,13 @@
  */
 bool EPOS2::init()
 {
+    // 电机重新上电后，这4步是必须的
     clearFault();
     setShutdown();
     setHalt();
     setPorfileVelocityMode();
+
+    // 这4步是可选的
     setMaximalProfileVelocity(3571);
     setQuickstopDeceleration(45);
     setProfileAcceleration(45);
@@ -24,7 +27,17 @@ bool EPOS2::start()
 
 bool EPOS2::stop()
 {
+  return false;
+}
+
+bool EPOS2::run(quint16 speed)
+{
+  if(!setTargetVelocity(speed))
     return false;
+  if(!setEnableState())
+    return false;
+
+  return true;
 }
 
 /**
@@ -316,7 +329,7 @@ qint32 EPOS2::getActualVelocity()
     send_4f_actively();
     waitResponse(waitTime);
     if(recvData.length() == 0x0b)
-        speed = recvData.at(4) + recvData.at(5);
+      speed = static_cast<quint16>( recvData.at(6)<<8) + static_cast<quint8>(recvData.at(5));
     else
         speed = -1;
 

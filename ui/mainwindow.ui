@@ -37,15 +37,15 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>410</width>
-         <height>638</height>
+         <width>389</width>
+         <height>755</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>4</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -358,15 +358,8 @@
             <string>Motor</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_6">
-            <item row="1" column="1">
-             <widget class="QPushButton" name="btn_motorStop">
-              <property name="text">
-               <string>停止</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEdit_8">
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="lineEdit_motorTargetSpeed">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -375,21 +368,14 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QPushButton" name="btn_motorStart">
-              <property name="text">
-               <string>启动</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
+            <item row="2" column="0">
              <widget class="QLabel" name="label_10">
               <property name="text">
                <string>电机转速（rpm/s)：</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="0" colspan="2">
+            <item row="4" column="0" colspan="2">
              <widget class="QGroupBox" name="groupBox_4">
               <property name="title">
                <string>测试功能</string>
@@ -483,6 +469,23 @@
                 </widget>
                </item>
               </layout>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QPushButton" name="btn_motorStart">
+              <property name="text">
+               <string>设置电机速度</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QPushButton" name="btn_motorInit">
+              <property name="toolTip">
+               <string>电机重新上电后，需要先初始化</string>
+              </property>
+              <property name="text">
+               <string>电机初始化</string>
+              </property>
              </widget>
             </item>
            </layout>
@@ -1277,7 +1280,7 @@
      <x>0</x>
      <y>0</y>
      <width>1259</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
