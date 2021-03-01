@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,2">
+   <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,2">
     <item>
      <widget class="QScrollArea" name="scrollArea">
       <property name="sizePolicy">
@@ -22,6 +22,12 @@
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>412</width>
+        <height>0</height>
+       </size>
       </property>
       <property name="widgetResizable">
        <bool>true</bool>
@@ -31,15 +37,15 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>367</width>
-         <height>770</height>
+         <width>410</width>
+         <height>638</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>4</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -833,37 +839,19 @@
                <string>离线文件</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_3">
-               <item row="3" column="1" colspan="3">
-                <widget class="QLineEdit" name="lineEdit_validFrameNum">
-                 <property name="text">
-                  <string>0</string>
-                 </property>
-                 <property name="readOnly">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
                <item row="4" column="2" colspan="2">
                 <widget class="QLineEdit" name="lineEdit_previewFrameInterval">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="text">
                   <string>1</string>
                  </property>
                  <property name="readOnly">
                   <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1" colspan="3">
-                <widget class="QLineEdit" name="lineEdit_selectShowFile">
-                 <property name="readOnly">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="3">
-                <widget class="QPushButton" name="btn_stopShowWave">
-                 <property name="text">
-                  <string>停止</string>
                  </property>
                 </widget>
                </item>
@@ -911,13 +899,6 @@
                  </property>
                 </widget>
                </item>
-               <item row="6" column="0" colspan="3">
-                <widget class="QPushButton" name="bt_showWave">
-                 <property name="text">
-                  <string>开始</string>
-                 </property>
-                </widget>
-               </item>
                <item row="2" column="0">
                 <widget class="QPushButton" name="btn_selectOfflineFile">
                  <property name="text">
@@ -927,13 +908,87 @@
                </item>
                <item row="5" column="2" colspan="2">
                 <widget class="QLineEdit" name="lineEdit_previewTimeInterval">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
                  <property name="text">
                   <string>100</string>
                  </property>
                 </widget>
                </item>
+               <item row="2" column="2" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_selectShowFile">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2" colspan="2">
+                <widget class="QLineEdit" name="lineEdit_validFrameNum">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>0</string>
+                 </property>
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="0" colspan="2">
+                <widget class="QPushButton" name="bt_showWave">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>开始</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="2" colspan="2">
+                <widget class="QPushButton" name="btn_stopShowWave">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>停止</string>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -1222,7 +1277,7 @@
      <x>0</x>
      <y>0</y>
      <width>1259</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">

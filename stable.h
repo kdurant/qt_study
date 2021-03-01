@@ -2,10 +2,8 @@
 #define STABLE_H
 
 #if defined __cplusplus
+#include <QtCore>
 #include <QMainWindow>
-
-#include "bsp_config.h"
-#include "noteinfo.h"
 
 #include <QCloseEvent>
 #include <QUdpSocket>
@@ -25,6 +23,8 @@
 
 #include <QThread>
 
+#include "bsp_config.h"
+#include "noteinfo.h"
 #endif
 
 #endif  // STABLE_H

@@ -15,8 +15,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = Radar
 TEMPLATE = app
 
-#CONFIG += precompile_header
-#PRECOMPILED_HEADER  = stable.h
+CONFIG += precompile_header
+PRECOMPILED_HEADER  = stable.h
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
@@ -60,8 +60,6 @@ HEADERS += \
     src/wave/OnlineWaveform.h \
     src/wave/WaveExtract.h \
     src/laser/laserType2.h \
-    stable.h \
-        stable.h \
         mainwindow.h \
     noteinfo.h \
     bsp_config.h \
