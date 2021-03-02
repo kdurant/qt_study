@@ -356,6 +356,16 @@ void MainWindow::initSignalSlot()
         ui->lineEdit_laserShowCurrent->setText(text);
     });
 
+    connect(ui->btn_laserReadFreq, &QPushButton::pressed, this, [this]() {
+      QString text = laser2Driver->getFreq();
+      ui->lineEdit_laserShowFreq->setText(text);
+    });
+
+    connect(ui->btn_laserReadTem, &QPushButton::pressed, this, [this]() {
+      QString text = laser2Driver->getTemp();
+      ui->lineEdit_laserShowTemp->setText(text);
+    });
+
     /*
      * 电机相关逻辑
      */

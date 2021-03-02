@@ -93,3 +93,45 @@ QString LaserType2::getCurrent()
     }
     return "error";
 }
+
+QString LaserType2::getFreq()
+{
+  QByteArray packet{"FM"};
+  packet.append("\r\n");
+  emit sendDataReady(MasterSet::LASER_PENETRATE, packet.length(), packet);
+
+  QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
+  connect(this, &LaserType2::responseDataReady, &waitLoop, &QEventLoop::quit);
+  QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
+  waitLoop.exec();
+  if(isRecvNewData)
+  {
+    isRecvNewData = false;
+    if(recvData.contains("FREQUENCY"))
+      return recvData.mid(11, recvData.length() - 2 - 11);
+    else
+      return "error";
+  }
+  return "error";
+}
+
+QString LaserType2::getTemp()
+{
+  QByteArray packet{"IT"};
+  packet.append("\r\n");
+  emit sendDataReady(MasterSet::LASER_PENETRATE, packet.length(), packet);
+
+  QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
+  connect(this, &LaserType2::responseDataReady, &waitLoop, &QEventLoop::quit);
+  QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
+  waitLoop.exec();
+  if(isRecvNewData)
+  {
+    isRecvNewData = false;
+    if(recvData.contains("TINT"))
+      return recvData.mid(6, recvData.length() - 2 - 6);
+    else
+      return "error";
+  }
+  return "error";
+}

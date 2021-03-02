@@ -24,6 +24,8 @@ public:
     bool    setFreq(qint32 freq);
     bool    setCurrent(qint32 current);
     QString getCurrent(void);
+    QString getFreq(void);
+    QString getTemp(void);
 
 public slots:
 
