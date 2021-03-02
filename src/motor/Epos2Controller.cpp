@@ -304,26 +304,12 @@ bool EPOS2::setTargetVelocity(quint16 velocity)
 qint32 EPOS2::getActualVelocity()
 {
     qint32           speed = 0;
-    QVector<quint16> word;
-    word.append(0x1001);
-    word.append(0x606C);
-    word.append(0x0100);
-    word = WordPlusCRC(word);
-
+    QVector<quint16> word{0x1001, 0x606C, 0x0100};
+    word             = WordPlusCRC(word);
     QByteArray frame = transmitWord2Byte(word);
-    // step1, send OpCode
-    QByteArray data = frame.mid(0, 1);
-    emit       sendDataReady(MasterSet::MOTOR_PENETRATE, 1, data);
-    waitResponse(waitTime);
-    if(!isResponse4f())
-        return -1;
 
-    // step2, sendData
-    data = frame.mid(1);
-    emit sendDataReady(MasterSet::MOTOR_PENETRATE, data.length(), data);
-    waitResponse(waitTime);
-    if(!isResponse4f00())
-        return -1;
+    if(!sendFrameStep1(frame))
+      return false;
 
     // step 3, 主动发送4f
     send_4f_actively();
@@ -337,4 +323,29 @@ qint32 EPOS2::getActualVelocity()
     send_4f_actively();
 
     return speed;
+}
+
+qint32 EPOS2::getActualPosition()
+{
+  qint32           postion = 0;
+  QVector<quint16> word{0x0260, 0xB001, 0x0030, 0x0000};
+  word             = WordPlusCRC(word);
+  QByteArray frame = transmitWord2Byte(word);
+
+  if(!sendFrameStep1(frame))
+    return false;
+
+  // step 3, 主动发送4f
+  send_4f_actively();
+  waitResponse(waitTime);
+  if(recvData.length() == 0x0b)
+    postion = static_cast<quint16>( recvData.at(6)<<8) + static_cast<quint8>(recvData.at(5));
+  else
+    postion = -1;
+
+  // step 4, 再次发送4f，结束
+  send_4f_actively();
+
+  return postion;
+  return 0;
 }

@@ -92,7 +92,7 @@ public:
     QByteArray setPorfilePositionMode();
     QByteArray setProfileVelocity(quint16 value);
     QByteArray setTargetPosition(qint32 value);
-    QByteArray getActualPosition();
+    qint32 getActualPosition();
     qint32     ReadPosition(QByteArray array);
 
     QByteArray setHomeMode();
