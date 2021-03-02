@@ -228,6 +228,7 @@ void MainWindow::initSignalSlot()
     /*
      * 读取系统参数信息相关逻辑
      */
+    connect(devInfo, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
     connect(dispatch, SIGNAL(infoDataReady(QByteArray &)), devInfo, SLOT(setNewData(QByteArray &)));
     connect(ui->btn_ReadSysInfo, &QPushButton::pressed, this, &MainWindow::getSysInfo);
     connect(autoReadInfoTimer, &QTimer::timeout, this, &MainWindow::getSysInfo);

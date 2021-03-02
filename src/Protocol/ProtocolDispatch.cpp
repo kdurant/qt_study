@@ -15,7 +15,8 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
     switch(command)
     {
         case SlaveUp::SYS_INFO:
-            emit infoDataReady(data);
+            transmitFrame = data.mid(24,256);
+            emit infoDataReady(transmitFrame);
             break;
         case SlaveUp::COMMAND_CNT:
             break;
