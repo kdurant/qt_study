@@ -114,7 +114,7 @@ private:
     EPOS2 *epos2Driver;
 
     DevInfo *                 devInfo;
-    QVector<DevInfo::SysPara> sysParaInfo;
+    QVector<DevInfo::SysParaOffset> sysParaInfo;
 };
 
 #endif  // MAINWINDOW_H
