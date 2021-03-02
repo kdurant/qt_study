@@ -18,7 +18,7 @@ public:
      * @param data
      * @return 
      */
-    static QByteArray int2ba(uint32_t data)
+    static QByteArray int2ba(quint32 data)
     {
         QByteArray ba;
         ba.resize(4);
@@ -29,9 +29,9 @@ public:
         return ba;
     }
 
-    static qint32 ba2int(QByteArray ba)
+    static quint32 ba2int(QByteArray ba)
     {
-        qint32 ret = (ba[0] << 24) + (ba[1] << 16) + (ba[2] << 8) + (ba[3] << 0);
+        quint32 ret = ba.toHex().toUInt(nullptr, 16);
         return ret;
     }
 };

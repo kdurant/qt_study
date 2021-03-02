@@ -1,9 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow),
-      configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
@@ -18,8 +17,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     epos2Driver = new EPOS2();
 
-    devInfo     = new DevInfo();
-    sysParaInfo = devInfo->getSysPara();
+    devInfo           = new DevInfo();
+    autoReadInfoTimer = new QTimer();
+    autoReadInfoTimer->setInterval(1000);
 
     offlineWaveForm->moveToThread(thread);
     connect(thread, SIGNAL(started()), offlineWaveForm, SLOT(getADsampleNumber()));
@@ -36,17 +36,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     plotSettings();
 
+    devInfo->getSysPara(sysParaInfo);
     ui->tableWidget_sysInfo->setColumnCount(2);
     ui->tableWidget_sysInfo->setRowCount(sysParaInfo.length());
     ui->tableWidget_sysInfo->setHorizontalHeaderLabels(QStringList() << "参数"
                                                                      << "值");
-    ui->tableWidget_sysInfo->verticalHeader()->setVisible(false); //隐藏列表头
+    ui->tableWidget_sysInfo->verticalHeader()->setVisible(false);  //隐藏列表头
     ui->tableWidget_sysInfo->horizontalHeader()->setSectionResizeMode(
-        QHeaderView::Stretch); //x先自适应宽度
-                               //    ui->tableWidget_sysInfo->horizontalHeader()
-        //        ->setSectionResizeMode(0, QHeaderView::ResizeToContents); //然后设置要根据内容使用宽度的列
+        QHeaderView::Stretch);  //x先自适应宽度
+                                //    ui->tableWidget_sysInfo->horizontalHeader()
+    //        ->setSectionResizeMode(0, QHeaderView::ResizeToContents); //然后设置要根据内容使用宽度的列
 
-    for (int i = 0; i < sysParaInfo.length(); i++) {
+    for(int i = 0; i < sysParaInfo.length(); i++)
+    {
         ui->tableWidget_sysInfo->setCellWidget(i, 0, new QLabel(sysParaInfo[i].name));
     }
 
@@ -57,8 +59,6 @@ MainWindow::MainWindow(QWidget *parent)
         item->setFlags(item->flags() & (~Qt::ItemIsEditable));
         ui->tableWidget_sysInfo->setItem(i, 0, item);
     }
-
-
 }
 
 MainWindow::~MainWindow()
@@ -225,6 +225,19 @@ void MainWindow::initSignalSlot()
         udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
     });
 
+    /*
+     * 读取系统参数信息相关逻辑
+     */
+    connect(dispatch, SIGNAL(infoDataReady(QByteArray &)), devInfo, SLOT(setNewData(QByteArray &)));
+    connect(ui->btn_ReadSysInfo, &QPushButton::pressed, this, &MainWindow::getSysInfo);
+    connect(autoReadInfoTimer, &QTimer::timeout, this, &MainWindow::getSysInfo);
+    connect(ui->checkBox_autoReadSysInfo, &QCheckBox::stateChanged, this, [this](int state) {
+        if(state == Qt::Checked)
+            autoReadInfoTimer->start();
+        else
+            autoReadInfoTimer->stop();
+    });
+
     // 具体数据分发
     connect(dispatch, SIGNAL(flashDataReady(QByteArray &)), updateFlash, SLOT(setDataFrame(QByteArray &)));
 
@@ -316,7 +329,6 @@ void MainWindow::initSignalSlot()
     connect(laser2Driver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
 
     connect(dispatch, &ProtocolDispatch::laserDataReady, laser2Driver, &LaserType2::setNewData);
-
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]() {
         bool status = false;
         switch(radarType)
@@ -357,13 +369,13 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->btn_laserReadFreq, &QPushButton::pressed, this, [this]() {
-      QString text = laser2Driver->getFreq();
-      ui->lineEdit_laserShowFreq->setText(text);
+        QString text = laser2Driver->getFreq();
+        ui->lineEdit_laserShowFreq->setText(text);
     });
 
     connect(ui->btn_laserReadTem, &QPushButton::pressed, this, [this]() {
-      QString text = laser2Driver->getTemp();
-      ui->lineEdit_laserShowTemp->setText(text);
+        QString text = laser2Driver->getTemp();
+        ui->lineEdit_laserShowTemp->setText(text);
     });
 
     /*
@@ -378,37 +390,21 @@ void MainWindow::initSignalSlot()
         ui->lineEdit_motorShowSpeed->setText(QString::number(speed, 10));
     });
 
-    connect(ui->btn_motorStart, &QPushButton::pressed, this, [this](){
-        quint16 speed =ui->lineEdit_motorTargetSpeed->text().toInt(nullptr, 10);
+    connect(ui->btn_motorStart, &QPushButton::pressed, this, [this]() {
+        quint16 speed = ui->lineEdit_motorTargetSpeed->text().toInt(nullptr, 10);
 
         epos2Driver->run(speed);
     });
 
-    connect(ui->btn_motorInit, &QPushButton::pressed, this, [this](){
-      ui->btn_motorInit->setEnabled(false);
-      epos2Driver->init();
-      ui->btn_motorInit->setEnabled(true);
+    connect(ui->btn_motorInit, &QPushButton::pressed, this, [this]() {
+        ui->btn_motorInit->setEnabled(false);
+        epos2Driver->init();
+        ui->btn_motorInit->setEnabled(true);
     });
 
     /*
      * 采集数据保存相关逻辑
      */
-}
-
-void MainWindow::getDeviceVersion(QString &version)
-{
-    QByteArray frame;
-
-    dispatch->encode(MasterSet::SYS_INFO, 4, 0x00000001);
-    //    udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-
-    QEventLoop waitLoop;
-    connect(dispatch, &ProtocolDispatch::infoDataReady, &waitLoop, &QEventLoop::quit);
-    QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
-    waitLoop.exec();
-
-    version = dispatch->getDeviceVersion();
-    ui->lineEdit_fpgaVer->setText(version);
 }
 
 void MainWindow::plotSettings()
@@ -502,12 +498,6 @@ void MainWindow::on_pushButton_sampleEnable_clicked()
         ui->pushButton_sampleEnable->setText("开始采集");
     }
     preview->setPreviewEnable(status);
-}
-
-void MainWindow::on_pushButton_ReadInfo_clicked()
-{
-    QString version;
-    getDeviceVersion(version);
 }
 
 void MainWindow::on_checkBox_autoZoom_stateChanged(int arg1)
@@ -625,5 +615,24 @@ void MainWindow::on_bt_showWave_clicked()
         {
             return;
         }
+    }
+}
+
+void MainWindow::getSysInfo()
+{
+    QVector<DevInfo::ParaInfo> info;
+    if(devInfo->getSysPara(info))
+    {
+        for(int i = 0; i < sysParaInfo.length(); i++)
+        {
+            if(i == 0)
+                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(sysParaInfo[i].value));
+            else
+                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16))));
+        }
+    }
+    else
+    {
+        QMessageBox::warning(this, "警告", "系统未连接");
     }
 }

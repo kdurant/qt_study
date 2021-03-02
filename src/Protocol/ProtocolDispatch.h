@@ -57,18 +57,12 @@ public slots:
     void encode(qint32 command, qint32 data_len, qint32 data);
     void encode(qint32 command, qint32 data_len, QByteArray &data);
 
-public:
-    QString getDeviceVersion()
-    {
-        return deviceVersion;
-    }
-
 signals:
     /**
      * @brief 系统状态不转发，直接返回
      * @param data
      */
-    void infoDataReady(uint32_t para, QByteArray &data);
+    void infoDataReady(QByteArray &data);
 
     /**
      * @brief 通过信号将数据传递给预览数据处理模块

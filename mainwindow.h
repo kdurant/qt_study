@@ -58,7 +58,6 @@ public:
 
     void initSignalSlot();
 
-    void getDeviceVersion(QString &version);
     void plotSettings(void);
 
 protected:
@@ -74,8 +73,6 @@ private slots:
 
     void on_pushButton_sampleEnable_clicked();
 
-    void on_pushButton_ReadInfo_clicked();
-
     void on_checkBox_autoZoom_stateChanged(int arg1);
 
     void on_btnNorFlashRead_clicked();
@@ -85,6 +82,8 @@ private slots:
     void on_btnNorFlasshReadFile_clicked();
 
     void on_bt_showWave_clicked();
+
+    void getSysInfo();
 
 private:
     Ui::MainWindow *ui;
@@ -113,8 +112,9 @@ private:
 
     EPOS2 *epos2Driver;
 
-    DevInfo *                 devInfo;
-    QVector<DevInfo::SysParaOffset> sysParaInfo;
+    DevInfo *                  devInfo;
+    QVector<DevInfo::ParaInfo> sysParaInfo;
+    QTimer *                   autoReadInfoTimer;
 };
 
 #endif  // MAINWINDOW_H
