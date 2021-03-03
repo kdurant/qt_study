@@ -71,10 +71,6 @@ private slots:
 
     void on_actionNote_triggered();
 
-    void on_pushButton_setPreviewPara_clicked();
-
-    void on_pushButton_sampleEnable_clicked();
-
     void on_checkBox_autoZoom_stateChanged(int arg1);
 
     void on_btnNorFlashRead_clicked();

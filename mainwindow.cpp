@@ -241,11 +241,70 @@ void MainWindow::initSignalSlot()
             autoReadInfoTimer->stop();
     });
 
-    // 具体数据分发
-    connect(dispatch, SIGNAL(flashDataReady(QByteArray &)), updateFlash, SLOT(setDataFrame(QByteArray &)));
+    /*
+     * 波形预览相关逻辑
+     */
+    connect(ui->btn_setPreviewPara, &QPushButton::pressed, this, [this](){
+        int totalSampleLen = ui->lineEdit_sampleLen->text().toInt();
+        int previewRatio   = ui->lineEdit_sampleRate->text().toInt();
+        int firstPos       = ui->lineEdit_firstStartPos->text().toInt();
+        int firstLen       = ui->lineEdit_firstLen->text().toInt();
+        int secondPos      = ui->lineEdit_secondStartPos->text().toInt();
+        int secondLen      = ui->lineEdit_secondLen->text().toInt();
+        int compressLen    = ui->lineEdit_compressLen->text().toInt();
+        int compressRatio  = ui->lineEdit_compressRatio->text().toInt();
+
+        if(secondPos < firstPos + firstLen)
+        {
+          QMessageBox::critical(NULL, "错误", "第二段起始位置需要小于第一段起始位置+第一段采样长度");
+          return;
+        }
+        if(compressLen >= secondLen)
+        {
+          QMessageBox::critical(NULL, "错误", "压缩长度需要小于第二段长度");
+          return;
+        }
+        if(secondPos + secondLen >= totalSampleLen)
+        {
+          QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
+          return;
+        }
+
+        if(compressLen % compressRatio != 0)
+        {
+          QMessageBox::critical(NULL, "错误", "压缩长度需要是压缩比的整数倍");
+          return;
+        }
+
+        preview->setTotalSampleLen(totalSampleLen);
+        preview->setPreviewRatio(previewRatio);
+        preview->setFirstPos(firstPos);
+        preview->setFirstLen(firstLen);
+        preview->setSecondPos(secondPos);
+        preview->setSecondLen(secondLen);
+        preview->setCompressLen(compressLen);
+        preview->setCompressRatio(compressRatio);
+    });
+
+    connect(ui->btn_sampleEnable, &QPushButton::pressed, this, [this](){
+          QByteArray frame;
+          quint32    status;
+
+          if(ui->btn_sampleEnable->text() == "开始采集")
+              {
+                status = 0x01010101;
+                ui->btn_sampleEnable->setText("停止采集");
+            }
+          else
+              {
+                status = 0;
+                ui->btn_sampleEnable->setText("开始采集");
+            }
+          preview->setPreviewEnable(status);
+    });
 
     /*
-     * 离线显示数据波形
+     * 离线显示数据波形相关逻辑
      */
     connect(ui->btn_selectOfflineFile, &QPushButton::pressed, this, [this]() {
         QString showFileName = QFileDialog::getOpenFileName(this, tr(""), "", tr("*.bin"));  //选择路径
@@ -280,6 +339,8 @@ void MainWindow::initSignalSlot()
     /*
      * Nor Flash操作，远程更新相关逻辑
      */
+
+    connect(dispatch, SIGNAL(flashDataReady(QByteArray &)), updateFlash, SLOT(setDataFrame(QByteArray &)));
     connect(ui->btnNorFlashWrite, &QPushButton::pressed, this, [this]() {
         uint32_t addr;
         if(ui->rBtnDecAddr->isChecked())
@@ -481,66 +542,7 @@ void MainWindow::on_actionNote_triggered()
     note->show();
 }
 
-void MainWindow::on_pushButton_setPreviewPara_clicked()
-{
-    int totalSampleLen = ui->lineEdit_sampleLen->text().toInt();
-    int previewRatio   = ui->lineEdit_sampleRate->text().toInt();
-    int firstPos       = ui->lineEdit_firstStartPos->text().toInt();
-    int firstLen       = ui->lineEdit_firstLen->text().toInt();
-    int secondPos      = ui->lineEdit_secondStartPos->text().toInt();
-    int secondLen      = ui->lineEdit_secondLen->text().toInt();
-    int compressLen    = ui->lineEdit_compressLen->text().toInt();
-    int compressRatio  = ui->lineEdit_compressRatio->text().toInt();
 
-    if(secondPos < firstPos + firstLen)
-    {
-        QMessageBox::critical(NULL, "错误", "第二段起始位置需要小于第一段起始位置+第一段采样长度");
-        return;
-    }
-    if(compressLen >= secondLen)
-    {
-        QMessageBox::critical(NULL, "错误", "压缩长度需要小于第二段长度");
-        return;
-    }
-    if(secondPos + secondLen >= totalSampleLen)
-    {
-        QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
-        return;
-    }
-
-    if(compressLen % compressRatio != 0)
-    {
-        QMessageBox::critical(NULL, "错误", "压缩长度需要是压缩比的整数倍");
-        return;
-    }
-
-    preview->setTotalSampleLen(totalSampleLen);
-    preview->setPreviewRatio(previewRatio);
-    preview->setFirstPos(firstPos);
-    preview->setFirstLen(firstLen);
-    preview->setSecondPos(secondPos);
-    preview->setSecondLen(secondLen);
-    preview->setCompressLen(compressLen);
-    preview->setCompressRatio(compressRatio);
-}
-
-void MainWindow::on_pushButton_sampleEnable_clicked()
-{
-    QByteArray frame;
-    quint32    status;
-
-    if(ui->pushButton_sampleEnable->text() == "开始采集")
-    {
-        status = 0x01010101;
-        ui->pushButton_sampleEnable->setText("停止采集");
-    }
-    else
-    {
-        status = 0;
-        ui->pushButton_sampleEnable->setText("开始采集");
-    }
-    preview->setPreviewEnable(status);
-}
 
 void MainWindow::on_checkBox_autoZoom_stateChanged(int arg1)
 {
