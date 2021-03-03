@@ -27,17 +27,17 @@ bool EPOS2::start()
 
 bool EPOS2::stop()
 {
-  return false;
+    return false;
 }
 
 bool EPOS2::run(quint16 speed)
 {
-  if(!setTargetVelocity(speed))
-    return false;
-  if(!setEnableState())
-    return false;
+    if (!setTargetVelocity(speed))
+        return false;
+    if (!setEnableState())
+        return false;
 
-  return true;
+    return true;
 }
 
 /**
@@ -309,13 +309,13 @@ qint32 EPOS2::getActualVelocity()
     QByteArray frame = transmitWord2Byte(word);
 
     if(!sendFrameStep1(frame))
-      return false;
+        return false;
 
     // step 3, 主动发送4f
     send_4f_actively();
     waitResponse(waitTime);
     if(recvData.length() == 0x0b)
-      speed = static_cast<quint16>( recvData.at(6)<<8) + static_cast<quint8>(recvData.at(5));
+        speed = static_cast<quint16>(recvData.at(6) << 8) + static_cast<quint8>(recvData.at(5));
     else
         speed = -1;
 
@@ -325,27 +325,44 @@ qint32 EPOS2::getActualVelocity()
     return speed;
 }
 
+bool EPOS2::setTargetPosition(quint32 value)
+{
+    QVector<quint16> word{0x1103, 0x607a, 0x0100, 0xffff, 0xffff};
+    word[3] = value & 0xffff;
+    word[4] = (value >> 16) & 0xffff;
+    word = WordPlusCRC(word);
+    QByteArray frame = transmitWord2Byte(word);
+
+    if (!sendFrameStep1(frame))
+        return false;
+
+    if (!sendFrameStep2())
+        return false;
+
+    return true;
+}
+
 qint32 EPOS2::getActualPosition()
 {
-  qint32           postion = 0;
-  QVector<quint16> word{0x0260, 0xB001, 0x0030, 0x0000};
-  word             = WordPlusCRC(word);
-  QByteArray frame = transmitWord2Byte(word);
+    qint32 postion = 0;
+    QVector<quint16> word{0x0260, 0xB001, 0x0030, 0x0000};
+    word = WordPlusCRC(word);
+    QByteArray frame = transmitWord2Byte(word);
 
-  if(!sendFrameStep1(frame))
-    return false;
+    if (!sendFrameStep1(frame))
+        return false;
 
-  // step 3, 主动发送4f
-  send_4f_actively();
-  waitResponse(waitTime);
-  if(recvData.length() == 0x0b)
-    postion = static_cast<quint16>( recvData.at(6)<<8) + static_cast<quint8>(recvData.at(5));
-  else
-    postion = -1;
+    // step 3, 主动发送4f
+    send_4f_actively();
+    waitResponse(waitTime);
+    if (recvData.length() == 0x0b)
+        postion = static_cast<quint16>(recvData.at(6) << 8) + static_cast<quint8>(recvData.at(5));
+    else
+        postion = -1;
 
-  // step 4, 再次发送4f，结束
-  send_4f_actively();
+    // step 4, 再次发送4f，结束
+    send_4f_actively();
 
-  return postion;
-  return 0;
+    return postion;
+    return 0;
 }

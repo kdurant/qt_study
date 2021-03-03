@@ -12,7 +12,9 @@ public:
     bool init(void) override;
     bool start(void) override;
     bool stop(void) override;
+
     bool run(quint16 speed);
+    bool movePosition(quint32 postion);
 
 private:
     bool       isRecvNewData{false};  // 是否收到数据
@@ -91,7 +93,7 @@ public:
     QByteArray setPositionControlWord();
     QByteArray setPorfilePositionMode();
     QByteArray setProfileVelocity(quint16 value);
-    QByteArray setTargetPosition(qint32 value);
+    bool setTargetPosition(quint32 value);
     qint32 getActualPosition();
     qint32     ReadPosition(QByteArray array);
 

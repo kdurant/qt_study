@@ -480,6 +480,10 @@ void MainWindow::initSignalSlot()
         ui->btn_motorInit->setEnabled(true);
     });
 
+    connect(ui->btn_motorMovePostion, &QPushButton::pressed, this, [this]() {
+        //        epos2Driver->();
+    });
+
     /*
      * 采集数据保存相关逻辑
      */
