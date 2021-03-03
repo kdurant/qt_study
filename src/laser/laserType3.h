@@ -1,6 +1,6 @@
 #ifndef LASERTYPE3_H
 #define LASERTYPE3_H
-// 陆地雷达激光控制器
+// 无人机雷达激光控制器
 #include "LaserController.h"
 #include "bsp_config.h"
 #include "protocol.h"
@@ -11,18 +11,28 @@ private:
     bool       isRecvNewData;  // 是否收到数据
     QByteArray recvData;
 
+    quint8 checksum(QVector<quint8> &data)
+    {
+        quint8 ret = 0;
+        for (int i = 0; i < 8; i++)
+            ret += data[i];
+        return ret;
+    }
+
 public:
     LaserType3()
     {
         isRecvNewData = false;
     }
 
+    bool setMode(OpenMode mode) override;
+
     bool open(void) override;
 
     bool close(void) override;
 
     bool setFreq(qint32 freq);
-    bool setCurrent(qint32 current);
+    bool setCurrent(quint16 current);
 
 public slots:
 

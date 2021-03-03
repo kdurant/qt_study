@@ -38,6 +38,7 @@ SOURCES += \
 #    src/Protocol/DoubleWaveProtocol.cpp \
 #    src/Protocol/RadarProtocolBasic.cpp \
     src/Protocol/AdSampleControl.cpp \
+    src/laser/laserType3.cpp \
     src/saveWave/SaveWave.cpp \
     src/wave/OfflineWaveform.cpp \
     src/wave/OnlineWaveform.cpp \
@@ -55,6 +56,7 @@ SOURCES += \
 
 HEADERS += \
     src/Protocol/AdSampleControl.h \
+    src/laser/laserType3.h \
     src/saveWave/SaveWave.h \
     src/wave/OfflineWaveform.h \
     src/wave/OnlineWaveform.h \

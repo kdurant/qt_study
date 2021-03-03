@@ -7,10 +7,9 @@ class LaserController : public QObject
     Q_OBJECT
 
 public:
-    enum OpenMode
-    {
-        IN_SIDE = 0x01,
-        OUT_SIDE
+    enum OpenMode {
+        IN_SIDE = 0x00,
+        OUT_SIDE = 0x01,
     };
 
     LaserController() = default;

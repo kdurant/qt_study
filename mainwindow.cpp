@@ -170,14 +170,21 @@ void MainWindow::uiConfig()
     {
         setWindowTitle(tr("陆地雷达控制软件"));
         ui->lineEdit_radarType->setText("陆地雷达");
-        ui->label_laserPower->setVisible(false);
-        ui->comboBox_laserPower->setVisible(false);
         ui->label_triggerMode->setVisible(false);
         ui->rbtn_triggerInside->setVisible(false);
         ui->rbtn_triggerOutside->setVisible(false);
         ui->comboBox_laserFreq->addItem("100000");
         ui->comboBox_laserFreq->addItem("200000");
         ui->comboBox_laserFreq->addItem("400000");
+    }
+    else if(radarType == BspConfig::RADAR_TPYE_DRONE)
+    {
+        setWindowTitle(tr("无人机雷达控制软件"));
+        ui->lineEdit_radarType->setText("无人机雷达");
+        ui->label_laserPower->setVisible(false);
+        ui->comboBox_laserPower->setVisible(false);
+        ui->comboBox_laserFreq->addItem("4000");
+        //        ui->label
     }
     else
     {

@@ -1,9 +1,22 @@
-#include "laserType2.h"
+
+#include "laserType3.h"
+#include <numeric>
+
+bool LaserType3::setMode(LaserController::OpenMode mode)
+{
+    QVector<quint8> command{0x55, 0xAA, 0x00, 0x01, 0xee, 0x00, 0x00, 0x00, 0x00, 0xff, 0x33, 0xcc};
+    command[4] = mode;
+    command[9] = checksum(command);
+    QByteArray frame;
+    for (int i = 0; i < command.length(); i++) {
+        frame.append(command[i] & 0xff);
+    }
+    emit sendDataReady(MasterSet::LASER_ENABLE, frame.length(), frame);
+    return true;
+}
 
 /**
  * @brief LaserType3::open
- * 1. 使用00 00 00 02指令，设置激光器工作频率
- * 2. 使用00 00 00 28指令，打开激光器
  * @return
  */
 bool LaserType3::open()
@@ -16,8 +29,6 @@ bool LaserType3::open()
 
 /**
  * @brief 关闭激光器
- * 1. 使用acc2命令将电流设置到0
- * 2. 使用00 00 00 28指令，关闭激光器
  * @return
  */
 bool LaserType3::close()
@@ -46,29 +57,25 @@ bool LaserType3::setFreq(qint32 freq)
 }
 
 /**
- * @brief 最大值5000mA
- * 设置的值是整数，但相应的数据会在后面添加小数点
- * 例如：设置5000，返回5000.00
+ * @brief 最大值电流，单位0.01A
  * @return
  */
-bool LaserType3::setCurrent(qint32 current)
+bool LaserType3::setCurrent(quint16 current)
 {
-    QByteArray packet{"ACC 2 "};
-    packet.append(QString::number(current));
-    packet.append("\r\n");
-    emit sendDataReady(MasterSet::LASER_PENETRATE, packet.length(), packet);
+    QVector<quint8> command{0x55, 0xAA, 0x00, 0x20, 0xee, 0x00, 0x00, 0x00, 0x00, 0xff, 0x33, 0xcc};
+    command[4] = current & 0xff;
+    command[5] = (current >> 8) & 0xff;
+    command[9] = checksum(command);
+    QByteArray frame;
+    for (int i = 0; i < command.length(); i++) {
+        frame.append(command[i] & 0xff);
+    }
+    emit sendDataReady(MasterSet::LASER_ENABLE, frame.length(), frame);
 
     QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
     connect(this, &LaserType3::responseDataReady, &waitLoop, &QEventLoop::quit);
     QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
     waitLoop.exec();
-    if(isRecvNewData)
-    {
-        isRecvNewData = false;
-        if(recvData.contains(packet.mid(0, packet.length() - 2)))
-            return true;
-        else
-            return false;
-    }
+
     return false;
 }
