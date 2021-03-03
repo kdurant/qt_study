@@ -24,8 +24,9 @@ public:
     struct ValidFileInfo
     {
         QByteArray name;
-        qint32 startUnit;
-        qint32 endUnit;
+        qint32 fileUnit;    // 本文件 文件名在ssd中的存储位置
+        qint32 startUnit;   // 本文件在ssd中的起始位置
+        qint32 endUnit;     // 本文件在ssd中的结束位置
     };
 
 public:
@@ -45,7 +46,7 @@ signals:
                        QByteArray &data); // 需要发送的数据已经准备好
 
 public slots:
-
+    // data为通信协议中的完整数据帧
     void setNewData(QByteArray &data)
     {
         allData.append(data);

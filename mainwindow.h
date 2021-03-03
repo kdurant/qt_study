@@ -37,6 +37,8 @@
 
 #include "Epos2Controller.h"
 
+#include "SaveWave.h"
+
 namespace Ui
 {
 class MainWindow;
@@ -115,6 +117,8 @@ private:
     DevInfo *                  devInfo;
     QVector<DevInfo::ParaInfo> sysParaInfo;
     QTimer *                   autoReadInfoTimer;
+
+    SaveWave *ssd;
 };
 
 #endif  // MAINWINDOW_H

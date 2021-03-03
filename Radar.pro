@@ -83,6 +83,8 @@ INCLUDEPATH += ./src/wave
 INCLUDEPATH += ./src/motor
 INCLUDEPATH += ./src/laser
 INCLUDEPATH += ./src/DevInfo
+INCLUDEPATH += ./src/saveWave
+
 
 FORMS += \
         ui/mainwindow.ui \

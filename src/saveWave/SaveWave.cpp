@@ -31,6 +31,8 @@ bool SaveWave::readDiskUnit(qint32 unitAddr, QByteArray &ret)
         }
     }
     ret = allData[0];
+    allData.clear();
+    timer->stop();
     return true;
 }
 
@@ -50,17 +52,41 @@ bool SaveWave::inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo)
         if (!readDiskUnit(unit++, fileName)) // 读操作失败
             return false;
 
-        if (fileName.contains(QByteArray(100, 0xee))) //文件名内容错误
+        if (fileName.mid(24+0, 8) == fileName.mid(24+8, 8)) //文件名内容错误
             return false;
 
         if (!readDiskUnit(unit++, filePos)) // 读操作失败
             return false;
-        if (filePos.mid(0, 8).contains(QByteArray(4, 0xdd))) //文件名内容错误
+        if (filePos.mid(24+0, 8) == filePos.mid(24+8, 8)) //文件位置内容错误
             return false;
 
-        fileInfo.name = fileName.mid(0, 252);
-        fileInfo.startUnit = BspConfig::ba2int(filePos.mid(0, 4));
-        fileInfo.endUnit = BspConfig::ba2int(filePos.mid(4, 4));
+        auto swapByteOrder = [](QByteArray &ba){
+          for(int i = 0; i< ba.length(); i+=4)
+          {
+            char c0 = ba.at(i);
+            char c1 = ba.at(i+1);
+            char c2 = ba.at(i+2);
+            char c3 = ba.at(i+3);
+
+            ba[i] = c3;
+            ba[i+1] = c2;
+            ba[i+2] = c1;
+            ba[i+3] = c0;
+          }
+
+        };
+        QByteArray name = fileName.mid(24, 252);
+        QByteArray startUnit = filePos.mid(24, 4);
+        QByteArray endUnit = filePos.mid(28, 4);
+        // 上面得到数据因为大小端的问题，在每4个字节内，需要交换字节序
+        swapByteOrder(name);
+        swapByteOrder(startUnit);
+        swapByteOrder(endUnit);
+
+        fileInfo.name = name;
+        fileInfo.fileUnit = unit-2;
+        fileInfo.startUnit = BspConfig::ba2int(startUnit);
+        fileInfo.endUnit = BspConfig::ba2int(endUnit);
     }
     return true;
 }

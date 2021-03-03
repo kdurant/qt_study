@@ -70,6 +70,7 @@ signals:
      */
     void onlineDataReady(QByteArray &data);
     void flashDataReady(QByteArray &data);
+    void ssdDataReady(QByteArray &data);
 
     void laserDataReady(QByteArray &data);
     void motorDataReady(QByteArray &data);

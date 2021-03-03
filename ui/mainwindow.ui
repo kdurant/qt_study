@@ -37,15 +37,15 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>410</width>
-         <height>638</height>
+         <width>389</width>
+         <height>755</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>5</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -349,6 +349,9 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="text">
+               <string>0</string>
               </property>
              </widget>
             </item>
@@ -991,14 +994,14 @@
               </property>
               <layout class="QGridLayout" name="gridLayout_9">
                <item row="5" column="0">
-                <widget class="QPushButton" name="pushButton">
+                <widget class="QPushButton" name="btn_ssdEnableStore">
                  <property name="text">
                   <string>开始存储</string>
                  </property>
                 </widget>
                </item>
                <item row="4" column="1">
-                <widget class="QLineEdit" name="lineEdit_4">
+                <widget class="QLineEdit" name="lineEdit_ssdStoreFileName">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1008,14 +1011,14 @@
                 </widget>
                </item>
                <item row="5" column="1">
-                <widget class="QPushButton" name="pushButton_4">
+                <widget class="QPushButton" name="btn_ssdDisableStore">
                  <property name="text">
                   <string>停止存储</string>
                  </property>
                 </widget>
                </item>
                <item row="1" column="0">
-                <widget class="QPushButton" name="pushButton_6">
+                <widget class="QPushButton" name="btn_ssdSearchSpace">
                  <property name="text">
                   <string>检索文件</string>
                  </property>
@@ -1024,7 +1027,7 @@
                <item row="0" column="0">
                 <widget class="QLabel" name="label_8">
                  <property name="text">
-                  <string>检索文件起始Unit(hex)：</string>
+                  <string>检索起始Unit(hex)：</string>
                  </property>
                 </widget>
                </item>
@@ -1049,12 +1052,15 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEdit_5">
+                <widget class="QLineEdit" name="lineEdit_ssdSearchStartUnit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>0</string>
                  </property>
                 </widget>
                </item>
@@ -1066,7 +1072,7 @@
                 </widget>
                </item>
                <item row="2" column="1">
-                <widget class="QLineEdit" name="lineEdit_43">
+                <widget class="QLineEdit" name="lineEdit_ssdAvailFileUnit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1076,7 +1082,7 @@
                 </widget>
                </item>
                <item row="3" column="1">
-                <widget class="QLineEdit" name="lineEdit_3">
+                <widget class="QLineEdit" name="lineEdit_ssdAvailDataUnit">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
@@ -1264,7 +1270,7 @@
      <x>0</x>
      <y>0</y>
      <width>1259</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">

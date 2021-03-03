@@ -60,6 +60,7 @@ public:
         STORE_FILE_STATUS = 0x0000000B, //使能存储：数据00 00 00 01 停止存储：数据 00 00 00 00
         READ_SSD_UNIT = 0x00000018,
     };
+
 };
 
 class SlaveUp

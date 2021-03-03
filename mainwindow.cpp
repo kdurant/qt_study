@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     autoReadInfoTimer = new QTimer();
     autoReadInfoTimer->setInterval(1000);
 
+    ssd = new SaveWave();
+
     offlineWaveForm->moveToThread(thread);
     connect(thread, SIGNAL(started()), offlineWaveForm, SLOT(getADsampleNumber()));
     connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), thread, SLOT(quit()));
@@ -406,6 +408,24 @@ void MainWindow::initSignalSlot()
     /*
      * 采集数据保存相关逻辑
      */
+
+    connect(ssd, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
+    connect(dispatch, &ProtocolDispatch::ssdDataReady, ssd, &SaveWave::setNewData);
+    connect(ui->btn_ssdSearchSpace, &QPushButton::pressed, this, [this](){
+      ui->btn_ssdSearchSpace->setEnabled(false);
+      SaveWave::ValidFileInfo fileInfo;
+      bool status = false;
+      quint32 startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt();
+
+      status = ssd->inquireSpace(startUnit, fileInfo);
+      if(status == false)
+      {
+          ui->lineEdit_ssdAvailFileUnit->setText(QString::number(fileInfo.fileUnit+2, 16));
+          ui->lineEdit_ssdAvailDataUnit->setText(QString::number(fileInfo.endUnit+1, 16));
+      }
+      ui->btn_ssdSearchSpace->setEnabled(true);
+    });
+
 }
 
 void MainWindow::plotSettings()
