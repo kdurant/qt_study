@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
@@ -244,7 +244,7 @@ void MainWindow::initSignalSlot()
     /*
      * 波形预览相关逻辑
      */
-    connect(ui->btn_setPreviewPara, &QPushButton::pressed, this, [this](){
+    connect(ui->btn_setPreviewPara, &QPushButton::pressed, this, [this]() {
         int totalSampleLen = ui->lineEdit_sampleLen->text().toInt();
         int previewRatio   = ui->lineEdit_sampleRate->text().toInt();
         int firstPos       = ui->lineEdit_firstStartPos->text().toInt();
@@ -256,24 +256,24 @@ void MainWindow::initSignalSlot()
 
         if(secondPos < firstPos + firstLen)
         {
-          QMessageBox::critical(NULL, "错误", "第二段起始位置需要小于第一段起始位置+第一段采样长度");
-          return;
+            QMessageBox::critical(NULL, "错误", "第二段起始位置需要小于第一段起始位置+第一段采样长度");
+            return;
         }
         if(compressLen >= secondLen)
         {
-          QMessageBox::critical(NULL, "错误", "压缩长度需要小于第二段长度");
-          return;
+            QMessageBox::critical(NULL, "错误", "压缩长度需要小于第二段长度");
+            return;
         }
         if(secondPos + secondLen >= totalSampleLen)
         {
-          QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
-          return;
+            QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
+            return;
         }
 
         if(compressLen % compressRatio != 0)
         {
-          QMessageBox::critical(NULL, "错误", "压缩长度需要是压缩比的整数倍");
-          return;
+            QMessageBox::critical(NULL, "错误", "压缩长度需要是压缩比的整数倍");
+            return;
         }
 
         preview->setTotalSampleLen(totalSampleLen);
@@ -286,21 +286,21 @@ void MainWindow::initSignalSlot()
         preview->setCompressRatio(compressRatio);
     });
 
-    connect(ui->btn_sampleEnable, &QPushButton::pressed, this, [this](){
-          QByteArray frame;
-          quint32    status;
+    connect(ui->btn_sampleEnable, &QPushButton::pressed, this, [this]() {
+        QByteArray frame;
+        quint32    status;
 
-          if(ui->btn_sampleEnable->text() == "开始采集")
-              {
-                status = 0x01010101;
-                ui->btn_sampleEnable->setText("停止采集");
-            }
-          else
-              {
-                status = 0;
-                ui->btn_sampleEnable->setText("开始采集");
-            }
-          preview->setPreviewEnable(status);
+        if(ui->btn_sampleEnable->text() == "开始采集")
+        {
+            status = 0x01010101;
+            ui->btn_sampleEnable->setText("停止采集");
+        }
+        else
+        {
+            status = 0;
+            ui->btn_sampleEnable->setText("开始采集");
+        }
+        preview->setPreviewEnable(status);
     });
 
     /*
@@ -471,28 +471,28 @@ void MainWindow::initSignalSlot()
      */
     connect(ssd, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
     connect(dispatch, &ProtocolDispatch::ssdDataReady, ssd, &SaveWave::setNewData);
-    connect(ui->btn_ssdSearchSpace, &QPushButton::pressed, this, [this](){
+    connect(ui->btn_ssdSearchSpace, &QPushButton::pressed, this, [this]() {
         ui->btn_ssdSearchSpace->setEnabled(false);
         SaveWave::ValidFileInfo fileInfo;
-        bool status = false;
-        quint32 startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt();
+        bool                    status    = false;
+        quint32                 startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt();
 
         status = ssd->inquireSpace(startUnit, fileInfo);
         if(status == false)
         {
-            ui->lineEdit_ssdAvailFileUnit->setText(QString::number(fileInfo.fileUnit+2, 16));
-            ui->lineEdit_ssdAvailDataUnit->setText(QString::number(fileInfo.endUnit+1, 16));
+            ui->lineEdit_ssdAvailFileUnit->setText(QString::number(fileInfo.fileUnit + 2, 16));
+            ui->lineEdit_ssdAvailDataUnit->setText(QString::number(fileInfo.endUnit + 1, 16));
         }
         ui->btn_ssdSearchSpace->setEnabled(true);
     });
 
-    connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this](){
+    connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this]() {
         ui->btn_ssdEnableStore->setEnabled(false);
 
         quint32 fileUnit = ui->lineEdit_ssdAvailFileUnit->text().toUInt(nullptr, 16);
         QString fileName = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
-        if(ui->lineEdit_ssdStoreFileName->text().length() !=0)
-          fileName.append(ui->lineEdit_ssdStoreFileName->text().length());
+        if(ui->lineEdit_ssdStoreFileName->text().length() != 0)
+            fileName.append(ui->lineEdit_ssdStoreFileName->text().length());
         ssd->setSaveFileName(fileUnit, fileName);
 
         quint32 dataUnit = ui->lineEdit_ssdAvailDataUnit->text().toUInt(nullptr, 16);
@@ -500,14 +500,13 @@ void MainWindow::initSignalSlot()
         ssd->enableStoreFile(0x01);
     });
 
-    connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this](){
+    connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this]() {
         QMessageBox message(QMessageBox::NoIcon, "停止存储", "真的要停止存储吗", QMessageBox::Yes | QMessageBox::No, NULL);
         if(message.exec() == QMessageBox::No)
             return;
         ui->btn_ssdEnableStore->setEnabled(true);
         ssd->enableStoreFile(0x00);
     });
-
 }
 
 void MainWindow::plotSettings()
@@ -516,10 +515,11 @@ void MainWindow::plotSettings()
     ui->plot->legend->setVisible(true);  //右上角指示曲线的缩略框
     ui->plot->xAxis->setLabel(QStringLiteral("时间：ns"));
     ui->plot->yAxis->setLabel(QStringLiteral("AD采样值"));
-    if(radarType == BspConfig::RADAR_TPYE_OCEAN)
+    if(radarType == BspConfig::RADAR_TPYE_OCEAN || radarType == BspConfig::RADAR_TPYE_LAND)
     {
         for(int i = 0; i < 8; i++)
             ui->plot->addGraph();
+
         ui->plot->graph(0)->setPen(QPen(Qt::red));
         ui->plot->graph(1)->setPen(QPen(Qt::red));
         ui->plot->graph(2)->setPen(QPen(Qt::blue));
@@ -541,8 +541,6 @@ void MainWindow::on_actionNote_triggered()
     NoteInfo *note = new NoteInfo;
     note->show();
 }
-
-
 
 void MainWindow::on_checkBox_autoZoom_stateChanged(int arg1)
 {
