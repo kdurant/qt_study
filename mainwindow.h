@@ -71,8 +71,6 @@ private slots:
 
     void on_actionNote_triggered();
 
-    void on_checkBox_autoZoom_stateChanged(int arg1);
-
     void on_btnNorFlashRead_clicked();
 
     void on_btnNorFlashErase_clicked();
@@ -87,6 +85,7 @@ private:
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;
     QSettings *     configIni;
+    QThread *       thread;
 
     BspConfig::RadarType radarType;
     QHostAddress         deviceIP;
@@ -95,9 +94,11 @@ private:
     QLabel *labelVer;
 
     ProtocolDispatch *dispatch;
+
     AdSampleControll *preview;
-    UpdateBin *       updateFlash;
-    QThread *         thread;
+    bool              autoZoomPlot{true};
+
+    UpdateBin *updateFlash;
 
     quint32 sampleFrameNumber;
 

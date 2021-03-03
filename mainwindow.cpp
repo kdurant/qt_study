@@ -303,6 +303,13 @@ void MainWindow::initSignalSlot()
         preview->setPreviewEnable(status);
     });
 
+    connect(ui->checkBox_autoZoom, &QCheckBox::stateChanged, this, [this](int state) {
+        if(state == Qt::Checked)
+            autoZoomPlot = true;
+        else
+            autoZoomPlot = false;
+    });
+
     /*
      * 离线显示数据波形相关逻辑
      */
@@ -511,24 +518,34 @@ void MainWindow::initSignalSlot()
 
 void MainWindow::plotSettings()
 {
-    ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    //ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
     ui->plot->legend->setVisible(true);  //右上角指示曲线的缩略框
     ui->plot->xAxis->setLabel(QStringLiteral("时间：ns"));
     ui->plot->yAxis->setLabel(QStringLiteral("AD采样值"));
-    if(radarType == BspConfig::RADAR_TPYE_OCEAN || radarType == BspConfig::RADAR_TPYE_LAND)
-    {
-        for(int i = 0; i < 8; i++)
-            ui->plot->addGraph();
 
-        ui->plot->graph(0)->setPen(QPen(Qt::red));
-        ui->plot->graph(1)->setPen(QPen(Qt::red));
-        ui->plot->graph(2)->setPen(QPen(Qt::blue));
-        ui->plot->graph(3)->setPen(QPen(Qt::blue));
-        ui->plot->graph(4)->setPen(QPen(Qt::black));
-        ui->plot->graph(5)->setPen(QPen(Qt::black));
-        ui->plot->graph(6)->setPen(QPen(Qt::darkCyan));
-        ui->plot->graph(7)->setPen(QPen(Qt::darkCyan));
+    for(int i = 0; i < 8; i++)
+    {
+        ui->plot->addGraph();
+        ui->plot->graph(i)->setScatterStyle(QCPScatterStyle::ssDisc);
     }
+
+    ui->plot->graph(0)->setPen(QPen(Qt::red));
+    ui->plot->graph(0)->setName("通道0第一段");
+    ui->plot->graph(1)->setPen(QPen(Qt::red));
+    ui->plot->graph(1)->setName("通道0第二段");
+    ui->plot->graph(2)->setPen(QPen(Qt::blue));
+    ui->plot->graph(2)->setName("通道1第一段");
+    ui->plot->graph(3)->setPen(QPen(Qt::blue));
+    ui->plot->graph(3)->setName("通道1第二段");
+    ui->plot->graph(4)->setPen(QPen(Qt::black));
+    ui->plot->graph(4)->setName("通道2第一段");
+    ui->plot->graph(5)->setPen(QPen(Qt::black));
+    ui->plot->graph(5)->setName("通道2第二段");
+    ui->plot->graph(6)->setPen(QPen(Qt::darkCyan));
+    ui->plot->graph(6)->setName("通道3第一段");
+    ui->plot->graph(7)->setPen(QPen(Qt::darkCyan));
+    ui->plot->graph(7)->setName("通道3第二段");
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -540,14 +557,6 @@ void MainWindow::on_actionNote_triggered()
 {
     NoteInfo *note = new NoteInfo;
     note->show();
-}
-
-void MainWindow::on_checkBox_autoZoom_stateChanged(int arg1)
-{
-    //    if(arg1 == Qt::Checked)
-    //        ui->graphicsView->setZoomFlag(true);
-    //    else
-    //        ui->graphicsView->setZoomFlag(false);
 }
 
 void MainWindow::on_btnNorFlashRead_clicked()
@@ -641,7 +650,8 @@ void MainWindow::on_bt_showWave_clicked()
             {
                 ui->plot->graph(n)->setData(allCh[n].pos, allCh[n].value);
             }
-            ui->plot->rescaleAxes();
+            if(autoZoomPlot)
+                ui->plot->rescaleAxes();
             ui->plot->replot();
 
             if(interval_time == 0)

@@ -834,7 +834,7 @@
                    <item>
                     <widget class="QCheckBox" name="checkBox_autoZoom">
                      <property name="text">
-                      <string>autoZoom</string>
+                      <string>自动缩放</string>
                      </property>
                     </widget>
                    </item>
