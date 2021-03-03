@@ -38,7 +38,9 @@ public:
     bool readDiskUnit(qint32 unitAddr, QByteArray &ret);
     bool inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo);
 
-    bool setSaveFileName(QByteArray &name);
+    bool setSaveFileName(quint32 unit, QString &name);
+    bool setSaveFileAddr(quint32 unit);
+    bool enableStoreFile(quint32 status);
 
 signals:
     void sendDataReady(qint32 command,

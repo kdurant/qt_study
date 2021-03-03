@@ -408,22 +408,43 @@ void MainWindow::initSignalSlot()
     /*
      * 采集数据保存相关逻辑
      */
-
     connect(ssd, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
     connect(dispatch, &ProtocolDispatch::ssdDataReady, ssd, &SaveWave::setNewData);
     connect(ui->btn_ssdSearchSpace, &QPushButton::pressed, this, [this](){
-      ui->btn_ssdSearchSpace->setEnabled(false);
-      SaveWave::ValidFileInfo fileInfo;
-      bool status = false;
-      quint32 startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt();
+        ui->btn_ssdSearchSpace->setEnabled(false);
+        SaveWave::ValidFileInfo fileInfo;
+        bool status = false;
+        quint32 startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt();
 
-      status = ssd->inquireSpace(startUnit, fileInfo);
-      if(status == false)
-      {
-          ui->lineEdit_ssdAvailFileUnit->setText(QString::number(fileInfo.fileUnit+2, 16));
-          ui->lineEdit_ssdAvailDataUnit->setText(QString::number(fileInfo.endUnit+1, 16));
-      }
-      ui->btn_ssdSearchSpace->setEnabled(true);
+        status = ssd->inquireSpace(startUnit, fileInfo);
+        if(status == false)
+        {
+            ui->lineEdit_ssdAvailFileUnit->setText(QString::number(fileInfo.fileUnit+2, 16));
+            ui->lineEdit_ssdAvailDataUnit->setText(QString::number(fileInfo.endUnit+1, 16));
+        }
+        ui->btn_ssdSearchSpace->setEnabled(true);
+    });
+
+    connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this](){
+        ui->btn_ssdEnableStore->setEnabled(false);
+
+        quint32 fileUnit = ui->lineEdit_ssdAvailFileUnit->text().toUInt(nullptr, 16);
+        QString fileName = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
+        if(ui->lineEdit_ssdStoreFileName->text().length() !=0)
+          fileName.append(ui->lineEdit_ssdStoreFileName->text().length());
+        ssd->setSaveFileName(fileUnit, fileName);
+
+        quint32 dataUnit = ui->lineEdit_ssdAvailDataUnit->text().toUInt(nullptr, 16);
+        ssd->setSaveFileAddr(dataUnit);
+        ssd->enableStoreFile(0x01);
+    });
+
+    connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this](){
+        QMessageBox message(QMessageBox::NoIcon, "停止存储", "真的要停止存储吗", QMessageBox::Yes | QMessageBox::No, NULL);
+        if(message.exec() == QMessageBox::No)
+            return;
+        ui->btn_ssdEnableStore->setEnabled(true);
+        ssd->enableStoreFile(0x00);
     });
 
 }

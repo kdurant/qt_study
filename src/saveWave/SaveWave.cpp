@@ -91,7 +91,31 @@ bool SaveWave::inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo)
     return true;
 }
 
-bool SaveWave::setSaveFileName(QByteArray &name)
+/**
+ * @brief 设置存储文件的名称
+ * @return
+ */
+bool SaveWave::setSaveFileName(quint32 unit, QString &name)
 {
-    emit sendDataReady(MasterSet::READ_SSD_UNIT, 4, name);
+    QByteArray frame;
+    frame.append(BspConfig::int2ba(unit));
+    frame.append(name.toUtf8());
+    emit sendDataReady(MasterSet::SET_STORE_FILE_NAME, frame.length(), frame);
+    return true;
+}
+
+bool SaveWave::setSaveFileAddr(quint32 unit)
+{
+    QByteArray frame;
+    frame.append(BspConfig::int2ba(unit));
+    emit sendDataReady(MasterSet::SET_WRITE_DATA_UNIT, 4, frame);
+    return true;
+}
+
+bool SaveWave::enableStoreFile(quint32 status)
+{
+  QByteArray frame;
+  frame.append(BspConfig::int2ba(status));
+  emit sendDataReady(MasterSet::STORE_FILE_STATUS, 4, frame);
+  return true;
 }
