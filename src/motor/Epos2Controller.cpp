@@ -41,6 +41,24 @@ bool EPOS2::run(quint16 speed)
 }
 
 /**
+ * @brief 移动电机到指定位置
+ * @param postion
+ * @return 
+ */
+bool EPOS2::movePosition(quint32 postion)
+{
+    clearFault();
+    setProfilePositionMode();
+    setProfileVelocity(500);
+    setQuickstopDeceleration(45);
+    setProfileAcceleration(45);
+    setProfileDeceleration(45);
+    setTargetPosition(postion);
+    setAbsolutePositionStartImmdeitaly();
+    return true;
+}
+
+/**
  * @brief 将一包完整的数据分成两次发送
  * @param frame
  * @return
@@ -325,6 +343,37 @@ qint32 EPOS2::getActualVelocity()
     return speed;
 }
 
+bool EPOS2::setProfilePositionMode()
+{
+    QVector<quint16> word{0x1103, 0x6060, 0x0100, 0x0001, 0x0000};
+    word = WordPlusCRC(word);
+    QByteArray frame = transmitWord2Byte(word);
+
+    if (!sendFrameStep1(frame))
+        return false;
+
+    if (!sendFrameStep2())
+        return false;
+
+    return true;
+}
+
+bool EPOS2::setProfileVelocity(quint16 value)
+{
+    QVector<quint16> word{0x1103, 0x6081, 0x0100, 0x0001, 0x0000};
+    word[3] = value;
+    word = WordPlusCRC(word);
+    QByteArray frame = transmitWord2Byte(word);
+
+    if (!sendFrameStep1(frame))
+        return false;
+
+    if (!sendFrameStep2())
+        return false;
+
+    return true;
+}
+
 bool EPOS2::setTargetPosition(quint32 value)
 {
     QVector<quint16> word{0x1103, 0x607a, 0x0100, 0xffff, 0xffff};
@@ -365,4 +414,19 @@ qint32 EPOS2::getActualPosition()
 
     return postion;
     return 0;
+}
+
+bool EPOS2::setAbsolutePositionStartImmdeitaly()
+{
+    QVector<quint16> word{0x1103, 0x6040, 0x0100, 0x003f, 0x0000};
+    word = WordPlusCRC(word);
+    QByteArray frame = transmitWord2Byte(word);
+
+    if (!sendFrameStep1(frame))
+        return false;
+
+    if (!sendFrameStep2())
+        return false;
+
+    return true;
 }

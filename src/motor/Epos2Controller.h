@@ -91,11 +91,13 @@ public:
     quint32 ReadVelocity(QByteArray array);
 
     QByteArray setPositionControlWord();
-    QByteArray setPorfilePositionMode();
-    QByteArray setProfileVelocity(quint16 value);
+    bool setProfilePositionMode();
+    bool setProfileVelocity(quint16 value);
     bool setTargetPosition(quint32 value);
     qint32 getActualPosition();
     qint32     ReadPosition(QByteArray array);
+
+    bool setAbsolutePositionStartImmdeitaly(void);
 
     QByteArray setHomeMode();
     QByteArray startHoming();
