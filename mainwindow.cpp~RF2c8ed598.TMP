@@ -573,36 +573,11 @@ void MainWindow::initSignalSlot()
      * DA，AD设置相关逻辑
      */
     connect(ui->btn_DASetValue, &QPushButton::pressed, this, [this]() {
-        quint32 chNum   = ui->comboBox_DAChSelect->currentIndex();
-        quint32 DAValue = ui->lineEdit_DAValue->text().toDouble(nullptr);
-        switch(radarType)
-        {
-            case BspConfig::RADAR_TPYE_LAND:
-                DAValue = static_cast<quint32>((DAValue - 3.434) / 0.017);
-                break;
-            case BspConfig::RADAR_TPYE_OCEAN:
-            case BspConfig::RADAR_TPYE_DRONE:
-                if(chNum == 0)
-                    DAValue = static_cast<quint32>((DAValue - 8.208) / 0.113);
-                else if(chNum == 1)
-                    DAValue = static_cast<quint32>((DAValue + 0.007) / 0.001);
-                else if(chNum == 2)
-                    DAValue = static_cast<quint32>((DAValue - 0.003) / 0.001);
-                else if(chNum == 3)
-                    DAValue = static_cast<quint32>((DAValue + 0.002) / 0.001);
-                break;
-            default:
-                break;
-        }
-
-        QByteArray frame = BspConfig::int2ba(chNum);
-        frame.append(BspConfig::int2ba(DAValue));
-        dispatch->encode(MasterSet::DA_SET_VALUE, frame.length(), frame);
-        ui->plainTextEdit_DASetLog->appendPlainText(ui->comboBox_DAChSelect->currentText() + ": " + ui->lineEdit_DAValue->text() + "V");
-    });
-
-    connect(ui->btn_ADReadValue, &QPushButton::pressed, this, [this]() {
-
+        quint32    chNum   = ui->comboBox_DAChSelect->currentIndex();
+        quint32    DAValue = ui->lineEdit_DAValue->text().toDouble(nullptr);
+        QByteArray frame   = BspConfig::int2ba(chNum);
+        frame.append(BspConfig::int2ba(chNum));
+        dispatch->encode(MasterSet::DA_SET_VALUE, frame.length(), frame));
     });
 }
 

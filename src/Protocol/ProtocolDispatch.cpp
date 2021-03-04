@@ -15,20 +15,12 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
     switch(command)
     {
         case SlaveUp::SYS_INFO:
-            transmitFrame = data.mid(24,256);
+            transmitFrame = data.mid(24, 256);
             emit infoDataReady(transmitFrame);
             break;
         case SlaveUp::COMMAND_CNT:
             break;
         case SlaveUp::PREVIEW_DATA:
-            //        case MasterSet::PREVIEW_ENABLE:
-            //        case MasterSet::PREVIEW_RATIO:
-            //        case MasterSet::FIRST_LEN:
-            //        case MasterSet::FIRST_POS:
-            //        case MasterSet::SAMPLE_LEN:
-            //        case MasterSet::SECOND_LEN:
-            //        case MasterSet::COMPRESS_LEN:
-            //        case MasterSet::COMPRESS_RATIO:
             emit onlineDataReady(data);
             break;
         case SlaveUp::LASER_PENETRATE:
@@ -44,8 +36,14 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
             break;
 
         case SlaveUp::RESPONSE_SSD_UNIT:
-          emit ssdDataReady(data);
-          break;
+            emit ssdDataReady(data);
+            break;
+        case SlaveUp::AD_RETURN_DATA:
+            emit ADDataReady(data);
+            break;
+        case SlaveUp::DA_RETURN_DATA:
+            emit DADataReady(data);
+            break;
         default:
             QMessageBox::critical(NULL, "错误", "接受到错误的UDP数据包");
             break;

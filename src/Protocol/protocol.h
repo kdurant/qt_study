@@ -55,15 +55,21 @@ public:
         WRITE_RUN  = 0x00100004,
     };
 
-    enum saveWave {
+    enum saveWave
+    {
         // 按顺序设置以下命令
-        SET_STORE_FILE_NAME = 0x0000000A, // 硬盘Unit号(4Bytes)，文件名(252Bytes)
+        SET_STORE_FILE_NAME = 0x0000000A,  // 硬盘Unit号(4Bytes)，文件名(252Bytes)
         SET_WRITE_DATA_UNIT = 0x00000019,
-        STORE_FILE_STATUS = 0x0000000B, //使能存储：数据00 00 00 01 停止存储：数据 00 00 00 00
+        STORE_FILE_STATUS   = 0x0000000B,  //使能存储：数据00 00 00 01 停止存储：数据 00 00 00 00
 
         READ_SSD_UNIT = 0x00000018,
     };
 
+    enum misc
+    {
+        DA_SET_VALUE = 0x00000004,
+        AD_GET_VALUE = 0x00000005,
+    };
 };
 
 class SlaveUp
@@ -87,8 +93,15 @@ public:
     {
         MOTOR_PENETRATE = 0x8000000C,
     };
-    enum saveWave {
+    enum saveWave
+    {
         RESPONSE_SSD_UNIT = 0x8000000A,  // 硬盘数据
+    };
+
+    enum misc
+    {
+        DA_RETURN_DATA = 0x80000015,
+        AD_RETURN_DATA = 0x80000016,
     };
 };
 

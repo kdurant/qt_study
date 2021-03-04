@@ -55,6 +55,7 @@ SOURCES += \
     src/motor/Epos2Controller.cpp
 
 HEADERS += \
+    src/DAControll/DAControl.h \
     src/Protocol/AdSampleControl.h \
     src/laser/laserType3.h \
     src/saveWave/SaveWave.h \

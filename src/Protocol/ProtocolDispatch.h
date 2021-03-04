@@ -74,6 +74,8 @@ signals:
 
     void laserDataReady(QByteArray &data);
     void motorDataReady(QByteArray &data);
+    void ADDataReady(QByteArray &data);
+    void DADataReady(QByteArray &data);
 
     void remoteUpdateDataReady(QByteArray data);
 
