@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     laserDriver  = new LaserController();
     laser1Driver = new LaserType1();
     laser2Driver = new LaserType2();
+    laser3Driver = new LaserType3();
 
     epos2Driver = new EPOS2();
 
@@ -97,8 +98,12 @@ void MainWindow::initParameter()
         case 3:
             radarType = BspConfig::RADAR_TPYE_DOUBLE_WAVE;
             break;
+        case 4:
+          radarType = BspConfig::RADAR_TPYE_DRONE;
+          break;
         default:
             radarType = BspConfig::RADAR_TPYE_OCEAN;
+            QMessageBox::critical(this, "error", "请设置正确的雷达类型");
             break;
     }
 
@@ -132,6 +137,7 @@ void MainWindow::saveParameter()
 
 void MainWindow::uiConfig()
 {
+    ui->rbtn_triggerInside->setChecked(true);
     if(radarType == BspConfig::RADAR_TPYE_760)
     {
         setWindowTitle(tr("760雷达控制软件"));
@@ -404,9 +410,17 @@ void MainWindow::initSignalSlot()
      * 激光器相关处理
      */
 
-    connect(laser2Driver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
+    if(radarType == BspConfig::RADAR_TPYE_OCEAN)
+    {
+        connect(laser2Driver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
+        connect(dispatch, &ProtocolDispatch::laserDataReady, laser2Driver, &LaserType2::setNewData);
+    }
+    else if(radarType == BspConfig::RADAR_TPYE_DRONE)
+    {
+        connect(laser3Driver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
+        connect(dispatch, &ProtocolDispatch::laserDataReady, laser3Driver, &LaserType3::setNewData);
+    }
 
-    connect(dispatch, &ProtocolDispatch::laserDataReady, laser2Driver, &LaserType2::setNewData);
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]() {
         bool status = false;
         switch(radarType)
@@ -414,6 +428,10 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_LAND:
                 laser2Driver->setFreq(4000);
                 status = laser2Driver->open();
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                laser3Driver->setFreq(4000);
+                status = laser3Driver->open();
                 break;
             default:
                 break;
@@ -428,6 +446,9 @@ void MainWindow::initSignalSlot()
         {
             case BspConfig::RADAR_TPYE_LAND:
                 status = laser2Driver->close();
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                status = laser3Driver->close();
                 break;
             default:
                 break;
@@ -444,6 +465,7 @@ void MainWindow::initSignalSlot()
     connect(ui->btn_laserReadCurrent, &QPushButton::pressed, this, [this]() {
         QString text = laser2Driver->getCurrent();
         ui->lineEdit_laserShowCurrent->setText(text);
+        laser3Driver->getStatus();
     });
 
     connect(ui->btn_laserReadFreq, &QPushButton::pressed, this, [this]() {
@@ -456,6 +478,14 @@ void MainWindow::initSignalSlot()
         ui->lineEdit_laserShowTemp->setText(text);
     });
 
+    connect(ui->rbtn_triggerInside, &QRadioButton::clicked, this, [this](){
+        laser3Driver->setMode(LaserController::IN_SIDE);
+    });
+
+    connect(ui->rbtn_triggerOutside, &QRadioButton::clicked, this, [this](){
+      laser3Driver->setMode(LaserController::OUT_SIDE);
+    });
+
     /*
      * 电机相关逻辑
      */
@@ -466,6 +496,12 @@ void MainWindow::initSignalSlot()
         qint32 speed = 0;
         speed        = epos2Driver->getActualVelocity();
         ui->lineEdit_motorShowSpeed->setText(QString::number(speed, 10));
+    });
+
+    connect(ui->btn_motorReadPosition, &QPushButton::pressed, this, [this]() {
+        quint32 postion = 0;
+        postion = epos2Driver->getActualPosition();
+        ui->lineEdit_motorShowPosition->setText(QString::number(postion, 10));
     });
 
     connect(ui->btn_motorStart, &QPushButton::pressed, this, [this]() {
@@ -487,9 +523,10 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->btn_motorMovePostion, &QPushButton::pressed, this, [this]() {
-        quint32 position = ui->lineEdit_motorTargetPosition->text().toDouble(nullptr) * 163840;
+        quint32 position = (ui->lineEdit_motorTargetPosition->text().toDouble(nullptr)/360) * 163840;
         epos2Driver->moveToPosition(position);
     });
+
 
     /*
      * 采集数据保存相关逻辑

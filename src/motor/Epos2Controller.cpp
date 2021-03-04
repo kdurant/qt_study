@@ -10,7 +10,7 @@ bool EPOS2::init()
     clearFault();
     setShutdown();
     setHalt();
-    setPorfileVelocityMode();
+    setProfileVelocityMode();
 
     // 这4步是可选的
     setMaximalProfileVelocity(3571);
@@ -261,7 +261,7 @@ bool EPOS2::setHalt()
     return true;
 }
 
-bool EPOS2::setPorfileVelocityMode()
+bool EPOS2::setProfileVelocityMode()
 {
     QVector<quint16> word{0x1103, 0x6060, 0x0100, 0x0003, 0x0000};
     word             = WordPlusCRC(word);

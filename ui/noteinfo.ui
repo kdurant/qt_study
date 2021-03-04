@@ -18,7 +18,13 @@
     <widget class="QPlainTextEdit" name="plainTextEdit">
      <property name="plainText">
       <string>正常操作步骤：
-1. 确认系统正常上电</string>
+1. 确认系统正常上电
+
+陆地雷达IP=192.168.1.101
+陆地雷达端口号=5555
+
+海洋雷达IP=192.168.1.102
+海洋雷达端口号=4444</string>
      </property>
     </widget>
    </item>

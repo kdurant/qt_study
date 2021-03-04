@@ -4,14 +4,14 @@
 
 bool LaserType3::setMode(LaserController::OpenMode mode)
 {
-    QVector<quint8> command{0x55, 0xAA, 0x00, 0x01, 0xee, 0x00, 0x00, 0x00, 0x00, 0xff, 0x33, 0xcc};
+    QVector<quint8> command{0x55, 0xAA, 0x00, 0x01, 0xee, 0x00, 0x00, 0x00, 0xff, 0x33, 0xcc};
     command[4] = mode;
-    command[9] = checksum(command);
+    command[8] = checksum(command);
     QByteArray frame;
     for (int i = 0; i < command.length(); i++) {
         frame.append(command[i] & 0xff);
     }
-    emit sendDataReady(MasterSet::LASER_ENABLE, frame.length(), frame);
+    emit sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
     return true;
 }
 
@@ -21,9 +21,12 @@ bool LaserType3::setMode(LaserController::OpenMode mode)
  */
 bool LaserType3::open()
 {
-    QByteArray frame = BspConfig::int2ba(0x01);
-    emit       sendDataReady(MasterSet::LASER_ENABLE, 4, frame);
-    QThread::msleep(1);
+    QVector<quint8> command{0x55, 0xAA, 0x00, 0x0C, 0x04, 0x00, 0x00, 0x00, 0x0f, 0x33, 0xcc};
+    QByteArray frame;
+    for (int i = 0; i < command.length(); i++) {
+        frame.append(command[i] & 0xff);
+    }
+    emit sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
     return true;
 }
 
@@ -33,13 +36,12 @@ bool LaserType3::open()
  */
 bool LaserType3::close()
 {
-    bool status = setCurrent(0);
-    if(!status)
-    {
-        return false;
+    QVector<quint8> command{0x55, 0xAA, 0x00, 0x0D, 0x04, 0x00, 0x00, 0x00, 0x10, 0x33, 0xcc};
+    QByteArray frame;
+    for (int i = 0; i < command.length(); i++) {
+        frame.append(command[i] & 0xff);
     }
-    QByteArray frame = BspConfig::int2ba(0x00);
-    emit       sendDataReady(MasterSet::LASER_ENABLE, 4, frame);
+    emit sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
     return true;
 }
 
@@ -62,20 +64,37 @@ bool LaserType3::setFreq(qint32 freq)
  */
 bool LaserType3::setCurrent(quint16 current)
 {
-    QVector<quint8> command{0x55, 0xAA, 0x00, 0x20, 0xee, 0x00, 0x00, 0x00, 0x00, 0xff, 0x33, 0xcc};
+    QVector<quint8> command{0x55, 0xAA, 0x0A, 0x01, 0xee, 0x00, 0x00, 0x00, 0x00, 0xff,0x33, 0xcc};
     command[4] = current & 0xff;
     command[5] = (current >> 8) & 0xff;
-    command[9] = checksum(command);
+    command[8] = checksum(command);
     QByteArray frame;
     for (int i = 0; i < command.length(); i++) {
         frame.append(command[i] & 0xff);
     }
     emit sendDataReady(MasterSet::LASER_ENABLE, frame.length(), frame);
 
+//    QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
+//    connect(this, &LaserType3::responseDataReady, &waitLoop, &QEventLoop::quit);
+//    QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
+//    waitLoop.exec();
+
+    return false;
+}
+
+bool LaserType3::getStatus()
+{
+    QVector<quint8> command{0x55, 0xAA, 0x00, 0xff, 0x04, 0x00, 0x00, 0x00, 0xff, 0x33, 0xcc};
+    QByteArray frame;
+    for (int i = 0; i < command.length(); i++) {
+      frame.append(command[i] & 0xff);
+    }
+    emit sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
+
     QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
     connect(this, &LaserType3::responseDataReady, &waitLoop, &QEventLoop::quit);
     QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
     waitLoop.exec();
 
-    return false;
+    return true;
 }

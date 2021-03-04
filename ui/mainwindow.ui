@@ -38,14 +38,14 @@
          <x>0</x>
          <y>0</y>
          <width>410</width>
-         <height>638</height>
+         <height>625</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>4</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -433,8 +433,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>368</width>
-                 <height>216</height>
+                 <width>210</width>
+                 <height>110</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -492,8 +492,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>368</width>
-                 <height>216</height>
+                 <width>213</width>
+                 <height>88</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -547,8 +547,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>368</width>
-                 <height>216</height>
+                 <width>210</width>
+                 <height>141</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -846,8 +846,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>368</width>
-                 <height>525</height>
+                 <width>266</width>
+                 <height>471</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -1089,8 +1089,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>368</width>
-                 <height>525</height>
+                 <width>360</width>
+                 <height>493</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -1548,7 +1548,7 @@
      <x>0</x>
      <y>0</y>
      <width>1259</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">

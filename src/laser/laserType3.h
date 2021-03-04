@@ -1,6 +1,6 @@
 #ifndef LASERTYPE3_H
 #define LASERTYPE3_H
-// 无人机雷达激光控制器
+// 无人机雷达激光控制器, PQNL 40
 #include "LaserController.h"
 #include "bsp_config.h"
 #include "protocol.h"
@@ -31,8 +31,11 @@ public:
 
     bool close(void) override;
 
-    bool setFreq(qint32 freq);
+    bool setFreq(qint32 freq) override;
+
     bool setCurrent(quint16 current);
+
+    bool getStatus(void);
 
 public slots:
 
