@@ -30,22 +30,27 @@ bool EPOS2::stop()
     return false;
 }
 
+/**
+ * @brief 需要在电机初始化后才能进行这个操作
+ * @param speed
+ * @return
+ */
 bool EPOS2::run(quint16 speed)
 {
-    if (!setTargetVelocity(speed))
+    if(!setTargetVelocity(speed))
         return false;
-    if (!setEnableState())
+    if(!setEnableState())
         return false;
 
     return true;
 }
 
 /**
- * @brief 移动电机到指定位置
+ * @brief 移动电机到指定位置, 定位模式下使用
  * @param postion
  * @return 
  */
-bool EPOS2::movePosition(quint32 postion)
+bool EPOS2::moveToPosition(quint32 postion)
 {
     clearFault();
     setProfilePositionMode();
@@ -55,6 +60,39 @@ bool EPOS2::movePosition(quint32 postion)
     setProfileDeceleration(45);
     setTargetPosition(postion);
     setAbsolutePositionStartImmdeitaly();
+    return true;
+}
+
+/**
+ * @brief 电机以固定的速度转动, 定速模式下使用
+ * init()和run()的结合
+ * @param speed
+ * @return
+ */
+bool EPOS2::moveFixSpeed(quint32 speed)
+{
+    clearFault();
+    setEnableState();
+    setHalt();
+    setProfilePositionMode();
+    setMaximalProfileVelocity(3571);
+    setQuickstopDeceleration(45);
+    setProfileAcceleration(45);
+    setProfileDeceleration(45);
+    setTargetVelocity(speed);
+    setEnableState();
+    return true;
+}
+
+bool EPOS2::moveToHome()
+{
+    clearFault();
+    setHomeMode();
+    setPositiveSpeed();
+    setShutdown();
+    setEnableState();
+    setHalt();
+    startHoming();
     return true;
 }
 
@@ -346,13 +384,13 @@ qint32 EPOS2::getActualVelocity()
 bool EPOS2::setProfilePositionMode()
 {
     QVector<quint16> word{0x1103, 0x6060, 0x0100, 0x0001, 0x0000};
-    word = WordPlusCRC(word);
+    word             = WordPlusCRC(word);
     QByteArray frame = transmitWord2Byte(word);
 
-    if (!sendFrameStep1(frame))
+    if(!sendFrameStep1(frame))
         return false;
 
-    if (!sendFrameStep2())
+    if(!sendFrameStep2())
         return false;
 
     return true;
@@ -361,14 +399,14 @@ bool EPOS2::setProfilePositionMode()
 bool EPOS2::setProfileVelocity(quint16 value)
 {
     QVector<quint16> word{0x1103, 0x6081, 0x0100, 0x0001, 0x0000};
-    word[3] = value;
-    word = WordPlusCRC(word);
+    word[3]          = value;
+    word             = WordPlusCRC(word);
     QByteArray frame = transmitWord2Byte(word);
 
-    if (!sendFrameStep1(frame))
+    if(!sendFrameStep1(frame))
         return false;
 
-    if (!sendFrameStep2())
+    if(!sendFrameStep2())
         return false;
 
     return true;
@@ -377,15 +415,15 @@ bool EPOS2::setProfileVelocity(quint16 value)
 bool EPOS2::setTargetPosition(quint32 value)
 {
     QVector<quint16> word{0x1103, 0x607a, 0x0100, 0xffff, 0xffff};
-    word[3] = value & 0xffff;
-    word[4] = (value >> 16) & 0xffff;
-    word = WordPlusCRC(word);
+    word[3]          = value & 0xffff;
+    word[4]          = (value >> 16) & 0xffff;
+    word             = WordPlusCRC(word);
     QByteArray frame = transmitWord2Byte(word);
 
-    if (!sendFrameStep1(frame))
+    if(!sendFrameStep1(frame))
         return false;
 
-    if (!sendFrameStep2())
+    if(!sendFrameStep2())
         return false;
 
     return true;
@@ -394,17 +432,19 @@ bool EPOS2::setTargetPosition(quint32 value)
 qint32 EPOS2::getActualPosition()
 {
     qint32 postion = 0;
-    QVector<quint16> word{0x0260, 0xB001, 0x0030, 0x0000};
-    word = WordPlusCRC(word);
+    //    QVector<quint16> word{0x0260, 0xB001, 0x0030, 0x0000};
+
+    QVector<quint16> word{0x1001, 0x6064, 0x0100};
+    word             = WordPlusCRC(word);
     QByteArray frame = transmitWord2Byte(word);
 
-    if (!sendFrameStep1(frame))
+    if(!sendFrameStep1(frame))
         return false;
 
     // step 3, 主动发送4f
     send_4f_actively();
     waitResponse(waitTime);
-    if (recvData.length() == 0x0b)
+    if(recvData.length() == 0x0b)
         postion = static_cast<quint16>(recvData.at(6) << 8) + static_cast<quint8>(recvData.at(5));
     else
         postion = -1;
@@ -419,13 +459,70 @@ qint32 EPOS2::getActualPosition()
 bool EPOS2::setAbsolutePositionStartImmdeitaly()
 {
     QVector<quint16> word{0x1103, 0x6040, 0x0100, 0x003f, 0x0000};
-    word = WordPlusCRC(word);
+    word             = WordPlusCRC(word);
     QByteArray frame = transmitWord2Byte(word);
 
-    if (!sendFrameStep1(frame))
+    if(!sendFrameStep1(frame))
         return false;
 
-    if (!sendFrameStep2())
+    if(!sendFrameStep2())
+        return false;
+
+    return true;
+}
+
+bool EPOS2::setHomeMode()
+{
+    QVector<quint16> word{0x1103, 0x6060, 0x0100, 0x0006, 0x0000};
+    word             = WordPlusCRC(word);
+    QByteArray frame = transmitWord2Byte(word);
+
+    if(!sendFrameStep1(frame))
+        return false;
+
+    if(!sendFrameStep2())
+        return false;
+
+    return true;
+}
+
+bool EPOS2::startHoming()
+{
+    QVector<quint16> word{0x1103, 0x6040, 0x0100, 0x001f, 0x0000, 0xac31};
+    QByteArray       frame = transmitWord2Byte(word);
+
+    if(!sendFrameStep1(frame))
+        return false;
+
+    if(!sendFrameStep2())
+        return false;
+
+    return true;
+}
+
+bool EPOS2::stopHoming()
+{
+    QVector<quint16> word{0x1103, 0x6040, 0x0100, 0x000f, 0x0000, 0xef52};
+    QByteArray       frame = transmitWord2Byte(word);
+
+    if(!sendFrameStep1(frame))
+        return false;
+
+    if(!sendFrameStep2())
+        return false;
+
+    return true;
+}
+
+bool EPOS2::setPositiveSpeed()
+{
+    QVector<quint16> word{0x1103, 0x6098, 0x0100, 0x0022, 0x0000, 0xf906};
+    QByteArray       frame = transmitWord2Byte(word);
+
+    if(!sendFrameStep1(frame))
+        return false;
+
+    if(!sendFrameStep2())
         return false;
 
     return true;

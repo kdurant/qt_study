@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
@@ -480,8 +480,15 @@ void MainWindow::initSignalSlot()
         ui->btn_motorInit->setEnabled(true);
     });
 
+    connect(ui->btn_motorMoveHome, &QPushButton::pressed, this, [this]() {
+        ui->btn_motorMoveHome->setEnabled(false);
+        epos2Driver->moveToHome();
+        ui->btn_motorMoveHome->setEnabled(true);
+    });
+
     connect(ui->btn_motorMovePostion, &QPushButton::pressed, this, [this]() {
-        //        epos2Driver->();
+        quint32 position = ui->lineEdit_motorTargetPosition->text().toDouble(nullptr) * 163840;
+        epos2Driver->moveToPosition(position);
     });
 
     /*

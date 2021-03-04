@@ -14,12 +14,17 @@ public:
     bool stop(void) override;
 
     bool run(quint16 speed);
-    bool movePosition(quint32 postion);
+    bool moveToPosition(quint32 postion);
+    bool moveFixSpeed(quint32 speed);
+    bool moveToHome(void);
 
 private:
     bool       isRecvNewData{false};  // 是否收到数据
     QByteArray recvData;
     qint32     waitTime{1000};
+
+    quint32 maxVelocity{3571};
+    quint32 quickStopDeceleration{45};
 
     void waitResponse(quint16 waitMS)
     {
@@ -79,30 +84,28 @@ public:
     bool setEnableState();
     bool setHalt();
 
-    bool       setPorfileVelocityMode();
+    bool       setProfileVelocityMode();
     bool       setMaximalProfileVelocity(quint16 value);
     bool       setQuickstopDeceleration(quint16 value);
     bool       setProfileAcceleration(quint16 value);
     bool       setProfileDeceleration(quint16 value);
     QByteArray setMaxAcceleration(quint16 value);
 
-    bool    setTargetVelocity(quint16 velocity);
-    qint32  getActualVelocity();
-    quint32 ReadVelocity(QByteArray array);
+    bool   setTargetVelocity(quint16 velocity);
+    qint32 getActualVelocity();
 
     QByteArray setPositionControlWord();
-    bool setProfilePositionMode();
-    bool setProfileVelocity(quint16 value);
-    bool setTargetPosition(quint32 value);
-    qint32 getActualPosition();
-    qint32     ReadPosition(QByteArray array);
+    bool       setProfilePositionMode();
+    bool       setProfileVelocity(quint16 value);
+    bool       setTargetPosition(quint32 value);
+    qint32     getActualPosition();
 
     bool setAbsolutePositionStartImmdeitaly(void);
 
-    QByteArray setHomeMode();
-    QByteArray startHoming();
-    QByteArray stopHoming();
-    QByteArray setPositiveSpeed();
+    bool setHomeMode();
+    bool startHoming();
+    bool stopHoming();
+    bool setPositiveSpeed();
 };
 
 #endif
