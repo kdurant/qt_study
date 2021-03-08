@@ -31,6 +31,8 @@
 #include "ProtocolDispatch.h"
 #include "UpdateBin.h"
 #include "WaveExtract.h"
+#include "ADControl.h"
+#include "DAControl.h"
 
 #include "laserType1.h"
 #include "laserType2.h"
@@ -98,6 +100,9 @@ private:
 
     AdSampleControll *preview;
     bool              autoZoomPlot{true};
+
+    DAControl *daDriver;
+    ADControl *adDriver;
 
     UpdateBin *updateFlash;
 

@@ -55,6 +55,7 @@ SOURCES += \
     src/motor/Epos2Controller.cpp
 
 HEADERS += \
+    src/ADControll/ADControl.h \
     src/DAControll/DAControl.h \
     src/Protocol/AdSampleControl.h \
     src/laser/laserType3.h \
@@ -87,6 +88,8 @@ INCLUDEPATH += ./src/motor
 INCLUDEPATH += ./src/laser
 INCLUDEPATH += ./src/DevInfo
 INCLUDEPATH += ./src/saveWave
+INCLUDEPATH += ./src/ADControll
+INCLUDEPATH += ./src/DAControll
 
 
 FORMS += \

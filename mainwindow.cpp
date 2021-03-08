@@ -11,6 +11,9 @@ MainWindow::MainWindow(QWidget *parent) :
     updateFlash     = new UpdateBin();
     offlineWaveForm = new OfflineWaveform();
 
+    daDriver = new DAControl();
+    adDriver = new ADControl();
+
     laserDriver  = new LaserController();
     laser1Driver = new LaserType1();
     laser2Driver = new LaserType2();
@@ -570,11 +573,11 @@ void MainWindow::initSignalSlot()
     });
 
     /*
-     * DA，AD设置相关逻辑
+     * DA设置相关逻辑
      */
     connect(ui->btn_DASetValue, &QPushButton::pressed, this, [this]() {
         quint32 chNum   = ui->comboBox_DAChSelect->currentIndex();
-        quint32 DAValue = ui->lineEdit_DAValue->text().toDouble(nullptr);
+        double  DAValue = ui->lineEdit_DAValue->text().toDouble(nullptr);
         switch(radarType)
         {
             case BspConfig::RADAR_TPYE_LAND:
@@ -594,15 +597,42 @@ void MainWindow::initSignalSlot()
             default:
                 break;
         }
-
-        QByteArray frame = BspConfig::int2ba(chNum);
-        frame.append(BspConfig::int2ba(DAValue));
-        dispatch->encode(MasterSet::DA_SET_VALUE, frame.length(), frame);
+        daDriver->setChannalValue(chNum, DAValue);
         ui->plainTextEdit_DASetLog->appendPlainText(ui->comboBox_DAChSelect->currentText() + ": " + ui->lineEdit_DAValue->text() + "V");
     });
 
+    /*
+     * AD设置相关逻辑
+     */
     connect(ui->btn_ADReadValue, &QPushButton::pressed, this, [this]() {
-
+        quint32 chNum       = ui->comboBox_ADChSelect->currentIndex();
+        qint32  digitValue  = adDriver->getChannalValue(chNum);
+        double  analogValue = 0;
+        if(digitValue < 0)
+            ui->lineEdit_ADValue->setText(QString::number(digitValue, 10));
+        else
+        {
+            switch(chNum)
+            {
+                case 0:
+                    analogValue = (digitValue / 4095.00) * 5;
+                    break;
+                case 1:
+                    analogValue = (digitValue - 12.95) / 817.8;
+                    break;
+                case 2:
+                    analogValue = (digitValue - 1.712) / 817.4;
+                    break;
+                case 3:
+                    analogValue = (digitValue - 0.634) / 818.4;
+                    break;
+                case 4:
+                    analogValue = (digitValue + 1.392) / 822.7;
+                    break;
+            }
+            ui->lineEdit_ADValue->setText(QString::number(analogValue, 'g', 2));
+        }
+        ui->plainTextEdit_ADSetLog->appendPlainText(ui->comboBox_ADChSelect->currentText() + ": " + ui->lineEdit_ADValue->text() + "V");
     });
 }
 
