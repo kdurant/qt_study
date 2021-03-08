@@ -94,12 +94,11 @@ private:
     QHostAddress         deviceIP;
     quint16              devicePort;
 
-    QLabel *labelVer;
-
     ProtocolDispatch *dispatch;
 
     AdSampleControll *preview;
     bool              autoZoomPlot{true};
+    OnlineWaveform *  onlineWaveForm;
 
     DAControl *daDriver;
     ADControl *adDriver;

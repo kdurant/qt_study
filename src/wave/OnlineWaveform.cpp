@@ -2,17 +2,19 @@
 
 void OnlineWaveform::getSampleData(QByteArray &frame)
 {
-    if (!isRecvNewData)
+    if(!isRecvNewData)
         return;
     curPckNumber = ProtocolDispatch::getPckNum(frame);
 
-    if (curPckNumber < prePckNumber) // 已经接收到新一次采集的数据了
+    if(curPckNumber < prePckNumber)  // 已经接收到新一次采集的数据了
     {
         emit fullSampleDataReady(fullSampleWave);
         fullSampleWave.clear();
-    } else {
+    }
+    else
+    {
         qint32 data_len = ProtocolDispatch::getDataLen(frame);
-        fullSampleWave.append(frame.mid(24, data_len));
+        fullSampleWave.append(frame.mid(FrameField::DATA_POS, data_len));
     }
     prePckNumber = curPckNumber;
 }

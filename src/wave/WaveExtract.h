@@ -10,14 +10,12 @@
 class WaveExtract : public QObject
 {
     Q_OBJECT
-private:
-    QString radarType;
 
 public:
     // 存放采样数据中，某个具体通道的具体哪一段数据
     struct WaveformInfo
     {
-        qint32 number;
+        qint32          number;
         QVector<double> pos;    // 相当于x轴
         QVector<double> value;  // 相当于y轴
     };

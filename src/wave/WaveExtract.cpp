@@ -8,8 +8,7 @@
  */
 bool WaveExtract::isChDataHead(QVector<quint8> frameData, int offset)
 {
-    return (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90
-            && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a);
+    return (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90 && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a);
 }
 
 /**
@@ -19,17 +18,21 @@ bool WaveExtract::isChDataHead(QVector<quint8> frameData, int offset)
  * @param ret
  * @return 
  */
-int WaveExtract::getWaveform(BspConfig::RadarType type,
-                             QVector<quint8> &frameData,
+int WaveExtract::getWaveform(BspConfig::RadarType                type,
+                             QVector<quint8> &                   frameData,
                              QVector<WaveExtract::WaveformInfo> &ret)
 {
-    WaveformInfo ch;
-    int start_pos = 0;
-    int len = 0;
-    int offset = 88;
+    if(frameData[0] != 0x01 || frameData[1] != 0x23 || frameData[2] != 0x45)
+        return -1;
 
-    while (offset < frameData.size()) {
-        if (isChDataHead(frameData, offset))
+    WaveformInfo ch;
+    int          start_pos = 0;
+    int          len       = 0;
+    int          offset    = 88;
+
+    while(offset < frameData.size())
+    {
+        if(isChDataHead(frameData, offset))
             offset += 4;
         else
             return -1;
@@ -41,17 +44,18 @@ int WaveExtract::getWaveform(BspConfig::RadarType type,
         len = (frameData.at(offset) << 8) + frameData.at(offset + 1);
         offset += 2;
 
-        for (int i = 0; i < len; i++) {
+        for(int i = 0; i < len; i++)
+        {
             ch.pos.append(i + start_pos);
             ch.value.append((frameData.at(offset + 0) << 8) + frameData.at(offset + 1));
             offset += 2;
         }
-        ret.append(ch); // 数据保存好后，清除当前的缓存，准备重新接收
+        ret.append(ch);  // 数据保存好后，清除当前的缓存，准备重新接收
         ch.pos.clear();
         ch.value.clear();
 
         // 如果第一段数据结束后的数据就是帧头标志，那么说明没有第二段数据
-        if (isChDataHead(frameData, offset))
+        if(isChDataHead(frameData, offset))
             continue;
 
         // 第二段数据 offset += 2;
@@ -60,12 +64,13 @@ int WaveExtract::getWaveform(BspConfig::RadarType type,
         len = (frameData.at(offset) << 8) + frameData.at(offset + 1);
         offset += 2;
 
-        for (int i = 0; i < len; i++) {
+        for(int i = 0; i < len; i++)
+        {
             ch.pos.append(i + start_pos);
             ch.value.append((frameData.at(offset + 0) << 8) + frameData.at(offset + 1));
             offset += 2;
         }
-        ret.append(ch); // 数据保存好后，清除当前的缓存，准备重新接收
+        ret.append(ch);  // 数据保存好后，清除当前的缓存，准备重新接收
         ch.pos.clear();
         ch.value.clear();
     }

@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
@@ -330,18 +330,12 @@ void MainWindow::initSignalSlot()
 
     connect(dispatch, SIGNAL(onlineDataReady(QByteArray &)), onlineWaveForm, SLOT(setNewData(QByteArray &)));
     connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data) {
-        QVector<quint8> sampleData;
-        for(auto &i : data)  // 数据格式转换
-            sampleData.append(i);
+        QVector<quint8>                    sampleData = offlineWaveForm->getFrameData(i);
         QVector<WaveExtract::WaveformInfo> allCh;
-
         WaveExtract::getWaveform(radarType, sampleData, allCh);
         for(int n = 0; n < allCh.size(); n++)
         {
-            if(allCh.size() != 8)  // 只有第一段波形
-                ui->plot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
-            else
-                ui->plot->graph(n)->setData(allCh[n].pos, allCh[n].value);
+            ui->plot->graph(n)->setData(allCh[n].pos, allCh[n].value);
         }
         if(autoZoomPlot)
             ui->plot->rescaleAxes();
@@ -787,11 +781,7 @@ void MainWindow::on_bt_showWave_clicked()
             QVector<quint8> sampleData = offlineWaveForm->getFrameData(i);
 
             QVector<WaveExtract::WaveformInfo> allCh;
-            if(WaveExtract::getWaveform(radarType, sampleData, allCh) == -1)
-            {
-                QMessageBox::warning(this, "警告", "数据格式和当前雷达类型不匹配");
-                return;
-            }
+            WaveExtract::getWaveform(radarType, sampleData, allCh);
             for(int n = 0; n < allCh.size(); n++)
             {
                 ui->plot->graph(n)->setData(allCh[n].pos, allCh[n].value);
