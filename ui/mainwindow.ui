@@ -482,8 +482,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>368</width>
-                 <height>242</height>
+                 <width>171</width>
+                 <height>91</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -596,8 +596,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>368</width>
-                 <height>216</height>
+                 <width>171</width>
+                 <height>117</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -675,147 +675,168 @@
            <attribute name="title">
             <string>Volt</string>
            </attribute>
-           <layout class="QGridLayout" name="gridLayout_2">
-            <item row="2" column="1">
-             <widget class="QPushButton" name="btn_DASetValue">
-              <property name="text">
-               <string>设置</string>
+           <layout class="QVBoxLayout" name="verticalLayout_10">
+            <item>
+             <widget class="QGroupBox" name="groupBox_9">
+              <property name="title">
+               <string>DA控制</string>
               </property>
+              <layout class="QGridLayout" name="gridLayout_2">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_11">
+                 <property name="text">
+                  <string>      DA通道：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLabel" name="label_12">
+                 <property name="text">
+                  <string>        值(V)：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QComboBox" name="comboBox_DAChSelect">
+                 <item>
+                  <property name="text">
+                   <string>DA0</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>DA1</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>DA2</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>DA3</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>DA4</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="lineEdit_DAValue">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QPushButton" name="btn_DASetValue">
+                 <property name="text">
+                  <string>设置当前通道</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" colspan="2">
+                <widget class="QPlainTextEdit" name="plainTextEdit_DASetLog"/>
+               </item>
+               <item row="2" column="0">
+                <widget class="QPushButton" name="pushButton">
+                 <property name="text">
+                  <string>清零所有通道</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
             </item>
-            <item row="6" column="0">
-             <widget class="QComboBox" name="comboBox_ADChSelect">
-              <item>
-               <property name="text">
-                <string>AD0</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>AD1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>AD2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>AD3</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>AD4</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_13">
-              <property name="text">
-               <string>      AD通道：</string>
+            <item>
+             <widget class="QGroupBox" name="groupBox_10">
+              <property name="title">
+               <string>AD控制</string>
               </property>
+              <layout class="QGridLayout" name="gridLayout_14">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_13">
+                 <property name="text">
+                  <string>      AD通道：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLabel" name="label_14">
+                 <property name="text">
+                  <string>        值(V)：</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="lineEdit_10">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QPushButton" name="btn_ADReadValue">
+                 <property name="text">
+                  <string>读取当前通道</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" colspan="2">
+                <widget class="QPlainTextEdit" name="plainTextEdit_ADSetLog"/>
+               </item>
+               <item row="1" column="0">
+                <widget class="QComboBox" name="comboBox_ADChSelect">
+                 <item>
+                  <property name="text">
+                   <string>AD0</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>AD1</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>AD2</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>AD3</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>AD4</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QPushButton" name="pushButton_2">
+                 <property name="text">
+                  <string>读取所有通道</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </widget>
-            </item>
-            <item row="6" column="1">
-             <widget class="QLineEdit" name="lineEdit_10">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="0">
-             <spacer name="verticalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="7" column="1">
-             <widget class="QPushButton" name="btn_ADReadValue">
-              <property name="text">
-               <string>读取</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="lineEdit_DAValue">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_11">
-              <property name="text">
-               <string>      DA通道：</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QComboBox" name="comboBox_DAChSelect">
-              <item>
-               <property name="text">
-                <string>DA0</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>DA1</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>DA2</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>DA3</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>DA4</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QLabel" name="label_14">
-              <property name="text">
-               <string>        值(V)：</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="label_12">
-              <property name="text">
-               <string>        值(V)：</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0" colspan="2">
-             <widget class="QPlainTextEdit" name="plainTextEdit_DASetLog"/>
-            </item>
-            <item row="8" column="0" colspan="2">
-             <widget class="QPlainTextEdit" name="plainTextEdit_ADSetLog"/>
             </item>
            </layout>
+           <zorder>groupBox_10</zorder>
+           <zorder>groupBox_9</zorder>
           </widget>
           <widget class="QWidget" name="tab_4">
            <attribute name="title">
