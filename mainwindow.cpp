@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
@@ -205,6 +205,14 @@ void MainWindow::uiConfig()
         //        ui->tabWidget->setTabEnabled(7, false);
     }
     ui->checkBox_autoZoom->setChecked(true);
+
+    QLabel *udpStatus = new QLabel("连接状态: ");
+    ui->statusBar->addPermanentWidget(udpStatus);
+
+    QLabel *captureStatus = new QLabel("采集状态：停止采集");
+    captureStatus->setObjectName("captureStatus");
+    captureStatus->setStyleSheet("color:red");
+    ui->statusBar->addPermanentWidget(captureStatus);
 
     QLabel *labelVer = new QLabel();
     labelVer->setText("软件版本：v" + QString(SOFT_VERSION) + "_" + QString(GIT_DATE) + "_" + QString(GIT_HASH));
