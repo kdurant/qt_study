@@ -45,28 +45,41 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>3</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
             <string>Info</string>
            </attribute>
            <layout class="QGridLayout" name="gridLayout_5">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_47">
-              <property name="text">
-               <string>本机IP地址：</string>
+            <item row="2" column="0" colspan="2">
+             <widget class="QTableWidget" name="tableWidget_sysInfo">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QAbstractScrollArea::AdjustToContents</enum>
               </property>
              </widget>
             </item>
             <item row="1" column="0">
-             <widget class="QLabel" name="label_44">
+             <widget class="QPushButton" name="btn_ReadSysInfo">
               <property name="text">
-               <string>本机端口号：</string>
+               <string>读取系统信息</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1">
+            <item row="1" column="1">
+             <widget class="QCheckBox" name="checkBox_autoReadSysInfo">
+              <property name="text">
+               <string>自动读取</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
              <widget class="QLineEdit" name="lineEdit_radarType">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -85,66 +98,10 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="0" colspan="2">
-             <widget class="QTableWidget" name="tableWidget_sysInfo">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="sizeAdjustPolicy">
-               <enum>QAbstractScrollArea::AdjustToContents</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
+            <item row="0" column="0">
              <widget class="QLabel" name="label_4">
               <property name="text">
                <string>设备类型：</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QPushButton" name="btn_ReadSysInfo">
-              <property name="text">
-               <string>读取系统信息</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="lineEdit_localPort">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEdit_localIP">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="inputMask">
-               <string/>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QCheckBox" name="checkBox_autoReadSysInfo">
-              <property name="text">
-               <string>自动读取</string>
               </property>
              </widget>
             </item>
@@ -846,15 +803,15 @@
             <item>
              <widget class="QToolBox" name="toolBox">
               <property name="currentIndex">
-               <number>1</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="page_3">
                <property name="geometry">
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>215</width>
-                 <height>393</height>
+                 <width>368</width>
+                 <height>525</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -882,14 +839,14 @@
                     </widget>
                    </item>
                    <item row="10" column="0">
-                    <widget class="QLabel" name="label_subThreshold_3">
+                    <widget class="QLabel" name="label_compressRatio">
                      <property name="text">
                       <string>压缩比：</string>
                      </property>
                     </widget>
                    </item>
                    <item row="9" column="0">
-                    <widget class="QLabel" name="label_subThreshold_2">
+                    <widget class="QLabel" name="label_compressLen">
                      <property name="text">
                       <string>压缩长度：</string>
                      </property>

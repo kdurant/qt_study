@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>426</width>
+    <height>344</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,6 +20,8 @@
       <string>正常操作步骤：
 1. 确认系统正常上电
 
+上位机IP地址设置：192.168.1.xxx
+
 陆地雷达IP=192.168.1.101
 陆地雷达端口号=5555
 
@@ -28,8 +30,23 @@
      </property>
     </widget>
    </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="../res.qrc">:/qss/ch_pos.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../res.qrc"/>
+ </resources>
  <connections/>
 </ui>

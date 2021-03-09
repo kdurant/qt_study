@@ -10,6 +10,7 @@
 #include <QUdpSocket>
 #include <QNetworkDatagram>
 #include <QHostAddress>
+#include <QNetworkInterface>
 
 #include <QSettings>
 #include <QScrollBar>
@@ -84,6 +85,8 @@ private slots:
 
     void getSysInfo();
 
+    QString read_ip_address(void);
+
 private:
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;
@@ -91,8 +94,12 @@ private:
     QThread *       thread;
 
     BspConfig::RadarType radarType;
-    QHostAddress         deviceIP;
-    quint16              devicePort;
+
+    QString localIP;
+    quint16 localPort{6666};
+
+    QHostAddress deviceIP;
+    quint16      devicePort;
 
     ProtocolDispatch *dispatch;
 

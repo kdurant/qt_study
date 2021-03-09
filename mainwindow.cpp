@@ -77,15 +77,9 @@ void MainWindow::initParameter()
 {
     QString   localHostName = QHostInfo::localHostName();
     QHostInfo info          = QHostInfo::fromName(localHostName);
-    //    if(info.addresses()[1].toString().startsWith("192.168.1"))
-    //        ui->lineEdit_localIP->setText(info.addresses()[1].toString());
-    //    else
-    //    {
-    //        ui->lineEdit_localIP->setText("请更改本机IP地址为：192.168.1.xxx");
-    //        ui->lineEdit_localIP->setStyleSheet("color:red");
-    //    }
-    ui->lineEdit_localIP->setText(configIni->value("System/localIP").toString());
-    ui->lineEdit_localPort->setText(configIni->value("System/localPort").toString());
+
+    localIP   = read_ip_address();
+    localPort = configIni->value("System/localPort").toUInt();
 
     //    radarType = configIni->value("System/radarType").toInt();
     switch(configIni->value("System/radarType").toInt())
@@ -194,7 +188,10 @@ void MainWindow::uiConfig()
         ui->label_laserPower->setVisible(false);
         ui->comboBox_laserPower->setVisible(false);
         ui->comboBox_laserFreq->addItem("4000");
-        //        ui->label
+        ui->label_compressLen->setVisible(false);
+        ui->lineEdit_compressLen->setVisible(false);
+        ui->label_compressRatio->setVisible(false);
+        ui->lineEdit_compressRatio->setVisible(false);
     }
     else
     {
@@ -221,8 +218,15 @@ void MainWindow::uiConfig()
 
 void MainWindow::udpBind()
 {
+    if(!localIP.contains("192.168.1"))
+    {
+        QMessageBox::warning(this, "警告", "请修改主机IP地址(192.168.1.xxx)");
+        ui->statusBar->showMessage(tr("请修改主机IP地址(192.168.1.xxx"), 3);
+        //        return;
+    }
+
     udpSocket = new QUdpSocket(this);
-    if(!udpSocket->bind(QHostAddress(ui->lineEdit_localIP->text()), ui->lineEdit_localPort->text().toInt()))
+    if(!udpSocket->bind(QHostAddress(localIP), localPort))
         QMessageBox::warning(NULL, "警告", "雷达连接失败");
     else
         ui->statusBar->showMessage(tr("连接设备成功"), 0);
@@ -277,28 +281,15 @@ void MainWindow::initSignalSlot()
         int firstLen       = ui->lineEdit_firstLen->text().toInt();
         int secondPos      = ui->lineEdit_secondStartPos->text().toInt();
         int secondLen      = ui->lineEdit_secondLen->text().toInt();
-        int compressLen    = ui->lineEdit_compressLen->text().toInt();
-        int compressRatio  = ui->lineEdit_compressRatio->text().toInt();
 
         if(secondPos < firstPos + firstLen)
         {
             QMessageBox::critical(NULL, "错误", "第二段起始位置需要小于第一段起始位置+第一段采样长度");
             return;
         }
-        if(compressLen >= secondLen)
-        {
-            QMessageBox::critical(NULL, "错误", "压缩长度需要小于第二段长度");
-            return;
-        }
         if(secondPos + secondLen >= totalSampleLen)
         {
             QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
-            return;
-        }
-
-        if(compressLen % compressRatio != 0)
-        {
-            QMessageBox::critical(NULL, "错误", "压缩长度需要是压缩比的整数倍");
             return;
         }
 
@@ -308,8 +299,6 @@ void MainWindow::initSignalSlot()
         preview->setFirstLen(firstLen);
         preview->setSecondPos(secondPos);
         preview->setSecondLen(secondLen);
-        preview->setCompressLen(compressLen);
-        preview->setCompressRatio(compressRatio);
     });
 
     connect(ui->btn_sampleEnable, &QPushButton::pressed, this, [this]() {
@@ -841,4 +830,21 @@ void MainWindow::getSysInfo()
     {
         QMessageBox::warning(this, "警告", "系统未连接");
     }
+}
+
+QString MainWindow::read_ip_address()
+{
+    QList<QHostAddress> list = QNetworkInterface::allAddresses();
+    foreach(QHostAddress address, list)
+    {
+        if(address.protocol() == QAbstractSocket::IPv4Protocol)
+        {
+            if(address.toString().contains("127.0."))
+            {
+                continue;
+            }
+            return address.toString();
+        }
+    }
+    return 0;
 }
