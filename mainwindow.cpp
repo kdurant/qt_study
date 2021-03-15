@@ -318,13 +318,6 @@ void MainWindow::initSignalSlot()
         preview->setPreviewEnable(status);
     });
 
-    connect(ui->checkBox_autoZoom, &QCheckBox::stateChanged, this, [this](int state) {
-        if(state == Qt::Checked)
-            autoZoomPlot = true;
-        else
-            autoZoomPlot = false;
-    });
-
     connect(dispatch, SIGNAL(onlineDataReady(QByteArray &)), onlineWaveForm, SLOT(setNewData(QByteArray &)));
     connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data) {
         QVector<quint8> sampleData;
@@ -345,6 +338,18 @@ void MainWindow::initSignalSlot()
         ui->plot->replot();
     });
 
+    /*
+     * 图表控制相关逻辑
+     */
+    connect(ui->checkBox_autoZoom, &QCheckBox::stateChanged, this, [this](int state) {
+        if(state == Qt::Checked)
+            autoZoomPlot = true;
+        else
+            autoZoomPlot = false;
+    });
+    connect(ui->checkBox_ch0Enable, &QCheckBox::stateChanged, this, [this](int state) {
+        qDebug() << state;
+    });
     /*
      * 离线显示数据波形相关逻辑
      */

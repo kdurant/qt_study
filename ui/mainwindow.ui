@@ -45,7 +45,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>4</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -1022,11 +1022,51 @@
                   <property name="title">
                    <string>图表设置</string>
                   </property>
-                  <layout class="QVBoxLayout" name="verticalLayout_5">
-                   <item>
+                  <layout class="QGridLayout" name="gridLayout_15">
+                   <item row="0" column="0">
                     <widget class="QCheckBox" name="checkBox_autoZoom">
                      <property name="text">
                       <string>自动缩放</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QCheckBox" name="checkBox_ch0Enable">
+                     <property name="text">
+                      <string>ch0</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QCheckBox" name="checkBox_ch1Enable">
+                     <property name="text">
+                      <string>ch1</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="2">
+                    <widget class="QCheckBox" name="checkBox_ch2Enable">
+                     <property name="text">
+                      <string>ch2</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="3">
+                    <widget class="QCheckBox" name="checkBox_ch3Enable">
+                     <property name="text">
+                      <string>ch3</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
                      </property>
                     </widget>
                    </item>
@@ -1053,8 +1093,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>368</width>
-                 <height>525</height>
+                 <width>227</width>
+                 <height>214</height>
                 </rect>
                </property>
                <attribute name="label">
