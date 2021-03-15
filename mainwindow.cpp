@@ -847,12 +847,19 @@ void MainWindow::getSysInfo()
     QVector<DevInfo::ParaInfo> info;
     if(devInfo->getSysPara(info))
     {
-        for(int i = 0; i < sysParaInfo.length(); i++)
+        for(int i = 0; i < info.length(); i++)
         {
             if(i == 0)
-                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(sysParaInfo[i].value));
+                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(info[i].value));
+            else if(i == 6)
+            {
+                if(info[i].value.contains(QByteArray(4, 0x01)))
+                    ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel("正在采集"));
+                else
+                    ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel("停止采集"));
+            }
             else
-                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16))));
+                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(info[i].value.toHex().toUInt(nullptr, 16))));
         }
     }
     else
