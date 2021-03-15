@@ -40,7 +40,7 @@ public:
     {
         LASER_PENETRATE = 0x00000001,
         LASER_FREQ      = 0x00000002,
-        LASER_ENABLE    = 0x00000028,
+        LASER_ENABLE    = 0x00000028,  // 好像
     };
     enum motor
     {

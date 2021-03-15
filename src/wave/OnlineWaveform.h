@@ -16,13 +16,14 @@ class OnlineWaveform : public QObject
     Q_OBJECT
 
 private:
-    bool isRecvNewData; // 是否收到数据
+    bool       isRecvNewData;  // 是否收到数据
     QByteArray recvData;
-    qint32 waitTime{10};
+    qint32     waitTime{10};
 
+    bool       isStartRecvCompleteFrame{false};
     QByteArray fullSampleWave;
-    qint32 curPckNumber{0};
-    qint32 prePckNumber{0};
+    qint32     curPckNumber{0};
+    qint32     prePckNumber{0};
 
 public:
     OnlineWaveform()
@@ -32,14 +33,14 @@ public:
     }
 
 signals:
-    void responseDataReady(void);               // 接收到响应数据
-    void fullSampleDataReady(QByteArray &data); // 找到一次完整的采样数据
+    void responseDataReady(void);                // 接收到响应数据
+    void fullSampleDataReady(QByteArray &data);  // 找到一次完整的采样数据
 
 public slots:
     void setNewData(QByteArray &data)
     {
         isRecvNewData = true;
-        recvData = data;
+        recvData      = data;
         //        emit responseDataReady();
         getSampleData(recvData);
     }

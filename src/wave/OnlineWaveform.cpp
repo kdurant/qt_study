@@ -1,7 +1,16 @@
 #include "OnlineWaveform.h"
 
+/**
+ * @brief OnlineWaveform::getSampleData
+ * 1. 开始时，curPckNumber， prePckNumber都是0
+ * 2. 工作后，curPckNumber先增加1，
+ * 3. 数据处理后，prePckNumber增加1
+ * 4.
+ * @param frame
+ */
 void OnlineWaveform::getSampleData(QByteArray &frame)
 {
+    qint32 data_len = 0;
     if(!isRecvNewData)
         return;
     curPckNumber = ProtocolDispatch::getPckNum(frame);
@@ -10,10 +19,13 @@ void OnlineWaveform::getSampleData(QByteArray &frame)
     {
         emit fullSampleDataReady(fullSampleWave);
         fullSampleWave.clear();
+
+        data_len = ProtocolDispatch::getDataLen(frame);
+        fullSampleWave.append(frame.mid(FrameField::DATA_POS, data_len));
     }
     else
     {
-        qint32 data_len = ProtocolDispatch::getDataLen(frame);
+        data_len = ProtocolDispatch::getDataLen(frame);
         fullSampleWave.append(frame.mid(FrameField::DATA_POS, data_len));
     }
     prePckNumber = curPckNumber;

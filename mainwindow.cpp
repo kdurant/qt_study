@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
@@ -192,6 +192,16 @@ void MainWindow::uiConfig()
         ui->lineEdit_compressLen->setVisible(false);
         ui->label_compressRatio->setVisible(false);
         ui->lineEdit_compressRatio->setVisible(false);
+
+        ui->btn_laserReadCurrent->setVisible(false);
+        ui->lineEdit_laserShowCurrent->setVisible(false);
+        ui->btn_laserReadFreq->setVisible(false);
+        ui->lineEdit_laserShowFreq->setVisible(false);
+        ui->btn_laserReadTem->setVisible(false);
+        ui->lineEdit_laserShowTemp->setVisible(false);
+
+        ui->lineEdit_laserCurrent->setToolTip("3500 <= current <=4500");
+        ui->lineEdit_laserCurrent->setValidator(new QIntValidator(0, 1000, this));
     }
     else
     {
@@ -274,6 +284,8 @@ void MainWindow::initSignalSlot()
     /*
      * 波形预览相关逻辑
      */
+    connect(preview, SIGNAL(sendDataReady(qint32, qint32, qint32)), dispatch, SLOT(encode(qint32, qint32, qint32)));
+
     connect(ui->btn_setPreviewPara, &QPushButton::pressed, this, [this]() {
         int totalSampleLen = ui->lineEdit_sampleLen->text().toInt();
         int previewRatio   = ui->lineEdit_sampleRate->text().toInt();
@@ -453,7 +465,7 @@ void MainWindow::initSignalSlot()
         switch(radarType)
         {
             case BspConfig::RADAR_TPYE_LAND:
-                laser2Driver->setFreq(4000);
+                laser2Driver->setFreq(100000);
                 status = laser2Driver->open();
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
@@ -485,7 +497,19 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]() {
-        if(!laser2Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt()))
+        bool status = false;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                status = laser2Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt());
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                status = laser3Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                break;
+            default:
+                break;
+        }
+        if(status == false)
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
 
