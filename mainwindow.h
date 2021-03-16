@@ -88,6 +88,17 @@ private slots:
     QString read_ip_address(void);
 
 private:
+    struct __sys_status__
+    {
+        bool ssdLinkStatus;
+        bool udpLinkStatus;
+        bool adCaptureStatus;
+
+        QLabel *label_udpLinkStatus;
+        QLabel *label_ssdLinkStatus;
+        QLabel *label_adCaptureStatus;
+    } sysStatus;
+
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;
     QSettings *     configIni;

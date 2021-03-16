@@ -66,6 +66,10 @@ MainWindow::MainWindow(QWidget *parent)
         item->setFlags(item->flags() & (~Qt::ItemIsEditable));
         ui->tableWidget_sysInfo->setItem(i, 0, item);
     }
+
+    sysStatus.ssdLinkStatus   = false;
+    sysStatus.udpLinkStatus   = false;
+    sysStatus.adCaptureStatus = false;
 }
 
 MainWindow::~MainWindow()
@@ -213,13 +217,16 @@ void MainWindow::uiConfig()
     }
     ui->checkBox_autoZoom->setChecked(true);
 
-    QLabel *udpStatus = new QLabel("连接状态: ");
-    ui->statusBar->addPermanentWidget(udpStatus);
+    sysStatus.label_udpLinkStatus = new QLabel("通信连接状态: 未连接");
+    ui->statusBar->addPermanentWidget(sysStatus.label_udpLinkStatus);
 
-    QLabel *captureStatus = new QLabel("采集状态：停止采集");
-    captureStatus->setObjectName("captureStatus");
-    captureStatus->setStyleSheet("color:red");
-    ui->statusBar->addPermanentWidget(captureStatus);
+    sysStatus.label_ssdLinkStatus = new QLabel("SSD连接状态: 未连接");
+    ui->statusBar->addPermanentWidget(sysStatus.label_ssdLinkStatus);
+
+    sysStatus.label_adCaptureStatus = new QLabel("采集状态：停止采集");
+    sysStatus.label_adCaptureStatus->setObjectName("captureStatus");
+    sysStatus.label_adCaptureStatus->setStyleSheet("color:red");
+    ui->statusBar->addPermanentWidget(sysStatus.label_adCaptureStatus);
 
     QLabel *labelVer = new QLabel();
     labelVer->setText("软件版本：v" + QString(SOFT_VERSION) + "_" + QString(GIT_DATE) + "_" + QString(GIT_HASH));
@@ -854,9 +861,17 @@ void MainWindow::getSysInfo()
             else if(i == 6)
             {
                 if(info[i].value.contains(QByteArray(4, 0x01)))
+                {
                     ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel("正在采集"));
+                    sysStatus.adCaptureStatus = true;
+                    sysStatus.label_adCaptureStatus->setText("正在采集");
+                }
                 else
+                {
                     ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel("停止采集"));
+                    sysStatus.adCaptureStatus = false;
+                    sysStatus.label_adCaptureStatus->setText("停止采集");
+                }
             }
             else
                 ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(info[i].value.toHex().toUInt(nullptr, 16))));
