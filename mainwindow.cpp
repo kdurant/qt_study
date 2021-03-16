@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("../config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
@@ -206,6 +206,11 @@ void MainWindow::uiConfig()
 
         ui->lineEdit_laserCurrent->setToolTip("3500 <= current <=4500");
         ui->lineEdit_laserCurrent->setValidator(new QIntValidator(0, 1000, this));
+
+        QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
+        QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
+        ui->comboBox_DAChSelect->addItems(DA1List);
+        ui->comboBox_ADChSelect->addItems(AD1List);
     }
     else
     {
@@ -631,29 +636,45 @@ void MainWindow::initSignalSlot()
      * DA设置相关逻辑
      */
     connect(ui->btn_DASetValue, &QPushButton::pressed, this, [this]() {
-        quint32 chNum   = ui->comboBox_DAChSelect->currentIndex();
-        double  DAValue = ui->lineEdit_DAValue->text().toDouble(nullptr);
+        if(ui->lineEdit_DAValue->text().isEmpty())
+        {
+            QMessageBox::warning(this, "warning", "请输入有效数据");
+            return;
+        }
+        quint32 chNum       = ui->comboBox_DAChSelect->currentIndex();
+        double  analogValue = ui->lineEdit_DAValue->text().toDouble(nullptr);
+        qint32  digitValue  = 0;
         switch(radarType)
         {
             case BspConfig::RADAR_TPYE_LAND:
-                DAValue = static_cast<quint32>((DAValue - 3.434) / 0.017);
+                digitValue = static_cast<quint32>((analogValue - 3.434) / 0.017);
                 break;
             case BspConfig::RADAR_TPYE_OCEAN:
             case BspConfig::RADAR_TPYE_DRONE:
                 if(chNum == 0)
-                    DAValue = static_cast<quint32>((DAValue - 8.208) / 0.113);
+                    digitValue = static_cast<qint32>((analogValue - 8.208) / 0.113);
                 else if(chNum == 1)
-                    DAValue = static_cast<quint32>((DAValue + 0.007) / 0.001);
+                    digitValue = static_cast<qint32>((analogValue + 0.007) / 0.001);
                 else if(chNum == 2)
-                    DAValue = static_cast<quint32>((DAValue - 0.003) / 0.001);
+                    digitValue = static_cast<qint32>((analogValue - 0.003) / 0.001);
                 else if(chNum == 3)
-                    DAValue = static_cast<quint32>((DAValue + 0.002) / 0.001);
+                    digitValue = static_cast<qint32>((analogValue + 0.002) / 0.001);
                 break;
             default:
                 break;
         }
-        daDriver->setChannalValue(chNum, DAValue);
+        if(digitValue < 0)
+            digitValue = 0;
+        daDriver->setChannalValue(chNum, digitValue);
         ui->plainTextEdit_DASetLog->appendPlainText(ui->comboBox_DAChSelect->currentText() + ": " + ui->lineEdit_DAValue->text() + "V");
+    });
+
+    connect(ui->btn_DAClearAll, &QPushButton::pressed, this, [this]() {
+        for(int i = 0; i < 4; i++)
+        {
+            daDriver->setChannalValue(i, 0);
+            ui->plainTextEdit_DASetLog->appendPlainText(ui->comboBox_DAChSelect->itemText(i) + ": 0V");
+        }
     });
 
     /*
@@ -688,6 +709,10 @@ void MainWindow::initSignalSlot()
             ui->lineEdit_ADValue->setText(QString::number(analogValue, 'g', 2));
         }
         ui->plainTextEdit_ADSetLog->appendPlainText(ui->comboBox_ADChSelect->currentText() + ": " + ui->lineEdit_ADValue->text() + "V");
+    });
+
+    connect(ui->btn_ADReadAll, &QPushButton::pressed, this, [this]() {
+        QMessageBox::warning(this, "warning", "还未实现此功能");
     });
 }
 
@@ -851,16 +876,15 @@ void MainWindow::on_bt_showWave_clicked()
 
 void MainWindow::getSysInfo()
 {
-    QVector<DevInfo::ParaInfo> info;
-    if(devInfo->getSysPara(info))
+    if(devInfo->getSysPara(sysParaInfo))
     {
-        for(int i = 0; i < info.length(); i++)
+        for(int i = 0; i < sysParaInfo.length(); i++)
         {
             if(i == 0)
-                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(info[i].value));
+                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(sysParaInfo[i].value));
             else if(i == 6)
             {
-                if(info[i].value.contains(QByteArray(4, 0x01)))
+                if(sysParaInfo[i].value.contains(QByteArray(4, 0x01)))
                 {
                     ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel("正在采集"));
                     sysStatus.adCaptureStatus = true;
@@ -874,7 +898,7 @@ void MainWindow::getSysInfo()
                 }
             }
             else
-                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(info[i].value.toHex().toUInt(nullptr, 16))));
+                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16))));
         }
     }
     else

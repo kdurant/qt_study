@@ -45,7 +45,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>4</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -654,33 +654,7 @@
                 </widget>
                </item>
                <item row="1" column="0">
-                <widget class="QComboBox" name="comboBox_DAChSelect">
-                 <item>
-                  <property name="text">
-                   <string>DA0</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>DA1</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>DA2</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>DA3</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>DA4</string>
-                  </property>
-                 </item>
-                </widget>
+                <widget class="QComboBox" name="comboBox_DAChSelect"/>
                </item>
                <item row="1" column="1">
                 <widget class="QLineEdit" name="lineEdit_DAValue">
@@ -703,7 +677,7 @@
                 <widget class="QPlainTextEdit" name="plainTextEdit_DASetLog"/>
                </item>
                <item row="2" column="0">
-                <widget class="QPushButton" name="pushButton">
+                <widget class="QPushButton" name="btn_DAClearAll">
                  <property name="text">
                   <string>清零所有通道</string>
                  </property>
@@ -740,6 +714,9 @@
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
                 </widget>
                </item>
                <item row="2" column="1">
@@ -753,36 +730,10 @@
                 <widget class="QPlainTextEdit" name="plainTextEdit_ADSetLog"/>
                </item>
                <item row="1" column="0">
-                <widget class="QComboBox" name="comboBox_ADChSelect">
-                 <item>
-                  <property name="text">
-                   <string>AD0</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>AD1</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>AD2</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>AD3</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>AD4</string>
-                  </property>
-                 </item>
-                </widget>
+                <widget class="QComboBox" name="comboBox_ADChSelect"/>
                </item>
                <item row="2" column="0">
-                <widget class="QPushButton" name="pushButton_2">
+                <widget class="QPushButton" name="btn_ADReadAll">
                  <property name="text">
                   <string>读取所有通道</string>
                  </property>
@@ -1094,7 +1045,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>227</width>
-                 <height>212</height>
+                 <height>214</height>
                 </rect>
                </property>
                <attribute name="label">
