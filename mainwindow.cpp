@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     udpBind();
     initSignalSlot();
+    setToolBar();
 
     plotSettings();
 
@@ -714,6 +715,34 @@ void MainWindow::initSignalSlot()
     connect(ui->btn_ADReadAll, &QPushButton::pressed, this, [this]() {
         QMessageBox::warning(this, "warning", "还未实现此功能");
     });
+
+    /*
+     * ToolBar
+     */
+    //    connect(ui->mainToolBar.)
+}
+
+void MainWindow::setToolBar()
+{
+    QAction *act[6];
+    act[0] = new QAction("系统信息", this);
+    act[1] = new QAction("激光器设置", this);
+    act[2] = new QAction("电机设置", this);
+    act[3] = new QAction("高压设置", this);
+    act[4] = new QAction("预览设置", this);
+    act[5] = new QAction("保存文件设置", this);
+    ui->mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    for(int i = 0; i < 6; i++)
+    {
+        ui->mainToolBar->addAction(act[i]);
+    }
+
+    connect(act[0], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(0); });
+    connect(act[1], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(1); });
+    connect(act[2], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(2); });
+    connect(act[3], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(3); });
+    connect(act[4], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(4); });
+    connect(act[5], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(5); });
 }
 
 void MainWindow::plotSettings()

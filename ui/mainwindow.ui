@@ -38,7 +38,7 @@
          <x>0</x>
          <y>0</y>
          <width>410</width>
-         <height>638</height>
+         <height>648</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -498,8 +498,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>368</width>
-                 <height>268</height>
+                 <width>171</width>
+                 <height>73</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -761,8 +761,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>368</width>
-                 <height>525</height>
+                 <width>250</width>
+                 <height>415</height>
                 </rect>
                </property>
                <attribute name="label">
@@ -1527,35 +1527,8 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionSetting"/>
-   <addaction name="actionLaserSetting"/>
-   <addaction name="actionMotorSetting"/>
-   <addaction name="actionSampleSetting"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionSetting">
-   <property name="text">
-    <string>系统设置</string>
-   </property>
-   <property name="toolTip">
-    <string>设置系统参数</string>
-   </property>
-  </action>
-  <action name="actionLaserSetting">
-   <property name="text">
-    <string>激光器设置</string>
-   </property>
-  </action>
-  <action name="actionMotorSetting">
-   <property name="text">
-    <string>电机设置</string>
-   </property>
-  </action>
-  <action name="actionSampleSetting">
-   <property name="text">
-    <string>抽样设置</string>
-   </property>
-  </action>
   <action name="actionNote">
    <property name="checkable">
     <bool>true</bool>

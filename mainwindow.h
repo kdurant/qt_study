@@ -63,6 +63,7 @@ public:
     void udpBind();
 
     void initSignalSlot();
+    void setToolBar(void);
 
     void plotSettings(void);
 
