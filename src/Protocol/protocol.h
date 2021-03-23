@@ -85,6 +85,11 @@ public:
     {
         FLASH_DATA = 0x80100001,
     };
+
+    enum gps
+    {
+        GPS_PENETRATE = 0x80000002,
+    };
     enum laser
     {
         LASER_PENETRATE = 0x80000003,

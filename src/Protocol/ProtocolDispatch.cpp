@@ -23,6 +23,10 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
         case SlaveUp::PREVIEW_DATA:
             emit onlineDataReady(data);
             break;
+        case SlaveUp::GPS_PENETRATE:
+            transmitFrame = data.mid(24, data_len);
+            emit gpsDataReady(transmitFrame);
+            break;
         case SlaveUp::LASER_PENETRATE:
             transmitFrame = data.mid(24, data_len);
             emit laserDataReady(transmitFrame);

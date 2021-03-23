@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
 
@@ -720,6 +720,74 @@ void MainWindow::initSignalSlot()
      * ToolBar
      */
     //    connect(ui->mainToolBar.)
+
+    connect(dispatch, &ProtocolDispatch::gpsDataReady, this, [this](QByteArray frame) {
+        // void processLatLonHeight( int length, unsigned char *pData )
+        // lat = getDouble( &pData ) * 180.0 / PI ;
+
+        auto getDouble = [](unsigned char **ppData) -> double {
+            double         retValue;
+            unsigned char *pBytes;
+
+            pBytes = (unsigned char *)(&retValue) + 7;
+
+            *pBytes-- = *(*ppData)++;
+            *pBytes-- = *(*ppData)++;
+            *pBytes-- = *(*ppData)++;
+            *pBytes-- = *(*ppData)++;
+            *pBytes-- = *(*ppData)++;
+            *pBytes-- = *(*ppData)++;
+            *pBytes-- = *(*ppData)++;
+            *pBytes   = *(*ppData)++;
+
+            return retValue;
+        };
+        int            offset   = 7;
+        uint32_t       gps_week = frame.mid(2, 2).toHex().toUInt(nullptr, 16);
+        uint32_t       gps_time = BspConfig::ba2int(frame.mid(4, 4));
+        unsigned char *pData    = new unsigned char(8);
+        for(int i = 0; i < 8; i++)
+        {
+            pData[i] = frame.mid(10, 8).at(i);
+        }
+        double latitude = getDouble(&pData);
+        for(int i = 0; i < 8; i++)
+        {
+            pData[i] = frame.mid(18, 8).at(i);
+        }
+        double longitude = getDouble(&pData);
+        for(int i = 0; i < 8; i++)
+        {
+            pData[i] = frame.mid(26, 8).at(i);
+        }
+        double altitude = getDouble(&pData);
+
+        for(int i = 0; i < 8; i++)
+        {
+            pData[i] = frame.mid(50, 8).at(i);
+        }
+        double roll = getDouble(&pData);
+        for(int i = 0; i < 8; i++)
+        {
+            pData[i] = frame.mid(58, 8).at(i);
+        }
+        double pitch = getDouble(&pData);
+        for(int i = 0; i < 8; i++)
+        {
+            pData[i] = frame.mid(66, 8).at(i);
+        }
+        double heading = getDouble(&pData);
+        ui->label_gpsWeek->setText(QString::number(gps_week));
+        ui->label_gpsSecond->setText(QString::number(gps_time));
+        ui->label_latitude->setText(QString::number(latitude, 'g', 3));
+        ui->label_longitude->setText(QString::number(longitude, 'g', 3));
+        ui->label_altitude->setText(QString::number(altitude, 'g', 3));
+        ui->label_roll->setText(QString::number(roll, 'g', 3));
+        ui->label_pitch->setText(QString::number(pitch, 'g', 3));
+        ui->label_heading->setText(QString::number(heading, 'g', 3));
+
+        delete pData;
+    });
 }
 
 void MainWindow::setToolBar()
