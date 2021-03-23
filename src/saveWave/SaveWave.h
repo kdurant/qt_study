@@ -18,15 +18,15 @@ class SaveWave : public QObject
 
 private:
     QVector<QByteArray> allData;
-    QTimer *timer;
+    QTimer *            timer;
 
 public:
     struct ValidFileInfo
-    {
+    {  // 保存最近一次有效检索文件的信息
         QByteArray name;
-        qint32 fileUnit;    // 本文件 文件名在ssd中的存储位置
-        qint32 startUnit;   // 本文件在ssd中的起始位置
-        qint32 endUnit;     // 本文件在ssd中的结束位置
+        qint32     fileUnit;   // 本文件 文件名在ssd中的存储位置
+        qint32     startUnit;  // 本文件在ssd中的起始位置
+        qint32     endUnit;    // 本文件在ssd中的结束位置
     };
 
 public:
@@ -43,9 +43,9 @@ public:
     bool enableStoreFile(quint32 status);
 
 signals:
-    void sendDataReady(qint32 command,
-                       qint32 data_len,
-                       QByteArray &data); // 需要发送的数据已经准备好
+    void sendDataReady(qint32      command,
+                       qint32      data_len,
+                       QByteArray &data);  // 需要发送的数据已经准备好
 
 public slots:
     // data为通信协议中的完整数据帧

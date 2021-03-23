@@ -35,13 +35,14 @@ public:
         sysPara.append({"激光重频       : ", {}, 0, 4});
         sysPara.append({"AD采样长度     : ", {}, 4, 4});
         sysPara.append({"AD预览抽样率   : ", {}, 8, 4});
-        sysPara.append({"相机触发频率   : ", {}, 12, 4});
+        //        sysPara.append({"相机触发频率   : ", {}, 12, 4});
         sysPara.append({"波形存储状态   : ", {}, 16, 4});
         sysPara.append({"AD采集状态     : ", {}, 20, 4});
-        sysPara.append({"相机触发状态   : ", {}, 24, 4});
+        //        sysPara.append({"相机触发状态   : ", {}, 24, 4});
         sysPara.append({"SSD链接状态    : ", {}, 28, 4});
-        sysPara.append({"保留未用       : ", {}, 32, 4});
-        sysPara.append({"保留未用       : ", {}, 36, 4});
+        sysPara.append({"sata读写状态机    : ", {}, 32, 1});
+        sysPara.append({"文件读写状态机       : ", {}, 33, 3});
+        //        sysPara.append({"保留未用       : ", {}, 36, 4});
 
         sysPara.append({"第一段起始位置 : ", {}, 60, 4});
         sysPara.append({"第一段采样长度 : ", {}, 64, 4});

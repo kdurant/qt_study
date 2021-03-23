@@ -7,10 +7,10 @@ bool DevInfo::getSysPara(QVector<DevInfo::ParaInfo>& ret)
 
     QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
     connect(this, &DevInfo::responseDataReady, &waitLoop, &QEventLoop::quit);
-    QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
+    QTimer::singleShot(200, &waitLoop, &QEventLoop::quit);
     waitLoop.exec();
-    //    if(recvData.size() != 256)
-    //        return false;
+    if(recvData.size() != 256)
+        return false;
 
     for(int i = 0; i < sysPara.length(); i++)
     {

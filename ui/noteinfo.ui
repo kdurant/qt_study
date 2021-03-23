@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>426</width>
-    <height>344</height>
+    <width>651</width>
+    <height>528</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,8 +25,29 @@
 陆地雷达IP=192.168.1.101
 陆地雷达端口号=5555
 
-海洋雷达IP=192.168.1.102
-海洋雷达端口号=4444</string>
+其他雷达IP=192.168.1.102
+其他雷达端口号=4444
+
+文件读写状态机：
+localparam              IDLE            = 0;
+localparam              RD_UNIT         = 1;
+localparam              WR_FILENAME     = 2;
+localparam              START           = 3;
+localparam              CHECK_DATA      = 4;    // 准备写采集数据
+localparam              WR_DATA         = 5;    // 将有效数据写入FIFO
+localparam              WR_APPEND       = 6;    
+localparam              WAIT_BRESP      = 7;
+localparam              WR_FILEINFO     = 8;
+localparam              ERASE           = 9;
+localparam              OVER            = 10;
+
+
+sata读写状态机：
+localparam IDLE   = 0,  // 空闲
+           ADDR   = 1,  // 写命令
+           DATA   = 2,  // 写数据
+           RESP   = 3;  // 读数据
+</string>
      </property>
     </widget>
    </item>

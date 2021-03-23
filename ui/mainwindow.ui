@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1314</width>
+    <width>1437</width>
     <height>725</height>
    </rect>
   </property>
@@ -24,7 +24,7 @@
        </size>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
@@ -417,7 +417,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>215</width>
+             <width>257</width>
              <height>298</height>
             </rect>
            </property>
@@ -680,8 +680,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>250</width>
-             <height>538</height>
+             <width>257</width>
+             <height>555</height>
             </rect>
            </property>
            <attribute name="label">
@@ -964,7 +964,7 @@
              <x>0</x>
              <y>0</y>
              <width>227</width>
-             <height>214</height>
+             <height>212</height>
             </rect>
            </property>
            <attribute name="label">
@@ -1443,7 +1443,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_12">
          <property name="title">
-          <string>GroupBox</string>
+          <string>设备信息</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_17">
           <item row="2" column="1">
@@ -1492,7 +1492,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_13">
          <property name="title">
-          <string>GroupBox</string>
+          <string>系统参数</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_11">
           <item>
@@ -1520,7 +1520,7 @@
           <item row="1" column="0">
            <widget class="QLabel" name="label_29">
             <property name="text">
-             <string>GPS秒：</string>
+             <string>GPS时间(ms)：</string>
             </property>
            </widget>
           </item>
@@ -1583,19 +1583,19 @@
           <item row="5" column="0">
            <widget class="QLabel" name="label_37">
             <property name="text">
-             <string>方向角：</string>
+             <string>方向角(°)：</string>
             </property>
            </widget>
           </item>
           <item row="6" column="0">
-           <widget class="QLabel" name="label_pitch">
+           <widget class="QLabel" name="label_40">
             <property name="text">
-             <string>俯仰角：</string>
+             <string>俯仰角(°)：</string>
             </property>
            </widget>
           </item>
           <item row="6" column="1">
-           <widget class="QLabel" name="label_40">
+           <widget class="QLabel" name="label_pitch">
             <property name="text">
              <string/>
             </property>
@@ -1611,7 +1611,7 @@
           <item row="7" column="0">
            <widget class="QLabel" name="label_41">
             <property name="text">
-             <string>翻滚角：</string>
+             <string>翻滚角(°)：</string>
             </property>
            </widget>
           </item>
@@ -1632,6 +1632,19 @@
          </layout>
         </widget>
        </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
      </widget>
     </item>
@@ -1642,7 +1655,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1314</width>
+     <width>1437</width>
      <height>23</height>
     </rect>
    </property>

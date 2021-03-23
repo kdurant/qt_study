@@ -91,12 +91,13 @@ private slots:
 private:
     struct __sys_status__
     {
-        bool ssdLinkStatus;
-        bool udpLinkStatus;
-        bool adCaptureStatus;
+        bool ssdLinkStatus;    // ssd是否连接
+        bool udpLinkStatus;    // udp是否可以正常通信
+        bool adCaptureStatus;  // ad是否正在采集
+        bool ssdStoreStatus;   // 是否正在存储采集数据
 
         QLabel *label_udpLinkStatus;
-        QLabel *label_ssdLinkStatus;
+        QLabel *label_ssdStoreStatus;
         QLabel *label_adCaptureStatus;
     } sysStatus;
 

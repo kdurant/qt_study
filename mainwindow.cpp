@@ -1,10 +1,11 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
+    setWindowState(Qt::WindowMaximized);
 
     dispatch        = new ProtocolDispatch();
     preview         = new AdSampleControll();
@@ -212,6 +213,10 @@ void MainWindow::uiConfig()
         QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_ADChSelect->addItems(AD1List);
+
+        ui->label_laserCurrent->setVisible(false);
+        ui->lineEdit_laserCurrent->setVisible(false);
+        ui->btn_laserSetCurrent->setVisible(false);
     }
     else
     {
@@ -223,11 +228,11 @@ void MainWindow::uiConfig()
     }
     ui->checkBox_autoZoom->setChecked(true);
 
-    sysStatus.label_udpLinkStatus = new QLabel("通信连接状态: 未连接");
-    ui->statusBar->addPermanentWidget(sysStatus.label_udpLinkStatus);
+    //    sysStatus.label_udpLinkStatus = new QLabel("通信连接状态: 未连接");
+    //    ui->statusBar->addPermanentWidget(sysStatus.label_udpLinkStatus);
 
-    sysStatus.label_ssdLinkStatus = new QLabel("SSD连接状态: 未连接");
-    ui->statusBar->addPermanentWidget(sysStatus.label_ssdLinkStatus);
+    sysStatus.label_ssdStoreStatus = new QLabel("SSD存储状态: 停止存储");
+    ui->statusBar->addPermanentWidget(sysStatus.label_ssdStoreStatus);
 
     sysStatus.label_adCaptureStatus = new QLabel("采集状态：停止采集");
     sysStatus.label_adCaptureStatus->setObjectName("captureStatus");
@@ -337,6 +342,11 @@ void MainWindow::initSignalSlot()
         }
         else
         {
+            if(sysStatus.ssdStoreStatus)
+            {
+                QMessageBox::warning(NULL, "警告", "请先停止存储数据");
+                return;
+            }
             status = 0;
             ui->btn_sampleEnable->setText("开始采集");
         }
@@ -597,6 +607,11 @@ void MainWindow::initSignalSlot()
     connect(ssd, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
     connect(dispatch, &ProtocolDispatch::ssdDataReady, ssd, &SaveWave::setNewData);
     connect(ui->btn_ssdSearchSpace, &QPushButton::pressed, this, [this]() {
+        if(sysStatus.adCaptureStatus)
+        {
+            QMessageBox::warning(this, "warning", "请停止预览数据");
+            return;
+        }
         ui->btn_ssdSearchSpace->setEnabled(false);
         SaveWave::ValidFileInfo fileInfo;
         bool                    status    = false;
@@ -612,6 +627,12 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this]() {
+        if(!sysStatus.adCaptureStatus)
+        {
+            QMessageBox::warning(this, "warning", "请先开始采集");
+            return;
+        }
+
         ui->btn_ssdEnableStore->setEnabled(false);
 
         quint32 fileUnit = ui->lineEdit_ssdAvailFileUnit->text().toUInt(nullptr, 16);
@@ -619,13 +640,14 @@ void MainWindow::initSignalSlot()
         if(ui->lineEdit_ssdStoreFileName->text().length() != 0)
             fileName.append(ui->lineEdit_ssdStoreFileName->text().length());
         ssd->setSaveFileName(fileUnit, fileName);
+        ui->lineEdit_ssdStoreFileName->setText(fileName);
 
         quint32 dataUnit = ui->lineEdit_ssdAvailDataUnit->text().toUInt(nullptr, 16);
         ssd->setSaveFileAddr(dataUnit);
         ssd->enableStoreFile(0x01);
     });
 
-    connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this]() {
+    connect(ui->btn_ssdDisableStore, &QPushButton::pressed, this, [this]() {
         QMessageBox message(QMessageBox::NoIcon, "停止存储", "真的要停止存储吗", QMessageBox::Yes | QMessageBox::No, NULL);
         if(message.exec() == QMessageBox::No)
             return;
@@ -743,50 +765,49 @@ void MainWindow::initSignalSlot()
             return retValue;
         };
         int            offset   = 7;
-        uint32_t       gps_week = frame.mid(2, 2).toHex().toUInt(nullptr, 16);
-        uint32_t       gps_time = BspConfig::ba2int(frame.mid(4, 4));
-        unsigned char *pData    = new unsigned char(8);
+        uint32_t       gps_week = frame.mid(offset + 2, 2).toHex().toUInt(nullptr, 16);
+        uint32_t       gps_time = BspConfig::ba2int(frame.mid(offset + 4, 4));
+        unsigned char  data[8];
+        unsigned char *pData = data;
         for(int i = 0; i < 8; i++)
         {
-            pData[i] = frame.mid(10, 8).at(i);
+            pData[i] = frame.mid(offset + 10, 8).at(i);
         }
         double latitude = getDouble(&pData);
         for(int i = 0; i < 8; i++)
         {
-            pData[i] = frame.mid(18, 8).at(i);
+            pData[i] = frame.mid(offset + 18, 8).at(i);
         }
         double longitude = getDouble(&pData);
         for(int i = 0; i < 8; i++)
         {
-            pData[i] = frame.mid(26, 8).at(i);
+            pData[i] = frame.mid(offset + 26, 8).at(i);
         }
         double altitude = getDouble(&pData);
 
         for(int i = 0; i < 8; i++)
         {
-            pData[i] = frame.mid(50, 8).at(i);
+            pData[i] = frame.mid(offset + 50, 8).at(i);
         }
         double roll = getDouble(&pData);
         for(int i = 0; i < 8; i++)
         {
-            pData[i] = frame.mid(58, 8).at(i);
+            pData[i] = frame.mid(offset + 58, 8).at(i);
         }
         double pitch = getDouble(&pData);
         for(int i = 0; i < 8; i++)
         {
-            pData[i] = frame.mid(66, 8).at(i);
+            pData[i] = frame.mid(offset + 66, 8).at(i);
         }
         double heading = getDouble(&pData);
         ui->label_gpsWeek->setText(QString::number(gps_week));
         ui->label_gpsSecond->setText(QString::number(gps_time));
-        ui->label_latitude->setText(QString::number(latitude, 'g', 3));
-        ui->label_longitude->setText(QString::number(longitude, 'g', 3));
-        ui->label_altitude->setText(QString::number(altitude, 'g', 3));
-        ui->label_roll->setText(QString::number(roll, 'g', 3));
-        ui->label_pitch->setText(QString::number(pitch, 'g', 3));
-        ui->label_heading->setText(QString::number(heading, 'g', 3));
-
-        delete pData;
+        ui->label_latitude->setText(QString::number(latitude, 'g', 6));
+        ui->label_longitude->setText(QString::number(longitude, 'g', 6));
+        ui->label_altitude->setText(QString::number(altitude, 'g', 6));
+        ui->label_roll->setText(QString::number(roll, 'g', 6));
+        ui->label_pitch->setText(QString::number(pitch, 'g', 6));
+        ui->label_heading->setText(QString::number(heading, 'g', 6));
     });
 }
 
@@ -973,24 +994,49 @@ void MainWindow::getSysInfo()
 {
     if(devInfo->getSysPara(sysParaInfo))
     {
+        ui->statusBar->showMessage(tr("系统通信正常"), 0);
         for(int i = 0; i < sysParaInfo.length(); i++)
         {
             if(i == 0)
                 ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(sysParaInfo[i].value));
-            else if(i == 6)
+            else if(i == 4)
+            {
+                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16))));
+                qint32 value = BspConfig::ba2int(sysParaInfo[i].value);
+                if(value == 1)
+                {
+                    sysStatus.ssdStoreStatus = true;
+                    sysStatus.label_ssdStoreStatus->setText("存储状态：正在存储");
+                }
+                else
+                {
+                    sysStatus.ssdStoreStatus = false;
+                    sysStatus.label_ssdStoreStatus->setText("存储状态：停止存储");
+                }
+            }
+            else if(i == 5)
             {
                 if(sysParaInfo[i].value.contains(QByteArray(4, 0x01)))
                 {
                     ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel("正在采集"));
                     sysStatus.adCaptureStatus = true;
-                    sysStatus.label_adCaptureStatus->setText("正在采集");
+                    sysStatus.label_adCaptureStatus->setText("采集状态：正在采集");
                 }
                 else
                 {
                     ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel("停止采集"));
                     sysStatus.adCaptureStatus = false;
-                    sysStatus.label_adCaptureStatus->setText("停止采集");
+                    sysStatus.label_adCaptureStatus->setText("采集状态：停止采集");
                 }
+            }
+            else if(i == 7)
+            {
+                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16), 2)));
+            }
+            else if(i == 8)
+            {
+                quint16 value = sysParaInfo[i].value[1] * 256 + sysParaInfo[i].value[0];
+                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(value, 2)));
             }
             else
                 ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16))));
@@ -998,7 +1044,7 @@ void MainWindow::getSysInfo()
     }
     else
     {
-        QMessageBox::warning(this, "警告", "系统未连接");
+        ui->statusBar->showMessage(tr("系统无法通信，检查网络连接"), 0);
     }
 }
 
