@@ -792,15 +792,14 @@ void MainWindow::initSignalSlot()
 
 void MainWindow::setToolBar()
 {
-    QAction *act[6];
-    act[0] = new QAction("系统信息", this);
-    act[1] = new QAction("激光器设置", this);
-    act[2] = new QAction("电机设置", this);
-    act[3] = new QAction("高压设置", this);
-    act[4] = new QAction("预览设置", this);
-    act[5] = new QAction("保存文件设置", this);
+    QAction *act[5];
+    act[0] = new QAction("激光器设置", this);
+    act[1] = new QAction("电机设置", this);
+    act[2] = new QAction("高压设置", this);
+    act[3] = new QAction("预览设置", this);
+    act[4] = new QAction("保存文件设置", this);
     ui->mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    for(int i = 0; i < 6; i++)
+    for(int i = 0; i < 5; i++)
     {
         ui->mainToolBar->addAction(act[i]);
     }
@@ -810,7 +809,6 @@ void MainWindow::setToolBar()
     connect(act[2], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(2); });
     connect(act[3], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(3); });
     connect(act[4], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(4); });
-    connect(act[5], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(5); });
 }
 
 void MainWindow::plotSettings()
