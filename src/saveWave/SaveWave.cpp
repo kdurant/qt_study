@@ -17,18 +17,16 @@ bool SaveWave::readDiskUnit(qint32 unitAddr, QByteArray &ret)
     waitLoop.exec();
 
     if(allData.size() != 64)
+    {
+        allData.clear();
         return false;
-
-    if(ProtocolDispatch::getPckNum(allData[0]) != 0)
-        return false;
-
-    if(ProtocolDispatch::getPckNum(allData[63]) != 63)
-        return false;
-
-    for(int i = 0; i < 64; i++)
+    }
+    // 发现包序号存在不连续的情况，检查前面几个包，简单判断下
+    for(int i = 0; i < 8; i++)
     {
         if(ProtocolDispatch::getPckNum(allData[i]) != i)
         {
+            allData.clear();
             return false;
         }
     }
@@ -57,8 +55,8 @@ bool SaveWave::inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo)
     {
         if(!readDiskUnit(unit++, fileName))  // 读操作失败
             return false;
-
-        if(fileName.mid(24 + 0, 8) == fileName.mid(24 + 8, 8))  //文件名内容错误
+        // 保存文件名的unit中，默认写入的数据是0xee
+        if(fileName.mid(24 + 0, 8) == QByteArray(8, 0xee))  //文件名内容错误
             return false;
 
         if(!readDiskUnit(unit++, filePos))  // 读操作失败
@@ -89,7 +87,7 @@ bool SaveWave::inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo)
         swapByteOrder(endUnit);
 
         fileInfo.name      = name;
-        fileInfo.fileUnit  = unit;
+        fileInfo.fileUnit  = unit - 2;
         fileInfo.startUnit = BspConfig::ba2int(startUnit);
         fileInfo.endUnit   = BspConfig::ba2int(endUnit);
     }

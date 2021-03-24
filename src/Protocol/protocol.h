@@ -32,7 +32,7 @@ public:
         SECOND_POS     = 0x0000002e,
         SECOND_LEN     = 0x00000030,
         SUM_THRE       = 0x0000002b,
-        MAX_THRE       = 0x0000002c,
+        VALUE_THRE     = 0x0000002c,
         COMPRESS_LEN   = 0x00200001,
         COMPRESS_RATIO = 0x00200002,
     };

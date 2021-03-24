@@ -8,7 +8,10 @@
  */
 bool WaveExtract::isChDataHead(QVector<quint8> frameData, int offset)
 {
-    return (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90 && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a);
+    if(frameData.size() < offset + 1)
+        return false;
+    else
+        return (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90 && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a);
 }
 
 /**
@@ -54,6 +57,10 @@ int WaveExtract::getWaveform(BspConfig::RadarType                type,
         ch.pos.clear();
         ch.value.clear();
 
+        if(offset == frameData.size())  // 数据分析结束
+        {
+            return 0;
+        }
         // 如果第一段数据结束后的数据就是帧头标志，那么说明没有第二段数据
         if(isChDataHead(frameData, offset))
             continue;

@@ -29,6 +29,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     ssd = new SaveWave();
 
+    sysStatus.ssdLinkStatus   = false;
+    sysStatus.udpLinkStatus   = false;
+    sysStatus.adCaptureStatus = false;
+
     offlineWaveForm->moveToThread(thread);
     connect(thread, SIGNAL(started()), offlineWaveForm, SLOT(getADsampleNumber()));
     connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), thread, SLOT(quit()));
@@ -69,9 +73,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->tableWidget_sysInfo->setItem(i, 0, item);
     }
 
-    sysStatus.ssdLinkStatus   = false;
-    sysStatus.udpLinkStatus   = false;
-    sysStatus.adCaptureStatus = false;
+    getSysInfo();
 }
 
 MainWindow::~MainWindow()
@@ -217,6 +219,7 @@ void MainWindow::uiConfig()
         ui->label_laserCurrent->setVisible(false);
         ui->lineEdit_laserCurrent->setVisible(false);
         ui->btn_laserSetCurrent->setVisible(false);
+        ui->tabWidget->setTabEnabled(4, false);
     }
     else
     {
@@ -311,6 +314,8 @@ void MainWindow::initSignalSlot()
         int firstLen       = ui->lineEdit_firstLen->text().toInt();
         int secondPos      = ui->lineEdit_secondStartPos->text().toInt();
         int secondLen      = ui->lineEdit_secondLen->text().toInt();
+        int sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
+        int valueThreshold = ui->lineEdit_subThreshold->text().toInt();
 
         if(secondPos < firstPos + firstLen)
         {
@@ -329,6 +334,8 @@ void MainWindow::initSignalSlot()
         preview->setFirstLen(firstLen);
         preview->setSecondPos(secondPos);
         preview->setSecondLen(secondLen);
+        preview->setSumThreshold(sumThreshold);
+        preview->setValueThreshold(valueThreshold);
     });
 
     connect(ui->btn_sampleEnable, &QPushButton::pressed, this, [this]() {
@@ -364,7 +371,10 @@ void MainWindow::initSignalSlot()
         for(int n = 0; n < allCh.size(); n++)
         {
             if(allCh.size() != 8)  // 只有第一段波形
+            {
                 ui->plot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
+                ui->plot->graph(n * 2 + 1)->data().data()->clear();
+            }
             else
                 ui->plot->graph(n)->setData(allCh[n].pos, allCh[n].value);
         }
@@ -607,9 +617,9 @@ void MainWindow::initSignalSlot()
     connect(ssd, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
     connect(dispatch, &ProtocolDispatch::ssdDataReady, ssd, &SaveWave::setNewData);
     connect(ui->btn_ssdSearchSpace, &QPushButton::pressed, this, [this]() {
-        if(sysStatus.adCaptureStatus)
+        if(sysStatus.ssdStoreStatus)
         {
-            QMessageBox::warning(this, "warning", "请停止预览数据");
+            QMessageBox::warning(this, "warning", "不能在写文件时检索数据");
             return;
         }
         ui->btn_ssdSearchSpace->setEnabled(false);
@@ -640,7 +650,6 @@ void MainWindow::initSignalSlot()
         if(ui->lineEdit_ssdStoreFileName->text().length() != 0)
             fileName.append(ui->lineEdit_ssdStoreFileName->text().length());
         ssd->setSaveFileName(fileUnit, fileName);
-        ui->lineEdit_ssdStoreFileName->setText(fileName);
 
         quint32 dataUnit = ui->lineEdit_ssdAvailDataUnit->text().toUInt(nullptr, 16);
         ssd->setSaveFileAddr(dataUnit);
@@ -829,7 +838,7 @@ void MainWindow::setToolBar()
     connect(act[1], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(1); });
     connect(act[2], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(2); });
     connect(act[3], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(3); });
-    connect(act[4], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(4); });
+    connect(act[4], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(3); });
 }
 
 void MainWindow::plotSettings()
