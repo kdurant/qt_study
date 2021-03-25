@@ -19,12 +19,18 @@ public:
     GpsInfo() = default;
     enum GPS_FRAME_LEN
     {
-        APPLANIX_LEN = 115
+        APPLANIX_LEN  = 115,
+        DISK_DATA_LEN = 88
     };
 
 private:
     BspConfig::Gps_Info gps;
 
+    /**
+     * @brief APPLANIX通过串口上传的GPS数据帧
+     * @param ppData
+     * @return
+     */
     double getDouble(unsigned char **ppData)
     {
         double         retValue;
@@ -42,6 +48,21 @@ private:
         *pBytes   = *(*ppData)++;
 
         return retValue;
+    }
+
+    /**
+     * @brief 硬盘数据中的GPS信息
+     * @param bytes
+     * @return
+     */
+    double byteArrayToDouble(QByteArray bytes)
+    {
+        double  fltRtn = 0.f;
+        uint8_t cTmp[8];
+        for(int i = 0; i < 8; i++)
+            cTmp[i] = bytes[7 - i];
+        memcpy(&fltRtn, cTmp, 8);
+        return fltRtn;
     }
 
 signals:
@@ -88,6 +109,17 @@ public slots:
                 pData[i] = frame.mid(offset + 66, 8).at(i);
             }
             gps.heading = getDouble(&pData);
+        }
+        else if(frame.size() == DISK_DATA_LEN)
+        {
+            gps.week            = frame.mid(8, 4).toHex().toUInt(nullptr, 16);
+            gps.current_week_ms = byteArrayToDouble(frame.mid(12, 8));
+            gps.latitude        = byteArrayToDouble(frame.mid(48, 8));
+            gps.longitude       = byteArrayToDouble(frame.mid(56, 8));
+            gps.altitude        = byteArrayToDouble(frame.mid(64, 8));
+            gps.roll            = byteArrayToDouble(frame.mid(40, 8));
+            gps.pitch           = byteArrayToDouble(frame.mid(32, 8));
+            gps.heading         = byteArrayToDouble(frame.mid(24, 8));
         }
         emit gpsDataReady(gps);
     }

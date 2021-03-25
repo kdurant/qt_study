@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -921,6 +921,10 @@ void MainWindow::on_bt_showWave_clicked()
                 QMessageBox::warning(this, "警告", "数据格式和当前雷达类型不匹配");
                 return;
             }
+            QByteArray convert;
+            for(int i = 0; i < 88; i++)
+                convert.append(sampleData[i]);
+            gps->parserGpsData(convert);
             for(int n = 0; n < allCh.size(); n++)
             {
                 ui->plot->graph(n)->setData(allCh[n].pos, allCh[n].value);

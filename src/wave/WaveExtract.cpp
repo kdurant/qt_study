@@ -83,7 +83,7 @@ int WaveExtract::getWaveform(BspConfig::RadarType                type,
     }
 
     //    return ret;
-    return -1;
+    return 0;
 }
 int WaveExtract::getWaveform(BspConfig::RadarType type, QByteArray &data, QVector<WaveformInfo> &ret)
 {
