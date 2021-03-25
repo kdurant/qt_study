@@ -120,16 +120,13 @@ private:
     AdSampleControll *preview;
     bool              autoZoomPlot{true};
     OnlineWaveform *  onlineWaveForm;
+    OfflineWaveform *offlineWaveForm;
+    bool running;
 
     DAControl *daDriver;
     ADControl *adDriver;
 
     UpdateBin *updateFlash;
-
-    quint32 sampleFrameNumber;
-
-    OfflineWaveform *offlineWaveForm;
-    bool             running;
 
     LaserController *laserDriver;
     LaserType1 *     laser1Driver;

@@ -2,8 +2,7 @@
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow),
-      configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -136,8 +135,6 @@ void MainWindow::initParameter()
     ui->lineEdit_subThreshold->setText(configIni->value("Preview/subThreshold").toString());
     ui->lineEdit_compressLen->setText(configIni->value("Preview/compressLen").toString());
     ui->lineEdit_compressRatio->setText(configIni->value("Preview/compressRatio").toString());
-
-    sampleFrameNumber = 0;
 }
 
 void MainWindow::saveParameter()
