@@ -42,6 +42,7 @@
 #include "Epos2Controller.h"
 
 #include "SaveWave.h"
+#include "gpsInfo.h"
 
 namespace Ui
 {
@@ -142,6 +143,7 @@ private:
     QTimer *                   autoReadInfoTimer;
 
     SaveWave *ssd;
+    GpsInfo * gps;
 };
 
 #endif  // MAINWINDOW_H

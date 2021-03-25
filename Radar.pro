@@ -58,6 +58,7 @@ HEADERS += \
     src/ADControll/ADControl.h \
     src/DAControll/DAControl.h \
     src/Protocol/AdSampleControl.h \
+    src/gpsInfo/gpsInfo.h \
     src/laser/laserType3.h \
     src/saveWave/SaveWave.h \
     src/wave/OfflineWaveform.h \
@@ -90,6 +91,7 @@ INCLUDEPATH += ./src/DevInfo
 INCLUDEPATH += ./src/saveWave
 INCLUDEPATH += ./src/ADControll
 INCLUDEPATH += ./src/DAControll
+INCLUDEPATH += ./src/gpsInfo
 
 
 FORMS += \

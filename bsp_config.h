@@ -5,12 +5,25 @@
 class BspConfig
 {
 public:
-    enum RadarType {
-        RADAR_TPYE_OCEAN = 0x00,
-        RADAR_TPYE_LAND = 0x01,
-        RADAR_TPYE_760 = 0x02,
+    enum RadarType
+    {
+        RADAR_TPYE_OCEAN       = 0x00,
+        RADAR_TPYE_LAND        = 0x01,
+        RADAR_TPYE_760         = 0x02,
         RADAR_TPYE_DOUBLE_WAVE = 0x03,
-        RADAR_TPYE_DRONE = 0x04,
+        RADAR_TPYE_DRONE       = 0x04,
+    };
+
+    struct Gps_Info
+    {
+        qint32 week;
+        qint32 current_week_ms;
+        double latitude;
+        double longitude;
+        double altitude;
+        double roll;
+        double pitch;
+        double heading;
     };
 
     /**
@@ -18,7 +31,8 @@ public:
      * @param data
      * @return 
      */
-    static QByteArray int2ba(quint32 data)
+    static QByteArray
+    int2ba(quint32 data)
     {
         QByteArray ba;
         ba.resize(4);

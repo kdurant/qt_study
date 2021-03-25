@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
     autoReadInfoTimer->setInterval(1000);
 
     ssd = new SaveWave();
+
+    gps = new GpsInfo();
 
     sysStatus.ssdLinkStatus   = false;
     sysStatus.udpLinkStatus   = false;
@@ -748,9 +750,19 @@ void MainWindow::initSignalSlot()
     });
 
     /*
-     * ToolBar
+     * gps信息处理
      */
-    //    connect(ui->mainToolBar.)
+    connect(dispatch, &ProtocolDispatch::gpsDataReady, gps, &GpsInfo::parserGpsData);
+    connect(gps, &GpsInfo::gpsDataReady, this, [this](BspConfig::Gps_Info &data) {
+        ui->label_gpsWeek->setText(QString::number(data.week));
+        ui->label_gpsSecond->setText(QString::number(data.current_week_ms));
+        ui->label_latitude->setText(QString::number(data.latitude, 'g', 6));
+        ui->label_longitude->setText(QString::number(data.longitude, 'g', 6));
+        ui->label_altitude->setText(QString::number(data.altitude, 'g', 6));
+        ui->label_roll->setText(QString::number(data.roll, 'g', 6));
+        ui->label_pitch->setText(QString::number(data.pitch, 'g', 6));
+        ui->label_heading->setText(QString::number(data.heading, 'g', 6));
+    });
 
     connect(dispatch, &ProtocolDispatch::gpsDataReady, this, [this](QByteArray frame) {
         // void processLatLonHeight( int length, unsigned char *pData )
