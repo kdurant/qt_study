@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     sysStatus.ssdLinkStatus   = false;
     sysStatus.udpLinkStatus   = false;
     sysStatus.adCaptureStatus = false;
+    sysStatus.ssdStoreStatus  = false;
 
     offlineWaveForm->moveToThread(thread);
     connect(thread, SIGNAL(started()), offlineWaveForm, SLOT(getADsampleNumber()));

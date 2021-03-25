@@ -21,6 +21,12 @@ private:
     QTimer *            timer;
 
 public:
+    enum ResponseStatus {
+        RESPONSE_OK = 0x00,
+        RESPONSE_NONE = -1, // 没有收到数据包
+        RESPONSE_MISS = -2, // 没有收到全部数据包
+    };
+
     struct ValidFileInfo
     {  // 保存最近一次有效检索文件的信息
         QByteArray name;
@@ -33,7 +39,7 @@ public:
     SaveWave()
     {
         timer = new QTimer();
-        timer->setInterval(20);
+        timer->setInterval(50);
     }
     bool readDiskUnit(qint32 unitAddr, QByteArray &ret);
     bool inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo);

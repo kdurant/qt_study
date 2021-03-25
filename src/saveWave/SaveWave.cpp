@@ -13,8 +13,11 @@ bool SaveWave::readDiskUnit(qint32 unitAddr, QByteArray &ret)
     QThread::msleep(1);
 
     QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
+    timer->start();
     connect(timer, &QTimer::timeout, &waitLoop, &QEventLoop::quit);
     waitLoop.exec();
+    if (allData.size() == 0)
+        return false;
 
     if(allData.size() != 64)
     {
