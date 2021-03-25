@@ -290,10 +290,10 @@ void MainWindow::initSignalSlot()
     });
 
     /*
-     * 读取系统参数信息相关逻辑
+     * 读取系统参数信息相关逻辑 
      */
-    connect(devInfo, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
-    connect(dispatch, SIGNAL(infoDataReady(QByteArray &)), devInfo, SLOT(setNewData(QByteArray &)));
+    connect(devInfo, &DevInfo::sendDataReady, dispatch, &ProtocolDispatch::encode);
+    connect(dispatch, &ProtocolDispatch::infoDataReady, devInfo, &DevInfo::setNewData);
     connect(ui->btn_ReadSysInfo, &QPushButton::pressed, this, &MainWindow::getSysInfo);
     connect(autoReadInfoTimer, &QTimer::timeout, this, &MainWindow::getSysInfo);
     connect(ui->checkBox_autoReadSysInfo, &QCheckBox::stateChanged, this, [this](int state) {
@@ -306,7 +306,7 @@ void MainWindow::initSignalSlot()
     /*
      * 波形预览相关逻辑
      */
-    connect(preview, SIGNAL(sendDataReady(qint32, qint32, qint32)), dispatch, SLOT(encode(qint32, qint32, qint32)));
+    connect(preview, &AdSampleControll::sendDataReady, dispatch, &ProtocolDispatch::encode);
 
     connect(ui->btn_setPreviewPara, &QPushButton::pressed, this, [this]() {
         int totalSampleLen = ui->lineEdit_sampleLen->text().toInt();
@@ -361,7 +361,10 @@ void MainWindow::initSignalSlot()
         preview->setPreviewEnable(status);
     });
 
-    connect(dispatch, SIGNAL(onlineDataReady(QByteArray &)), onlineWaveForm, SLOT(setNewData(QByteArray &)));
+    connect(dispatch,
+            &ProtocolDispatch::onlineDataReady,
+            onlineWaveForm,
+            &OnlineWaveform::setNewData);
     connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data) {
         QVector<quint8> sampleData;
         for(auto &i : data)  // 数据格式转换
@@ -433,7 +436,7 @@ void MainWindow::initSignalSlot()
      * Nor Flash操作，远程更新相关逻辑
      */
 
-    connect(dispatch, SIGNAL(flashDataReady(QByteArray &)), updateFlash, SLOT(setDataFrame(QByteArray &)));
+    connect(dispatch, &ProtocolDispatch::flashDataReady, updateFlash, &UpdateBin::setDataFrame);
     connect(ui->btnNorFlashWrite, &QPushButton::pressed, this, [this]() {
         uint32_t addr;
         if(ui->rBtnDecAddr->isChecked())
@@ -715,7 +718,7 @@ void MainWindow::initSignalSlot()
      * AD设置相关逻辑
      */
     connect(dispatch, &ProtocolDispatch::ADDataReady, adDriver, &ADControl::setNewData);
-    connect(adDriver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
+    connect(adDriver, &ADControl::sendDataReady, dispatch, &ProtocolDispatch::encode);
     connect(ui->btn_ADReadValue, &QPushButton::pressed, this, [this]() {
         quint32 chNum       = ui->comboBox_ADChSelect->currentIndex();
         qint32  digitValue  = adDriver->getChannalValue(chNum);

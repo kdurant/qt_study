@@ -54,31 +54,6 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
     }
 }
 
-/**
- * @brief 发送长度固定的系统参数
- * @return
- */
-void ProtocolDispatch::encode(qint32 command, qint32 data_len, qint32 data)
-{
-    QByteArray frame;
-    uint32_t   checksum = 0xeeeeffff;
-
-    frame.append(QByteArray::fromHex("AA555AA5AA555AA5"));  // 帧头
-    frame.append(
-        QByteArray::fromHex(QByteArray::number(cmdNum++, 16).rightJustified(8, '0')));  // 指令序号
-    frame.append(
-        QByteArray::fromHex(QByteArray::number(command, 16).rightJustified(8, '0')));  // 命令
-    frame.append(QByteArray::fromHex(
-        QByteArray::number(packetNum, 16).rightJustified(8, '0')));  // 包序号，一般为0
-    frame.append(QByteArray::fromHex(
-        QByteArray::number(data_len, 16).rightJustified(8, '0')));                                            // 有效数据长度
-    frame.append(QByteArray::fromHex(QByteArray::number(data, 16).rightJustified(8, '0').append(504, '0')));  // 数据，总是256
-    frame.append(
-        QByteArray::fromHex(QByteArray::number(checksum, 16).rightJustified(8, '0')));  // 校验
-
-    emit frameDataReady(frame);
-}
-
 void ProtocolDispatch::encode(qint32 command, qint32 data_len, QByteArray &data)
 {
     QByteArray frame;

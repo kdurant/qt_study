@@ -54,7 +54,6 @@ public:
     }
 
 public slots:
-    void encode(qint32 command, qint32 data_len, qint32 data);
     void encode(qint32 command, qint32 data_len, QByteArray &data);
 
 signals:

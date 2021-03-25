@@ -1,8 +1,9 @@
 #ifndef PREVIEW_PROCESS_H
 #define PREVIEW_PROCESS_H
-#include <QtCore>
-#include "protocol.h"
 #include "ProtocolDispatch.h"
+#include "bsp_config.h"
+#include "protocol.h"
+#include <QtCore>
 
 /*
  * 设置AD采样参数
@@ -16,116 +17,90 @@ public:
     }
     void setPreviewEnable(int data)
     {
-        previewEnable = data;
-        emit sendDataReady(MasterSet::PREVIEW_ENABLE, 4, data);
-
-        QEventLoop waitLoop;  // 等待响应数据，或者10ms超时
-        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
-        waitLoop.exec();
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::PREVIEW_ENABLE, 4, frame);
+        sleepWithoutBlock(interval);
     }
     void setTotalSampleLen(int data)
     {
-        totalSampleLen = data;
-        emit       sendDataReady(MasterSet::SAMPLE_LEN, 4, data);
-        QEventLoop waitLoop;  // 等待响应数据，或者10ms超时
-        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
-        waitLoop.exec();
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::SAMPLE_LEN, 4, frame);
+        sleepWithoutBlock(interval);
     }
     void setPreviewRatio(int data)
     {
-        previewRatio = data;
-        emit       sendDataReady(MasterSet::PREVIEW_RATIO, 4, data);
-        QEventLoop waitLoop;  // 等待响应数据，或者10ms超时
-        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
-        waitLoop.exec();
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::PREVIEW_RATIO, 4, frame);
+        sleepWithoutBlock(interval);
     }
     void setFirstPos(int data)
     {
-        firstPos = data;
-        emit       sendDataReady(MasterSet::FIRST_POS, 4, data);
-        QEventLoop waitLoop;  // 等待响应数据，或者10ms超时
-        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
-        waitLoop.exec();
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::FIRST_POS, 4, frame);
+        sleepWithoutBlock(interval);
     }
     void setFirstLen(int data)
     {
-        firstLen = data;
-        emit       sendDataReady(MasterSet::FIRST_LEN, 4, data);
-        QEventLoop waitLoop;  // 等待响应数据，或者10ms超时
-        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
-        waitLoop.exec();
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::FIRST_LEN, 4, frame);
+        sleepWithoutBlock(interval);
     }
     void setSecondPos(int data)
     {
-        secondPos = data;
-        emit       sendDataReady(MasterSet::SECOND_POS, 4, data);
-        QEventLoop waitLoop;  // 等待响应数据，或者10ms超时
-        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
-        waitLoop.exec();
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::SECOND_POS, 4, frame);
+        sleepWithoutBlock(interval);
     }
     void setSecondLen(int data)
     {
-        secondLen = data;
-        emit       sendDataReady(MasterSet::SECOND_LEN, 4, data);
-        QEventLoop waitLoop;  // 等待响应数据，或者10ms超时
-        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
-        waitLoop.exec();
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::SECOND_LEN, 4, frame);
+        sleepWithoutBlock(interval);
     }
     void setSumThreshold(int data)
     {
-        emit       sendDataReady(MasterSet::SUM_THRE, 4, data);
-        QEventLoop waitLoop;  // 等待响应数据，或者10ms超时
-        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
-        waitLoop.exec();
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::SUM_THRE, 4, frame);
+        sleepWithoutBlock(interval);
     }
 
     void setValueThreshold(int data)
     {
-        emit       sendDataReady(MasterSet::VALUE_THRE, 4, data);
-        QEventLoop waitLoop;  // 等待响应数据，或者10ms超时
-        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
-        waitLoop.exec();
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::VALUE_THRE, 4, frame);
+        sleepWithoutBlock(interval);
     }
     void setCompressLen(int data)
     {
-        compressLen = data;
-        emit       sendDataReady(MasterSet::COMPRESS_LEN, 4, data);
-        QEventLoop waitLoop;  // 等待响应数据，或者10ms超时
-        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
-        waitLoop.exec();
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::COMPRESS_LEN, 4, frame);
+        sleepWithoutBlock(interval);
     }
     void setCompressRatio(int data)
     {
-        compressRatio = data;
-        emit       sendDataReady(MasterSet::COMPRESS_RATIO, 4, data);
-        QEventLoop waitLoop;  // 等待响应数据，或者10ms超时
-        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
-        waitLoop.exec();
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::COMPRESS_RATIO, 4, frame);
+        sleepWithoutBlock(interval);
     }
 
     void enabelADSample(quint32 status)
     {
-        //        QByteArray frame;
-        //        frame.append(BspConfig::int2ba(status));
-        emit       sendDataReady(MasterSet::PREVIEW_ENABLE, 4, status);
-        QEventLoop waitLoop;  // 等待响应数据，或者10ms超时
-        QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
-        waitLoop.exec();
+        QByteArray frame = BspConfig::int2ba(status);
+        emit       sendDataReady(MasterSet::PREVIEW_ENABLE, 4, frame);
+        sleepWithoutBlock(interval);
     }
 
 signals:
-    void sendDataReady(qint32 command, qint32 data_len, qint32 data);
+    void sendDataReady(qint32 command, qint32 data_len, QByteArray &data);
 
 private:
-    int previewEnable;
+    qint32 interval{20};
 
-    int totalSampleLen;
-    int previewRatio;
-    int firstPos;
-    int firstLen;
-    int secondPos;
-    int secondLen;
-    int compressLen;
-    int compressRatio;
+    void sleepWithoutBlock(qint32 interval)
+    {
+        QEventLoop waitLoop;
+        QTimer::singleShot(interval, &waitLoop, &QEventLoop::quit);
+        waitLoop.exec();
+    }
 };
 #endif
