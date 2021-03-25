@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -669,6 +669,7 @@ void MainWindow::initSignalSlot()
     /*
      * DA设置相关逻辑
      */
+    connect(daDriver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
     connect(ui->btn_DASetValue, &QPushButton::pressed, this, [this]() {
         if(ui->lineEdit_DAValue->text().isEmpty())
         {
@@ -714,6 +715,8 @@ void MainWindow::initSignalSlot()
     /*
      * AD设置相关逻辑
      */
+    connect(dispatch, &ProtocolDispatch::ADDataReady, adDriver, &ADControl::setNewData);
+    connect(adDriver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
     connect(ui->btn_ADReadValue, &QPushButton::pressed, this, [this]() {
         quint32 chNum       = ui->comboBox_ADChSelect->currentIndex();
         qint32  digitValue  = adDriver->getChannalValue(chNum);
@@ -762,73 +765,6 @@ void MainWindow::initSignalSlot()
         ui->label_roll->setText(QString::number(data.roll, 'g', 6));
         ui->label_pitch->setText(QString::number(data.pitch, 'g', 6));
         ui->label_heading->setText(QString::number(data.heading, 'g', 6));
-    });
-
-    connect(dispatch, &ProtocolDispatch::gpsDataReady, this, [this](QByteArray frame) {
-        // void processLatLonHeight( int length, unsigned char *pData )
-        // lat = getDouble( &pData ) * 180.0 / PI ;
-
-        auto getDouble = [](unsigned char **ppData) -> double {
-            double         retValue;
-            unsigned char *pBytes;
-
-            pBytes = (unsigned char *)(&retValue) + 7;
-
-            *pBytes-- = *(*ppData)++;
-            *pBytes-- = *(*ppData)++;
-            *pBytes-- = *(*ppData)++;
-            *pBytes-- = *(*ppData)++;
-            *pBytes-- = *(*ppData)++;
-            *pBytes-- = *(*ppData)++;
-            *pBytes-- = *(*ppData)++;
-            *pBytes   = *(*ppData)++;
-
-            return retValue;
-        };
-        int            offset   = 7;
-        uint32_t       gps_week = frame.mid(offset + 2, 2).toHex().toUInt(nullptr, 16);
-        uint32_t       gps_time = BspConfig::ba2int(frame.mid(offset + 4, 4));
-        unsigned char  data[8];
-        unsigned char *pData = data;
-        for(int i = 0; i < 8; i++)
-        {
-            pData[i] = frame.mid(offset + 10, 8).at(i);
-        }
-        double latitude = getDouble(&pData);
-        for(int i = 0; i < 8; i++)
-        {
-            pData[i] = frame.mid(offset + 18, 8).at(i);
-        }
-        double longitude = getDouble(&pData);
-        for(int i = 0; i < 8; i++)
-        {
-            pData[i] = frame.mid(offset + 26, 8).at(i);
-        }
-        double altitude = getDouble(&pData);
-
-        for(int i = 0; i < 8; i++)
-        {
-            pData[i] = frame.mid(offset + 50, 8).at(i);
-        }
-        double roll = getDouble(&pData);
-        for(int i = 0; i < 8; i++)
-        {
-            pData[i] = frame.mid(offset + 58, 8).at(i);
-        }
-        double pitch = getDouble(&pData);
-        for(int i = 0; i < 8; i++)
-        {
-            pData[i] = frame.mid(offset + 66, 8).at(i);
-        }
-        double heading = getDouble(&pData);
-        ui->label_gpsWeek->setText(QString::number(gps_week));
-        ui->label_gpsSecond->setText(QString::number(gps_time));
-        ui->label_latitude->setText(QString::number(latitude, 'g', 6));
-        ui->label_longitude->setText(QString::number(longitude, 'g', 6));
-        ui->label_altitude->setText(QString::number(altitude, 'g', 6));
-        ui->label_roll->setText(QString::number(roll, 'g', 6));
-        ui->label_pitch->setText(QString::number(pitch, 'g', 6));
-        ui->label_heading->setText(QString::number(heading, 'g', 6));
     });
 }
 
