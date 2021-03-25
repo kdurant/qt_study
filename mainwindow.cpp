@@ -2,7 +2,8 @@
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+    : QMainWindow(parent), ui(new Ui::MainWindow),
+      configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -795,6 +796,14 @@ void MainWindow::plotSettings()
     ui->plot->legend->setVisible(true);  //右上角指示曲线的缩略框
     ui->plot->xAxis->setLabel(QStringLiteral("时间：ns"));
     ui->plot->yAxis->setLabel(QStringLiteral("AD采样值"));
+
+    QSharedPointer<QCPAxisTickerFixed> intTicker(new QCPAxisTickerFixed);
+    //设置刻度之间的步长为1
+    intTicker->setTickStep(1);
+    //设置缩放策略
+    intTicker->setScaleStrategy(QCPAxisTickerFixed::ssMultiples);
+    //应用自定义整形ticker
+    ui->plot->xAxis->setTicker(intTicker);
 
     for(int i = 0; i < 8; i++)
     {
