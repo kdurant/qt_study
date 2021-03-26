@@ -144,6 +144,27 @@ void MainWindow::saveParameter()
 
 void MainWindow::uiConfig()
 {
+    QRegExp           decReg("[0-9]+$");
+    QRegExpValidator *decValidator = new QRegExpValidator(decReg, this);
+    QRegExp           floatReg("[0-9\.]+$");
+    QRegExpValidator *floatValidator = new QRegExpValidator(floatReg, this);
+    QRegExp           hexReg("[0-9,a-f,A-F]+$");
+    QRegExpValidator *hexValidator = new QRegExpValidator(hexReg, this);
+
+    ui->lineEdit_motorTargetSpeed->setValidator(decValidator);
+    ui->lineEdit_DAValue->setValidator(floatValidator);
+    ui->lineEdit_sampleLen->setValidator(decValidator);
+    ui->lineEdit_sampleRate->setValidator(decValidator);
+    ui->lineEdit_firstStartPos->setValidator(decValidator);
+    ui->lineEdit_firstLen->setValidator(decValidator);
+    ui->lineEdit_secondStartPos->setValidator(decValidator);
+    ui->lineEdit_secondLen->setValidator(decValidator);
+    ui->lineEdit_sumThreshold->setValidator(decValidator);
+    ui->lineEdit_subThreshold->setValidator(decValidator);
+    ui->lineEdit_compressLen->setValidator(decValidator);
+    ui->lineEdit_compressRatio->setValidator(decValidator);
+    ui->lineEdit_ssdSearchStartUnit->setValidator(hexValidator);
+
     ui->rbtn_triggerInside->setChecked(true);
     if(radarType == BspConfig::RADAR_TPYE_760)
     {
