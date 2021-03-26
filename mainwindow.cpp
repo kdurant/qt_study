@@ -397,15 +397,15 @@ void MainWindow::initSignalSlot()
         {
             if(allCh.size() != 8)  // 只有第一段波形
             {
-                ui->plot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
-                ui->plot->graph(n * 2 + 1)->data().data()->clear();
+                ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
+                ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
             }
             else
-                ui->plot->graph(n)->setData(allCh[n].pos, allCh[n].value);
+                ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
         }
         if(autoZoomPlot)
-            ui->plot->rescaleAxes();
-        ui->plot->replot();
+            ui->sampleDataPlot->rescaleAxes();
+        ui->sampleDataPlot->replot();
     });
 
     /*
@@ -812,11 +812,11 @@ void MainWindow::setToolBar()
 
 void MainWindow::plotSettings()
 {
-    //ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    ui->plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
-    ui->plot->legend->setVisible(true);  //右上角指示曲线的缩略框
-    ui->plot->xAxis->setLabel(QStringLiteral("时间：ns"));
-    ui->plot->yAxis->setLabel(QStringLiteral("AD采样值"));
+    //ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
+    ui->sampleDataPlot->legend->setVisible(true);  //右上角指示曲线的缩略框
+    ui->sampleDataPlot->xAxis->setLabel(QStringLiteral("时间：ns"));
+    ui->sampleDataPlot->yAxis->setLabel(QStringLiteral("AD采样值"));
 
     QSharedPointer<QCPAxisTickerFixed> intTicker(new QCPAxisTickerFixed);
     //设置刻度之间的步长为1
@@ -824,30 +824,30 @@ void MainWindow::plotSettings()
     //设置缩放策略
     intTicker->setScaleStrategy(QCPAxisTickerFixed::ssMultiples);
     //应用自定义整形ticker
-    ui->plot->xAxis->setTicker(intTicker);
+    ui->sampleDataPlot->xAxis->setTicker(intTicker);
 
     for(int i = 0; i < 8; i++)
     {
-        ui->plot->addGraph();
-        ui->plot->graph(i)->setScatterStyle(QCPScatterStyle::ssDisc);
+        ui->sampleDataPlot->addGraph();
+        ui->sampleDataPlot->graph(i)->setScatterStyle(QCPScatterStyle::ssDisc);
     }
 
-    ui->plot->graph(0)->setPen(QPen(Qt::red));
-    ui->plot->graph(0)->setName("通道0第一段");
-    ui->plot->graph(1)->setPen(QPen(Qt::red));
-    ui->plot->graph(1)->setName("通道0第二段");
-    ui->plot->graph(2)->setPen(QPen(Qt::blue));
-    ui->plot->graph(2)->setName("通道1第一段");
-    ui->plot->graph(3)->setPen(QPen(Qt::blue));
-    ui->plot->graph(3)->setName("通道1第二段");
-    ui->plot->graph(4)->setPen(QPen(Qt::black));
-    ui->plot->graph(4)->setName("通道2第一段");
-    ui->plot->graph(5)->setPen(QPen(Qt::black));
-    ui->plot->graph(5)->setName("通道2第二段");
-    ui->plot->graph(6)->setPen(QPen(Qt::darkCyan));
-    ui->plot->graph(6)->setName("通道3第一段");
-    ui->plot->graph(7)->setPen(QPen(Qt::darkCyan));
-    ui->plot->graph(7)->setName("通道3第二段");
+    ui->sampleDataPlot->graph(0)->setPen(QPen(Qt::red));
+    ui->sampleDataPlot->graph(0)->setName("通道0第一段");
+    ui->sampleDataPlot->graph(1)->setPen(QPen(Qt::red));
+    ui->sampleDataPlot->graph(1)->setName("通道0第二段");
+    ui->sampleDataPlot->graph(2)->setPen(QPen(Qt::blue));
+    ui->sampleDataPlot->graph(2)->setName("通道1第一段");
+    ui->sampleDataPlot->graph(3)->setPen(QPen(Qt::blue));
+    ui->sampleDataPlot->graph(3)->setName("通道1第二段");
+    ui->sampleDataPlot->graph(4)->setPen(QPen(Qt::black));
+    ui->sampleDataPlot->graph(4)->setName("通道2第一段");
+    ui->sampleDataPlot->graph(5)->setPen(QPen(Qt::black));
+    ui->sampleDataPlot->graph(5)->setName("通道2第二段");
+    ui->sampleDataPlot->graph(6)->setPen(QPen(Qt::darkCyan));
+    ui->sampleDataPlot->graph(6)->setName("通道3第一段");
+    ui->sampleDataPlot->graph(7)->setPen(QPen(Qt::darkCyan));
+    ui->sampleDataPlot->graph(7)->setName("通道3第二段");
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -958,11 +958,11 @@ void MainWindow::on_bt_showWave_clicked()
             gps->parserGpsData(convert);
             for(int n = 0; n < allCh.size(); n++)
             {
-                ui->plot->graph(n)->setData(allCh[n].pos, allCh[n].value);
+                ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
             }
             if(autoZoomPlot)
-                ui->plot->rescaleAxes();
-            ui->plot->replot();
+                ui->sampleDataPlot->rescaleAxes();
+            ui->sampleDataPlot->replot();
 
             if(interval_time == 0)
                 continue;

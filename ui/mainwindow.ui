@@ -419,8 +419,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>209</width>
-                <height>317</height>
+                <width>171</width>
+                <height>91</height>
                </rect>
               </property>
               <attribute name="label">
@@ -478,8 +478,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>209</width>
-                <height>317</height>
+                <width>171</width>
+                <height>73</height>
                </rect>
               </property>
               <attribute name="label">
@@ -742,7 +742,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>233</width>
-                <height>557</height>
+                <height>533</height>
                </rect>
               </property>
               <attribute name="label">
@@ -1076,7 +1076,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>227</width>
-                <height>557</height>
+                <height>214</height>
                </rect>
               </property>
               <attribute name="label">
@@ -1424,7 +1424,7 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="50,1">
        <item>
-        <widget class="QCustomPlot" name="plot" native="true">
+        <widget class="QCustomPlot" name="sampleDataPlot" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout"/>
         </widget>
        </item>
