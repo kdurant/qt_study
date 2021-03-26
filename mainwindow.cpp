@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     devInfo           = new DevInfo();
     autoReadInfoTimer = new QTimer();
     autoReadInfoTimer->setInterval(1000);
+    autoReadInfoTimer->start();
 
     ssd = new SaveWave();
 
@@ -315,13 +316,12 @@ void MainWindow::initSignalSlot()
      */
     connect(devInfo, &DevInfo::sendDataReady, dispatch, &ProtocolDispatch::encode);
     connect(dispatch, &ProtocolDispatch::infoDataReady, devInfo, &DevInfo::setNewData);
-    connect(ui->btn_ReadSysInfo, &QPushButton::pressed, this, &MainWindow::getSysInfo);
-    connect(autoReadInfoTimer, &QTimer::timeout, this, &MainWindow::getSysInfo);
-    connect(ui->checkBox_autoReadSysInfo, &QCheckBox::stateChanged, this, [this](int state) {
-        if(state == Qt::Checked)
-            autoReadInfoTimer->start();
-        else
-            autoReadInfoTimer->stop();
+    connect(ui->btn_ReadSysInfo, &QPushButton::pressed, this, [this]() {
+        getSysInfo();
+    });
+    connect(autoReadInfoTimer, &QTimer::timeout, this, [this]() {
+        if(ui->checkBox_autoReadSysInfo->isChecked())
+            getSysInfo();
     });
 
     /*
