@@ -112,7 +112,8 @@ public slots:
         }
         else if(frame.size() == DISK_DATA_LEN)
         {
-            gps.week            = frame.mid(8, 4).toHex().toUInt(nullptr, 16);
+            gps.week = frame.mid(8, 4).toHex().toUInt(nullptr, 16);
+            // 不同GPS型号解析的类型的方式不同，后续完善
             gps.current_week_ms = BspConfig::ba2int(frame.mid(12, 8));
             gps.latitude        = byteArrayToDouble(frame.mid(48, 8));
             gps.longitude       = byteArrayToDouble(frame.mid(56, 8));

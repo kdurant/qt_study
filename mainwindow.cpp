@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -418,7 +418,28 @@ void MainWindow::initSignalSlot()
             autoZoomPlot = false;
     });
     connect(ui->checkBox_ch0Enable, &QCheckBox::stateChanged, this, [this](int state) {
-        qDebug() << state;
+        bool status = state == Qt::Unchecked ? false : true;
+        ui->sampleDataPlot->graph(0)->setVisible(status);
+        ui->sampleDataPlot->graph(1)->setVisible(status);
+        ui->sampleDataPlot->replot();
+    });
+    connect(ui->checkBox_ch1Enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool status = state == Qt::Unchecked ? false : true;
+        ui->sampleDataPlot->graph(2)->setVisible(status);
+        ui->sampleDataPlot->graph(3)->setVisible(status);
+        ui->sampleDataPlot->replot();
+    });
+    connect(ui->checkBox_ch2Enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool status = state == Qt::Unchecked ? false : true;
+        ui->sampleDataPlot->graph(4)->setVisible(status);
+        ui->sampleDataPlot->graph(5)->setVisible(status);
+        ui->sampleDataPlot->replot();
+    });
+    connect(ui->checkBox_ch3Enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool status = state == Qt::Unchecked ? false : true;
+        ui->sampleDataPlot->graph(6)->setVisible(status);
+        ui->sampleDataPlot->graph(7)->setVisible(status);
+        ui->sampleDataPlot->replot();
     });
     /*
      * 离线显示数据波形相关逻辑

@@ -35,7 +35,7 @@ int WaveExtract::getWaveform(BspConfig::RadarType                type,
 
     while(offset < frameData.size())
     {
-        if(isChDataHead(frameData, offset))
+        if(isChDataHead(frameData, offset))  // 如果这里检查失败，很可能是陆地雷达数据
             offset += 4;
         else
             return -1;
