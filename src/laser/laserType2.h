@@ -1,10 +1,10 @@
 #ifndef LASERTYPE2_H
 #define LASERTYPE2_H
-// 陆地雷达激光控制器
 #include "LaserController.h"
 #include "bsp_config.h"
 #include "protocol.h"
 
+// 陆地雷达激光控制器
 class LaserType2 : public LaserController
 {
 private:
@@ -28,7 +28,6 @@ public:
     QString getTemp(void);
 
 public slots:
-
     void setNewData(QByteArray& data)
     {
         isRecvNewData = true;

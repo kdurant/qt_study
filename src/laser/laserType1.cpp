@@ -10,7 +10,7 @@ bool LaserType1::setMode(LaserController::OpenMode mode)
     }
     array[5] = mode;
 
-    emit sendDataReady(array);
+    emit sendDataReady(MasterSet::LASER_PENETRATE, array.length(), array);
 
     QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
     connect(this, &LaserType1::responseDataReady, &waitLoop, &QEventLoop::quit);
