@@ -85,7 +85,7 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tab_2">
           <attribute name="title">
@@ -389,6 +389,13 @@
             </widget>
            </item>
            <item>
+            <widget class="QLabel" name="label_21">
+             <property name="text">
+              <string>电机重新上电后，需要先初始化</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
               <widget class="QPushButton" name="btn_motorInit">
@@ -412,15 +419,15 @@
            <item>
             <widget class="QToolBox" name="toolBox_motor">
              <property name="currentIndex">
-              <number>0</number>
+              <number>1</number>
              </property>
              <widget class="QWidget" name="page">
               <property name="geometry">
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>171</width>
-                <height>91</height>
+                <width>209</width>
+                <height>299</height>
                </rect>
               </property>
               <attribute name="label">
@@ -478,8 +485,8 @@
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>171</width>
-                <height>73</height>
+                <width>209</width>
+                <height>299</height>
                </rect>
               </property>
               <attribute name="label">
@@ -742,7 +749,7 @@
                 <x>0</x>
                 <y>0</y>
                 <width>233</width>
-                <height>533</height>
+                <height>557</height>
                </rect>
               </property>
               <attribute name="label">
@@ -1541,7 +1548,7 @@
           <item row="3" column="0">
            <widget class="QLabel" name="label_33">
             <property name="text">
-             <string>纬度(°)：</string>
+             <string>经度(°)：</string>
             </property>
            </widget>
           </item>
@@ -1569,7 +1576,7 @@
           <item row="2" column="0">
            <widget class="QLabel" name="label_31">
             <property name="text">
-             <string>经度(°)：</string>
+             <string>纬度(°)：</string>
             </property>
            </widget>
           </item>
