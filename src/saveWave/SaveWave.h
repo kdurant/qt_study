@@ -21,14 +21,16 @@ private:
     QTimer *            timer;
 
 public:
-    enum ResponseStatus {
-        RESPONSE_OK = 0x00,
-        RESPONSE_NONE = -1, // 没有收到数据包
-        RESPONSE_MISS = -2, // 没有收到全部数据包
+    enum FileStatus
+    {
+        FILE_INFO_FULL = 0x00,
+        FILE_POSITION_ERROR,  // 文件名正确，文件位置信息错误
+        FILE_INFO_NONE,       // 没有收到全部数据包
     };
 
     struct ValidFileInfo
     {  // 保存最近一次有效检索文件的信息
+        FileStatus status;
         QByteArray name;
         qint32     fileUnit;   // 本文件 文件名在ssd中的存储位置
         qint32     startUnit;  // 本文件在ssd中的起始位置

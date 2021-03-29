@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -670,15 +670,24 @@ void MainWindow::initSignalSlot()
         }
         ui->btn_ssdSearchSpace->setEnabled(false);
         SaveWave::ValidFileInfo fileInfo;
-        bool                    status    = false;
         quint32                 startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt();
 
-        status = ssd->inquireSpace(startUnit, fileInfo);
-        if(status == false)
+        ssd->inquireSpace(startUnit, fileInfo);
+
+        switch(fileInfo.status)
         {
-            ui->lineEdit_ssdAvailFileUnit->setText(QString::number(fileInfo.fileUnit + 2, 16));
-            ui->lineEdit_ssdAvailDataUnit->setText(QString::number(fileInfo.endUnit + 1, 16));
+            case SaveWave::FileStatus::FILE_INFO_FULL:
+                ui->lineEdit_ssdAvailFileUnit->setText(QString::number(fileInfo.fileUnit + 2, 16));
+                ui->lineEdit_ssdAvailDataUnit->setText(QString::number(fileInfo.endUnit + 1, 16));
+                break;
+            case SaveWave::FileStatus::FILE_POSITION_ERROR:
+                QMessageBox::warning(this, "warning", "上次文件信息写入出错, 请断电更换硬盘！");
+                break;
+            case SaveWave::FileStatus::FILE_INFO_NONE:
+                QMessageBox::warning(this, "warning", "没有读取到硬盘数据，确认网络连接正常");
+                break;
         }
+
         ui->btn_ssdSearchSpace->setEnabled(true);
     });
 
