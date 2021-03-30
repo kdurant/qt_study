@@ -32,10 +32,10 @@ public:
     DevInfo()
     {
         sysPara.append({"FPGA版本       : ", {}, 248, 8});
-        sysPara.append({"激光重频       : ", {}, 0, 4});
+        sysPara.append({"激光重频(Hz)       : ", {}, 0, 4});
         sysPara.append({"AD采样长度     : ", {}, 4, 4});
         sysPara.append({"AD预览抽样率   : ", {}, 8, 4});
-        //        sysPara.append({"相机触发频率   : ", {}, 12, 4});
+        sysPara.append({"相机触发频率(s)   : ", {}, 12, 4});
         sysPara.append({"波形存储状态   : ", {}, 16, 4});
         sysPara.append({"AD采集状态     : ", {}, 20, 4});
         //        sysPara.append({"相机触发状态   : ", {}, 24, 4});

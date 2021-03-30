@@ -165,6 +165,7 @@ void MainWindow::uiConfig()
     ui->lineEdit_compressLen->setValidator(decValidator);
     ui->lineEdit_compressRatio->setValidator(decValidator);
     ui->lineEdit_ssdSearchStartUnit->setValidator(hexValidator);
+    ui->lineEdit_cameraFreq->setValidator(decValidator);
 
     ui->rbtn_triggerInside->setChecked(true);
     if(radarType == BspConfig::RADAR_TPYE_760)
@@ -819,6 +820,17 @@ void MainWindow::initSignalSlot()
         ui->label_pitch->setText(QString::number(data.pitch, 'g', 6));
         ui->label_heading->setText(QString::number(data.heading, 'g', 6));
     });
+
+    connect(ui->btn_cameraFreq, &QPushButton::pressed, this, [this]() {
+        uint32_t second = ui->lineEdit_cameraFreq->text().toUInt(nullptr, 10);
+        if(second > 4)
+        {
+            QMessageBox::warning(this, "warning", "最大拍照间隔4s，请重新设置");
+        }
+        uint32_t   value = second * 1000000000 / 8;
+        QByteArray frame = BspConfig::int2ba(value);
+        dispatch->encode(MasterSet::CAMERA_FREQ_SET, 4, frame);
+    });
 }
 
 void MainWindow::setToolBar()
@@ -1017,9 +1029,9 @@ void MainWindow::getSysInfo()
         ui->statusBar->showMessage(tr("系统通信正常"), 0);
         for(int i = 0; i < sysParaInfo.length(); i++)
         {
-            if(i == 0)
+            if(i == 0)  // 软件版本
                 ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(sysParaInfo[i].value));
-            else if(i == 4)
+            else if(i == 5)  // 波形存储状态
             {
                 ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16))));
                 qint32 value = BspConfig::ba2int(sysParaInfo[i].value);
@@ -1034,7 +1046,7 @@ void MainWindow::getSysInfo()
                     sysStatus.label_ssdStoreStatus->setText("存储状态：停止存储");
                 }
             }
-            else if(i == 5)
+            else if(i == 6)  //  数据采集状态
             {
                 if(sysParaInfo[i].value.contains(QByteArray(4, 0x01)))
                 {
@@ -1049,11 +1061,11 @@ void MainWindow::getSysInfo()
                     sysStatus.label_adCaptureStatus->setText("采集状态：停止采集");
                 }
             }
-            else if(i == 7)
+            else if(i == 8)  // sata底层读写状态机
             {
                 ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16), 2)));
             }
-            else if(i == 8)
+            else if(i == 9)  // 文件读写状态机
             {
                 quint16 value = sysParaInfo[i].value[1] * 256 + sysParaInfo[i].value[0];
                 ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(value, 2)));

@@ -67,8 +67,9 @@ public:
 
     enum misc
     {
-        DA_SET_VALUE = 0x00000004,
-        AD_GET_VALUE = 0x00000005,
+        DA_SET_VALUE    = 0x00000004,
+        AD_GET_VALUE    = 0x00000005,
+        CAMERA_FREQ_SET = 0x0000000D,
     };
 };
 
