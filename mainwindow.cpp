@@ -484,6 +484,17 @@ void MainWindow::initSignalSlot()
         ui->sampleDataPlot->rescaleAxes();
         ui->sampleDataPlot->replot();
     });
+
+    connect(ui->btn_showGpsSubTime, &QPushButton::pressed, this, [this]() {
+        QVector<double> y = offlineWaveForm->getGpsSubTime();
+        QVector<double> x;
+        for(int i = 0; i < y.size(); i++)
+            x.append(i);
+
+        ui->sampleDataPlot->graph(2)->setData(x, y);
+        ui->sampleDataPlot->rescaleAxes();
+        ui->sampleDataPlot->replot();
+    });
     /*
      * Nor Flash操作，远程更新相关逻辑
      */

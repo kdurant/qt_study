@@ -57,6 +57,11 @@ QVector<double> OfflineWaveform::getMotorCnt()
     return motorCnt;
 }
 
+QVector<double> OfflineWaveform::getGpsSubTime()
+{
+    return gpsSubTime;
+}
+
 /**
  * @brief 计算文件中有多少次完整的采样数据
  * 找到数据中0x01234567的位置，并记录下来，算作采样数据的开头
@@ -79,13 +84,18 @@ qint32 OfflineWaveform::getADsampleNumber()
             {
                 emit sendSampleFrameNumber(sampleFrameNumber);
             }
+            // 顺便读取GPS细分时间
+            file.seek(offset + 20);
+            file.read(buffer, 4);
+            quint32 value = (static_cast<quint8>(buffer[0]) << 24) + (static_cast<quint8>(buffer[1]) << 16) + (static_cast<quint8>(buffer[2]) << 8) + (static_cast<quint8>(buffer[3]) << 0);
+            gpsSubTime.append(value);
 
             // 顺便读取电机计数值
             file.seek(offset + 76);
             file.read(buffer, 4);
             offset += 76;
-            quint32 ret = (static_cast<quint8>(buffer[0]) << 24) + (static_cast<quint8>(buffer[1]) << 16) + (static_cast<quint8>(buffer[2]) << 8) + (static_cast<quint8>(buffer[3]) << 0);
-            motorCnt.append(ret);
+            value = (static_cast<quint8>(buffer[0]) << 24) + (static_cast<quint8>(buffer[1]) << 16) + (static_cast<quint8>(buffer[2]) << 8) + (static_cast<quint8>(buffer[3]) << 0);
+            motorCnt.append(value);
         }
         offset += 4;
     }

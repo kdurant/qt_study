@@ -22,6 +22,8 @@ public:
     quint32         getMotorCnt(qint32 number);
     QVector<double> getMotorCnt(void);
 
+    QVector<double> getGpsSubTime(void);
+
 public slots:
     qint32 getADsampleNumber();
 
@@ -36,5 +38,6 @@ private:
     QVector<quint8>  frameData;
 
     QVector<double> motorCnt;
+    QVector<double> gpsSubTime;
 };
 #endif
