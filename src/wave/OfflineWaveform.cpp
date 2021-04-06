@@ -29,6 +29,25 @@ QVector<quint8> OfflineWaveform::getFrameData(qint32 number)
     }
 }
 
+/**
+ * @brief 获得某次采样的电机计数值
+ * @param number
+ * @return
+ */
+quint32 OfflineWaveform::getMotorCnt(qint32 number)
+{
+    char  buf[4] = {0};
+    QFile file(waveFile);
+    if(file.open(QIODevice::ReadOnly))
+    {
+        file.seek(frameStartPos[number] + 76);
+        file.read(buf, 4);
+    }
+    quint32 ret = (static_cast<quint8>(buf[0]) << 24) + (static_cast<quint8>(buf[1]) << 16) + (static_cast<quint8>(buf[2]) << 8) + (static_cast<quint8>(buf[3]) << 0);
+
+    return ret;
+}
+
 /*
  * 从一次完整的采样数据中，分析出通道个数以及每个通道具体的波形
  */
@@ -79,7 +98,7 @@ qint32 OfflineWaveform::getADsampleNumber()
     int  length       = 0;
     char buffer[4]    = {0};
     sampleFrameNumber = 0;
-    qint32 offset     = 0;
+    quint32 offset    = 0;
     while((length = file.read(buffer, 4)) != 0)
     {
         if(buffer[0] == 0x01 && buffer[1] == 0x23 && buffer[2] == 0x45 && buffer[3] == 0x67)

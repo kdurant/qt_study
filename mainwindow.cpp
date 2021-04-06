@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -474,7 +474,20 @@ void MainWindow::initSignalSlot()
 
     connect(ui->bt_showWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
     connect(ui->btn_stopShowWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
+    connect(ui->btn_showMotorCnt, &QPushButton::pressed, this, [this]() {
+        int             total = ui->lineEdit_validFrameNum->text().toInt();
+        QVector<double> motorCnt;
+        QVector<double> x;
+        for(int i = 0; i < total; i++)
+        {
+            x.append(i);
+            motorCnt.append(offlineWaveForm->getMotorCnt(i));
+        }
 
+        ui->sampleDataPlot->graph(0)->setData(x, motorCnt);
+        ui->sampleDataPlot->rescaleAxes();
+        ui->sampleDataPlot->replot();
+    });
     /*
      * Nor Flash操作，远程更新相关逻辑
      */
