@@ -85,7 +85,7 @@
           </size>
          </property>
          <property name="currentIndex">
-          <number>5</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="tab_2">
           <attribute name="title">
@@ -389,7 +389,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="label_21">
+            <widget class="QLabel" name="label_motorInfo">
              <property name="text">
               <string>电机重新上电后，需要先初始化</string>
              </property>

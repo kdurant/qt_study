@@ -644,12 +644,14 @@ void MainWindow::initSignalSlot()
     connect(ui->btn_motorInit, &QPushButton::pressed, this, [this]() {
         ui->btn_motorInit->setEnabled(false);
         epos2Driver->init();
+        ui->label_motorInfo->setText("电机初始化已完成");
         ui->btn_motorInit->setEnabled(true);
     });
 
     connect(ui->btn_motorMoveHome, &QPushButton::pressed, this, [this]() {
         ui->btn_motorMoveHome->setEnabled(false);
         epos2Driver->moveToHome();
+        ui->label_motorInfo->setText("Home模式后需要重新初始化，电机才能运动");
         ui->btn_motorMoveHome->setEnabled(true);
     });
 
