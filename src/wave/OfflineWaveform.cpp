@@ -48,43 +48,14 @@ quint32 OfflineWaveform::getMotorCnt(qint32 number)
     return ret;
 }
 
-/*
- * 从一次完整的采样数据中，分析出通道个数以及每个通道具体的波形
+/**
+ * @brief 分析采样次数时，顺便提取的电机计数值
+ * @return
  */
-//int OfflineWaveform::getWaveform(QVector<ChInfo> &allCh)
-//{
-//    int    ret = 0;
-//    ChInfo ch;
-//    int    offset = 88;
-
-//    while(offset < frameData.size())
-//    {
-//        if(isChDataHead(offset))
-//            offset += 4;
-//        else
-//            return ret;
-
-//        ch.number = getChNumber(offset);
-//        offset += 8;
-
-//        int start_pos = (frameData.at(offset) << 8) + frameData.at(offset + 1);
-//        offset += 2;
-//        int len = (frameData.at(offset) << 8) + frameData.at(offset + 1);
-//        offset += 2;
-
-//        for(int i = 0; i < len; i++)
-//        {
-//            ch.key.append(i + start_pos);
-//            ch.value.append((frameData.at(offset + 0) << 8) + frameData.at(offset + 1));
-//            offset += 2;
-//        }
-//        allCh.append(ch);
-//        ch.key.clear();
-//        ch.value.clear();
-//    }
-
-//    return ret;
-//}
+QVector<double> OfflineWaveform::getMotorCnt()
+{
+    return motorCnt;
+}
 
 /**
  * @brief 计算文件中有多少次完整的采样数据
@@ -108,6 +79,13 @@ qint32 OfflineWaveform::getADsampleNumber()
             {
                 emit sendSampleFrameNumber(sampleFrameNumber);
             }
+
+            // 顺便读取电机计数值
+            file.seek(offset + 76);
+            file.read(buffer, 4);
+            offset += 76;
+            quint32 ret = (static_cast<quint8>(buffer[0]) << 24) + (static_cast<quint8>(buffer[1]) << 16) + (static_cast<quint8>(buffer[2]) << 8) + (static_cast<quint8>(buffer[3]) << 0);
+            motorCnt.append(ret);
         }
         offset += 4;
     }

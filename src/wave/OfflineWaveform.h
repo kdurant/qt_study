@@ -20,6 +20,7 @@ public:
 
     QVector<quint8> getFrameData(qint32 number);  // 获得一次采样完整的数据
     quint32         getMotorCnt(qint32 number);
+    QVector<double> getMotorCnt(void);
 
 public slots:
     qint32 getADsampleNumber();
@@ -33,5 +34,7 @@ private:
     qint32           sampleFrameNumber;
     QVector<quint32> frameStartPos;  // 单次采样数据开始在文件中的位置
     QVector<quint8>  frameData;
+
+    QVector<double> motorCnt;
 };
 #endif

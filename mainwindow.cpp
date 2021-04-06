@@ -475,14 +475,10 @@ void MainWindow::initSignalSlot()
     connect(ui->bt_showWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
     connect(ui->btn_stopShowWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
     connect(ui->btn_showMotorCnt, &QPushButton::pressed, this, [this]() {
-        int             total = ui->lineEdit_validFrameNum->text().toInt();
-        QVector<double> motorCnt;
+        QVector<double> motorCnt = offlineWaveForm->getMotorCnt();
         QVector<double> x;
-        for(int i = 0; i < total; i++)
-        {
+        for(int i = 0; i < motorCnt.size(); i++)
             x.append(i);
-            motorCnt.append(offlineWaveForm->getMotorCnt(i));
-        }
 
         ui->sampleDataPlot->graph(0)->setData(x, motorCnt);
         ui->sampleDataPlot->rescaleAxes();
