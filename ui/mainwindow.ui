@@ -1750,7 +1750,7 @@
         <widget class="QTreeWidget" name="treeWidget_attitude">
          <column>
           <property name="text">
-           <string>姿态传感器信息</string>
+           <string>参数项</string>
           </property>
          </column>
          <column>
@@ -1760,111 +1760,116 @@
          </column>
          <item>
           <property name="text">
-           <string>加速度</string>
-          </property>
-          <property name="text">
-           <string/>
+           <string>姿态传感器</string>
           </property>
           <item>
            <property name="text">
-            <string>x轴</string>
+            <string>加速度</string>
            </property>
            <property name="text">
             <string/>
            </property>
+           <item>
+            <property name="text">
+             <string>x轴</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>y轴</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>z轴</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>温度</string>
+            </property>
+           </item>
           </item>
           <item>
            <property name="text">
-            <string>y轴</string>
+            <string>角速度</string>
            </property>
+           <property name="text">
+            <string/>
+           </property>
+           <item>
+            <property name="text">
+             <string>x轴</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>y轴</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>z轴</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>温度</string>
+            </property>
+           </item>
           </item>
           <item>
            <property name="text">
-            <string>z轴</string>
+            <string>角度</string>
            </property>
+           <item>
+            <property name="text">
+             <string>x轴</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>y轴</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>z轴</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>温度</string>
+            </property>
+           </item>
           </item>
           <item>
            <property name="text">
-            <string>温度</string>
+            <string>磁场</string>
            </property>
-          </item>
-         </item>
-         <item>
-          <property name="text">
-           <string>角速度</string>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <item>
-           <property name="text">
-            <string>x轴</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>y轴</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>z轴</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>温度</string>
-           </property>
-          </item>
-         </item>
-         <item>
-          <property name="text">
-           <string>角度</string>
-          </property>
-          <item>
-           <property name="text">
-            <string>x轴</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>y轴</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>z轴</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>温度</string>
-           </property>
-          </item>
-         </item>
-         <item>
-          <property name="text">
-           <string>磁场</string>
-          </property>
-          <item>
-           <property name="text">
-            <string>x轴</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>y轴</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>z轴</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>温度</string>
-           </property>
+           <item>
+            <property name="text">
+             <string>x轴</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>y轴</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>z轴</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>温度</string>
+            </property>
+           </item>
           </item>
          </item>
         </widget>

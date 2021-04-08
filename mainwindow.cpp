@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -150,6 +150,7 @@ void MainWindow::uiConfig()
 {
     ui->treeWidget_attitude->expandAll();
     ui->treeWidget_attitude->setVisible(false);
+    ui->treeWidget_attitude->resizeColumnToContents(0);
 
     QRegExp           decReg("[0-9]+$");
     QRegExpValidator *decValidator = new QRegExpValidator(decReg, this);
@@ -870,31 +871,31 @@ void MainWindow::initSignalSlot()
      */
     connect(dispatch, &ProtocolDispatch::attitudeDataReady, attitude, &AttitudeSensor::parserFrame);
     connect(attitude, &AttitudeSensor::sendAttitudeResult, this, [this](AttitudeSensor::AttitudeInfo accelerate, AttitudeSensor::AttitudeInfo angularVelocity, AttitudeSensor::AttitudeInfo angular, AttitudeSensor::AttitudeInfo magneticField) {
-        QTreeWidgetItem *item = new QTreeWidgetItem;
+        QList<QTreeWidgetItem *> itemList;
 
-        item = ui->treeWidget_attitude->topLevelItem(0);
-        item->child(0)->setText(1, QString::number(accelerate.x, 'g', 6));
-        item->child(1)->setText(1, QString::number(accelerate.y, 'g', 6));
-        item->child(2)->setText(1, QString::number(accelerate.z, 'g', 6));
-        item->child(3)->setText(1, QString::number(accelerate.temp, 'g', 6));
+        itemList = ui->treeWidget_attitude->findItems("加速度", Qt::MatchExactly);
+        itemList.first()->child(0)->setText(1, QString::number(accelerate.x, 'g', 6));
+        itemList.first()->child(1)->setText(1, QString::number(accelerate.y, 'g', 6));
+        itemList.first()->child(2)->setText(1, QString::number(accelerate.z, 'g', 6));
+        itemList.first()->child(3)->setText(1, QString::number(accelerate.temp, 'g', 6));
 
-        item = ui->treeWidget_attitude->topLevelItem(1);
-        item->child(0)->setText(1, QString::number(angularVelocity.x, 'g', 6));
-        item->child(1)->setText(1, QString::number(angularVelocity.y, 'g', 6));
-        item->child(2)->setText(1, QString::number(angularVelocity.z, 'g', 6));
-        item->child(3)->setText(1, QString::number(angularVelocity.temp, 'g', 6));
+        itemList = ui->treeWidget_attitude->findItems("角速度", Qt::MatchExactly);
+        itemList.first()->child(0)->setText(1, QString::number(angularVelocity.x, 'g', 6));
+        itemList.first()->child(1)->setText(1, QString::number(angularVelocity.y, 'g', 6));
+        itemList.first()->child(2)->setText(1, QString::number(angularVelocity.z, 'g', 6));
+        itemList.first()->child(3)->setText(1, QString::number(angularVelocity.temp, 'g', 6));
 
-        item = ui->treeWidget_attitude->topLevelItem(2);
-        item->child(0)->setText(1, QString::number(angular.x, 'g', 6));
-        item->child(1)->setText(1, QString::number(angular.y, 'g', 6));
-        item->child(2)->setText(1, QString::number(angular.z, 'g', 6));
-        item->child(3)->setText(1, QString::number(angular.temp, 'g', 6));
+        itemList = ui->treeWidget_attitude->findItems("角度", Qt::MatchExactly);
+        itemList.first()->child(0)->setText(1, QString::number(angular.x, 'g', 6));
+        itemList.first()->child(1)->setText(1, QString::number(angular.y, 'g', 6));
+        itemList.first()->child(2)->setText(1, QString::number(angular.z, 'g', 6));
+        itemList.first()->child(3)->setText(1, QString::number(angular.temp, 'g', 6));
 
-        item = ui->treeWidget_attitude->topLevelItem(3);
-        item->child(0)->setText(1, QString::number(magneticField.x, 'g', 6));
-        item->child(1)->setText(1, QString::number(magneticField.y, 'g', 6));
-        item->child(2)->setText(1, QString::number(magneticField.z, 'g', 6));
-        item->child(3)->setText(1, QString::number(magneticField.temp, 'g', 6));
+        itemList = ui->treeWidget_attitude->findItems("磁场", Qt::MatchExactly);
+        itemList.first()->child(0)->setText(1, QString::number(magneticField.x, 'g', 6));
+        itemList.first()->child(1)->setText(1, QString::number(magneticField.y, 'g', 6));
+        itemList.first()->child(2)->setText(1, QString::number(magneticField.z, 'g', 6));
+        itemList.first()->child(3)->setText(1, QString::number(magneticField.temp, 'g', 6));
     });
 }
 
