@@ -99,6 +99,10 @@ public:
     {
         MOTOR_PENETRATE = 0x8000000C,
     };
+    enum attitude
+    {
+        ATTITUDE_PENETRATE = 0x80600001,
+    };
     enum saveWave
     {
         RESPONSE_SSD_UNIT = 0x8000000A,  // 硬盘数据

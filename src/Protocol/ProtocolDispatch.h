@@ -74,6 +74,7 @@ signals:
     void gpsDataReady(QByteArray &data);
     void laserDataReady(QByteArray &data);
     void motorDataReady(QByteArray &data);
+    void attitudeDataReady(QByteArray &data);
     void ADDataReady(QByteArray &data);
     void DADataReady(QByteArray &data);
 

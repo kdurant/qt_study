@@ -58,6 +58,7 @@ HEADERS += \
     src/ADControll/ADControl.h \
     src/DAControll/DAControl.h \
     src/Protocol/AdSampleControl.h \
+    src/attitudeSensor/AttitudeSensor.h \
     src/gpsInfo/gpsInfo.h \
     src/laser/laserType3.h \
     src/saveWave/SaveWave.h \
@@ -92,6 +93,7 @@ INCLUDEPATH += ./src/saveWave
 INCLUDEPATH += ./src/ADControll
 INCLUDEPATH += ./src/DAControll
 INCLUDEPATH += ./src/gpsInfo
+INCLUDEPATH += ./src/attitudeSensor
 
 
 FORMS += \
