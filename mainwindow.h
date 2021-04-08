@@ -22,6 +22,7 @@
 #include <QSlider>
 #include <QSpinBox>
 #include <QPushButton>
+#include <QStandardItemModel>
 
 #include <QThread>
 
@@ -43,6 +44,7 @@
 
 #include "SaveWave.h"
 #include "gpsInfo.h"
+#include "AttitudeSensor.h"
 
 namespace Ui
 {
@@ -120,8 +122,8 @@ private:
     AdSampleControll *preview;
     bool              autoZoomPlot{true};
     OnlineWaveform *  onlineWaveForm;
-    OfflineWaveform *offlineWaveForm;
-    bool running;
+    OfflineWaveform * offlineWaveForm;
+    bool              running;
 
     DAControl *daDriver;
     ADControl *adDriver;
@@ -139,8 +141,9 @@ private:
     QVector<DevInfo::ParaInfo> sysParaInfo;
     QTimer *                   autoReadInfoTimer;
 
-    SaveWave *ssd;
-    GpsInfo * gps;
+    SaveWave *      ssd;
+    GpsInfo *       gps;
+    AttitudeSensor *attitude;
 };
 
 #endif  // MAINWINDOW_H

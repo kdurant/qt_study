@@ -30,7 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ssd = new SaveWave();
 
-    gps = new GpsInfo();
+    gps      = new GpsInfo();
+    attitude = new AttitudeSensor;
 
     sysStatus.ssdLinkStatus   = false;
     sysStatus.udpLinkStatus   = false;
@@ -52,7 +53,6 @@ MainWindow::MainWindow(QWidget *parent) :
     setToolBar();
 
     plotSettings();
-
     devInfo->getSysPara(sysParaInfo);
     ui->tableWidget_sysInfo->setColumnCount(2);
     ui->tableWidget_sysInfo->setRowCount(sysParaInfo.length());
@@ -145,6 +145,8 @@ void MainWindow::saveParameter()
 
 void MainWindow::uiConfig()
 {
+    ui->treeWidget_attitude->expandAll();
+    ui->treeWidget_attitude->setVisible(false);
     QRegExp           decReg("[0-9]+$");
     QRegExpValidator *decValidator = new QRegExpValidator(decReg, this);
     QRegExp           floatReg("[0-9\.]+$");
@@ -852,6 +854,38 @@ void MainWindow::initSignalSlot()
         uint32_t   value = second * 1000000000 / 8;
         QByteArray frame = BspConfig::int2ba(value);
         dispatch->encode(MasterSet::CAMERA_FREQ_SET, 4, frame);
+    });
+
+    /*
+     * 姿态传感器信息处理
+     */
+    connect(dispatch, &ProtocolDispatch::attitudeDataReady, attitude, &AttitudeSensor::parserFrame);
+    connect(attitude, &AttitudeSensor::sendAttitudeResult, this, [this](AttitudeSensor::AttitudeInfo accelerate, AttitudeSensor::AttitudeInfo angularVelocity, AttitudeSensor::AttitudeInfo angular, AttitudeSensor::AttitudeInfo magneticField) {
+        QTreeWidgetItem *item = new QTreeWidgetItem;
+
+        item = ui->treeWidget_attitude->topLevelItem(0);
+        item->child(0)->setText(1, QString::number(accelerate.x, 'g', 6));
+        item->child(1)->setText(1, QString::number(accelerate.y, 'g', 6));
+        item->child(2)->setText(1, QString::number(accelerate.z, 'g', 6));
+        item->child(3)->setText(1, QString::number(accelerate.temp, 'g', 6));
+
+        item = ui->treeWidget_attitude->topLevelItem(1);
+        item->child(0)->setText(1, QString::number(angularVelocity.x, 'g', 6));
+        item->child(1)->setText(1, QString::number(angularVelocity.y, 'g', 6));
+        item->child(2)->setText(1, QString::number(angularVelocity.z, 'g', 6));
+        item->child(3)->setText(1, QString::number(angularVelocity.temp, 'g', 6));
+
+        item = ui->treeWidget_attitude->topLevelItem(2);
+        item->child(0)->setText(1, QString::number(angular.x, 'g', 6));
+        item->child(1)->setText(1, QString::number(angular.y, 'g', 6));
+        item->child(2)->setText(1, QString::number(angular.z, 'g', 6));
+        item->child(3)->setText(1, QString::number(angular.temp, 'g', 6));
+
+        item = ui->treeWidget_attitude->topLevelItem(3);
+        item->child(0)->setText(1, QString::number(magneticField.x, 'g', 6));
+        item->child(1)->setText(1, QString::number(magneticField.y, 'g', 6));
+        item->child(2)->setText(1, QString::number(magneticField.z, 'g', 6));
+        item->child(3)->setText(1, QString::number(magneticField.temp, 'g', 6));
     });
 }
 
