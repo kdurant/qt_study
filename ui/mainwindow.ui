@@ -1760,6 +1760,51 @@
          </column>
          <item>
           <property name="text">
+           <string>GPS信息</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>周</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>秒</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>纬度(°)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>经度(°)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>高度(m)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>翻滚角(°)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>俯仰角(°)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>航向角(°)</string>
+           </property>
+          </item>
+         </item>
+         <item>
+          <property name="text">
            <string>姿态传感器</string>
           </property>
           <item>

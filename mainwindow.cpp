@@ -853,6 +853,18 @@ void MainWindow::initSignalSlot()
         ui->label_roll->setText(QString::number(data.roll, 'g', 6));
         ui->label_pitch->setText(QString::number(data.pitch, 'g', 6));
         ui->label_heading->setText(QString::number(data.heading, 'g', 6));
+
+        QList<QTreeWidgetItem *> itemList;
+
+        itemList = ui->treeWidget_attitude->findItems("GPS信息", Qt::MatchExactly);
+        itemList.first()->child(0)->setText(1, QString::number(data.week));
+        itemList.first()->child(1)->setText(1, QString::number(data.current_week_ms));
+        itemList.first()->child(2)->setText(1, QString::number(data.latitude, 'g', 6));
+        itemList.first()->child(3)->setText(1, QString::number(data.longitude, 'g', 6));
+        itemList.first()->child(4)->setText(1, QString::number(data.altitude, 'g', 6));
+        itemList.first()->child(5)->setText(1, QString::number(data.roll, 'g', 6));
+        itemList.first()->child(6)->setText(1, QString::number(data.pitch, 'g', 6));
+        itemList.first()->child(7)->setText(1, QString::number(data.heading, 'g', 6));
     });
 
     connect(ui->btn_cameraFreq, &QPushButton::pressed, this, [this]() {
