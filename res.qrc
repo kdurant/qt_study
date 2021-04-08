@@ -1,10 +1,10 @@
 <RCC>
     <qresource prefix="/">
-        <file>qss/basic.qss</file>
         <file>qss/arrow.png</file>
         <file>qss/rbtn_checked.png</file>
         <file>qss/rbtn_unchecked.png</file>
         <file>qss/ch_pos.png</file>
+        <file>qss/basic.css</file>
     </qresource>
     <qresource prefix="/config"/>
 </RCC>

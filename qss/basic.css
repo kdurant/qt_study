@@ -1,0 +1,226 @@
+QMainWindow
+{
+    border: 2px solid #323232;
+}
+
+QStatusBar
+{
+    border-left: 2px solid #323232;
+    border-right: 2px solid #323232;
+    border-bottom: 2px solid #323232;
+}
+
+QToolTip
+{
+     border: 1px solid black;
+     background-color: #ffa02f;
+     padding: 1px;
+     border-radius: 3px;
+     opacity: 100;
+}
+QScrollArea
+{
+
+}
+
+QLineEdit
+{
+    border:2px solid #C0DCF2;
+    border-radius:3px;
+    padding:2px;
+    background:none;
+    selection-background-color:#00BB9E;
+    selection-color:#FFFFFF;
+    min-height: 4ex;
+}
+
+QLabel
+{
+    color:#386487;
+    border:0px solid #C0DCF2;
+    background:qlineargradient(spread:pad,x1:0,y1:0,x2:0,y2:1,stop:0 #DEF0FE,stop:1 #C0DEF6);
+}
+
+QPushButton
+{
+    background-color: palegoldenrod;
+    border-width: 1px;
+    border-color: darkkhaki;
+    border-style: solid;
+    border-radius: 3;
+    padding: 3px;
+    min-width: 15ex;
+    min-height: 4ex;
+}
+
+QPushButton:hover
+{
+   background-color: green;
+}
+
+/* Increase the padding, so the text is shifted when the button is
+   pressed. */
+QPushButton:pressed
+{
+    padding-left: 5px;
+    padding-top: 5px;
+    background-color: #d0d67c;
+}
+
+QRadioButton:enabled:checked
+{
+    color: rgb(128, 128, 255);
+}
+
+QRadioButton::indicator
+{
+    width:48;
+    height:24;
+}
+
+QRadioButton#singleRadioBtn::indicator
+{
+    width:100;
+    height:32;
+}
+
+QRadioButton::indicator:unchecked{
+    image: url(:/qss/rbtn_unchecked.png);
+}
+QRadioButton::indicator:checked{
+    image: url(:/qss/rbtn_checked.png);
+}
+
+QComboBox
+{
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid green;
+    /*background: green;*/
+}
+QComboBox:editable
+{
+    background: cyan;
+}
+QComboBox:!editable,QComboBox::drop-down:editable
+{
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0#E1E1E1, stop: 0.4 #DDDDDD,
+    stop:0.5#D8D8D8, stop: 1.0 #D3D3D3);
+}
+QComboBox:!editable:on,QComboBox::drop-down:editable:on {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+    stop:0#D3D3D3, stop: 0.4 #D8D8D8,
+    stop:0.5#DDDDDD, stop: 1.0 #E1E1E1);
+}
+
+QGroupBox
+{
+    font-size: 12px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0#E0E0E0, stop: 1 #FFFFFF);
+    border:2px solid gray;
+    border-radius:5px;
+    margin-top:10px;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top center;/* position at the top center */
+    padding:03px;
+    background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0#FFEECE, stop: 1 #FFFFFF);
+}
+
+
+QTabBar::tab:disabled
+{
+    width: 0; color: transparent;
+}
+
+QTabBar::tab:selected
+{
+    background-color: #d0d67c;
+}
+
+QTabBar::tab:hover
+{
+    background-color: #4fccb1;
+}
+
+
+QToolBox {
+  padding: 0px;
+  border: 0px;
+  border: 3px solid #32414B;
+}
+
+QToolBox:selected {
+  padding: 0px;
+  border: 2px solid #1464A0;
+}
+
+QToolBox::tab {
+  background-color: #19232D;
+  border: 1px solid #32414B;
+  color: #F0F0F0;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+QToolBox::tab:disabled {
+  color: #787878;
+}
+
+QToolBox::tab:selected {
+  background-color: #505F69;
+  border-bottom: 2px solid #1464A0;
+}
+
+QToolBox::tab:selected:disabled {
+  background-color: #32414B;
+  border-bottom: 2px solid #14506E;
+}
+
+QToolBox::tab:!selected {
+  background-color: #32414B;
+  border-bottom: 2px solid #32414B;
+}
+
+QToolBox::tab:!selected:disabled {
+  background-color: #19232D;
+}
+
+QToolBox::tab:hover {
+  border-color: #148CD2;
+  background-color: rgb(63, 147, 168);
+  border-bottom: 2px solid #148CD2;
+}
+
+QTreeWidget
+{
+    background-color: #5b677a7a;
+ 
+    /* set the font properties*/
+    font-size:17px;
+    color: white;
+}
+
+QTreeWidget::item
+{
+    margin:3px;
+    background: #5b677a7a;
+    background-clip: margin;
+}
+
+QTreeView::item:hover 
+{
+    background: rgb(69, 187, 217);;
+}
+ 
+QTreeView::item:selected:active
+{
+    background: rgb(63, 147, 168);
+}
+ 
+QTreeView::item:selected:!active 
+{
+    background: rgb(63, 147, 168);
+}

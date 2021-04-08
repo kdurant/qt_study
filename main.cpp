@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     //    QFile qss("../Radar/qss/basic.qss");
-    QFile qss(":/qss/basic.qss");
+    QFile qss(":/qss/basic.css");
     //    QFile qss("basic.qss");
     if(qss.open(QFile::ReadOnly))
         a.setStyleSheet(qss.readAll());

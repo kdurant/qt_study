@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -111,6 +111,9 @@ void MainWindow::initParameter()
         case 4:
             radarType = BspConfig::RADAR_TPYE_DRONE;
             break;
+        case 5:
+            radarType = BspConfig::RADAR_TPYE_UNDER_WATER;
+            break;
         default:
             radarType = BspConfig::RADAR_TPYE_OCEAN;
             QMessageBox::critical(this, "error", "请设置正确的雷达类型");
@@ -147,6 +150,7 @@ void MainWindow::uiConfig()
 {
     ui->treeWidget_attitude->expandAll();
     ui->treeWidget_attitude->setVisible(false);
+
     QRegExp           decReg("[0-9]+$");
     QRegExpValidator *decValidator = new QRegExpValidator(decReg, this);
     QRegExp           floatReg("[0-9\.]+$");
@@ -170,6 +174,12 @@ void MainWindow::uiConfig()
     ui->lineEdit_cameraFreq->setValidator(decValidator);
 
     ui->rbtn_triggerInside->setChecked(true);
+
+    ui->label_compressLen->hide();
+    ui->lineEdit_compressLen->hide();
+    ui->label_compressRatio->hide();
+    ui->lineEdit_compressRatio->hide();
+
     if(radarType == BspConfig::RADAR_TPYE_760)
     {
         setWindowTitle(tr("760雷达控制软件"));
@@ -199,8 +209,8 @@ void MainWindow::uiConfig()
     {
         setWindowTitle(tr("海洋雷达控制软件"));
         ui->lineEdit_radarType->setText("海洋雷达");
-        ui->label_laserCurrent->setVisible(false);
-        ui->lineEdit_laserCurrent->setVisible(false);
+        ui->label_laserCurrent->hide();
+        ui->lineEdit_laserCurrent->hide();
         ui->comboBox_laserFreq->addItem("5000");
         //        ui->label
     }
@@ -208,9 +218,9 @@ void MainWindow::uiConfig()
     {
         setWindowTitle(tr("陆地雷达控制软件"));
         ui->lineEdit_radarType->setText("陆地雷达");
-        ui->label_triggerMode->setVisible(false);
-        ui->rbtn_triggerInside->setVisible(false);
-        ui->rbtn_triggerOutside->setVisible(false);
+        ui->label_triggerMode->hide();
+        ui->rbtn_triggerInside->hide();
+        ui->rbtn_triggerOutside->hide();
         ui->comboBox_laserFreq->addItem("100000");
         ui->comboBox_laserFreq->addItem("200000");
         ui->comboBox_laserFreq->addItem("400000");
@@ -219,20 +229,15 @@ void MainWindow::uiConfig()
     {
         setWindowTitle(tr("无人机雷达控制软件"));
         ui->lineEdit_radarType->setText("无人机雷达");
-        ui->label_laserPower->setVisible(false);
-        ui->comboBox_laserPower->setVisible(false);
+        ui->label_laserPower->hide();
+        ui->comboBox_laserPower->hide();
         ui->comboBox_laserFreq->addItem("4000");
-        ui->label_compressLen->setVisible(false);
-        ui->lineEdit_compressLen->setVisible(false);
-        ui->label_compressRatio->setVisible(false);
-        ui->lineEdit_compressRatio->setVisible(false);
-
-        ui->btn_laserReadCurrent->setVisible(false);
-        ui->lineEdit_laserShowCurrent->setVisible(false);
-        ui->btn_laserReadFreq->setVisible(false);
-        ui->lineEdit_laserShowFreq->setVisible(false);
-        ui->btn_laserReadTem->setVisible(false);
-        ui->lineEdit_laserShowTemp->setVisible(false);
+        ui->btn_laserReadCurrent->hide();
+        ui->lineEdit_laserShowCurrent->hide();
+        ui->btn_laserReadFreq->hide();
+        ui->lineEdit_laserShowFreq->hide();
+        ui->btn_laserReadTem->hide();
+        ui->lineEdit_laserShowTemp->hide();
 
         ui->lineEdit_laserCurrent->setToolTip("3500 <= current <=4500");
         ui->lineEdit_laserCurrent->setValidator(new QIntValidator(0, 1000, this));
@@ -242,10 +247,14 @@ void MainWindow::uiConfig()
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_ADChSelect->addItems(AD1List);
 
-        ui->label_laserCurrent->setVisible(false);
-        ui->lineEdit_laserCurrent->setVisible(false);
-        ui->btn_laserSetCurrent->setVisible(false);
+        ui->label_laserCurrent->hide();
+        ui->lineEdit_laserCurrent->hide();
+        ui->btn_laserSetCurrent->hide();
         ui->tabWidget->setTabEnabled(4, false);
+    }
+    else if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
+    {
+        ui->treeWidget_attitude->show();
     }
     else
     {

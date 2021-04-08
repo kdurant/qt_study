@@ -12,6 +12,7 @@ public:
         RADAR_TPYE_760         = 0x02,
         RADAR_TPYE_DOUBLE_WAVE = 0x03,
         RADAR_TPYE_DRONE       = 0x04,
+        RADAR_TPYE_UNDER_WATER = 0x05,
     };
 
     struct Gps_Info
