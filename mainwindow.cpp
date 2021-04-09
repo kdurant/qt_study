@@ -1098,15 +1098,19 @@ void MainWindow::on_bt_showWave_clicked()
             }
             if(autoZoomPlot)
                 ui->sampleDataPlot->rescaleAxes();
-            ui->sampleDataPlot->replot(QCustomPlot::rpQueuedReplot);  // 耗时1-20ms，造成界面上的卡顿
+            ui->sampleDataPlot->replot();  // 耗时1-20ms，造成界面上的卡顿
 
             if(interval_time == 0)
+            {
+                QCoreApplication::processEvents(QEventLoop::AllEvents);
                 continue;
+            }
             else
             {
-                QEventLoop eventloop;
-                QTimer::singleShot(interval_time, &eventloop, SLOT(quit()));
-                eventloop.exec();
+                CHECKTIME(
+                    QEventLoop eventloop;
+                    QTimer::singleShot(interval_time, &eventloop, SLOT(quit()));
+                    eventloop.exec(););
             }
         }
         else
