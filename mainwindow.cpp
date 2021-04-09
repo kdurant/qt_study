@@ -454,6 +454,18 @@ void MainWindow::initSignalSlot()
         ui->sampleDataPlot->graph(7)->setVisible(status);
         ui->sampleDataPlot->replot();
     });
+
+    connect(ui->btn_axisRangeSet, &QPushButton::pressed, this, [this]() {
+        quint32 xMin = ui->lineEdit_axisXmin->text().toUInt(nullptr, 10);
+        quint32 xMax = ui->lineEdit_axisXmax->text().toUInt(nullptr, 10);
+        ui->sampleDataPlot->xAxis->setRange(xMin, xMax);
+
+        quint32 yMin = ui->lineEdit_axisYmin->text().toUInt(nullptr, 10);
+        quint32 yMax = ui->lineEdit_axisYmax->text().toUInt(nullptr, 10);
+        ui->sampleDataPlot->yAxis->setRange(yMin, yMax);
+
+        ui->sampleDataPlot->replot();
+    });
     /*
      * 离线显示数据波形相关逻辑
      */
