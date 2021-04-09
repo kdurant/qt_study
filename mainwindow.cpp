@@ -948,6 +948,11 @@ void MainWindow::plotSettings()
     ui->sampleDataPlot->xAxis->setLabel(QStringLiteral("时间：ns"));
     ui->sampleDataPlot->yAxis->setLabel(QStringLiteral("AD采样值"));
 
+    ui->sampleDataPlot->axisRect()->setRangeDrag(Qt::Horizontal);
+    ui->sampleDataPlot->axisRect()->setRangeZoom(Qt::Horizontal);
+    ui->sampleDataPlot->axisRect()->setRangeZoomAxes(ui->sampleDataPlot->xAxis, ui->sampleDataPlot->yAxis);
+    ui->sampleDataPlot->setSelectionRectMode(QCP::srmZoom);
+
     QSharedPointer<QCPAxisTickerFixed> intTicker(new QCPAxisTickerFixed);
     //设置刻度之间的步长为1
     intTicker->setTickStep(1);
