@@ -1088,12 +1088,12 @@ void MainWindow::on_bt_showWave_clicked()
             gps->parserGpsData(convert);  //  耗时小于1ms
 
             for(int n = 0; n < allCh.size(); n++)
-            {  // 耗时1-20ms，造成界面上的卡顿
+            {  //  耗时小于1ms
                 ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
             }
             if(autoZoomPlot)
                 ui->sampleDataPlot->rescaleAxes();
-            ui->sampleDataPlot->replot();
+            ui->sampleDataPlot->replot(QCustomPlot::rpQueuedReplot);  // 耗时1-20ms，造成界面上的卡顿
 
             if(interval_time == 0)
                 continue;
