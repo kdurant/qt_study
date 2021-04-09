@@ -149,8 +149,11 @@ void MainWindow::saveParameter()
 void MainWindow::uiConfig()
 {
     ui->treeWidget_attitude->expandAll();
-    ui->treeWidget_attitude->setVisible(false);
     ui->treeWidget_attitude->resizeColumnToContents(0);
+
+    QList<QTreeWidgetItem *> itemList;
+    itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
+    itemList.first()->setHidden(true);
 
     QRegExp           decReg("[0-9]+$");
     QRegExpValidator *decValidator = new QRegExpValidator(decReg, this);
@@ -255,7 +258,11 @@ void MainWindow::uiConfig()
     }
     else if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
     {
-        ui->treeWidget_attitude->show();
+        setWindowTitle(tr("水下预警雷达控制软件"));
+        ui->lineEdit_radarType->setText("水下预警雷达");
+        QList<QTreeWidgetItem *> itemList;
+        itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
+        itemList.first()->setHidden(false);
     }
     else
     {
@@ -857,15 +864,6 @@ void MainWindow::initSignalSlot()
      */
     connect(dispatch, &ProtocolDispatch::gpsDataReady, gps, &GpsInfo::parserGpsData);
     connect(gps, &GpsInfo::gpsDataReady, this, [this](BspConfig::Gps_Info &data) {
-        ui->label_gpsWeek->setText(QString::number(data.week));
-        ui->label_gpsSecond->setText(QString::number(data.current_week_ms));
-        ui->label_latitude->setText(QString::number(data.latitude, 'g', 6));
-        ui->label_longitude->setText(QString::number(data.longitude, 'g', 6));
-        ui->label_altitude->setText(QString::number(data.altitude, 'g', 6));
-        ui->label_roll->setText(QString::number(data.roll, 'g', 6));
-        ui->label_pitch->setText(QString::number(data.pitch, 'g', 6));
-        ui->label_heading->setText(QString::number(data.heading, 'g', 6));
-
         QList<QTreeWidgetItem *> itemList;
 
         itemList = ui->treeWidget_attitude->findItems("GPS信息", Qt::MatchExactly);

@@ -1543,6 +1543,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="text">
+             <string>0</string>
+            </property>
            </widget>
           </item>
           <item row="1" column="4">
@@ -1560,6 +1563,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="text">
+             <string>1024</string>
+            </property>
            </widget>
           </item>
           <item row="1" column="2">
@@ -1576,6 +1582,9 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="text">
+             <string>100</string>
             </property>
            </widget>
           </item>
@@ -1613,6 +1622,9 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="text">
+             <string>1000</string>
             </property>
            </widget>
           </item>
@@ -1688,133 +1700,6 @@
             </property>
             <property name="sizeAdjustPolicy">
              <enum>QAbstractScrollArea::AdjustToContents</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_11">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>GPS信息</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_16">
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_29">
-            <property name="text">
-             <string>GPS时间(ms)：</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QLabel" name="label_roll">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_33">
-            <property name="text">
-             <string>经度(°)：</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_20">
-            <property name="text">
-             <string>GPS周：</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLabel" name="label_latitude">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLabel" name="label_altitude">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_31">
-            <property name="text">
-             <string>纬度(°)：</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="label_gpsWeek">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_35">
-            <property name="text">
-             <string>高度(m)：</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_37">
-            <property name="text">
-             <string>翻滚角(°)：</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_40">
-            <property name="text">
-             <string>俯仰角(°)：</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="1">
-           <widget class="QLabel" name="label_pitch">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLabel" name="label_longitude">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="label_41">
-            <property name="text">
-             <string>航向角(°)：</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="1">
-           <widget class="QLabel" name="label_heading">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="label_gpsSecond">
-            <property name="text">
-             <string/>
             </property>
            </widget>
           </item>
