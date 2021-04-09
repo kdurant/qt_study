@@ -1,6 +1,13 @@
 #ifndef BSP_CONFIG_H
 #define BSP_CONFIG_H
 #include <QtCore>
+#define CONCAT_(x, y) x##y
+#define CONCAT(x, y) CONCAT_(x, y)
+
+#define CHECKTIME(x)                     \
+    QElapsedTimer CONCAT(sb_, __LINE__); \
+    CONCAT(sb_, __LINE__).start();       \
+    x qDebug() << __FUNCTION__ << ":" << __LINE__ << " Elapsed time: " << CONCAT(sb_, __LINE__).elapsed() << " ms."
 
 class BspConfig
 {

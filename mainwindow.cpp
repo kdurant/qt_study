@@ -951,7 +951,6 @@ void MainWindow::plotSettings()
         ui->sampleDataPlot->addGraph();
         ui->sampleDataPlot->graph(i)->setScatterStyle(QCPScatterStyle::ssDisc);
     }
-
     ui->sampleDataPlot->graph(0)->setPen(QPen(Qt::red));
     ui->sampleDataPlot->graph(0)->setName("通道0第一段");
     ui->sampleDataPlot->graph(1)->setPen(QPen(Qt::red));
@@ -1064,20 +1063,22 @@ void MainWindow::on_bt_showWave_clicked()
         if(running)
         {
             ui->spin_framePos->setValue(i);
-            QVector<quint8> sampleData = offlineWaveForm->getFrameData(i);
+            QVector<quint8> sampleData = offlineWaveForm->getFrameData(i);  // 耗时小于1ms
 
             QVector<WaveExtract::WaveformInfo> allCh;
-            if(WaveExtract::getWaveform(radarType, sampleData, allCh) == -1)
+            if(WaveExtract::getWaveform(radarType, sampleData, allCh) == -1)  // 耗时小于1ms
             {
                 QMessageBox::warning(this, "警告", "数据格式和当前雷达类型不匹配");
                 return;
             }
+
             QByteArray convert;
             for(int i = 0; i < 88; i++)
                 convert.append(sampleData[i]);
-            gps->parserGpsData(convert);
+            gps->parserGpsData(convert);  //  耗时小于1ms
+
             for(int n = 0; n < allCh.size(); n++)
-            {
+            {  // 耗时1-20ms，造成界面上的卡顿
                 ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
             }
             if(autoZoomPlot)
