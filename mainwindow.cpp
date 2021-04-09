@@ -928,6 +928,7 @@ void MainWindow::setToolBar()
     act.append(new QAction("电机设置", this));
     act.append(new QAction("高压设置", this));
     act.append(new QAction("预览设置", this));
+    act.append(new QAction("显示侧边栏", this));
     ui->mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     for(int i = 0; i < act.size(); i++)
     {
@@ -938,6 +939,10 @@ void MainWindow::setToolBar()
     connect(act[1], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(1); });
     connect(act[2], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(2); });
     connect(act[3], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(3); });
+    connect(act[4], &QAction::triggered, this, [this]() {
+        ui->dockWidget_left->show();
+        ui->dockWidget_right->show();
+    });
 }
 
 void MainWindow::plotSettings()
