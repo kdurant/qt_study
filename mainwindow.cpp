@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -1107,10 +1107,9 @@ void MainWindow::on_bt_showWave_clicked()
             }
             else
             {
-                CHECKTIME(
-                    QEventLoop eventloop;
-                    QTimer::singleShot(interval_time, &eventloop, SLOT(quit()));
-                    eventloop.exec(););
+                QEventLoop eventloop;
+                QTimer::singleShot(interval_time, &eventloop, SLOT(quit()));
+                eventloop.exec();
             }
         }
         else
