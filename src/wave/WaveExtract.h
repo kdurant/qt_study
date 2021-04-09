@@ -15,18 +15,17 @@ public:
     // 存放采样数据中，某个具体通道的具体哪一段数据
     struct WaveformInfo
     {
-        qint32          number;
         QVector<double> pos;    // 相当于x轴
         QVector<double> value;  // 相当于y轴
     };
 
     WaveExtract() = default;
 
+    static bool isFrameHead(QVector<quint8> frameData, int offset);
     static bool isChDataHead(QVector<quint8> frameData, int offset);
 
     static int getWaveform(BspConfig::RadarType   type,
                            QVector<quint8> &      frameData,
                            QVector<WaveformInfo> &ret);
-    static int getWaveform(BspConfig::RadarType type, QByteArray &data, QVector<WaveformInfo> &ret);
 };
 #endif
