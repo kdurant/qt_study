@@ -24,18 +24,7 @@ X1,X2,X3,X4 代表数据位。 X5 代表校验和（取低 8 位） 。
 */
 class LaserType4 : public LaserController
 {
-private:
-    bool       isRecvNewData;  // 是否收到数据
-    QByteArray recvData;
-
-    quint8 checksum(QVector<quint8>& data)
-    {
-        quint8 ret = 0;
-        for(int i = 0; i < 8; i++)
-            ret += data[i];
-        return ret;
-    }
-
+    Q_OBJECT
 public:
     LaserType4()
     {
@@ -43,8 +32,17 @@ public:
     }
     struct LaserInfo
     {
+        // 主控板返回状态
         quint8 statusBit;
         quint8 errorBit;
+        qint8  headTemp;
+
+        // 驱动板返回状态
+        quint16 current;  // unit: 0.01A
+
+        quint32 ldTemp;            // 0-3000000(正值),3000000-6000000(负值)  温度值*10000,精确到小数点后第四位
+        quint32 laserCrystalTemp;  // 激光晶体温度
+        quint32 multiCrystalTemp;  // 倍频晶体温度
     };
 
     bool setMode(OpenMode mode) override;
@@ -54,14 +52,28 @@ public:
     bool close(void) override;
     bool setPower(quint16 power) override;
 
+    void getStatus(QByteArray& data);
+
+private:
+    bool       isRecvNewData;  // 是否收到数据
+    QByteArray recvData;
+    LaserInfo  info;
+
+    quint8 checksum(QVector<quint8>& data)
+    {
+        quint8 ret = 0;
+        for(int i = 0; i < 8; i++)
+            ret += data[i];
+        return ret;
+    }
+
 signals:
-    void laserInfoReady(BspConfig::Gps_Info& data);  // 接收到响应数据
+    void laserInfoReady(LaserInfo& data);  // 接收到响应数据
 
 public slots:
     void setNewData(QByteArray& data)
     {
-        recvData = data;
-        emit responseDataReady();
+        getStatus(data);
     }
 };
 

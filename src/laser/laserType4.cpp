@@ -53,3 +53,28 @@ bool LaserType4::setPower(quint16 power)
     emit sendDataReady(MasterSet::LASER_ENABLE, frame.length(), frame);
     return true;
 }
+
+void LaserType4::getStatus(QByteArray &data)
+{
+    switch(data[2])
+    {
+        case 0x00:
+            info.statusBit = data[32];
+            info.errorBit  = data[33];
+            info.headTemp  = data[34];
+            break;
+        case 0x0a:
+            info.current = data.mid(6, 2).toHex().toUInt();
+            break;
+        case 0x3c:
+            info.ldTemp = data.mid(8, 4).toHex().toUInt();
+            break;
+        case 0x3e:
+            info.laserCrystalTemp = data.mid(8, 4).toHex().toUInt();
+            break;
+        case 0x3f:
+            info.multiCrystalTemp = data.mid(8, 4).toHex().toUInt();
+            break;
+    }
+    emit laserInfoReady(info);
+}
