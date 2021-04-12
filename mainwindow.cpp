@@ -176,6 +176,8 @@ void MainWindow::uiConfig()
     ui->lineEdit_compressRatio->setValidator(decValidator);
     ui->lineEdit_ssdSearchStartUnit->setValidator(hexValidator);
     ui->lineEdit_cameraFreq->setValidator(decValidator);
+    ui->lineEdit_pmtDelayTime->setValidator(decValidator);
+    ui->lineEdit_pmtGateTime->setValidator(decValidator);
 
     ui->rbtn_triggerInside->setChecked(true);
 
@@ -183,6 +185,8 @@ void MainWindow::uiConfig()
     ui->lineEdit_compressLen->hide();
     ui->label_compressRatio->hide();
     ui->lineEdit_compressRatio->hide();
+    ui->lineEdit_pmtDelayTime->hide();
+    ui->lineEdit_pmtGateTime->hide();
 
     if(radarType == BspConfig::RADAR_TPYE_760)
     {
@@ -263,6 +267,9 @@ void MainWindow::uiConfig()
         QList<QTreeWidgetItem *> itemList;
         itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
         itemList.first()->setHidden(false);
+
+        ui->lineEdit_pmtDelayTime->show();
+        ui->lineEdit_pmtGateTime->show();
     }
     else
     {
@@ -350,14 +357,16 @@ void MainWindow::initSignalSlot()
     connect(preview, &AdSampleControll::sendDataReady, dispatch, &ProtocolDispatch::encode);
 
     connect(ui->btn_setPreviewPara, &QPushButton::pressed, this, [this]() {
-        int totalSampleLen = ui->lineEdit_sampleLen->text().toInt();
-        int previewRatio   = ui->lineEdit_sampleRate->text().toInt();
-        int firstPos       = ui->lineEdit_firstStartPos->text().toInt();
-        int firstLen       = ui->lineEdit_firstLen->text().toInt();
-        int secondPos      = ui->lineEdit_secondStartPos->text().toInt();
-        int secondLen      = ui->lineEdit_secondLen->text().toInt();
-        int sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
-        int valueThreshold = ui->lineEdit_subThreshold->text().toInt();
+        int     totalSampleLen = ui->lineEdit_sampleLen->text().toInt();
+        int     previewRatio   = ui->lineEdit_sampleRate->text().toInt();
+        int     firstPos       = ui->lineEdit_firstStartPos->text().toInt();
+        int     firstLen       = ui->lineEdit_firstLen->text().toInt();
+        int     secondPos      = ui->lineEdit_secondStartPos->text().toInt();
+        int     secondLen      = ui->lineEdit_secondLen->text().toInt();
+        int     sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
+        int     valueThreshold = ui->lineEdit_subThreshold->text().toInt();
+        quint16 pmtDelayTime   = ui->lineEdit_pmtDelayTime->text().toUInt();
+        quint16 pmtGateTime    = ui->lineEdit_pmtGateTime->text().toUInt();
 
         if(secondPos < firstPos + firstLen)
         {
@@ -377,7 +386,12 @@ void MainWindow::initSignalSlot()
         preview->setSecondPos(secondPos);
         preview->setSecondLen(secondLen);
         preview->setSumThreshold(sumThreshold);
-        preview->setValueThreshold(valueThreshold);
+
+        if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
+        {
+            preview->setValueThreshold(valueThreshold);
+            preview->setPmtDelayAndGateTime(pmtDelayTime, pmtGateTime);
+        }
     });
 
     connect(ui->btn_sampleEnable, &QPushButton::pressed, this, [this]() {

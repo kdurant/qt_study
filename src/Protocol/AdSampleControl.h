@@ -83,6 +83,14 @@ public:
         sleepWithoutBlock(interval);
     }
 
+    void setPmtDelayAndGateTime(quint16 delay, quint16 high)
+    {
+        quint32    data  = ((delay >> 3) << 16) + (high >> 3);
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::PMT_CONTROL_TIME, 4, frame);
+        sleepWithoutBlock(interval);
+    }
+
     void enabelADSample(quint32 status)
     {
         QByteArray frame = BspConfig::int2ba(status);

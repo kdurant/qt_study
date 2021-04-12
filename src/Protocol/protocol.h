@@ -25,16 +25,17 @@ public:
         PREVIEW_ENABLE = 0x0000000C,
         SYS_INFO       = 0x00000013,
 
-        SAMPLE_LEN     = 0x00000008,
-        PREVIEW_RATIO  = 0x00000009,
-        FIRST_POS      = 0x00000029,
-        FIRST_LEN      = 0x0000002a,
-        SECOND_POS     = 0x0000002e,
-        SECOND_LEN     = 0x00000030,
-        SUM_THRE       = 0x0000002b,
-        VALUE_THRE     = 0x0000002c,
-        COMPRESS_LEN   = 0x00200001,
-        COMPRESS_RATIO = 0x00200002,
+        SAMPLE_LEN       = 0x00000008,
+        PREVIEW_RATIO    = 0x00000009,
+        FIRST_POS        = 0x00000029,
+        FIRST_LEN        = 0x0000002a,
+        SECOND_POS       = 0x0000002e,
+        SECOND_LEN       = 0x00000030,
+        SUM_THRE         = 0x0000002b,
+        VALUE_THRE       = 0x0000002c,
+        COMPRESS_LEN     = 0x00200001,
+        COMPRESS_RATIO   = 0x00200002,
+        PMT_CONTROL_TIME = 0x00000032,
     };
     enum laser
     {
