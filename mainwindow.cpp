@@ -601,6 +601,7 @@ void MainWindow::initSignalSlot()
     {
         connect(laser4Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser4Driver, &LaserType4::setNewData);
+        connect(laser4Driver, &LaserType4::laserInfoReady, this, &MainWindow::showLaserInfo);
     }
 
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]() {
@@ -648,27 +649,21 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]() {
         bool status = false;
-        switch(radarType)
-        {
-            case BspConfig::RADAR_TPYE_LAND:
-                status = laser2Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt());
-                break;
-            case BspConfig::RADAR_TPYE_DRONE:
-                status = laser3Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
-                break;
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
-                status = laser4Driver->setPower(ui->lineEdit_laserCurrent->text().toInt() / 10);
-                break;
-            default:
-                break;
+        switch (radarType) {
+        case BspConfig::RADAR_TPYE_LAND:
+            status = laser2Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt());
+            break;
+        case BspConfig::RADAR_TPYE_DRONE:
+            status = laser3Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
+            break;
+        case BspConfig::RADAR_TPYE_UNDER_WATER:
+            status = laser4Driver->setPower(ui->lineEdit_laserCurrent->text().toInt() / 10);
+            break;
+        default:
+            break;
         }
         if(status == false)
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
-    });
-
-    connect(ui->btn_laserReadInfo, &QPushButton::pressed, this, [this]() {
-        QString text = laser2Driver->getCurrent();
-        laser3Driver->getStatus();
     });
 
     connect(ui->rbtn_triggerInside, &QRadioButton::clicked, this, [this]() {
@@ -710,6 +705,8 @@ void MainWindow::initSignalSlot()
         if(status == false)
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
+
+    //    connect(ui->btn_laserReadInfo, &QPushButton::pressed, this, [this]() {});
 
     /*
      * 电机相关逻辑
@@ -1223,6 +1220,34 @@ void MainWindow::getSysInfo()
     {
         ui->statusBar->showMessage(tr("系统无法通信，检查网络连接"), 0);
     }
+}
+
+void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
+{
+    QList<QTreeWidgetItem *> itemList;
+
+    itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
+    itemList.first()->setText(1, QString::number(info.current * 10));
+
+    itemList = ui->treeWidget_laser->findItems("激光头温度", Qt::MatchExactly);
+    itemList.first()->setText(1, QString::number(info.headTemp / 10000, 'g', 5));
+
+    itemList = ui->treeWidget_laser->findItems("LD温度", Qt::MatchExactly);
+    itemList.first()->setText(1, QString::number(info.ldTemp / 10000, 'g', 5));
+
+    itemList = ui->treeWidget_laser->findItems("激光晶体温度", Qt::MatchExactly);
+    itemList.first()->setText(1, QString::number(info.laserCrystalTemp / 10000, 'g', 5));
+
+    itemList = ui->treeWidget_laser->findItems("倍频晶体温度", Qt::MatchExactly);
+    itemList.first()->setText(1, QString::number(info.multiCrystalTemp / 10000, 'g', 5));
+
+    itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
+    itemList.first()
+        ->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
+
+    itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
+    itemList.first()
+        ->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
 }
 
 QString MainWindow::read_ip_address()

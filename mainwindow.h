@@ -89,6 +89,7 @@ private slots:
     void on_bt_showWave_clicked();
 
     void getSysInfo();
+    void showLaserInfo(LaserType4::LaserInfo &info);
 
     QString read_ip_address(void);
 

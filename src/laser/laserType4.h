@@ -73,6 +73,7 @@ signals:
 public slots:
     void setNewData(QByteArray& data)
     {
+        recvData = data;
         getStatus(data);
     }
 };
