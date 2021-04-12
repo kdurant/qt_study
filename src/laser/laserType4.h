@@ -41,6 +41,11 @@ public:
     {
         isRecvNewData = false;
     }
+    struct LaserInfo
+    {
+        quint8 statusBit;
+        quint8 errorBit;
+    };
 
     bool setMode(OpenMode mode) override;
 
@@ -48,6 +53,9 @@ public:
 
     bool close(void) override;
     bool setPower(quint16 power) override;
+
+signals:
+    void laserInfoReady(BspConfig::Gps_Info& data);  // 接收到响应数据
 
 public slots:
     void setNewData(QByteArray& data)

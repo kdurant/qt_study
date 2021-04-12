@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -180,8 +180,6 @@ void MainWindow::uiConfig()
     ui->lineEdit_pmtDelayTime->setValidator(decValidator);
     ui->lineEdit_pmtGateTime->setValidator(decValidator);
 
-    ui->rbtn_triggerInside->setChecked(true);
-
     ui->label_compressLen->hide();
     ui->lineEdit_compressLen->hide();
     ui->label_compressRatio->hide();
@@ -190,6 +188,9 @@ void MainWindow::uiConfig()
     ui->lineEdit_pmtGateTime->hide();
     ui->label_laserPower->hide();
     ui->comboBox_laserPower->hide();
+
+    ui->tabWidget->setTabEnabled(4, false);
+    ui->tabWidget->setTabEnabled(5, false);
 
     if(radarType == BspConfig::RADAR_TPYE_760)
     {
@@ -213,8 +214,6 @@ void MainWindow::uiConfig()
 
         ui->label_sumThreshold->hide();
         ui->lineEdit_sumThreshold->hide();
-        ui->tabWidget->setTabEnabled(2, false);
-        ui->tabWidget->setTabEnabled(5, false);
     }
     else if(radarType == BspConfig::RADAR_TPYE_OCEAN)
     {
@@ -244,6 +243,8 @@ void MainWindow::uiConfig()
         ui->comboBox_laserPower->hide();
         ui->comboBox_laserFreq->addItem("4000");
 
+        ui->tabWidget->setTabEnabled(4, true);
+
         ui->lineEdit_laserCurrent->setToolTip("3500 <= current <=4500");
         ui->lineEdit_laserCurrent->setValidator(new QIntValidator(0, 1000, this));
 
@@ -255,7 +256,6 @@ void MainWindow::uiConfig()
         ui->label_laserCurrent->hide();
         ui->lineEdit_laserCurrent->hide();
         ui->btn_laserSetCurrent->hide();
-        ui->tabWidget->setTabEnabled(4, false);
     }
     else if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
     {
@@ -271,10 +271,6 @@ void MainWindow::uiConfig()
     else
     {
         setWindowTitle(tr("[xx]雷达控制软件"));
-        ui->tabWidget->setTabEnabled(2, false);
-        ui->tabWidget->setTabEnabled(5, false);
-        ui->tabWidget->setTabEnabled(6, false);
-        //        ui->tabWidget->setTabEnabled(7, false);
     }
     ui->checkBox_autoZoom->setChecked(true);
 
