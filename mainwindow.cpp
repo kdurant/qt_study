@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -59,9 +59,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tableWidget_sysInfo->setHorizontalHeaderLabels(QStringList() << "参数"
                                                                      << "值");
     ui->tableWidget_sysInfo->verticalHeader()->setVisible(false);  //隐藏列表头
-    ui->tableWidget_sysInfo->horizontalHeader()->setSectionResizeMode(
-        QHeaderView::Stretch);  //x先自适应宽度
-                                //    ui->tableWidget_sysInfo->horizontalHeader()
+                                                                   //    ui->tableWidget_sysInfo->horizontalHeader()->setSectionResizeMode(
+                                                                   //        QHeaderView::Stretch);  //x先自适应宽度
+                                                                   //    ui->tableWidget_sysInfo->horizontalHeader()
     //        ->setSectionResizeMode(0, QHeaderView::ResizeToContents); //然后设置要根据内容使用宽度的列
 
     for(int i = 0; i < sysParaInfo.length(); i++)
