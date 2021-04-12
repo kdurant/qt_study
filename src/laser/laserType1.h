@@ -29,7 +29,7 @@ public:
     bool open(void) override;
 
     bool close(void) override;
-    bool setPower(qint8 power) override;
+    bool setPower(quint16 power) override;
 
     bool setLD2DlyTime(quint16 value);
 

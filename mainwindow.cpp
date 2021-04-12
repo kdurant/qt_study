@@ -20,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
     laser1Driver = new LaserType1();
     laser2Driver = new LaserType2();
     laser3Driver = new LaserType3();
+    laser4Driver = new LaserType4();
 
     epos2Driver = new EPOS2();
 
@@ -187,6 +188,8 @@ void MainWindow::uiConfig()
     ui->lineEdit_compressRatio->hide();
     ui->lineEdit_pmtDelayTime->hide();
     ui->lineEdit_pmtGateTime->hide();
+    ui->label_laserPower->hide();
+    ui->comboBox_laserPower->hide();
 
     if(radarType == BspConfig::RADAR_TPYE_760)
     {
@@ -240,12 +243,6 @@ void MainWindow::uiConfig()
         ui->label_laserPower->hide();
         ui->comboBox_laserPower->hide();
         ui->comboBox_laserFreq->addItem("4000");
-        ui->btn_laserReadCurrent->hide();
-        ui->lineEdit_laserShowCurrent->hide();
-        ui->btn_laserReadFreq->hide();
-        ui->lineEdit_laserShowFreq->hide();
-        ui->btn_laserReadTem->hide();
-        ui->lineEdit_laserShowTemp->hide();
 
         ui->lineEdit_laserCurrent->setToolTip("3500 <= current <=4500");
         ui->lineEdit_laserCurrent->setValidator(new QIntValidator(0, 1000, this));
@@ -604,6 +601,11 @@ void MainWindow::initSignalSlot()
         connect(laser3Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser3Driver, &LaserType3::setNewData);
     }
+    else if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
+    {
+        connect(laser4Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
+        connect(dispatch, &ProtocolDispatch::laserDataReady, laser4Driver, &LaserType4::setNewData);
+    }
 
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]() {
         bool status = false;
@@ -616,6 +618,10 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_DRONE:
                 laser3Driver->setFreq(4000);
                 status = laser3Driver->open();
+                break;
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                laser4Driver->setFreq(5000);
+                status = laser4Driver->open();
                 break;
             default:
                 break;
@@ -634,6 +640,9 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_DRONE:
                 status = laser3Driver->close();
                 break;
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                status = laser4Driver->close();
+                break;
             default:
                 break;
         }
@@ -651,6 +660,9 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_DRONE:
                 status = laser3Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
                 break;
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                status = laser4Driver->setPower(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                break;
             default:
                 break;
         }
@@ -658,28 +670,49 @@ void MainWindow::initSignalSlot()
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
 
-    connect(ui->btn_laserReadCurrent, &QPushButton::pressed, this, [this]() {
+    connect(ui->btn_laserReadInfo, &QPushButton::pressed, this, [this]() {
         QString text = laser2Driver->getCurrent();
-        ui->lineEdit_laserShowCurrent->setText(text);
         laser3Driver->getStatus();
     });
 
-    connect(ui->btn_laserReadFreq, &QPushButton::pressed, this, [this]() {
-        QString text = laser2Driver->getFreq();
-        ui->lineEdit_laserShowFreq->setText(text);
-    });
-
-    connect(ui->btn_laserReadTem, &QPushButton::pressed, this, [this]() {
-        QString text = laser2Driver->getTemp();
-        ui->lineEdit_laserShowTemp->setText(text);
-    });
-
     connect(ui->rbtn_triggerInside, &QRadioButton::clicked, this, [this]() {
-        laser3Driver->setMode(LaserController::IN_SIDE);
+        bool status = false;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                status = laser2Driver->setMode(LaserController::IN_SIDE);
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                status = laser3Driver->setMode(LaserController::IN_SIDE);
+                break;
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                status = laser4Driver->setMode(LaserController::IN_SIDE);
+                break;
+            default:
+                break;
+        }
+        if(status == false)
+            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
 
     connect(ui->rbtn_triggerOutside, &QRadioButton::clicked, this, [this]() {
-        laser3Driver->setMode(LaserController::OUT_SIDE);
+        bool status = false;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                status = laser2Driver->setMode(LaserController::OUT_SIDE);
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                status = laser3Driver->setMode(LaserController::OUT_SIDE);
+                break;
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                status = laser4Driver->setMode(LaserController::OUT_SIDE);
+                break;
+            default:
+                break;
+        }
+        if(status == false)
+            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
 
     /*

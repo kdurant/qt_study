@@ -42,7 +42,7 @@ bool LaserType1::close()
     return true;
 }
 
-bool LaserType1::setPower(qint8 power)
+bool LaserType1::setPower(quint16 power)
 {
     QByteArray array;
     array.append((char)0x55);

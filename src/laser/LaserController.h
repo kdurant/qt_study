@@ -20,11 +20,15 @@ public:
     {
         return false;
     };
-    virtual bool setPower(qint8 power)
+
+    // 部分激光器以功率的形式
+    // 部分激光器以电流的形式
+    virtual bool setPower(quint16 power)
     {
         return false;
     };
 
+    // 外触发时的工作频率
     virtual bool setFreq(qint32 freq)
     {
         return false;

@@ -39,6 +39,7 @@
 #include "laserType1.h"
 #include "laserType2.h"
 #include "laserType3.h"
+#include "laserType4.h"
 
 #include "Epos2Controller.h"
 
@@ -134,6 +135,7 @@ private:
     LaserType1 *     laser1Driver;
     LaserType2 *     laser2Driver;
     LaserType3 *     laser3Driver;
+    LaserType4 *     laser4Driver;
 
     EPOS2 *epos2Driver;
 
