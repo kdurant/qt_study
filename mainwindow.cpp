@@ -24,10 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     epos2Driver = new EPOS2();
 
-    devInfo           = new DevInfo();
-    autoReadInfoTimer = new QTimer();
-    autoReadInfoTimer->setInterval(1000);
-    autoReadInfoTimer->start();
+    devInfo = new DevInfo();
+
+    timer1s = startTimer(1000);
 
     ssd = new SaveWave();
 
@@ -339,10 +338,6 @@ void MainWindow::initSignalSlot()
     connect(ui->btn_ReadSysInfo, &QPushButton::pressed, this, [this]() {
         getSysInfo();
     });
-    connect(autoReadInfoTimer, &QTimer::timeout, this, [this]() {
-        if(ui->checkBox_autoReadSysInfo->isChecked())
-            getSysInfo();
-    });
 
     /*
      * 波形预览相关逻辑
@@ -649,18 +644,19 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]() {
         bool status = false;
-        switch (radarType) {
-        case BspConfig::RADAR_TPYE_LAND:
-            status = laser2Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt());
-            break;
-        case BspConfig::RADAR_TPYE_DRONE:
-            status = laser3Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
-            break;
-        case BspConfig::RADAR_TPYE_UNDER_WATER:
-            status = laser4Driver->setPower(ui->lineEdit_laserCurrent->text().toInt() / 10);
-            break;
-        default:
-            break;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                status = laser2Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt());
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                status = laser3Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                break;
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                status = laser4Driver->setPower(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                break;
+            default:
+                break;
         }
         if(status == false)
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
@@ -1031,7 +1027,23 @@ void MainWindow::plotSettings()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    Q_UNUSED(event);
     saveParameter();
+}
+
+void MainWindow::timerEvent(QTimerEvent *event)
+{
+    if(timer1s == event->timerId())
+    {
+        // 判断sata状态机是否正常，从而得知文件结束信息有没有正确写入到硬盘
+        //        if(sysStatus.udpLinkStatus & sysStatus.ssdLinkStatus & (!sysStatus.ssdStoreStatus))
+        //        {
+        //            sysParaInfo[8].value
+        //        }
+
+        if(ui->checkBox_autoReadSysInfo->isChecked())
+            getSysInfo();
+    }
 }
 
 void MainWindow::on_actionNote_triggered()

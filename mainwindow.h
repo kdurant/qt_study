@@ -73,6 +73,7 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *event);
+    void timerEvent(QTimerEvent *event);
 
 private slots:
 
@@ -110,6 +111,7 @@ private:
     QUdpSocket *    udpSocket;
     QSettings *     configIni;
     QThread *       thread;
+    qint32          timer1s;
 
     BspConfig::RadarType radarType;
 
@@ -142,7 +144,6 @@ private:
 
     DevInfo *                  devInfo;
     QVector<DevInfo::ParaInfo> sysParaInfo;
-    QTimer *                   autoReadInfoTimer;
 
     SaveWave *      ssd;
     GpsInfo *       gps;
