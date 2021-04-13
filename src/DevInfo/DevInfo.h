@@ -31,25 +31,25 @@ public:
 
     DevInfo()
     {
-        sysPara.append({"FPGA版本       : ", {}, 248, 8});
-        sysPara.append({"激光重频(Hz)       : ", {}, 0, 4});
-        sysPara.append({"AD采样长度     : ", {}, 4, 4});
-        sysPara.append({"AD预览抽样率   : ", {}, 8, 4});
-        sysPara.append({"相机触发频率(s)   : ", {}, 12, 4});
-        sysPara.append({"波形存储状态   : ", {}, 16, 4});
-        sysPara.append({"AD采集状态     : ", {}, 20, 4});
-        //        sysPara.append({"相机触发状态   : ", {}, 24, 4});
-        sysPara.append({"SSD链接状态    : ", {}, 28, 4});
-        sysPara.append({"sata读写状态机    : ", {}, 32, 1});
-        sysPara.append({"文件读写状态机       : ", {}, 33, 3});
-        //        sysPara.append({"保留未用       : ", {}, 36, 4});
+        sysPara.append({"FPGA版本: ", QByteArray(4, 0x00), 248, 8});
+        sysPara.append({"激光重频(Hz): ", QByteArray(4, 0x00), 0, 4});
+        sysPara.append({"AD采样长度: ", QByteArray(4, 0x00), 4, 4});
+        sysPara.append({"AD预览抽样率: ", QByteArray(4, 0x00), 8, 4});
+        sysPara.append({"相机触发频率(s): ", QByteArray(4, 0x00), 12, 4});
+        sysPara.append({"波形存储状态: ", QByteArray(4, 0x00), 16, 4});
+        sysPara.append({"AD采集状态: ", QByteArray(4, 0x00), 20, 4});
+        //        sysPara.append({"相机触发状态   : " , QByteArray(4, 0x00), 24, 4});
+        sysPara.append({"SSD链接状态: ", QByteArray(4, 0x00), 28, 4});
+        sysPara.append({"sata读写状态机: ", QByteArray(1, 0x00), 32, 1});
+        sysPara.append({"文件读写状态机: ", QByteArray(3, 0x00), 33, 3});
+        //        sysPara.append({"保留未用       : " , QByteArray(4, 0x00), 36, 4});
 
-        sysPara.append({"第一段起始位置 : ", {}, 60, 4});
-        sysPara.append({"第一段采样长度 : ", {}, 64, 4});
-        sysPara.append({"第二段起始位置 : ", {}, 68, 4});
-        sysPara.append({"第二段采样长度 : ", {}, 72, 4});
-        sysPara.append({"和阈值         : ", {}, 76, 4});
-        sysPara.append({"值阈值         : ", {}, 80, 4});
+        sysPara.append({"第一段起始位置: ", QByteArray(4, 0x00), 60, 4});
+        sysPara.append({"第一段采样长度: ", QByteArray(4, 0x00), 64, 4});
+        sysPara.append({"第二段起始位置: ", QByteArray(4, 0x00), 68, 4});
+        sysPara.append({"第二段采样长度: ", QByteArray(4, 0x00), 72, 4});
+        sysPara.append({"和阈值: ", QByteArray(4, 0x00), 76, 4});
+        sysPara.append({"值阈值: ", QByteArray(4, 0x00), 80, 4});
     }
 
     bool getSysPara(QVector<DevInfo::ParaInfo>& ret);

@@ -58,11 +58,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget_sysInfo->setRowCount(sysParaInfo.length());
     ui->tableWidget_sysInfo->setHorizontalHeaderLabels(QStringList() << "参数"
                                                                      << "值");
-    ui->tableWidget_sysInfo->verticalHeader()->setVisible(false);  //隐藏列表头
-                                                                   //    ui->tableWidget_sysInfo->horizontalHeader()->setSectionResizeMode(
-                                                                   //        QHeaderView::Stretch);  //x先自适应宽度
-                                                                   //    ui->tableWidget_sysInfo->horizontalHeader()
-    //        ->setSectionResizeMode(0, QHeaderView::ResizeToContents); //然后设置要根据内容使用宽度的列
+    ui->tableWidget_sysInfo->verticalHeader()->setVisible(false);                                         //隐藏列表头
+                                                                                                          //    ui->tableWidget_sysInfo->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);              //x先自适应宽度
+    ui->tableWidget_sysInfo->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);  //然后设置要根据内容使用宽度的列
 
     for(int i = 0; i < sysParaInfo.length(); i++)
     {
@@ -1036,10 +1034,13 @@ void MainWindow::timerEvent(QTimerEvent *event)
     if(timer1s == event->timerId())
     {
         // 判断sata状态机是否正常，从而得知文件结束信息有没有正确写入到硬盘
-        //        if(sysStatus.udpLinkStatus & sysStatus.ssdLinkStatus & (!sysStatus.ssdStoreStatus))
-        //        {
-        //            sysParaInfo[8].value
-        //        }
+        if(sysStatus.udpLinkStatus & sysStatus.ssdLinkStatus & (!sysStatus.ssdStoreStatus))
+        {
+            if(sysParaInfo[8].value.toHex().toUInt() != 0x01)
+            {
+                ui->statusBar->showMessage("文件结束信息异常，没有写入硬盘", 0);
+            }
+        }
 
         if(ui->checkBox_autoReadSysInfo->isChecked())
             getSysInfo();

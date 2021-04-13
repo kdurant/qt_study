@@ -9,8 +9,11 @@ bool DevInfo::getSysPara(QVector<DevInfo::ParaInfo>& ret)
     connect(this, &DevInfo::responseDataReady, &waitLoop, &QEventLoop::quit);
     QTimer::singleShot(10, &waitLoop, &QEventLoop::quit);
     waitLoop.exec();
-    if(recvData.size() != 256)
+    if(recvData.size() != 256)  // 没有收到响应数据
+    {
+        ret = sysPara;
         return false;
+    }
 
     for(int i = 0; i < sysPara.length(); i++)
     {
