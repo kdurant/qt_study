@@ -3,6 +3,7 @@
 
 #include <QtCore>
 #include "protocol.h"
+#include "bsp_config.h"
 class DevInfo : public QObject
 {
     Q_OBJECT
