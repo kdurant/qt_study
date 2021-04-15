@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -85,10 +85,25 @@ MainWindow::~MainWindow()
 
 void MainWindow::initParameter()
 {
+    if(!configIni->contains("System/radarType"))
+    {
+        QMessageBox::warning(this, "warning", "缺少配置文件");
+    }
     QString   localHostName = QHostInfo::localHostName();
     QHostInfo info          = QHostInfo::fromName(localHostName);
 
-    localIP   = read_ip_address();
+    if(configIni->value("System/mode").toString() == "debug")
+        localIP = "127.0.0.1";
+    else
+    {
+        localIP = read_ip_address();
+        if(!localIP.contains("192.168.1"))
+        {
+            QMessageBox::warning(this, "警告", "请修改主机IP地址(192.168.1.xxx)");
+            ui->statusBar->showMessage(tr("请修改主机IP地址(192.168.1.xxx"), 3);
+        }
+    }
+
     localPort = configIni->value("System/localPort").toUInt();
 
     //    radarType = configIni->value("System/radarType").toInt();
@@ -289,13 +304,6 @@ void MainWindow::uiConfig()
 
 void MainWindow::udpBind()
 {
-    if(!localIP.contains("192.168.1"))
-    {
-        QMessageBox::warning(this, "警告", "请修改主机IP地址(192.168.1.xxx)");
-        ui->statusBar->showMessage(tr("请修改主机IP地址(192.168.1.xxx"), 3);
-        //        return;
-    }
-
     udpSocket = new QUdpSocket(this);
     if(!udpSocket->bind(QHostAddress(localIP), localPort))
         QMessageBox::warning(NULL, "警告", "雷达连接失败");
@@ -929,29 +937,26 @@ void MainWindow::initSignalSlot()
     connect(attitude, &AttitudeSensor::sendAttitudeResult, this, [this](AttitudeSensor::AttitudeInfo accelerate, AttitudeSensor::AttitudeInfo angularVelocity, AttitudeSensor::AttitudeInfo angular, AttitudeSensor::AttitudeInfo magneticField) {
         QList<QTreeWidgetItem *> itemList;
 
-        itemList = ui->treeWidget_attitude->findItems("加速度", Qt::MatchExactly);
-        itemList.first()->child(0)->setText(1, QString::number(accelerate.x, 'g', 6));
-        itemList.first()->child(1)->setText(1, QString::number(accelerate.y, 'g', 6));
-        itemList.first()->child(2)->setText(1, QString::number(accelerate.z, 'g', 6));
-        itemList.first()->child(3)->setText(1, QString::number(accelerate.temp, 'g', 6));
+        itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
+        itemList.first()->child(0)->child(0)->setText(1, QString::number(accelerate.x, 'g', 6));
+        itemList.first()->child(0)->child(1)->setText(1, QString::number(accelerate.y, 'g', 6));
+        itemList.first()->child(0)->child(2)->setText(1, QString::number(accelerate.z, 'g', 6));
+        itemList.first()->child(0)->child(3)->setText(1, QString::number(accelerate.temp, 'g', 6));
 
-        itemList = ui->treeWidget_attitude->findItems("角速度", Qt::MatchExactly);
-        itemList.first()->child(0)->setText(1, QString::number(angularVelocity.x, 'g', 6));
-        itemList.first()->child(1)->setText(1, QString::number(angularVelocity.y, 'g', 6));
-        itemList.first()->child(2)->setText(1, QString::number(angularVelocity.z, 'g', 6));
-        itemList.first()->child(3)->setText(1, QString::number(angularVelocity.temp, 'g', 6));
+        itemList.first()->child(1)->child(0)->setText(1, QString::number(angularVelocity.x, 'g', 6));
+        itemList.first()->child(1)->child(1)->setText(1, QString::number(angularVelocity.y, 'g', 6));
+        itemList.first()->child(1)->child(2)->setText(1, QString::number(angularVelocity.z, 'g', 6));
+        itemList.first()->child(1)->child(3)->setText(1, QString::number(angularVelocity.temp, 'g', 6));
 
-        itemList = ui->treeWidget_attitude->findItems("角度", Qt::MatchExactly);
-        itemList.first()->child(0)->setText(1, QString::number(angular.x, 'g', 6));
-        itemList.first()->child(1)->setText(1, QString::number(angular.y, 'g', 6));
-        itemList.first()->child(2)->setText(1, QString::number(angular.z, 'g', 6));
-        itemList.first()->child(3)->setText(1, QString::number(angular.temp, 'g', 6));
+        itemList.first()->child(2)->child(0)->setText(1, QString::number(angular.x, 'g', 6));
+        itemList.first()->child(2)->child(1)->setText(1, QString::number(angular.y, 'g', 6));
+        itemList.first()->child(2)->child(2)->setText(1, QString::number(angular.z, 'g', 6));
+        itemList.first()->child(2)->child(3)->setText(1, QString::number(angular.temp, 'g', 6));
 
-        itemList = ui->treeWidget_attitude->findItems("磁场", Qt::MatchExactly);
-        itemList.first()->child(0)->setText(1, QString::number(magneticField.x, 'g', 6));
-        itemList.first()->child(1)->setText(1, QString::number(magneticField.y, 'g', 6));
-        itemList.first()->child(2)->setText(1, QString::number(magneticField.z, 'g', 6));
-        itemList.first()->child(3)->setText(1, QString::number(magneticField.temp, 'g', 6));
+        itemList.first()->child(3)->child(0)->setText(1, QString::number(magneticField.x, 'g', 6));
+        itemList.first()->child(3)->child(1)->setText(1, QString::number(magneticField.y, 'g', 6));
+        itemList.first()->child(3)->child(2)->setText(1, QString::number(magneticField.z, 'g', 6));
+        itemList.first()->child(3)->child(3)->setText(1, QString::number(magneticField.temp, 'g', 6));
     });
 }
 
