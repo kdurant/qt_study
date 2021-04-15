@@ -14,17 +14,15 @@ validUdpPacket = []
 把需要的数据帧先放到队列里
 """
 for i in cap:
-    if len(i.layers) == 4 and str(i.layers[3]) == 'DATA':
-        validUdpPacket.append(i.data.data)
+    if str(i.highest_layer) == 'DATA' and i.data.data.find('80600001') == 24:
+        print(i.data.data)
 
-msg = binascii.a2b_hex(validUdpPacket[0])
-s.sendto(msg, address)
-
-#for frame in validUdpPacket:
-#msg = str(frame)
-#print(msg)
-#msg = binascii.a2b_hex(msg)
+#msg = binascii.a2b_hex(validUdpPacket[0])
 #s.sendto(msg, address)
-#time.sleep(0.1)
+
+for frame in validUdpPacket:
+    msg = binascii.a2b_hex(str(frame))
+    s.sendto(msg, address)
+    time.sleep(0.1)
 
 s.close()

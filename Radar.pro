@@ -112,6 +112,6 @@ DEFINES += SOFT_VERSION=\"\\\"$$VERSION\\\"\"
 TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH
 #TARGET = Radar_$$VERSION
 
-DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
+#DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
 
-include($$PWD/deploy.pri)
+#include($$PWD/deploy.pri)
