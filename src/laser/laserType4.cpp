@@ -42,8 +42,8 @@ bool LaserType4::close()
 bool LaserType4::setPower(quint16 power)
 {
     QVector<quint8> command{0x55, 0xAA, 0x0A, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x33, 0xcc};
-    command[6] = power & 0xff;
-    command[7] = (power >> 8) & 0xff;
+    command[6] = (power >> 8) & 0xff;
+    command[7] = power & 0xff;
     command[8] = checksum(command);
     QByteArray frame;
     for(int i = 0; i < command.length(); i++)
