@@ -78,6 +78,8 @@ signals:
     void ADDataReady(QByteArray &data);
     void DADataReady(QByteArray &data);
 
+    void errorDataReady(QString &data);
+
     void remoteUpdateDataReady(QByteArray data);
 
     /**

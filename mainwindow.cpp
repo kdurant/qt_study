@@ -90,22 +90,6 @@ void MainWindow::initParameter()
     {
         QMessageBox::warning(this, "warning", "缺少配置文件");
     }
-    QString   localHostName = QHostInfo::localHostName();
-    QHostInfo info          = QHostInfo::fromName(localHostName);
-
-    if(configIni->value("System/mode").toString() == "debug")
-        localIP = "127.0.0.1";
-    else
-    {
-        localIP = read_ip_address();
-        if(!localIP.contains("192.168.1"))
-        {
-            QMessageBox::warning(this, "警告", "请修改主机IP地址(192.168.1.xxx)");
-            ui->statusBar->showMessage(tr("请修改主机IP地址(192.168.1.xxx"), 3);
-        }
-    }
-
-    localPort = configIni->value("System/localPort").toUInt();
 
     //    radarType = configIni->value("System/radarType").toInt();
     switch(configIni->value("System/radarType").toInt())
@@ -134,7 +118,27 @@ void MainWindow::initParameter()
             break;
     }
 
-    deviceIP   = QHostAddress(configIni->value("System/radarIP").toString());
+    QString   localHostName = QHostInfo::localHostName();
+    QHostInfo info          = QHostInfo::fromName(localHostName);
+
+    if(configIni->value("System/mode").toString() == "debug")
+        localIP = "127.0.0.1";
+    else
+    {
+        localIP = read_ip_address();
+        if(!localIP.contains("192.168.1"))
+        {
+            QMessageBox::warning(this, "警告", "请修改主机IP地址(192.168.1.xxx)");
+            ui->statusBar->showMessage(tr("请修改主机IP地址(192.168.1.xxx"), 3);
+        }
+    }
+
+    localPort = configIni->value("System/localPort").toUInt();
+
+    if(configIni->value("System/mode").toString() == "debug")
+        deviceIP = QHostAddress("127.0.0.1");
+    else
+        deviceIP = QHostAddress(configIni->value("System/radarIP").toString());
     devicePort = configIni->value("System/radarPort").toInt();
 
     if(devicePort == 0)
@@ -341,6 +345,10 @@ void MainWindow::initSignalSlot()
     // 发送已经打包好的数据
     connect(dispatch, &ProtocolDispatch::frameDataReady, this, [this](QByteArray frame) {
         udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+    });
+
+    connect(dispatch, &ProtocolDispatch::errorDataReady, this, [this](QString &error) {
+        ui->statusBar->showMessage(error, 3);
     });
 
     /*

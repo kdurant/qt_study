@@ -54,7 +54,8 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
             emit DADataReady(data);
             break;
         default:
-            QMessageBox::critical(NULL, "错误", "接受到错误的UDP数据包");
+            QString error = "Undefined command received!";
+            emit    errorDataReady(error);
             break;
     }
 }
