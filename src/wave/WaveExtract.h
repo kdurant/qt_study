@@ -15,8 +15,9 @@ public:
     // 存放采样数据中，某个具体通道的具体哪一段数据
     struct WaveformInfo
     {
-        QVector<double> pos;    // 相当于x轴
-        QVector<double> value;  // 相当于y轴
+        quint32         motorCnt;  // 电机位置计数
+        QVector<double> pos;       // 相当于x轴
+        QVector<double> value;     // 相当于y轴
     };
 
     WaveExtract() = default;

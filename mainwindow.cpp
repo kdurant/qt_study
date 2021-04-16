@@ -1045,9 +1045,6 @@ void MainWindow::plotLineSettings()
 
 void MainWindow::plotColormapSettings()
 {
-    QList<QCustomPlot *> widget2CustomPlotList;
-    QList<QCPColorMap *> widget2QCPColorMapList;
-
     QVBoxLayout *widget2VBox;
     widget2VBox = new QVBoxLayout;
 
@@ -1072,10 +1069,6 @@ void MainWindow::plotColormapSettings()
         customPlot->xAxis->setLabel("电机角度(°)");
         customPlot->yAxis->setLabel("采样值");
 
-        // set up colorMap
-        // key   = 第n帧 (200 帧)
-        // value = 距离 采样点 (1024点)
-        // data  = 幅值 采样值
         QCPColorMap *colorMap = new QCPColorMap(customPlot->xAxis, customPlot->yAxis);
         widget2QCPColorMapList.append(colorMap);
 
@@ -1121,6 +1114,34 @@ void MainWindow::plotColormapSettings()
 
         // rescale the key and value axes so the whole color map is visible;
         customPlot->rescaleAxes();
+    }
+}
+
+void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
+{
+    QCustomPlot *    customPlot;
+    QCPColorMap *    colorMap;
+    QCPColorMapData *colorMapData;
+    if(allCh.size() == 8)
+    {
+        for(int i = 0; i < 4; ++i)
+        {
+            customPlot   = widget2CustomPlotList.at(i);
+            colorMap     = widget2QCPColorMapList.at(i);
+            colorMapData = colorMap->data();
+
+            for(int keyIndex = 0; keyIndex < allCh[0].pos.length(); ++keyIndex)
+            {
+                int    key   = (int)allCh[i * 2].pos[keyIndex];
+                double value = allCh[i * 2].value[keyIndex];
+
+                int frameN = (int)((allCh[i * 2].motorCnt / 163840.0) * 180);
+                colorMapData->setCell(frameN, key, value);
+            }
+
+            colorMap->rescaleDataRange();
+            customPlot->replot();
+        }
     }
 }
 
@@ -1258,6 +1279,9 @@ void MainWindow::on_bt_showWave_clicked()
             if(autoZoomPlot)
                 ui->sampleDataPlot->rescaleAxes();
             ui->sampleDataPlot->replot();  // 耗时1-20ms，造成界面上的卡顿
+
+            // ///////////
+            updateColormap(allCh);
 
             if(interval_time == 0)
             {

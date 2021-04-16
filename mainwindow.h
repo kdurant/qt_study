@@ -46,6 +46,7 @@
 #include "SaveWave.h"
 #include "gpsInfo.h"
 #include "AttitudeSensor.h"
+#include "qcustomplot.h"
 
 namespace Ui
 {
@@ -71,6 +72,7 @@ public:
 
     void plotLineSettings(void);
     void plotColormapSettings(void);
+    void updateColormap(QVector<WaveExtract::WaveformInfo> &allCh);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -149,6 +151,9 @@ private:
     SaveWave *      ssd;
     GpsInfo *       gps;
     AttitudeSensor *attitude;
+
+    QList<QCustomPlot *> widget2CustomPlotList;
+    QList<QCPColorMap *> widget2QCPColorMapList;
 };
 
 #endif  // MAINWINDOW_H

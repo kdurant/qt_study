@@ -56,6 +56,16 @@ public:
         quint32 ret = ba.toHex().toUInt(nullptr, 16);
         return ret;
     }
+
+    // ba必须有4个元素
+    static quint32 ba2int(QVector<quint8> ba)
+    {
+        if(ba.size() != 4)
+            return 0;
+
+        quint32 ret = (ba[0] << 24) + (ba[1] << 16) + (ba[2] << 8) + (ba[3] << 0);
+        return ret;
+    }
 };
 
 #endif  // BSP_CONFIG_H

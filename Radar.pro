@@ -88,6 +88,7 @@ INCLUDEPATH += ./src/ADControll
 INCLUDEPATH += ./src/DAControll
 INCLUDEPATH += ./src/gpsInfo
 INCLUDEPATH += ./src/attitudeSensor
+INCLUDEPATH += ./src/third_lib/QCustomPlot/
 
 
 FORMS += \

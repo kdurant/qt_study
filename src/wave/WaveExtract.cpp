@@ -37,6 +37,7 @@ int WaveExtract::getWaveform(BspConfig::RadarType                type,
     int          start_pos = 0;
     int          len       = 0;
     int          offset    = 88;
+    ch.motorCnt            = BspConfig::ba2int(frameData.mid(76, 4));
 
     quint8 skipPointNum = 0;
     while(offset < frameData.size())
