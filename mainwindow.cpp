@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -52,7 +52,8 @@ MainWindow::MainWindow(QWidget *parent)
     initSignalSlot();
     setToolBar();
 
-    plotSettings();
+    plotLineSettings();
+    plotColormapSettings();
     devInfo->getSysPara(sysParaInfo);
     ui->tableWidget_sysInfo->setColumnCount(2);
     ui->tableWidget_sysInfo->setRowCount(sysParaInfo.length());
@@ -273,6 +274,12 @@ void MainWindow::uiConfig()
     {
         setWindowTitle(tr("水下预警雷达控制软件"));
         ui->lineEdit_radarType->setText("水下预警雷达");
+
+        QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
+        QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
+        ui->comboBox_DAChSelect->addItems(DA1List);
+        ui->comboBox_ADChSelect->addItems(AD1List);
+
         QList<QTreeWidgetItem *> itemList;
         itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
         itemList.first()->setHidden(false);
@@ -984,7 +991,7 @@ void MainWindow::setToolBar()
     });
 }
 
-void MainWindow::plotSettings()
+void MainWindow::plotLineSettings()
 {
     //ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
@@ -1026,6 +1033,87 @@ void MainWindow::plotSettings()
     ui->sampleDataPlot->graph(6)->setName("通道3第一段");
     ui->sampleDataPlot->graph(7)->setPen(QPen(Qt::darkCyan));
     ui->sampleDataPlot->graph(7)->setName("通道3第二段");
+}
+
+void MainWindow::plotColormapSettings()
+{
+    QList<QCustomPlot *> widget2CustomPlotList;
+    QList<QCPColorMap *> widget2QCPColorMapList;
+
+    QVBoxLayout *widget2VBox;
+    widget2VBox = new QVBoxLayout;
+
+    ui->widget2->setStyleSheet("QWidget#widget2{background-color:gray;}");
+    ui->widget2->setLayout(widget2VBox);
+
+    for(int i = 0; i < 4; ++i)
+    {
+        QCustomPlot *customPlot = new QCustomPlot;
+        widget2CustomPlotList.append(customPlot);
+        widget2VBox->addWidget(customPlot, 4);
+    }
+
+    for(int i = 0; i < 4; ++i)
+    {
+        // configure axis rect
+        QCustomPlot *customPlot = widget2CustomPlotList.at(i);
+
+        customPlot->setInteractions(QCP::Interaction::iRangeDrag |
+                                    QCP::Interaction::iRangeZoom);
+        customPlot->axisRect()->setupFullAxesBox(true);  //四刻度轴
+        customPlot->xAxis->setLabel("电机角度(°)");
+        customPlot->yAxis->setLabel("采样值");
+
+        // set up colorMap
+        // key   = 第n帧 (200 帧)
+        // value = 距离 采样点 (1024点)
+        // data  = 幅值 采样值
+        QCPColorMap *colorMap = new QCPColorMap(customPlot->xAxis, customPlot->yAxis);
+        widget2QCPColorMapList.append(colorMap);
+
+        int nx = 180;
+        int ny = 1000;
+
+        colorMap->data()->setSize(nx, ny);                                 // nx*ny(cells)
+        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 1000));  // span the coordinate range
+        colorMap->setDataScaleType(QCPAxis::ScaleType::stLinear);
+
+        // add color scale:
+        QCPColorScale *colorScale = new QCPColorScale(customPlot);
+        customPlot->plotLayout()->addElement(0, 1, colorScale);  // add it to the right of the main axis rect
+        colorScale->setType(QCPAxis::atRight);                   // scale shall be vertical bar with tick/axis labels right(default)
+        colorMap->setColorScale(colorScale);
+        colorScale->axis()->setLabel(QString("通道%1采样值").arg(i + 1));  // color scale name
+
+        // set the color gradient of the color map to one of the presets:
+        QCPColorGradient colorGradient;
+
+        QMap<double, QColor> map;
+        QList<QColor>        list;
+
+        list.append(Qt::black);
+        list.append(Qt::blue);
+        list.append(Qt::darkGray);
+        list.append(Qt::white);
+        for(int i = 0; i < 4; ++i)
+        {
+            map[i * 0.15 + 0.3] = list.at(i % list.size());
+        }
+        colorGradient.setColorStops(map);
+
+        colorGradient.loadPreset(QCPColorGradient::gpPolar);
+        colorMap->setGradient(colorGradient);
+
+        // make sure the axis rect and color scale synchronize their bottom and top margins.
+        QCPMarginGroup *marginGroup = new QCPMarginGroup(customPlot);
+        customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
+
+        // rescale the data dimension such that all data points in the span lie in the visualized by the color gradient
+        colorMap->rescaleDataRange();
+
+        // rescale the key and value axes so the whole color map is visible;
+        customPlot->rescaleAxes();
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -1244,20 +1332,20 @@ void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
 {
     QList<QTreeWidgetItem *> itemList;
 
-    itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
+    itemList = ui->treeWidget_laser->findItems("电流(mA)", Qt::MatchExactly);
     itemList.first()->setText(1, QString::number(info.current * 10));
 
-    itemList = ui->treeWidget_laser->findItems("激光头温度", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.headTemp / 10000, 'g', 5));
+    itemList = ui->treeWidget_laser->findItems("激光头温度(°)", Qt::MatchExactly);
+    itemList.first()->setText(1, QString::number(info.headTemp));
 
-    itemList = ui->treeWidget_laser->findItems("LD温度", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.ldTemp / 10000, 'g', 5));
+    itemList = ui->treeWidget_laser->findItems("LD温度(°)", Qt::MatchExactly);
+    itemList.first()->setText(1, QString::number(info.ldTemp * 0.0001, 'f', 4));
 
-    itemList = ui->treeWidget_laser->findItems("激光晶体温度", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.laserCrystalTemp / 10000, 'g', 5));
+    itemList = ui->treeWidget_laser->findItems("激光晶体温度(°)", Qt::MatchExactly);
+    itemList.first()->setText(1, QString::number(info.laserCrystalTemp * 0.0001, 'f', 4));
 
-    itemList = ui->treeWidget_laser->findItems("倍频晶体温度", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.multiCrystalTemp / 10000, 'g', 5));
+    itemList = ui->treeWidget_laser->findItems("倍频晶体温度(°)", Qt::MatchExactly);
+    itemList.first()->setText(1, QString::number(info.multiCrystalTemp * 0.0001, 'f', 4));
 
     itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
     itemList.first()

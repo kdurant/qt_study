@@ -69,7 +69,8 @@ public:
     void initSignalSlot();
     void setToolBar(void);
 
-    void plotSettings(void);
+    void plotLineSettings(void);
+    void plotColormapSettings(void);
 
 protected:
     void closeEvent(QCloseEvent *event);

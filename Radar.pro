@@ -109,8 +109,8 @@ DEFINES += GIT_DATE=\\\"$$GIT_DATE\\\"
 VERSION = 0.10
 DEFINES += SOFT_VERSION=\"\\\"$$VERSION\\\"\"
 
-TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH
-#TARGET = Radar_$$VERSION
+#TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH
+TARGET = Radar_$$VERSION
 
 #DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
 

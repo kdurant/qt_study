@@ -57,7 +57,7 @@ public:
 private:
     bool       isRecvNewData;  // 是否收到数据
     QByteArray recvData;
-    LaserInfo  info;
+    LaserInfo  info{0, 0, 0, 0, 0, 0, 0};
 
     quint8 checksum(QVector<quint8>& data)
     {
@@ -74,7 +74,22 @@ public slots:
     void setNewData(QByteArray& data)
     {
         recvData = data;
-        getStatus(data);
+
+        QByteArray frame;
+
+        frame = data.mid(0, 40);
+        getStatus(frame);
+
+        frame = data.mid(40, 40);
+        getStatus(frame);
+
+        frame = data.mid(80, 40);
+        getStatus(frame);
+
+        frame = data.mid(120);
+        getStatus(frame);
+
+        emit laserInfoReady(info);
     }
 };
 

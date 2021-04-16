@@ -14,165 +14,177 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3">
+   <layout class="QVBoxLayout" name="verticalLayout_12">
     <item>
-     <widget class="QFrame" name="frame_2">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+     <widget class="QTabWidget" name="tabWidget_2">
+      <property name="currentIndex">
+       <number>0</number>
       </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="50,0">
-       <item>
-        <widget class="QCustomPlot" name="sampleDataPlot" native="true">
-         <layout class="QHBoxLayout" name="horizontalLayout"/>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_8">
-         <property name="title">
-          <string>图表设置</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_18">
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="lineEdit_axisXmin">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>0</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="4">
-           <widget class="QLabel" name="label_36">
-            <property name="text">
-             <string>y轴max</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QLineEdit" name="lineEdit_axisXmax">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>1024</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QLabel" name="label_32">
-            <property name="text">
-             <string>x轴max</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="3">
-           <widget class="QLineEdit" name="lineEdit_axisYmin">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>100</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="label_21">
-            <property name="text">
-             <string>x轴min</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="checkBox_ch0Enable">
-            <property name="text">
-             <string>ch0</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QCheckBox" name="checkBox_ch1Enable">
-            <property name="text">
-             <string>ch1</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="4">
-           <widget class="QLineEdit" name="lineEdit_axisYmax">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>1000</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="3">
-           <widget class="QCheckBox" name="checkBox_ch2Enable">
-            <property name="text">
-             <string>ch2</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="4">
-           <widget class="QCheckBox" name="checkBox_ch3Enable">
-            <property name="text">
-             <string>ch3</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QLabel" name="label_34">
-            <property name="text">
-             <string>y轴min</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="5">
-           <widget class="QCheckBox" name="checkBox_autoZoom">
-            <property name="text">
-             <string>自动缩放</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="5">
-           <widget class="QPushButton" name="btn_axisRangeSet">
-            <property name="text">
-             <string>设置坐标范围</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>信号预览</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="5,0">
+        <item>
+         <widget class="QCustomPlot" name="sampleDataPlot" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout"/>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_8">
+          <property name="title">
+           <string>图表设置</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_18">
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="lineEdit_axisXmin">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="4">
+            <widget class="QLabel" name="label_36">
+             <property name="text">
+              <string>y轴max</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLineEdit" name="lineEdit_axisXmax">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>1024</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QLabel" name="label_32">
+             <property name="text">
+              <string>x轴max</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLineEdit" name="lineEdit_axisYmin">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>100</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="label_21">
+             <property name="text">
+              <string>x轴min</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="checkBox_ch0Enable">
+             <property name="text">
+              <string>ch0</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QCheckBox" name="checkBox_ch1Enable">
+             <property name="text">
+              <string>ch1</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="4">
+            <widget class="QLineEdit" name="lineEdit_axisYmax">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>1000</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QCheckBox" name="checkBox_ch2Enable">
+             <property name="text">
+              <string>ch2</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="4">
+            <widget class="QCheckBox" name="checkBox_ch3Enable">
+             <property name="text">
+              <string>ch3</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLabel" name="label_34">
+             <property name="text">
+              <string>y轴min</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="5">
+            <widget class="QCheckBox" name="checkBox_autoZoom">
+             <property name="text">
+              <string>自动缩放</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="5">
+            <widget class="QPushButton" name="btn_axisRangeSet">
+             <property name="text">
+              <string>设置坐标范围</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_6">
+       <attribute name="title">
+        <string>色彩映射</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <item>
+         <widget class="QWidget" name="widget2" native="true"/>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -183,7 +195,7 @@
      <x>0</x>
      <y>0</y>
      <width>1274</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -618,8 +630,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>214</width>
-              <height>115</height>
+              <width>171</width>
+              <height>91</height>
              </rect>
             </property>
             <attribute name="label">
@@ -677,8 +689,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>329</width>
-              <height>143</height>
+              <width>291</width>
+              <height>288</height>
              </rect>
             </property>
             <attribute name="label">
@@ -732,8 +744,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>214</width>
-              <height>146</height>
+              <width>171</width>
+              <height>117</height>
              </rect>
             </property>
             <attribute name="label">
@@ -940,8 +952,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>315</width>
-              <height>713</height>
+              <width>274</width>
+              <height>585</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1320,8 +1332,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>238</width>
-              <height>467</height>
+              <width>194</width>
+              <height>368</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1761,7 +1773,7 @@
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QVBoxLayout" name="verticalLayout_4">
+    <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,1">
      <item>
       <widget class="QGroupBox" name="groupBox_13">
        <property name="title">

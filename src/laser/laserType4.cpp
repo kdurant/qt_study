@@ -75,6 +75,7 @@ void LaserType4::getStatus(QByteArray &data)
         case 0x3f:
             info.multiCrystalTemp = data.mid(8, 4).toHex().toUInt();
             break;
+        default:
+            break;
     }
-    emit laserInfoReady(info);
 }
