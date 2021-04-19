@@ -1003,8 +1003,8 @@ void MainWindow::setToolBar()
 
 void MainWindow::plotLineSettings()
 {
-    //ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
+    //    ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    //ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
     ui->sampleDataPlot->legend->setVisible(true);  //右上角指示曲线的缩略框
     ui->sampleDataPlot->xAxis->setLabel(QStringLiteral("时间：ns"));
     ui->sampleDataPlot->yAxis->setLabel(QStringLiteral("AD采样值"));
@@ -1077,10 +1077,10 @@ void MainWindow::plotColormapSettings()
         widget2QCPColorMapList.append(colorMap);
 
         int nx = 180;
-        int ny = 400;
+        int ny = 1024;
 
-        colorMap->data()->setSize(nx, ny);                                  // nx*ny(cells)
-        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(100, 500));  // span the coordinate range
+        colorMap->data()->setSize(nx, ny);                                 // nx*ny(cells)
+        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 1024));  // span the coordinate range
         colorMap->setDataScaleType(QCPAxis::ScaleType::stLinear);
 
         // add color scale:
@@ -1139,7 +1139,19 @@ void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
                 offset = i * 2;
 
             int    key   = (int)allCh[offset].pos[keyIndex];
-            double value = allCh[offset].value[keyIndex];
+            double value = 0;
+            if(i == 0)
+            {
+                value = 100;
+                if(key == 200)
+                    value = 200;
+                if(key == 250)
+                    value = 250;
+                if(key == 300)
+                    value = 300;
+            }
+            else
+                value = allCh[offset].value[keyIndex];
 
             int frameN = (int)((allCh[offset].motorCnt / 163840.0) * 180);
             colorMapData->setCell(frameN, key, value);
