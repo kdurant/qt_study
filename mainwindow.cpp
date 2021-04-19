@@ -766,7 +766,7 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->btn_motorMovePostion, &QPushButton::pressed, this, [this]() {
-        quint32 position = (ui->lineEdit_motorTargetPosition->text().toDouble(nullptr) / 360) * 163840;
+        quint32 position = ui->lineEdit_motorTargetPosition->text().toUInt();
         epos2Driver->moveToPosition(position);
     });
 

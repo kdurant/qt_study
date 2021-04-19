@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget_2">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
@@ -759,15 +759,15 @@
          <item>
           <widget class="QToolBox" name="toolBox_motor">
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="page">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>171</width>
-              <height>91</height>
+              <width>291</width>
+              <height>288</height>
              </rect>
             </property>
             <attribute name="label">
@@ -787,20 +787,6 @@
                </property>
               </spacer>
              </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_9">
-               <property name="text">
-                <string>目标位置(°)</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QPushButton" name="btn_motorMovePostion">
-               <property name="text">
-                <string>定位</string>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="1">
               <widget class="QLineEdit" name="lineEdit_motorTargetPosition">
                <property name="sizePolicy">
@@ -808,6 +794,20 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_9">
+               <property name="text">
+                <string>目标位置(qc)</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QPushButton" name="btn_motorMovePostion">
+               <property name="text">
+                <string>定位</string>
                </property>
               </widget>
              </item>
