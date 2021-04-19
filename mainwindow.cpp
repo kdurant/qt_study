@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -449,6 +449,8 @@ void MainWindow::initSignalSlot()
         if(autoZoomPlot)
             ui->sampleDataPlot->rescaleAxes();
         ui->sampleDataPlot->replot();
+
+        updateColormap(allCh);
     });
 
     /*
@@ -1068,15 +1070,17 @@ void MainWindow::plotColormapSettings()
         customPlot->axisRect()->setupFullAxesBox(true);  //四刻度轴
         customPlot->xAxis->setLabel("电机角度(°)");
         customPlot->yAxis->setLabel("采样值");
+        //if(i != 3)
+        //customPlot->hide();
 
         QCPColorMap *colorMap = new QCPColorMap(customPlot->xAxis, customPlot->yAxis);
         widget2QCPColorMapList.append(colorMap);
 
         int nx = 180;
-        int ny = 1000;
+        int ny = 400;
 
-        colorMap->data()->setSize(nx, ny);                                 // nx*ny(cells)
-        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 1000));  // span the coordinate range
+        colorMap->data()->setSize(nx, ny);                                  // nx*ny(cells)
+        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(100, 500));  // span the coordinate range
         colorMap->setDataScaleType(QCPAxis::ScaleType::stLinear);
 
         // add color scale:
@@ -1102,7 +1106,7 @@ void MainWindow::plotColormapSettings()
         }
         colorGradient.setColorStops(map);
 
-        colorGradient.loadPreset(QCPColorGradient::gpPolar);
+        colorGradient.loadPreset(QCPColorGradient::gpSpectrum);
         colorMap->setGradient(colorGradient);
 
         // make sure the axis rect and color scale synchronize their bottom and top margins.
@@ -1122,26 +1126,27 @@ void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
     QCustomPlot *    customPlot;
     QCPColorMap *    colorMap;
     QCPColorMapData *colorMapData;
-    if(allCh.size() == 8)
+    int              offset = 0;
+    for(int i = 0; i < 4; ++i)
     {
-        for(int i = 0; i < 4; ++i)
+        customPlot   = widget2CustomPlotList.at(i);
+        colorMap     = widget2QCPColorMapList.at(i);
+        colorMapData = colorMap->data();
+
+        for(int keyIndex = 0; keyIndex < allCh[0].pos.length(); ++keyIndex)
         {
-            customPlot   = widget2CustomPlotList.at(i);
-            colorMap     = widget2QCPColorMapList.at(i);
-            colorMapData = colorMap->data();
+            if(allCh.size() == 8)
+                offset = i * 2;
 
-            for(int keyIndex = 0; keyIndex < allCh[0].pos.length(); ++keyIndex)
-            {
-                int    key   = (int)allCh[i * 2].pos[keyIndex];
-                double value = allCh[i * 2].value[keyIndex];
+            int    key   = (int)allCh[offset].pos[keyIndex];
+            double value = allCh[offset].value[keyIndex];
 
-                int frameN = (int)((allCh[i * 2].motorCnt / 163840.0) * 180);
-                colorMapData->setCell(frameN, key, value);
-            }
-
-            colorMap->rescaleDataRange();
-            customPlot->replot();
+            int frameN = (int)((allCh[offset].motorCnt / 163840.0) * 180);
+            colorMapData->setCell(frameN, key, value);
         }
+
+        colorMap->rescaleDataRange();
+        customPlot->replot();
     }
 }
 
