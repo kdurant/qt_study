@@ -254,7 +254,7 @@
             </widget>
            </item>
            <item row="1" column="3">
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="btn_colorMap">
              <property name="text">
               <string>设置</string>
              </property>
@@ -289,28 +289,28 @@
             </widget>
            </item>
            <item row="3" column="0">
-            <widget class="QLineEdit" name="lineEdit_colorMap0">
+            <widget class="QLineEdit" name="lineEdit_colorMapXmin">
              <property name="text">
               <string>-90</string>
              </property>
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QLineEdit" name="lineEdit_colorMap1">
+            <widget class="QLineEdit" name="lineEdit_colorMapXmax">
              <property name="text">
               <string>90</string>
              </property>
             </widget>
            </item>
            <item row="3" column="2">
-            <widget class="QLineEdit" name="lineEdit_colorMap2">
+            <widget class="QLineEdit" name="lineEdit_colorMapYmin">
              <property name="text">
               <string>0</string>
              </property>
             </widget>
            </item>
            <item row="3" column="3">
-            <widget class="QLineEdit" name="lineEdit_colorMap3">
+            <widget class="QLineEdit" name="lineEdit_colorMapYmax">
              <property name="text">
               <string>1024</string>
              </property>

@@ -999,6 +999,33 @@ void MainWindow::initSignalSlot()
         QCustomPlot *customPlot = widget2CustomPlotList.at(3);
         customPlot->setVisible(status);
     });
+
+    connect(ui->btn_colorMap, &QPushButton::pressed, this, [this]() {
+        int xMin = ui->lineEdit_colorMapXmin->text().toInt();
+        int xMax = ui->lineEdit_colorMapXmax->text().toInt();
+        int yMin = ui->lineEdit_colorMapYmin->text().toInt();
+        int yMax = ui->lineEdit_colorMapYmax->text().toInt();
+        int nx   = xMax - xMin;
+        int ny   = yMax - yMin;
+        int i    = 0;
+        if(ui->comboBox_colorMap->currentText() == "通道0")
+            i = 0;
+        else if(ui->comboBox_colorMap->currentText() == "通道1")
+            i = 1;
+        else if(ui->comboBox_colorMap->currentText() == "通道2")
+            i = 2;
+        else if(ui->comboBox_colorMap->currentText() == "通道3")
+            i = 3;
+
+        QCPColorMap *colorMap = widget2QCPColorMapList.at(i);
+        colorMap->data()->setSize(nx, ny);  // nx*ny(cells)
+        colorMap->data()->setRange(QCPRange(xMin, xMax), QCPRange(yMin, yMax));
+
+        QCustomPlot *customPlot = widget2CustomPlotList.at(i);
+
+        colorMap->rescaleDataRange();
+        customPlot->replot();
+    });
 }
 
 void MainWindow::setToolBar()
