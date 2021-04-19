@@ -852,6 +852,7 @@ void MainWindow::initSignalSlot()
                 break;
             case BspConfig::RADAR_TPYE_OCEAN:
             case BspConfig::RADAR_TPYE_DRONE:
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
                 if(chNum == 0)
                     digitValue = static_cast<qint32>((analogValue - 8.208) / 0.113);
                 else if(chNum == 1)
