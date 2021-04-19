@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -974,6 +974,30 @@ void MainWindow::initSignalSlot()
         itemList.first()->child(3)->child(1)->setText(1, QString::number(magneticField.y, 'g', 6));
         itemList.first()->child(3)->child(2)->setText(1, QString::number(magneticField.z, 'g', 6));
         itemList.first()->child(3)->child(3)->setText(1, QString::number(magneticField.temp, 'g', 6));
+    });
+
+    /*
+     * 伪彩色图标设置
+     */
+    connect(ui->checkBox_colorMap0_enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool         status     = state == Qt::Unchecked ? false : true;
+        QCustomPlot *customPlot = widget2CustomPlotList.at(0);
+        customPlot->setVisible(status);
+    });
+    connect(ui->checkBox_colorMap1_enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool         status     = state == Qt::Unchecked ? false : true;
+        QCustomPlot *customPlot = widget2CustomPlotList.at(1);
+        customPlot->setVisible(status);
+    });
+    connect(ui->checkBox_colorMap2_enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool         status     = state == Qt::Unchecked ? false : true;
+        QCustomPlot *customPlot = widget2CustomPlotList.at(2);
+        customPlot->setVisible(status);
+    });
+    connect(ui->checkBox_colorMap3_enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool         status     = state == Qt::Unchecked ? false : true;
+        QCustomPlot *customPlot = widget2CustomPlotList.at(3);
+        customPlot->setVisible(status);
     });
 }
 
