@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -763,6 +763,10 @@ void MainWindow::initSignalSlot()
             return;
         }
         ui->btn_ssdSearchSpace->setEnabled(false);
+
+        ui->tableWidget_fileList->clearContents();
+        ui->tableWidget_fileList->setRowCount(1);
+
         SaveWave::ValidFileInfo fileInfo;
         quint32                 startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt();
 
@@ -785,23 +789,20 @@ void MainWindow::initSignalSlot()
         ui->btn_ssdSearchSpace->setEnabled(true);
 
         // 显示已经查询到的文件信息
-        QList<SaveWave::ValidFileInfo> fileList = ssd->getFileList();
-        if(fileList.empty())
-            return;
+    });
+    connect(ssd, &SaveWave::fileDataReady, this, [this](SaveWave::ValidFileInfo &fileInfo) {
+        int row = ui->tableWidget_fileList->rowCount();
+        ui->tableWidget_fileList->setCellWidget(row - 1, 0, new QLabel(fileInfo.name));
 
-        for(int i = 0; i < fileList.size(); ++i)
-        {
-            ui->tableWidget_fileList->setCellWidget(i, 0, new QLabel(fileList.at(i).name));
+        ui->tableWidget_fileList->setCellWidget(row - 1, 1, new QLabel(QString::number(fileInfo.startUnit)));
+        ui->tableWidget_fileList->setCellWidget(row - 1, 2, new QLabel(QString::number(fileInfo.endUnit)));
+        ui->tableWidget_fileList->setCellWidget(row - 1, 3, new QLabel(QString::number(fileInfo.startUnit, 16)));
+        ui->tableWidget_fileList->setCellWidget(row - 1, 4, new QLabel(QString::number(fileInfo.endUnit, 16)));
 
-            ui->tableWidget_fileList->setCellWidget(i, 1, new QLabel(QString::number(fileList.at(i).startUnit)));
-            ui->tableWidget_fileList->setCellWidget(i, 2, new QLabel(QString::number(fileList.at(i).endUnit)));
-            ui->tableWidget_fileList->setCellWidget(i, 3, new QLabel(QString::number(fileList.at(i).startUnit, 16)));
-            ui->tableWidget_fileList->setCellWidget(i, 4, new QLabel(QString::number(fileList.at(i).endUnit, 16)));
-
-            quint32 fileSize = (fileList.at(i).endUnit - fileList.at(i).startUnit) * 16;
-            QString size     = QString("%1GB / %2MB").arg(fileSize / 1024.0 / 1024).arg(fileSize / 1024.0);
-            ui->tableWidget_fileList->setCellWidget(i, 5, new QLabel(size));
-        }
+        quint32 fileSize = (fileInfo.endUnit - fileInfo.startUnit) * 16;
+        QString size     = QString("%1GB / %2MB").arg(fileSize / 1024.0 / 1024).arg(fileSize / 1024.0);
+        ui->tableWidget_fileList->setCellWidget(row - 1, 5, new QLabel(size));
+        ui->tableWidget_fileList->setRowCount(row + 1);
     });
 
     connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this]() {

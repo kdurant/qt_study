@@ -106,6 +106,7 @@ bool SaveWave::inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo)
         fileInfo.endUnit   = BspConfig::ba2int(endUnit);
 
         fileList.append(fileInfo);
+        emit fileDataReady(fileInfo);
 
         // 文件名有效，但文件信息无效，说明文件信息没有被正确写入到SSD中，底层状态机异常
         if(name.mid(0, 8) != name.mid(8, 8) && startUnit == endUnit)

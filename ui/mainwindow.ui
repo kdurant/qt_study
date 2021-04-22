@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget_2">
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
@@ -475,7 +475,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -1138,7 +1138,7 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>-22</y>
+              <y>0</y>
               <width>274</width>
               <height>585</height>
              </rect>
@@ -1520,7 +1520,7 @@
               <x>0</x>
               <y>0</y>
               <width>194</width>
-              <height>368</height>
+              <height>366</height>
              </rect>
             </property>
             <attribute name="label">

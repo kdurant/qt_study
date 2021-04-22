@@ -61,6 +61,8 @@ signals:
                        qint32      data_len,
                        QByteArray &data);  // 需要发送的数据已经准备好
 
+    void fileDataReady(ValidFileInfo &fileInfo);
+
 public slots:
     // data为通信协议中的完整数据帧
     void setNewData(QByteArray &data)
