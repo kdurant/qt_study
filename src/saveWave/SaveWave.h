@@ -16,10 +16,6 @@ class SaveWave : public QObject
 {
     Q_OBJECT
 
-private:
-    QVector<QByteArray> allData;
-    QTimer *            timer;
-
 public:
     enum FileStatus
     {
@@ -37,6 +33,11 @@ public:
         qint32     endUnit;    // 本文件在ssd中的结束位置
     };
 
+private:
+    QVector<QByteArray>  allData;
+    QTimer *             timer;
+    QList<ValidFileInfo> fileList;
+
 public:
     SaveWave()
     {
@@ -45,6 +46,11 @@ public:
     }
     bool readDiskUnit(qint32 unitAddr, QByteArray &ret);
     bool inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo);
+
+    QList<ValidFileInfo> getFileList(void)
+    {
+        return fileList;
+    }
 
     bool setSaveFileName(quint32 unit, QString &name);
     bool setSaveFileAddr(quint32 unit);

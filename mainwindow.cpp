@@ -783,6 +783,25 @@ void MainWindow::initSignalSlot()
         }
 
         ui->btn_ssdSearchSpace->setEnabled(true);
+
+        // 显示已经查询到的文件信息
+        QList<SaveWave::ValidFileInfo> fileList = ssd->getFileList();
+        if(fileList.empty())
+            return;
+
+        for(int i = 0; i < fileList.size(); ++i)
+        {
+            ui->tableWidget_fileList->setCellWidget(i, 0, new QLabel(fileList.at(i).name));
+
+            ui->tableWidget_fileList->setCellWidget(i, 1, new QLabel(QString::number(fileList.at(i).startUnit)));
+            ui->tableWidget_fileList->setCellWidget(i, 2, new QLabel(QString::number(fileList.at(i).endUnit)));
+            ui->tableWidget_fileList->setCellWidget(i, 3, new QLabel(QString::number(fileList.at(i).startUnit, 16)));
+            ui->tableWidget_fileList->setCellWidget(i, 4, new QLabel(QString::number(fileList.at(i).endUnit, 16)));
+
+            quint32 fileSize = (fileList.at(i).endUnit - fileList.at(i).startUnit) * 16;
+            QString size     = QString("%1GB / %2MB").arg(fileSize / 1024.0 / 1024).arg(fileSize / 1024.0);
+            ui->tableWidget_fileList->setCellWidget(i, 5, new QLabel(size));
+        }
     });
 
     connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this]() {
