@@ -74,6 +74,8 @@ public:
     void plotColormapSettings(void);
     void updateColormap(QVector<WaveExtract::WaveformInfo> &allCh);
 
+    void initSysInfoUi(void);
+
 protected:
     void closeEvent(QCloseEvent *event);
     void timerEvent(QTimerEvent *event);

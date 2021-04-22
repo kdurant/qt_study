@@ -55,26 +55,6 @@ MainWindow::MainWindow(QWidget *parent) :
     plotLineSettings();
     plotColormapSettings();
     devInfo->getSysPara(sysParaInfo);
-    ui->tableWidget_sysInfo->setColumnCount(2);
-    ui->tableWidget_sysInfo->setRowCount(sysParaInfo.length());
-    ui->tableWidget_sysInfo->setHorizontalHeaderLabels(QStringList() << "参数"
-                                                                     << "值");
-    ui->tableWidget_sysInfo->verticalHeader()->setVisible(false);                                         //隐藏列表头
-                                                                                                          //    ui->tableWidget_sysInfo->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);              //x先自适应宽度
-    ui->tableWidget_sysInfo->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);  //然后设置要根据内容使用宽度的列
-
-    for(int i = 0; i < sysParaInfo.length(); i++)
-    {
-        ui->tableWidget_sysInfo->setCellWidget(i, 0, new QLabel(sysParaInfo[i].name));
-    }
-
-    for(int i = 0; i < 10; i++)
-    {
-        QTableWidgetItem *item = new QTableWidgetItem();
-        item->setBackground(QBrush(QColor(Qt::lightGray)));
-        item->setFlags(item->flags() & (~Qt::ItemIsEditable));
-        ui->tableWidget_sysInfo->setItem(i, 0, item);
-    }
 
     getSysInfo();
 }
@@ -1211,6 +1191,30 @@ void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
 
         colorMap->rescaleDataRange();
         customPlot->replot();
+    }
+}
+
+void MainWindow::initSysInfoUi()
+{
+    ui->tableWidget_sysInfo->setColumnCount(2);
+    ui->tableWidget_sysInfo->setRowCount(sysParaInfo.length());
+    ui->tableWidget_sysInfo->setHorizontalHeaderLabels(QStringList() << "参数"
+                                                                     << "值");
+    ui->tableWidget_sysInfo->verticalHeader()->setVisible(false);  //隐藏列表头
+        //    ui->tableWidget_sysInfo->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);              //x先自适应宽度
+    ui->tableWidget_sysInfo->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);  //然后设置要根据内容使用宽度的列
+
+    for(int i = 0; i < sysParaInfo.length(); i++)
+    {
+        ui->tableWidget_sysInfo->setCellWidget(i, 0, new QLabel(sysParaInfo[i].name));
+    }
+
+    for(int i = 0; i < 10; i++)
+    {
+        QTableWidgetItem *item = new QTableWidgetItem();
+        item->setBackground(QBrush(QColor(Qt::lightGray)));
+        item->setFlags(item->flags() & (~Qt::ItemIsEditable));
+        ui->tableWidget_sysInfo->setItem(i, 0, item);
     }
 }
 
