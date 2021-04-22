@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget_2">
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
@@ -321,6 +321,57 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tab_8">
+       <attribute name="title">
+        <string>SSD文件列表</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_13" stretch="5,1">
+        <item>
+         <widget class="QTableWidget" name="tableWidget_fileList">
+          <column>
+           <property name="text">
+            <string>文件名</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>起始地址(DEC)</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>结束地址(DEC)</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>起始地址(HEX)</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>结束地址(HEX)</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>文件大小</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <widget class="QFrame" name="frame">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -424,7 +475,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -825,8 +876,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>291</width>
-              <height>288</height>
+              <width>171</width>
+              <height>73</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1087,7 +1138,7 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
+              <y>-22</y>
               <width>274</width>
               <height>585</height>
              </rect>

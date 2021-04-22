@@ -75,6 +75,7 @@ public:
     void updateColormap(QVector<WaveExtract::WaveformInfo> &allCh);
 
     void initSysInfoUi(void);
+    void initFileListUi(void);
 
 protected:
     void closeEvent(QCloseEvent *event);

@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -55,7 +55,8 @@ MainWindow::MainWindow(QWidget *parent)
     plotLineSettings();
     plotColormapSettings();
     devInfo->getSysPara(sysParaInfo);
-
+    initSysInfoUi();
+    initFileListUi();
     getSysInfo();
 }
 
@@ -1216,6 +1217,12 @@ void MainWindow::initSysInfoUi()
         item->setFlags(item->flags() & (~Qt::ItemIsEditable));
         ui->tableWidget_sysInfo->setItem(i, 0, item);
     }
+}
+
+void MainWindow::initFileListUi()
+{
+    //    ui->tableWidget_fileList->resizeColumnsToContents();
+    ui->tableWidget_fileList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);  //然后设置要根据内容使用宽度的列
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
