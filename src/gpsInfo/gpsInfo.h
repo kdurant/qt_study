@@ -17,6 +17,9 @@ class GpsInfo : public QObject
 
 public:
     GpsInfo() = default;
+
+    // 不同型号GPS上传的数据内容不一致，长度也不一致
+    // 所以可以根据上传数据的长度来判断GPS设备类型，进而解析数据
     enum GPS_FRAME_LEN
     {
         APPLANIX_LEN  = 115,
@@ -24,7 +27,7 @@ public:
     };
 
 private:
-    BspConfig::Gps_Info gps;
+    BspConfig::Gps_Info gps{0, 0, 0, 0, 0, 0, 0, 0};
 
     /**
      * @brief APPLANIX通过串口上传的GPS数据帧
@@ -113,7 +116,7 @@ public slots:
         else if(frame.size() == DISK_DATA_LEN)
         {
             gps.week = frame.mid(8, 4).toHex().toUInt(nullptr, 16);
-            // 不同GPS型号解析的类型的方式不同，后续完善
+            // TODO: 不同GPS型号解析的类型的方式不同，后续完善
             gps.current_week_ms = BspConfig::ba2int(frame.mid(12, 8));
             gps.latitude        = byteArrayToDouble(frame.mid(48, 8));
             gps.longitude       = byteArrayToDouble(frame.mid(56, 8));
