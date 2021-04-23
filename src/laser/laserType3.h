@@ -7,6 +7,7 @@
 // 无人机雷达激光控制器, PQNL 40
 class LaserType3 : public LaserController
 {
+    Q_OBJECT
 private:
     bool       isRecvNewData;  // 是否收到数据
     QByteArray recvData;
@@ -25,6 +26,13 @@ public:
         isRecvNewData = false;
     }
 
+    struct LaserInfo
+    {
+        quint32 freq_outside;
+        quint32 freq_inside;
+        quint32 work_time;
+    };
+
     bool setMode(OpenMode mode) override;
 
     bool open(void) override;
@@ -36,6 +44,9 @@ public:
     bool setCurrent(quint16 current);
 
     bool getStatus(void);
+
+signals:
+    void laserInfoReady(LaserInfo& data);  // 接收到响应数据
 
 public slots:
     void setNewData(QByteArray& data)

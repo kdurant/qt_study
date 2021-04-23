@@ -149,7 +149,6 @@ void MainWindow::uiConfig()
 {
     ui->treeWidget_attitude->expandAll();
     ui->treeWidget_attitude->resizeColumnToContents(0);
-    ui->treeWidget_laser->resizeColumnToContents(0);
     QList<QTreeWidgetItem *> itemList;
     itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
     itemList.first()->setHidden(true);
@@ -300,9 +299,12 @@ void MainWindow::uiConfig()
         case BspConfig::RADAR_TPYE_LAND:
             break;
         case BspConfig::RADAR_TPYE_DRONE:
-            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率"));
-            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "内触发频率"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率(Hz)"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "内触发频率(Hz)"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "工作时间(s)"));
             ui->treeWidget_laser->addTopLevelItems(topItems);
+
+            ui->treeWidget_laser->resizeColumnToContents(0);
 
             break;
         case BspConfig::RADAR_TPYE_UNDER_WATER:
@@ -317,6 +319,8 @@ void MainWindow::uiConfig()
             topItems.last()->addChild(new QTreeWidgetItem(topItems.last(), QStringList() << "自检状态"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "错误位"));
             ui->treeWidget_laser->addTopLevelItems(topItems);
+
+            ui->treeWidget_laser->resizeColumnToContents(0);
             break;
         default:
             break;
@@ -624,6 +628,18 @@ void MainWindow::initSignalSlot()
     {
         connect(laser3Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser3Driver, &LaserType3::setNewData);
+        connect(laser3Driver, &LaserType3::laserInfoReady, this, [this](LaserType3::LaserInfo &info) {
+            QList<QTreeWidgetItem *> itemList;
+
+            itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_outside));
+
+            itemList = ui->treeWidget_laser->findItems("内触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_inside));
+
+            itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.work_time));
+        });
     }
     else if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
     {

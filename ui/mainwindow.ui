@@ -608,59 +608,6 @@
              <string>值</string>
             </property>
            </column>
-           <item>
-            <property name="text">
-             <string>电流(mA)</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>激光头温度(°)</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>LD温度(°)</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>激光晶体温度(°)</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>倍频晶体温度(°)</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>状态位</string>
-            </property>
-            <item>
-             <property name="text">
-              <string>是否打开</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>触发方式</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>自检状态</string>
-             </property>
-            </item>
-           </item>
-           <item>
-            <property name="text">
-             <string>错误位</string>
-            </property>
-           </item>
           </widget>
          </item>
         </layout>

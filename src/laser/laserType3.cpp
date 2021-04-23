@@ -96,6 +96,10 @@ bool LaserType3::setCurrent(quint16 current)
     return true;
 }
 
+/**
+ * @brief 每发送一次查询命令，激光器只会返回一种状态数据（总共有5种)
+ * @return
+ */
 bool LaserType3::getStatus()
 {
     QVector<quint8> command{0x55, 0xAA, 0x00, 0xff, 0x00, 0x00, 0x00, 0x00, 0xfe, 0x33, 0xcc};
@@ -110,6 +114,34 @@ bool LaserType3::getStatus()
     connect(this, &LaserType3::responseDataReady, &waitLoop, &QEventLoop::quit);
     QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
     waitLoop.exec();
+
+    LaserInfo info{0, 0, 0};
+    if(recvData.size() == 0x32)
+    {
+        switch(recvData[2])
+        {
+            case 0x00:
+                info.freq_outside = static_cast<quint8>(recvData[4]) +
+                                    (static_cast<quint8>(recvData[5]) << 8) +
+                                    (static_cast<quint8>(recvData[6]) << 16) +
+                                    (static_cast<quint8>(recvData[7]) << 24);
+
+                info.freq_inside = static_cast<quint8>(recvData[8]) +
+                                   (static_cast<quint8>(recvData[9]) << 8) +
+                                   (static_cast<quint8>(recvData[10]) << 16) +
+                                   (static_cast<quint8>(recvData[11]) << 24);
+
+                info.work_time = static_cast<quint8>(recvData[36]) +
+                                 (static_cast<quint8>(recvData[37]) << 8) +
+                                 (static_cast<quint8>(recvData[38]) << 16) +
+                                 (static_cast<quint8>(recvData[39]) << 24);
+
+                break;
+            default:
+                break;
+        }
+        emit laserInfoReady(info);
+    }
 
     return true;
 }
