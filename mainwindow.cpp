@@ -292,6 +292,35 @@ void MainWindow::uiConfig()
     QLabel *labelVer = new QLabel();
     labelVer->setText("软件版本：v" + QString(SOFT_VERSION) + "_" + GIT_DATE + "_" + GIT_HASH);
     ui->statusBar->addPermanentWidget(labelVer);
+
+    QList<QTreeWidgetItem *> topItems;
+    QList<QTreeWidgetItem *> subItems;
+    switch(radarType)
+    {
+        case BspConfig::RADAR_TPYE_LAND:
+            break;
+        case BspConfig::RADAR_TPYE_DRONE:
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "内触发频率"));
+            ui->treeWidget_laser->addTopLevelItems(topItems);
+
+            break;
+        case BspConfig::RADAR_TPYE_UNDER_WATER:
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流(mA)"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "激光头温度(°)"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "LD温度(°)"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "激光晶体温度(°)"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "倍频晶体温度(°)"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "状态位"));
+            topItems.last()->addChild(new QTreeWidgetItem(topItems.last(), QStringList() << "是否打开"));
+            topItems.last()->addChild(new QTreeWidgetItem(topItems.last(), QStringList() << "触发方式"));
+            topItems.last()->addChild(new QTreeWidgetItem(topItems.last(), QStringList() << "自检状态"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "错误位"));
+            ui->treeWidget_laser->addTopLevelItems(topItems);
+            break;
+        default:
+            break;
+    }
 }
 
 void MainWindow::udpBind()
@@ -706,7 +735,9 @@ void MainWindow::initSignalSlot()
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
 
-    //    connect(ui->btn_laserReadInfo, &QPushButton::pressed, this, [this]() {});
+    connect(ui->btn_laserReadInfo, &QPushButton::pressed, this, [this]() {
+        laser3Driver->getStatus();
+    });
 
     /*
      * 电机相关逻辑
