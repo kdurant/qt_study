@@ -186,7 +186,7 @@ void MainWindow::uiConfig()
     ui->label_laserPower->hide();
     ui->comboBox_laserPower->hide();
 
-    ui->tabWidget->setTabEnabled(4, false);
+    //ui->tabWidget->setTabEnabled(4, false);
     ui->tabWidget->setTabEnabled(5, false);
 
     if(radarType == BspConfig::RADAR_TPYE_760)
@@ -570,7 +570,8 @@ void MainWindow::initSignalSlot()
      */
 
     connect(dispatch, &ProtocolDispatch::flashDataReady, updateFlash, &UpdateBin::setDataFrame);
-    connect(ui->btnNorFlashWrite, &QPushButton::pressed, this, [this]() {
+    connect(updateFlash, &UpdateBin::flashCommandReadySet, dispatch, &ProtocolDispatch::encode);
+    connect(ui->btn_norFlashWrite, &QPushButton::pressed, this, [this]() {
         uint32_t addr;
         if(ui->rBtnDecAddr->isChecked())
         {
@@ -585,11 +586,11 @@ void MainWindow::initSignalSlot()
         {
             data.append(i);
         }
-        ui->btnNorFlashWrite->setEnabled(false);
+        ui->btn_norFlashWrite->setEnabled(false);
         updateFlash->flashErase(addr);
 
         updateFlash->flashWrite(addr, data);
-        ui->btnNorFlashWrite->setEnabled(true);
+        ui->btn_norFlashWrite->setEnabled(true);
     });
 
     connect(ui->btn_selectUpdateFile, &QPushButton::pressed, this, [this]() {
@@ -613,6 +614,11 @@ void MainWindow::initSignalSlot()
     connect(updateFlash, &UpdateBin::updatedBytes, this, [this](qint32 bytes) {
         qDebug() << "has write " << bytes;
         ui->pBar_updateBin->setValue(bytes);
+    });
+
+    connect(ui->btn_norFlashRead, &QPushButton::clicked, this, [this]() {
+        QByteArray recv = updateFlash->flashRead(0);
+        qDebug() << recv;
     });
 
     /*

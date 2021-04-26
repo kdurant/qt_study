@@ -74,7 +74,7 @@ void ProtocolDispatch::encode(qint32 command, qint32 data_len, QByteArray &data)
     frame.append(QByteArray::fromHex(
         QByteArray::number(data_len, 16).rightJustified(8, '0')));  // 有效数据长度
     frame.append(data);                                             // 数据，总是256
-    if(data_len < 256)
+    if(data_len <= 256)
         frame.append(256 - data_len, 0);
     else
         QMessageBox::warning(nullptr, "警告", "需要打包的数据过长");

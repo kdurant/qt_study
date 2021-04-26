@@ -475,7 +475,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>4</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -1793,14 +1793,14 @@
              </widget>
             </item>
             <item row="3" column="0">
-             <widget class="QPushButton" name="btnNorFlashRead">
+             <widget class="QPushButton" name="btn_norFlashRead">
               <property name="text">
                <string>读取扇区</string>
               </property>
              </widget>
             </item>
             <item row="4" column="0">
-             <widget class="QPushButton" name="btnNorFlashErase">
+             <widget class="QPushButton" name="btn_norFlashErase">
               <property name="toolTip">
                <string>擦除起始地址所在的扇区</string>
               </property>
@@ -1810,7 +1810,7 @@
              </widget>
             </item>
             <item row="5" column="0">
-             <widget class="QPushButton" name="btnNorFlashWrite">
+             <widget class="QPushButton" name="btn_norFlashWrite">
               <property name="toolTip">
                <string>在起始地址所在的地址写入256个默认数据</string>
               </property>
@@ -1820,7 +1820,7 @@
              </widget>
             </item>
             <item row="6" column="0">
-             <widget class="QPushButton" name="btnNorFlasshReadFile">
+             <widget class="QPushButton" name="btn_norFlashReadFile">
               <property name="text">
                <string>读取文件</string>
               </property>
