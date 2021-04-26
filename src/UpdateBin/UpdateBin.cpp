@@ -54,11 +54,17 @@ bool UpdateBin::flashUpdate(QString &filePath)
     uint32_t   hasWriteBytes = 0;
     QByteArray writeData;
     QByteArray recvData;
+    qint32     reSendCnt = 0;
 
     while(!file.atEnd())
     {
         writeData = file.read(UpdateBin::BYTES_PER_WRITE);
         int len   = writeData.length();
+        if(len < UpdateBin::BYTES_PER_WRITE)
+        {
+            writeData.append(QByteArray(256 - len, 0xee));
+        }
+
         if(hasWriteBytes % UpdateBin::FLASH_BLOCK_SIZE == 0)
         {
             flashErase(BIN_FILE_OFFSET + hasWriteBytes);
@@ -72,24 +78,22 @@ bool UpdateBin::flashUpdate(QString &filePath)
                 writeData[i + 1] = temp;
             }
         };
-        swapByteOrder(len);
+        //        swapByteOrder(len);
 
-        flashWrite(BIN_FILE_OFFSET + hasWriteBytes, writeData);
-        recvData = flashRead(BIN_FILE_OFFSET + hasWriteBytes);
+        while(reSendCnt <= 3)
+        {
+            flashWrite(BIN_FILE_OFFSET + hasWriteBytes, writeData);
+            recvData = flashRead(BIN_FILE_OFFSET + hasWriteBytes);
 
-        // 只有最后一次才会出现这种情况
-        if(len != UpdateBin::BYTES_PER_WRITE)
-        {
-            return writeData == readData.mid(0, len);
-        }
-        else
-        {
-            if(writeData != readData)
+            if(recvData == writeData)
             {
-                QMessageBox::critical(NULL, "critical", "写入数据错误");
-                return false;
+                reSendCnt = 0;
+                break;
             }
+            else
+                reSendCnt++;
         }
+
         hasWriteBytes += len;
         emit updatedBytes(hasWriteBytes);
     }

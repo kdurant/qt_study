@@ -12,8 +12,8 @@ public:
     enum
     {
         BYTES_PER_WRITE  = 256,
-        FLASH_BLOCK_SIZE = 0x10000,
-        BIN_FILE_OFFSET  = 0x6000000
+        FLASH_BLOCK_SIZE = 0x10000 * 2,  // 64Kword/block,  128K Byte/block
+        BIN_FILE_OFFSET  = 0x0000000
     };
     UpdateBin()
     {

@@ -595,7 +595,7 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->btn_selectUpdateFile, &QPushButton::pressed, this, [this]() {
-        QString updateFilePath = QFileDialog::getOpenFileName(this, tr(""), "", tr("*.bin"));  //选择路径
+        QString updateFilePath = QFileDialog::getOpenFileName(this, tr(""), "", tr("*"));  //选择路径
         if(updateFilePath.size() == 0)
             return;
         ui->lineEdit_updateFilePath->setText(updateFilePath);
@@ -613,8 +613,9 @@ void MainWindow::initSignalSlot()
     });
 
     connect(updateFlash, &UpdateBin::updatedBytes, this, [this](qint32 bytes) {
-        qDebug() << "has write " << bytes;
+        ui->btn_startUpdate->setEnabled(false);
         ui->pBar_updateBin->setValue(bytes);
+        ui->btn_startUpdate->setEnabled(true);
     });
 
     connect(ui->btn_norFlashRead, &QPushButton::clicked, this, [this]() {
