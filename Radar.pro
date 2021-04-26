@@ -51,6 +51,7 @@ SOURCES += \
     src/motor/Epos2Controller.cpp
 
 HEADERS += \
+    common.h \
     src/ADControll/ADControl.h \
     src/DAControll/DAControl.h \
     src/Protocol/AdSampleControl.h \

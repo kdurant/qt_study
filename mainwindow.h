@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 
+#include "common.h"
 #include "bsp_config.h"
 #include "noteinfo.h"
 

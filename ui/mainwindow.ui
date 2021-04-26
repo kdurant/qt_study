@@ -1839,6 +1839,16 @@
               </property>
              </widget>
             </item>
+            <item row="6" column="0">
+             <widget class="QCheckBox" name="checkBox_norFlashBitSwap">
+              <property name="toolTip">
+               <string>显示或保存数据时，是否进行bit-swap</string>
+              </property>
+              <property name="text">
+               <string>bit-swapping</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>

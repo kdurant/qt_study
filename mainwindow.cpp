@@ -664,6 +664,11 @@ void MainWindow::initSignalSlot()
 
             currentAddr     = startAddr + 128 * i;
             QByteArray data = updateFlash->flashRead(currentAddr);
+            if(ui->checkBox_norFlashBitSwap->isChecked())
+            {
+                for(auto &i : data)
+                    i = Common::bitSwap(i);
+            }
             file.write(data);
         }
         file.close();
