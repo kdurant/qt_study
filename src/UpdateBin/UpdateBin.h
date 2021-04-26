@@ -13,7 +13,7 @@ public:
     {
         BYTES_PER_WRITE  = 256,
         FLASH_BLOCK_SIZE = 0x10000,
-        BIN_FILE_OFFSET  = 0x4000000
+        BIN_FILE_OFFSET  = 0x6000000
     };
     UpdateBin()
     {
@@ -22,7 +22,10 @@ public:
     ~UpdateBin()
     {
     }
-    void setFlashAddr(uint32_t addr) { opFlashAddr = addr; }
+    void setFlashAddr(uint32_t addr)
+    {
+        opFlashAddr = addr;
+    }
 
     void flashErase(uint32_t addr);
 
@@ -39,9 +42,9 @@ public:
      * @param addr
      * @param data
      */
-    void flashWrite(uint32_t addr, QByteArray &data);
+    void flashWrite(uint32_t addr, QByteArray& data);
 
-    bool flashUpdate(QString &filePath);
+    bool flashUpdate(QString& filePath);
 
 public slots:
     void setDataFrame(QByteArray& frame);

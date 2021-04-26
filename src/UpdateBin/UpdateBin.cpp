@@ -9,6 +9,7 @@
  */
 void UpdateBin::flashErase(uint32_t addr)
 {
+    addr /= 2;
     QByteArray ba = int2ba(addr);
     emit       flashCommandReadySet(MasterSet::ERASE_ADDR, 4, ba);
     QEventLoop loop;
@@ -18,6 +19,7 @@ void UpdateBin::flashErase(uint32_t addr)
 
 QByteArray UpdateBin::flashRead(uint32_t addr)
 {
+    addr /= 2;
     QByteArray ba = int2ba(addr);
     emit       flashCommandReadySet(MasterSet::READ_ADDR, 4, ba);
     QEventLoop waitLoop;
@@ -30,6 +32,7 @@ QByteArray UpdateBin::flashRead(uint32_t addr)
 
 void UpdateBin::flashWrite(uint32_t addr, QByteArray &data)
 {
+    addr /= 2;
     writeData     = data;
     QByteArray ba = int2ba(addr);
 
@@ -50,7 +53,7 @@ bool UpdateBin::flashUpdate(QString &filePath)
     file.open(QIODevice::ReadOnly);
     uint32_t   hasWriteBytes = 0;
     QByteArray writeData;
-    QByteArray secondData;
+    QByteArray recvData;
 
     while(!file.atEnd())
     {
@@ -72,7 +75,7 @@ bool UpdateBin::flashUpdate(QString &filePath)
         swapByteOrder(len);
 
         flashWrite(BIN_FILE_OFFSET + hasWriteBytes, writeData);
-        secondData = flashRead(BIN_FILE_OFFSET + hasWriteBytes);
+        recvData = flashRead(BIN_FILE_OFFSET + hasWriteBytes);
 
         // 只有最后一次才会出现这种情况
         if(len != UpdateBin::BYTES_PER_WRITE)
