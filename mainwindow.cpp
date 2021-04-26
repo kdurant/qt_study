@@ -581,6 +581,8 @@ void MainWindow::initSignalSlot()
         {
             addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
         }
+        addr /= 2;
+
         QByteArray data;
         for(int i = 0; i < 256; i++)
         {
@@ -626,6 +628,7 @@ void MainWindow::initSignalSlot()
         {
             addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
         }
+        addr /= 2;
         QByteArray recv = updateFlash->flashRead(addr);
         ui->plain_NorDebugInfo->appendPlainText(recv.toHex());
     });
@@ -642,6 +645,7 @@ void MainWindow::initSignalSlot()
             startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
             sectorNum = ui->lineEdit_NorFlashReadLen->text().toInt(nullptr, 16) / 256;
         }
+        startAddr /= 2;
 
         ui->pBarNorFlashRead->setValue(0);
         ui->pBarNorFlashRead->setMaximum(sectorNum - 1);
@@ -649,7 +653,7 @@ void MainWindow::initSignalSlot()
         uint32_t   currentAddr;
         QByteArray ba;
 
-        QString fileName = QString("addr_0x%1.bin").arg(QString::number(startAddr, 16));
+        QString fileName = QString("addr_0x%1.bin").arg(QString::number(startAddr * 2, 16));
 
         QFile file(fileName);
         file.open(QIODevice::ReadWrite);
@@ -658,7 +662,7 @@ void MainWindow::initSignalSlot()
         {
             ui->pBarNorFlashRead->setValue(i);
 
-            currentAddr     = startAddr + 256 * i;
+            currentAddr     = startAddr + 128 * i;
             QByteArray data = updateFlash->flashRead(currentAddr);
             file.write(data);
         }

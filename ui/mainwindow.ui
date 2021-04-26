@@ -1755,7 +1755,7 @@
             <item row="1" column="0">
              <widget class="QLabel" name="label_2">
               <property name="text">
-               <string>起始地址:</string>
+               <string>起始地址(Byte):</string>
               </property>
              </widget>
             </item>
@@ -1768,7 +1768,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>3f80000</string>
+               <string>6000000</string>
               </property>
              </widget>
             </item>
@@ -1788,7 +1788,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>6e3000</string>
+               <string>400</string>
               </property>
              </widget>
             </item>
