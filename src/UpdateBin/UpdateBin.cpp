@@ -3,6 +3,10 @@
 #include "ProtocolDispatch.h"
 #include "UpdateBin.h"
 
+/**
+ * @brief 擦除nor flash扇区时，好像可以输入本扇区内的任意地址都可以（有机会重新确认）
+ * @param addr
+ */
 void UpdateBin::flashErase(uint32_t addr)
 {
     QByteArray ba = int2ba(addr);

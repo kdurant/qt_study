@@ -87,11 +87,7 @@ private slots:
 
     void on_actionNote_triggered();
 
-    void on_btnNorFlashRead_clicked();
-
     void on_btnNorFlashErase_clicked();
-
-    void on_btnNorFlasshReadFile_clicked();
 
     void on_bt_showWave_clicked();
 

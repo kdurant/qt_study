@@ -617,8 +617,52 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->btn_norFlashRead, &QPushButton::clicked, this, [this]() {
-        QByteArray recv = updateFlash->flashRead(0);
-        qDebug() << recv;
+        uint32_t addr;
+        if(ui->rBtnDecAddr->isChecked())
+        {
+            addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
+        }
+        else
+        {
+            addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+        }
+        QByteArray recv = updateFlash->flashRead(addr);
+        ui->plain_NorDebugInfo->appendPlainText(recv.toHex());
+    });
+
+    connect(ui->btn_norFlashReadFile, &QPushButton::clicked, this, [this]() {
+        uint32_t startAddr, sectorNum;
+        if(ui->rBtnDecAddr->isChecked())
+        {
+            startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
+            sectorNum = ui->lineEdit_NorFlashReadLen->text().toInt(nullptr, 10) / 256;
+        }
+        else
+        {
+            startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+            sectorNum = ui->lineEdit_NorFlashReadLen->text().toInt(nullptr, 16) / 256;
+        }
+
+        ui->pBarNorFlashRead->setValue(0);
+        ui->pBarNorFlashRead->setMaximum(sectorNum - 1);
+
+        uint32_t   currentAddr;
+        QByteArray ba;
+
+        QString fileName = QString("addr_0x%1.bin").arg(QString::number(startAddr, 16));
+
+        QFile file(fileName);
+        file.open(QIODevice::ReadWrite);
+
+        for(uint32_t i = 0; i < sectorNum; i++)
+        {
+            ui->pBarNorFlashRead->setValue(i);
+
+            currentAddr     = startAddr + 256 * i;
+            QByteArray data = updateFlash->flashRead(currentAddr);
+            file.write(data);
+        }
+        file.close();
     });
 
     /*
@@ -1328,20 +1372,6 @@ void MainWindow::on_actionNote_triggered()
     note->show();
 }
 
-void MainWindow::on_btnNorFlashRead_clicked()
-{
-    uint32_t addr;
-    if(ui->rBtnDecAddr->isChecked())
-    {
-        addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
-    }
-    else
-    {
-        addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
-    }
-    ui->plain_NorDebugInfo->setPlainText(updateFlash->flashRead(addr));
-}
-
 void MainWindow::on_btnNorFlashErase_clicked()
 {
     uint32_t addr;
@@ -1354,40 +1384,6 @@ void MainWindow::on_btnNorFlashErase_clicked()
         addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
     }
     updateFlash->flashErase(addr);
-}
-
-void MainWindow::on_btnNorFlasshReadFile_clicked()
-{
-    uint32_t startAddr, needNum;
-    if(ui->rBtnDecAddr->isChecked())
-    {
-        startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
-        needNum   = ui->lineEdit_NorFlashReadLen->text().toInt(nullptr, 10) / 256;
-    }
-    else
-    {
-        startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
-        needNum   = ui->lineEdit_NorFlashReadLen->text().toInt(nullptr, 16) / 256;
-    }
-
-    ui->pBarNorFlashRead->setValue(0);
-    ui->pBarNorFlashRead->setMaximum(needNum - 1);
-
-    uint32_t   currentAddr;
-    QByteArray ba;
-
-    QFile file("origin.bin");
-    file.open(QIODevice::ReadWrite);
-
-    for(uint32_t i = 0; i < needNum; i++)
-    {
-        ui->pBarNorFlashRead->setValue(i);
-
-        currentAddr     = startAddr + 256 * i;
-        QByteArray data = updateFlash->flashRead(currentAddr);
-        file.write(data);
-    }
-    file.close();
 }
 
 void MainWindow::on_bt_showWave_clicked()

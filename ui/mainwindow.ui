@@ -1775,7 +1775,7 @@
             <item row="2" column="0">
              <widget class="QLabel" name="label_3">
               <property name="text">
-               <string>数据长度:</string>
+               <string>数据长度(Byte):</string>
               </property>
              </widget>
             </item>
@@ -1794,6 +1794,9 @@
             </item>
             <item row="3" column="0">
              <widget class="QPushButton" name="btn_norFlashRead">
+              <property name="toolTip">
+               <string>从指定地址读取256字节数据</string>
+              </property>
               <property name="text">
                <string>读取扇区</string>
               </property>
@@ -1809,23 +1812,6 @@
               </property>
              </widget>
             </item>
-            <item row="5" column="0">
-             <widget class="QPushButton" name="btn_norFlashWrite">
-              <property name="toolTip">
-               <string>在起始地址所在的地址写入256个默认数据</string>
-              </property>
-              <property name="text">
-               <string>写入扇区</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="0">
-             <widget class="QPushButton" name="btn_norFlashReadFile">
-              <property name="text">
-               <string>读取文件</string>
-              </property>
-             </widget>
-            </item>
             <item row="8" column="0" colspan="2">
              <widget class="QPlainTextEdit" name="plain_NorDebugInfo"/>
             </item>
@@ -1833,6 +1819,23 @@
              <widget class="QProgressBar" name="pBarNorFlashRead">
               <property name="value">
                <number>0</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QPushButton" name="btn_norFlashReadFile">
+              <property name="text">
+               <string>读取文件</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QPushButton" name="btn_norFlashWrite">
+              <property name="toolTip">
+               <string>在起始地址所在的地址写入256个默认数据</string>
+              </property>
+              <property name="text">
+               <string>写入扇区</string>
               </property>
              </widget>
             </item>
