@@ -17,7 +17,12 @@ void UpdateBin::flashErase(uint32_t addr)
     loop.exec();
 }
 
-QByteArray UpdateBin::flashRead(uint32_t addr)
+/**
+ * @brief 读取起始地址后的256个字节数据
+ * @param addr
+ * @return
+ */
+QByteArray UpdateBin::pageRead(uint32_t addr)
 {
     addr /= 2;
     QByteArray ba = int2ba(addr);
@@ -30,7 +35,13 @@ QByteArray UpdateBin::flashRead(uint32_t addr)
     return readData;
 }
 
-void UpdateBin::flashWrite(uint32_t addr, QByteArray &data)
+/**
+ * @brief pageWrite
+ * 需要依次完成发送flash数据， 要写入flash地址，自动启动flash写操作
+ * @param addr
+ * @param data
+ */
+void UpdateBin::pageWrite(uint32_t addr, QByteArray &data)
 {
     addr /= 2;
     writeData     = data;
@@ -44,6 +55,32 @@ void UpdateBin::flashWrite(uint32_t addr, QByteArray &data)
     emit flashCommandReadySet(MasterSet::WRITE_ADDR, 4, ba);
     QTimer::singleShot(5, &waitLoop, &QEventLoop::quit);
     waitLoop.exec();
+}
+
+/**
+ * @brief UpdateBin::blockWrite
+ * PC28F00一个block是128K Byte
+ * @param addr
+ * @param data
+ */
+bool UpdateBin::blockWrite(uint32_t addr, QByteArray &data)
+{
+    if(data.size() != FLASH_BLOCK_SIZE)
+        return false;
+
+    QByteArray writeData;
+    QByteArray recvData;
+    flashErase(BIN_FILE_OFFSET + addr);
+
+    for(int i = 0; i < FLASH_BLOCK_SIZE / 256; i++)
+    {
+        writeData = data.mid(i * 256, 256);
+        pageWrite(addr + i * 256, writeData);
+        recvData = pageRead(addr + i * 256);
+        if(writeData != recvData)
+            return false;
+    }
+    return true;
 }
 
 bool UpdateBin::flashUpdate(QString &filePath)
@@ -64,6 +101,8 @@ bool UpdateBin::flashUpdate(QString &filePath)
         {
             writeData.append(QByteArray(256 - len, 0xee));
         }
+        for(auto &i : writeData)
+            i = Common::bitSwap(i);
 
         if(hasWriteBytes % UpdateBin::FLASH_BLOCK_SIZE == 0)
         {
@@ -82,8 +121,8 @@ bool UpdateBin::flashUpdate(QString &filePath)
 
         while(reSendCnt <= 3)
         {
-            flashWrite(BIN_FILE_OFFSET + hasWriteBytes, writeData);
-            recvData = flashRead(BIN_FILE_OFFSET + hasWriteBytes);
+            pageWrite(BIN_FILE_OFFSET + hasWriteBytes, writeData);
+            recvData = pageRead(BIN_FILE_OFFSET + hasWriteBytes);
 
             if(recvData == writeData)
             {

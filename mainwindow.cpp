@@ -590,7 +590,7 @@ void MainWindow::initSignalSlot()
         ui->btn_norFlashWrite->setEnabled(false);
         updateFlash->flashErase(addr);
 
-        updateFlash->flashWrite(addr, data);
+        updateFlash->pageWrite(addr, data);
         ui->btn_norFlashWrite->setEnabled(true);
     });
 
@@ -628,7 +628,7 @@ void MainWindow::initSignalSlot()
         {
             addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
         }
-        QByteArray recv = updateFlash->flashRead(addr);
+        QByteArray recv = updateFlash->pageRead(addr);
         ui->plain_NorDebugInfo->appendPlainText(recv.toHex());
     });
 
@@ -661,8 +661,8 @@ void MainWindow::initSignalSlot()
             ui->pBarNorFlashRead->setValue(i);
 
             currentAddr      = startAddr + 256 * i;
-            QByteArray data  = updateFlash->flashRead(currentAddr);
-            QByteArray data2 = updateFlash->flashRead(currentAddr);
+            QByteArray data  = updateFlash->pageRead(currentAddr);
+            QByteArray data2 = updateFlash->pageRead(currentAddr);
             if(data != data2)
             {
                 qDebug() << "error addr at: " << currentAddr;

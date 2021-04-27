@@ -1,6 +1,6 @@
 #ifndef UPDATE_BIN_H
 #define UPDATE_BIN_H
-
+#include "common.h"
 #include "protocol.h"
 #include <QMessageBox>
 #include <QtCore>
@@ -13,7 +13,7 @@ public:
     {
         BYTES_PER_WRITE  = 256,
         FLASH_BLOCK_SIZE = 0x10000 * 2,  // 64Kword/block,  128K Byte/block
-        BIN_FILE_OFFSET  = 0x0000000
+        BIN_FILE_OFFSET  = 0x0000000     // MCS文件烧录到这个地址0x6000000
     };
     UpdateBin()
     {
@@ -29,20 +29,11 @@ public:
 
     void flashErase(uint32_t addr);
 
-    /**
-     * @brief 读取起始地址后的256个字节数据
-     * @param addr
-     * @return
-     */
-    QByteArray flashRead(uint32_t addr);
+    QByteArray pageRead(uint32_t addr);
 
-    /**
-     * @brief writeFlash
-     * 需要依次完成发送flash数据， 要写入flash地址，自动启动flash写操作
-     * @param addr
-     * @param data
-     */
-    void flashWrite(uint32_t addr, QByteArray& data);
+    void pageWrite(uint32_t addr, QByteArray& data);
+
+    bool blockWrite(uint32_t addr, QByteArray& data);
 
     bool flashUpdate(QString& filePath);
 
