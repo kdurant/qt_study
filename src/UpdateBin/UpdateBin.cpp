@@ -13,7 +13,7 @@ void UpdateBin::flashErase(uint32_t addr)
     QByteArray ba = int2ba(addr);
     emit       flashCommandReadySet(MasterSet::ERASE_ADDR, 4, ba);
     QEventLoop loop;
-    QTimer::singleShot(2000, &loop, SLOT(quit()));
+    QTimer::singleShot(1200, &loop, SLOT(quit()));
     loop.exec();
 }
 
@@ -44,7 +44,6 @@ QByteArray UpdateBin::pageRead(uint32_t addr)
 void UpdateBin::pageWrite(uint32_t addr, QByteArray &data)
 {
     addr /= 2;
-    writeData     = data;
     QByteArray ba = int2ba(addr);
 
     emit       flashCommandReadySet(MasterSet::WRITE_DATA, data.size(), data);
@@ -68,9 +67,10 @@ bool UpdateBin::blockWrite(uint32_t addr, QByteArray &data)
     if(data.size() != FLASH_BLOCK_SIZE)
         return false;
 
+    qDebug() << data.size();
     QByteArray writeData;
     QByteArray recvData;
-    flashErase(BIN_FILE_OFFSET + addr);
+    flashErase(addr);
 
     for(int i = 0; i < FLASH_BLOCK_SIZE / 256; i++)
     {
@@ -88,43 +88,25 @@ bool UpdateBin::flashUpdate(QString &filePath)
 {
     QFile file(filePath);
     file.open(QIODevice::ReadOnly);
-    uint32_t   hasWriteBytes = 0;
-    QByteArray writeData;
-    QByteArray recvData;
-    qint32     reSendCnt = 0;
+    uint32_t hasWriteBytes = 0;
+    qint32   reSendCnt     = 0;
+    bool     status        = false;
 
     while(!file.atEnd())
     {
-        writeData = file.read(UpdateBin::BYTES_PER_WRITE);
+        writeData = file.read(UpdateBin::FLASH_BLOCK_SIZE);
         int len   = writeData.length();
-        if(len < UpdateBin::BYTES_PER_WRITE)
+        if(len < UpdateBin::FLASH_BLOCK_SIZE)
         {
-            writeData.append(QByteArray(256 - len, 0xee));
+            writeData.append(QByteArray(UpdateBin::FLASH_BLOCK_SIZE - len, 0xee));
         }
         for(auto &i : writeData)
             i = Common::bitSwap(i);
 
-        if(hasWriteBytes % UpdateBin::FLASH_BLOCK_SIZE == 0)
-        {
-            flashErase(BIN_FILE_OFFSET + hasWriteBytes);
-        }
-        auto swapByteOrder = [&writeData](int len) {
-            for(int i = 0; i < len; i += 2)
-            {
-                uint8_t temp;
-                temp             = writeData[i];
-                writeData[i]     = writeData[i + 1];
-                writeData[i + 1] = temp;
-            }
-        };
-        //        swapByteOrder(len);
-
         while(reSendCnt <= 3)
         {
-            pageWrite(BIN_FILE_OFFSET + hasWriteBytes, writeData);
-            recvData = pageRead(BIN_FILE_OFFSET + hasWriteBytes);
-
-            if(recvData == writeData)
+            status = blockWrite(BIN_FILE_OFFSET + hasWriteBytes, writeData);
+            if(status)
             {
                 reSendCnt = 0;
                 break;
@@ -136,6 +118,7 @@ bool UpdateBin::flashUpdate(QString &filePath)
         hasWriteBytes += len;
         emit updatedBytes(hasWriteBytes);
     }
+    emit updatedBytes(hasWriteBytes);
     return true;
 }
 

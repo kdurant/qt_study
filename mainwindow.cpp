@@ -614,7 +614,7 @@ void MainWindow::initSignalSlot()
 
     connect(updateFlash, &UpdateBin::updatedBytes, this, [this](qint32 bytes) {
         ui->btn_startUpdate->setEnabled(false);
-        ui->pBar_updateBin->setValue(bytes);
+        ui->pBar_updateBin->setValue(bytes - 1);
         ui->btn_startUpdate->setEnabled(true);
     });
 
