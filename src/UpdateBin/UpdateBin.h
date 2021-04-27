@@ -22,10 +22,6 @@ public:
     ~UpdateBin()
     {
     }
-    void setFlashAddr(uint32_t addr)
-    {
-        opFlashAddr = addr;
-    }
 
     void flashErase(uint32_t addr);
 
@@ -36,6 +32,7 @@ public:
 
     bool blockWrite(uint32_t addr, QByteArray& data);
 
+    bool checkBinFormat(QString& filePath);
     bool flashUpdate(QString& filePath);
 
 public slots:
@@ -51,7 +48,6 @@ signals:
 private:
     QByteArray frame;
     bool       isRecvFlashData;
-    uint32_t   opFlashAddr;  // 读、写、擦除  共用一个地址
 
     QByteArray readData;
     QByteArray writeData;

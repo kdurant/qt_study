@@ -475,7 +475,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>4</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -1689,13 +1689,6 @@
             <string>固件升级</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_4">
-            <item row="0" column="0">
-             <widget class="QPushButton" name="btn_selectUpdateFile">
-              <property name="text">
-               <string>选择文件</string>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="1">
              <widget class="QLineEdit" name="lineEdit_updateFilePath">
               <property name="sizePolicy">
@@ -1706,14 +1699,14 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QPushButton" name="btn_startUpdate">
+            <item row="0" column="0">
+             <widget class="QPushButton" name="btn_selectUpdateFile">
               <property name="text">
-               <string>开始升级</string>
+               <string>选择文件</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="2" column="0" colspan="2">
              <widget class="QProgressBar" name="pBar_updateBin">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1726,11 +1719,18 @@
               </property>
              </widget>
             </item>
+            <item row="1" column="0" colspan="2">
+             <widget class="QPushButton" name="btn_startUpdate">
+              <property name="text">
+               <string>开始升级</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </widget>
          </item>
          <item>
-          <widget class="QGroupBox" name="groupBox_3">
+          <widget class="QGroupBox" name="groupBox_norFlashTest">
            <property name="title">
             <string>Nor Flash测试</string>
            </property>
@@ -1742,20 +1742,47 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QRadioButton" name="rBtnHexAddr">
-              <property name="text">
-               <string>16进制地址</string>
+            <item row="3" column="0">
+             <widget class="QPushButton" name="btn_norFlashRead">
+              <property name="toolTip">
+               <string>从指定地址读取256字节数据</string>
               </property>
-              <property name="checked">
-               <bool>true</bool>
+              <property name="text">
+               <string>读取扇区</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_2">
+            <item row="7" column="0" colspan="2">
+             <widget class="QProgressBar" name="pBarNorFlashRead">
+              <property name="value">
+               <number>0</number>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_3">
               <property name="text">
-               <string>起始地址(Byte):</string>
+               <string>数据长度(Byte):</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QPushButton" name="btn_norFlashReadFile">
+              <property name="text">
+               <string>读取文件</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0" colspan="2">
+             <widget class="QPlainTextEdit" name="plain_NorDebugInfo"/>
+            </item>
+            <item row="4" column="1">
+             <widget class="QPushButton" name="btn_norFlashWrite">
+              <property name="toolTip">
+               <string>在起始地址所在的地址写入256个默认数据</string>
+              </property>
+              <property name="text">
+               <string>写入扇区</string>
               </property>
              </widget>
             </item>
@@ -1772,10 +1799,33 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_3">
+            <item row="6" column="0">
+             <widget class="QCheckBox" name="checkBox_norFlashBitSwap">
+              <property name="toolTip">
+               <string>显示或保存数据时，是否进行bit-swap</string>
+              </property>
               <property name="text">
-               <string>数据长度(Byte):</string>
+               <string>bit-swapping</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QRadioButton" name="rBtnHexAddr">
+              <property name="text">
+               <string>16进制地址</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QPushButton" name="btn_norFlashErase">
+              <property name="toolTip">
+               <string>擦除起始地址所在的扇区</string>
+              </property>
+              <property name="text">
+               <string>擦除扇区</string>
               </property>
              </widget>
             </item>
@@ -1792,65 +1842,28 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QPushButton" name="btn_norFlashRead">
-              <property name="toolTip">
-               <string>从指定地址读取256字节数据</string>
-              </property>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_2">
               <property name="text">
-               <string>读取扇区</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QPushButton" name="btn_norFlashErase">
-              <property name="toolTip">
-               <string>擦除起始地址所在的扇区</string>
-              </property>
-              <property name="text">
-               <string>擦除扇区</string>
-              </property>
-             </widget>
-            </item>
-            <item row="8" column="0" colspan="2">
-             <widget class="QPlainTextEdit" name="plain_NorDebugInfo"/>
-            </item>
-            <item row="7" column="0" colspan="2">
-             <widget class="QProgressBar" name="pBarNorFlashRead">
-              <property name="value">
-               <number>0</number>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QPushButton" name="btn_norFlashReadFile">
-              <property name="text">
-               <string>读取文件</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="1">
-             <widget class="QPushButton" name="btn_norFlashWrite">
-              <property name="toolTip">
-               <string>在起始地址所在的地址写入256个默认数据</string>
-              </property>
-              <property name="text">
-               <string>写入扇区</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="0">
-             <widget class="QCheckBox" name="checkBox_norFlashBitSwap">
-              <property name="toolTip">
-               <string>显示或保存数据时，是否进行bit-swap</string>
-              </property>
-              <property name="text">
-               <string>bit-swapping</string>
+               <string>起始地址(Byte):</string>
               </property>
              </widget>
             </item>
            </layout>
           </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>

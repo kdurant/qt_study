@@ -188,6 +188,7 @@ void MainWindow::uiConfig()
 
     //ui->tabWidget->setTabEnabled(4, false);
     ui->tabWidget->setTabEnabled(5, false);
+    ui->groupBox_norFlashTest->hide();
 
     if(radarType == BspConfig::RADAR_TPYE_760)
     {
@@ -608,14 +609,19 @@ void MainWindow::initSignalSlot()
             QMessageBox::warning(this, "warning", "请先选择文件");
             return;
         }
+        if(!updateFlash->checkBinFormat(updateFilePath))
+        {
+            QMessageBox::warning(this, "warning", "文件格式错误，请重新选择文件");
+            return;
+        }
         ui->pBar_updateBin->setValue(0);
         ui->pBar_updateBin->setMaximum(QFile(updateFilePath).size());
         ui->btn_startUpdate->setEnabled(false);
 
         if(updateFlash->flashUpdate(updateFilePath))
-            QMessageBox::information(nullptr, "information", "本次升级成功，断电重启后生效");
+            QMessageBox::information(this, "information", "本次升级成功，断电重启后生效");
         else
-            QMessageBox::warning(nullptr, "warning", "本次升级失败，请重新尝试（不要断电）");
+            QMessageBox::warning(this, "warning", "本次升级失败，请重新尝试（不要断电）");
 
         ui->btn_startUpdate->setEnabled(true);
     });
@@ -1392,20 +1398,6 @@ void MainWindow::on_actionNote_triggered()
 {
     NoteInfo *note = new NoteInfo;
     note->show();
-}
-
-void MainWindow::on_btnNorFlashErase_clicked()
-{
-    uint32_t addr;
-    if(ui->rBtnDecAddr->isChecked())
-    {
-        addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
-    }
-    else
-    {
-        addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
-    }
-    updateFlash->flashErase(addr);
 }
 
 void MainWindow::on_bt_showWave_clicked()
