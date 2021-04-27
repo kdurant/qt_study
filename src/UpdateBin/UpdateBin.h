@@ -13,7 +13,7 @@ public:
     {
         BYTES_PER_WRITE  = 256,
         FLASH_BLOCK_SIZE = 0x10000 * 2,  // 64Kword/block,  128K Byte/block
-        BIN_FILE_OFFSET  = 0x0000000     // MCS文件烧录到这个地址0x6000000
+        BIN_FILE_OFFSET  = 0x6000000     // MCS文件烧录到这个地址0x6000000
     };
     UpdateBin()
     {
@@ -30,6 +30,7 @@ public:
     void flashErase(uint32_t addr);
 
     QByteArray pageRead(uint32_t addr);
+    QByteArray pageReadWithCheck(uint32_t addr);
 
     void pageWrite(uint32_t addr, QByteArray& data);
 

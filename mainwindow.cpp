@@ -608,14 +608,20 @@ void MainWindow::initSignalSlot()
             QMessageBox::warning(this, "warning", "请先选择文件");
             return;
         }
-        ui->pBar_updateBin->setMaximum(QFile(updateFilePath).size() - 1);
-        updateFlash->flashUpdate(updateFilePath);
+        ui->pBar_updateBin->setValue(0);
+        ui->pBar_updateBin->setMaximum(QFile(updateFilePath).size());
+        ui->btn_startUpdate->setEnabled(false);
+
+        if(updateFlash->flashUpdate(updateFilePath))
+            QMessageBox::information(nullptr, "information", "本次升级成功，断电重启后生效");
+        else
+            QMessageBox::warning(nullptr, "warning", "本次升级失败，请重新尝试（不要断电）");
+
+        ui->btn_startUpdate->setEnabled(true);
     });
 
     connect(updateFlash, &UpdateBin::updatedBytes, this, [this](qint32 bytes) {
-        ui->btn_startUpdate->setEnabled(false);
-        ui->pBar_updateBin->setValue(bytes - 1);
-        ui->btn_startUpdate->setEnabled(true);
+        ui->pBar_updateBin->setValue(bytes);
     });
 
     connect(ui->btn_norFlashRead, &QPushButton::clicked, this, [this]() {
@@ -647,6 +653,7 @@ void MainWindow::initSignalSlot()
 
         ui->pBarNorFlashRead->setValue(0);
         ui->pBarNorFlashRead->setMaximum(sectorNum - 1);
+        ui->btn_norFlashReadFile->setEnabled(false);
 
         uint32_t   currentAddr;
         QByteArray ba;
@@ -656,14 +663,14 @@ void MainWindow::initSignalSlot()
         QFile file(fileName);
         file.open(QIODevice::ReadWrite);
 
+        QByteArray errorResult(256, 0xee);
         for(uint32_t i = 0; i < sectorNum; i++)
         {
             ui->pBarNorFlashRead->setValue(i);
 
-            currentAddr      = startAddr + 256 * i;
-            QByteArray data  = updateFlash->pageRead(currentAddr);
-            QByteArray data2 = updateFlash->pageRead(currentAddr);
-            if(data != data2)
+            currentAddr     = startAddr + 256 * i;
+            QByteArray data = updateFlash->pageReadWithCheck(currentAddr);
+            if(data == errorResult)
             {
                 qDebug() << "error addr at: " << currentAddr;
             }
@@ -676,6 +683,8 @@ void MainWindow::initSignalSlot()
             file.write(data);
         }
         file.close();
+
+        ui->btn_norFlashReadFile->setEnabled(true);
     });
 
     /*
