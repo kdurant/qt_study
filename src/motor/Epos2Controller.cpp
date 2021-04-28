@@ -445,7 +445,7 @@ qint32 EPOS2::getActualPosition()
     send_4f_actively();
     waitResponse(waitTime);
     if(recvData.length() == 0x0b)
-        postion = static_cast<quint16>(recvData.at(6) << 8) + static_cast<quint8>(recvData.at(5));
+        postion = (static_cast<quint8>(recvData.at(8)) << 24) + (static_cast<quint8>(recvData.at(7)) << 16) + (static_cast<quint8>(recvData.at(6)) << 8) + static_cast<quint8>(recvData.at(5));
     else
         postion = -1;
 
