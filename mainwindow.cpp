@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -189,6 +189,7 @@ void MainWindow::uiConfig()
     //ui->tabWidget->setTabEnabled(4, false);
     ui->tabWidget->setTabEnabled(5, false);
     ui->groupBox_norFlashTest->hide();
+    ui->tabWidget->setCurrentIndex(0);
 
     if(radarType == BspConfig::RADAR_TPYE_760)
     {
@@ -241,7 +242,7 @@ void MainWindow::uiConfig()
         ui->comboBox_laserPower->hide();
         ui->comboBox_laserFreq->addItem("4000");
 
-        ui->tabWidget->setTabEnabled(4, true);
+        ui->tabWidget->setTabEnabled(4, false);
 
         ui->lineEdit_laserCurrent->setToolTip("3500 <= current <=4500");
         ui->lineEdit_laserCurrent->setValidator(new QIntValidator(0, 1000, this));
