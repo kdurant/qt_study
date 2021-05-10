@@ -1,8 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow), configIni(new QSettings("./config.ini", QSettings::IniFormat)), thread(new QThread())
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
@@ -181,6 +181,8 @@ void MainWindow::uiConfig()
     ui->lineEdit_compressLen->hide();
     ui->label_compressRatio->hide();
     ui->lineEdit_compressRatio->hide();
+    ui->label_pmtGateTime->hide();
+    ui->label_pmtDelayTime->hide();
     ui->lineEdit_pmtDelayTime->hide();
     ui->lineEdit_pmtGateTime->hide();
     ui->label_laserPower->hide();
@@ -304,6 +306,8 @@ void MainWindow::uiConfig()
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率(Hz)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "内触发频率(Hz)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "工作时间(s)"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "状态位"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "错误位"));
             ui->treeWidget_laser->addTopLevelItems(topItems);
 
             ui->treeWidget_laser->resizeColumnToContents(0);
@@ -718,6 +722,12 @@ void MainWindow::initSignalSlot()
 
             itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
             itemList.first()->setText(1, QString::number(info.work_time));
+
+            itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.status_bit, 2), 8, QLatin1Char('0')));
+
+            itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.error_bit, 2), 8, QLatin1Char('0')));
         });
     }
     else if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
@@ -831,7 +841,8 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->btn_laserReadInfo, &QPushButton::pressed, this, [this]() {
-        laser3Driver->getStatus();
+        while(laser3Driver->getStatus() != true)
+            ;
     });
 
     /*

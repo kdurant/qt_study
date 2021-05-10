@@ -31,6 +31,8 @@ public:
         quint32 freq_outside;
         quint32 freq_inside;
         quint32 work_time;
+        quint8  status_bit;
+        quint8  error_bit;
     };
 
     bool setMode(OpenMode mode) override;

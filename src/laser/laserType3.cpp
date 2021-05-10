@@ -115,7 +115,7 @@ bool LaserType3::getStatus()
     QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
     waitLoop.exec();
 
-    LaserInfo info{0, 0, 0};
+    LaserInfo info{0, 0, 0, 0, 0};
     if(recvData.size() == 0x32)
     {
         switch(recvData[2])
@@ -136,12 +136,16 @@ bool LaserType3::getStatus()
                                  (static_cast<quint8>(recvData[38]) << 16) +
                                  (static_cast<quint8>(recvData[39]) << 24);
 
+                info.status_bit = static_cast<quint8>(recvData[45]);
+                info.error_bit  = static_cast<quint8>(recvData[46]);
+                emit laserInfoReady(info);
+                return true;
+
                 break;
             default:
                 break;
         }
-        emit laserInfoReady(info);
     }
 
-    return true;
+    return false;
 }
