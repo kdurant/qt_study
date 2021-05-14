@@ -307,11 +307,18 @@ void MainWindow::uiConfig()
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "内触发频率(Hz)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "工作时间(s)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "状态位"));
+            topItems.last()->addChild(new QTreeWidgetItem(topItems.last(), QStringList() << "是否开启激光器"));
+            topItems.last()->addChild(new QTreeWidgetItem(topItems.last(), QStringList() << "是否外触发"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "错误位"));
+            topItems.last()->addChild(new QTreeWidgetItem(topItems.last(), QStringList() << "驱动板应答是否丢失"));
+            topItems.last()->addChild(new QTreeWidgetItem(topItems.last(), QStringList() << "控制板应答是否丢失"));
+            topItems.last()->addChild(new QTreeWidgetItem(topItems.last(), QStringList() << "是否过温"));
+            topItems.last()->addChild(new QTreeWidgetItem(topItems.last(), QStringList() << "是否欠温"));
+            topItems.last()->addChild(new QTreeWidgetItem(topItems.last(), QStringList() << "是否存在频率问题"));
             ui->treeWidget_laser->addTopLevelItems(topItems);
 
             ui->treeWidget_laser->resizeColumnToContents(0);
-
+            ui->treeWidget_laser->expandAll();
             break;
         case BspConfig::RADAR_TPYE_UNDER_WATER:
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流(mA)"));
@@ -725,9 +732,13 @@ void MainWindow::initSignalSlot()
 
             itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
             itemList.first()->setText(1, QString("%1").arg(QString::number(info.status_bit, 2), 8, QLatin1Char('0')));
+            itemList.first()->child(0)->setText(1, QString::number((info.status_bit >> 0) & 0x01));
+            itemList.first()->child(1)->setText(1, QString::number((info.status_bit >> 1) & 0x01));
 
             itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
             itemList.first()->setText(1, QString("%1").arg(QString::number(info.error_bit, 2), 8, QLatin1Char('0')));
+            for(int i = 0; i < 5; i++)
+                itemList.first()->child(i)->setText(1, QString::number((info.error_bit >> i) & 0x01));
         });
     }
     else if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
