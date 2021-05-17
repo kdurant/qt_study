@@ -74,7 +74,7 @@ qint32 OfflineWaveform::getADsampleNumber()
     int  length       = 0;
     char buffer[4]    = {0};
     sampleFrameNumber = 0;
-    quint32 offset    = 0;
+    quint64 offset    = 0;
     while((length = file.read(buffer, 4)) != 0)
     {
         if(buffer[0] == 0x01 && buffer[1] == 0x23 && buffer[2] == 0x45 && buffer[3] == 0x67)
