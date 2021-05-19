@@ -235,6 +235,14 @@ void MainWindow::uiConfig()
         ui->comboBox_laserFreq->addItem("100000");
         ui->comboBox_laserFreq->addItem("200000");
         ui->comboBox_laserFreq->addItem("400000");
+
+        QStringList DA1List{"APDHV"};
+        QStringList AD1List{"APD TEMP", "APDHV FB"};
+        ui->comboBox_DAChSelect->addItems(DA1List);
+        ui->comboBox_ADChSelect->addItems(AD1List);
+
+        ui->label_secondLen->hide();
+        ui->lineEdit_secondLen->hide();
     }
     else if(radarType == BspConfig::RADAR_TPYE_DRONE)
     {
@@ -711,8 +719,8 @@ void MainWindow::initSignalSlot()
 
     if(radarType == BspConfig::RADAR_TPYE_OCEAN)
     {
-        connect(laser2Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
-        connect(dispatch, &ProtocolDispatch::laserDataReady, laser2Driver, &LaserType2::setNewData);
+        connect(laser1Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
+        connect(dispatch, &ProtocolDispatch::laserDataReady, laser1Driver, &LaserType1::setNewData);
     }
     else if(radarType == BspConfig::RADAR_TPYE_DRONE)
     {
@@ -746,6 +754,11 @@ void MainWindow::initSignalSlot()
         connect(laser4Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser4Driver, &LaserType4::setNewData);
         connect(laser4Driver, &LaserType4::laserInfoReady, this, &MainWindow::showLaserInfo);
+    }
+    else if(radarType == BspConfig::RADAR_TPYE_LAND)
+    {
+        connect(laser2Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
+        connect(dispatch, &ProtocolDispatch::laserDataReady, laser2Driver, &LaserType2::setNewData);
     }
 
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]() {
