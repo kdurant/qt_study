@@ -309,6 +309,13 @@ void MainWindow::uiConfig()
     switch(radarType)
     {
         case BspConfig::RADAR_TPYE_LAND:
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "温度"));
+            ui->treeWidget_laser->addTopLevelItems(topItems);
+
+            ui->treeWidget_laser->resizeColumnToContents(0);
+            ui->treeWidget_laser->expandAll();
             break;
         case BspConfig::RADAR_TPYE_DRONE:
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率(Hz)"));
@@ -876,8 +883,27 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->btn_laserReadInfo, &QPushButton::pressed, this, [this]() {
-        while(laser3Driver->getStatus() != true)
-            ;
+        QList<QTreeWidgetItem *> itemList;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                itemList = ui->treeWidget_laser->findItems("外触发频率", Qt::MatchExactly);
+                itemList.first()->setText(1, laser2Driver->getFreq());
+                itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
+                itemList.first()->setText(1, laser2Driver->getCurrent());
+                itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
+                itemList.first()->setText(1, laser2Driver->getTemp());
+
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                while(laser3Driver->getStatus() != true)
+                    ;
+                break;
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                break;
+            default:
+                break;
+        }
     });
 
     /*
