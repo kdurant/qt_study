@@ -25,8 +25,17 @@ public:
         PREVIEW_ENABLE = 0x0000000C,
         SYS_INFO       = 0x00000013,
 
-        SAMPLE_LEN       = 0x00000008,
-        PREVIEW_RATIO    = 0x00000009,
+        SAMPLE_LEN    = 0x00000008,
+        PREVIEW_RATIO = 0x00000009,
+        // 陆地雷达参数
+        // 当初没有设计好，不然可以合并
+        ALGO_A_POS        = 0x00000022,
+        ALGO_A_LEN        = 0x00000023,
+        ALGO_B_POS        = 0x00000025,
+        ALGO_B_SUM_THRE   = 0x00000026,
+        ALGO_B_VALUE_THRE = 0x00000027,
+
+        // 海洋雷达参数
         FIRST_POS        = 0x00000029,
         FIRST_LEN        = 0x0000002a,
         SECOND_POS       = 0x0000002e,

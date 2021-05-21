@@ -23,7 +23,7 @@ private:
     bool       isStartRecvCompleteFrame{false};
     QByteArray fullSampleWave;
     qint32     curPckNumber{0};
-    qint32     prePckNumber{0};
+    qint32     prePckNumber{0xffff};
 
 public:
     OnlineWaveform()
@@ -32,6 +32,12 @@ public:
         //        connect(this, &OnlineWaveform::responseDataReady, this, &OnlineWaveform::getSampleData);
     }
 
+    bool isFrameHead(QByteArray &data)
+    {
+        if(data.size() < 4)
+            return false;
+        return (data.at(0) == 0x01 && data.at(1) == 0x23 && data.at(2) == 0x45 && data.at(3) == 0x67);
+    }
 signals:
     void responseDataReady(void);                // 接收到响应数据
     void fullSampleDataReady(QByteArray &data);  // 找到一次完整的采样数据

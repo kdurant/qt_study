@@ -417,14 +417,25 @@ void MainWindow::initSignalSlot()
             QMessageBox::critical(NULL, "错误", "第二段起始位置需要小于第一段起始位置+第一段采样长度");
             return;
         }
+
+        preview->setTotalSampleLen(totalSampleLen);
+        preview->setPreviewRatio(previewRatio);
+
+        if(radarType == BspConfig::RADAR_TPYE_LAND)
+        {
+            preview->setAlgoAPos((firstPos >> 3) << 3);
+            preview->setAlgoALen((firstLen >> 3) << 3);
+            preview->setAlgoBPos((secondPos >> 3) << 3);
+            preview->setAlgoBSumThre(sumThreshold);
+            preview->setAlgoBValueThre(valueThreshold);
+            return;
+        }
+
         if(secondPos + secondLen >= totalSampleLen)
         {
             QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
             return;
         }
-
-        preview->setTotalSampleLen(totalSampleLen);
-        preview->setPreviewRatio(previewRatio);
         preview->setFirstPos(firstPos);
         preview->setFirstLen(firstLen);
         preview->setSecondPos(secondPos);
@@ -1372,7 +1383,7 @@ void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
             else
                 value = allCh[offset].value[keyIndex];
 
-            int frameN = (int)((allCh[offset].motorCnt / 163840.0) * 180);
+            int frameN = (int)(((allCh[offset].motorCnt % 163840) / 163840.0) * 180);
             colorMapData->setCell(frameN, key, value);
         }
 

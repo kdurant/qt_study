@@ -98,6 +98,37 @@ public:
         sleepWithoutBlock(interval);
     }
 
+    void setAlgoAPos(int data)
+    {
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::ALGO_A_POS, 4, frame);
+        sleepWithoutBlock(interval);
+    }
+    void setAlgoALen(int data)
+    {
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::ALGO_A_LEN, 4, frame);
+        sleepWithoutBlock(interval);
+    }
+    void setAlgoBPos(int data)
+    {
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::ALGO_B_POS, 4, frame);
+        sleepWithoutBlock(interval);
+    }
+    void setAlgoBSumThre(int data)
+    {
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::ALGO_B_SUM_THRE, 4, frame);
+        sleepWithoutBlock(interval);
+    }
+    void setAlgoBValueThre(int data)
+    {
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::ALGO_B_VALUE_THRE, 4, frame);
+        sleepWithoutBlock(interval);
+    }
+
 signals:
     void sendDataReady(qint32 command, qint32 data_len, QByteArray &data);
 
