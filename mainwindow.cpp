@@ -784,7 +784,7 @@ void MainWindow::initSignalSlot()
         switch(radarType)
         {
             case BspConfig::RADAR_TPYE_LAND:
-                laser2Driver->setFreq(100000);
+                laser2Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 status = laser2Driver->open();
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
