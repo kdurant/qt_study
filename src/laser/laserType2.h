@@ -26,6 +26,7 @@ public:
     QString getCurrent(void);
     QString getFreq(void);
     QString getTemp(void);
+    QString getStatus(void);
 
 public slots:
     void setNewData(QByteArray& data)

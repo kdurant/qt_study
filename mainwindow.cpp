@@ -309,6 +309,7 @@ void MainWindow::uiConfig()
     switch(radarType)
     {
         case BspConfig::RADAR_TPYE_LAND:
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "激光器状态"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "温度"));
@@ -887,13 +888,14 @@ void MainWindow::initSignalSlot()
         switch(radarType)
         {
             case BspConfig::RADAR_TPYE_LAND:
+                itemList = ui->treeWidget_laser->findItems("激光器状态", Qt::MatchExactly);
+                itemList.first()->setText(1, laser2Driver->getStatus());
                 itemList = ui->treeWidget_laser->findItems("外触发频率", Qt::MatchExactly);
                 itemList.first()->setText(1, laser2Driver->getFreq());
                 itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
                 itemList.first()->setText(1, laser2Driver->getCurrent());
                 itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
                 itemList.first()->setText(1, laser2Driver->getTemp());
-
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
                 while(laser3Driver->getStatus() != true)
