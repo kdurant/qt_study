@@ -475,7 +475,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -757,7 +757,7 @@
          <item>
           <widget class="QToolBox" name="toolBox_motor">
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="page">
             <property name="geometry">
@@ -793,6 +793,9 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="text">
+                <string>0</string>
+               </property>
               </widget>
              </item>
              <item row="0" column="0">
@@ -823,8 +826,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>171</width>
-              <height>73</height>
+              <width>291</width>
+              <height>288</height>
              </rect>
             </property>
             <attribute name="label">
@@ -878,8 +881,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>171</width>
-              <height>117</height>
+              <width>291</width>
+              <height>288</height>
              </rect>
             </property>
             <attribute name="label">
@@ -901,6 +904,9 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="text">
+                <string>0</string>
+               </property>
               </widget>
              </item>
              <item row="1" column="1">
@@ -911,10 +917,16 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="text">
+                <string>0</string>
+               </property>
               </widget>
              </item>
              <item row="3" column="0">
               <widget class="QPushButton" name="btn_motorSweep">
+               <property name="toolTip">
+                <string>角度相等时，停止摆扫</string>
+               </property>
                <property name="text">
                 <string>摆扫</string>
                </property>
