@@ -445,10 +445,10 @@ void MainWindow::initSignalSlot()
         preview->setSecondPos(secondPos);
         preview->setSecondLen(secondLen);
         preview->setSumThreshold(sumThreshold);
+        preview->setValueThreshold(valueThreshold);
 
         if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
         {
-            preview->setValueThreshold(valueThreshold);
             preview->setPmtDelayAndGateTime(pmtDelayTime, pmtGateTime);
         }
     });
