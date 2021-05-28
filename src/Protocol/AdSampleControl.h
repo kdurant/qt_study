@@ -33,6 +33,12 @@ public:
         emit       sendDataReady(MasterSet::PREVIEW_RATIO, 4, frame);
         sleepWithoutBlock(interval);
     }
+    void setTrgMode(int data)
+    {
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::TRG_MODE, 4, frame);
+        sleepWithoutBlock(interval);
+    }
     void setFirstPos(int data)
     {
         QByteArray frame = BspConfig::int2ba(data);

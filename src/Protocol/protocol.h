@@ -80,6 +80,13 @@ public:
         DA_SET_VALUE    = 0x00000004,
         AD_GET_VALUE    = 0x00000005,
         CAMERA_FREQ_SET = 0x0000000D,
+        TRG_MODE        = 0x00700001,
+    };
+
+    enum _trg_mode
+    {
+        INSIDE_TRG  = 0x00,
+        OUTSIDE_TRG = 0x01,
     };
 };
 

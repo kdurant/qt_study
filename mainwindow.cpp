@@ -386,22 +386,16 @@ void MainWindow::initSignalSlot()
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagram()));
 
     // 发送已经打包好的数据
-    connect(dispatch, &ProtocolDispatch::frameDataReady, this, [this](QByteArray frame) {
-        udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
-    });
+    connect(dispatch, &ProtocolDispatch::frameDataReady, this, [this](QByteArray frame) { udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort); });
 
-    connect(dispatch, &ProtocolDispatch::errorDataReady, this, [this](QString &error) {
-        ui->statusBar->showMessage(error, 3);
-    });
+    connect(dispatch, &ProtocolDispatch::errorDataReady, this, [this](QString &error) { ui->statusBar->showMessage(error, 3); });
 
     /*
      * 读取系统参数信息相关逻辑 
      */
     connect(devInfo, &DevInfo::sendDataReady, dispatch, &ProtocolDispatch::encode);
     connect(dispatch, &ProtocolDispatch::infoDataReady, devInfo, &DevInfo::setNewData);
-    connect(ui->btn_ReadSysInfo, &QPushButton::pressed, this, [this]() {
-        getSysInfo();
-    });
+    connect(ui->btn_ReadSysInfo, &QPushButton::pressed, this, [this]() { getSysInfo(); });
 
     /*
      * 波形预览相关逻辑
@@ -478,6 +472,10 @@ void MainWindow::initSignalSlot()
         }
         preview->setPreviewEnable(status);
     });
+
+    connect(ui->rbtn_previewOutsideTrg, &QRadioButton::clicked, this, [this]() { preview->setTrgMode(MasterSet::OUTSIDE_TRG); });
+
+    connect(ui->rbtn_previewInsideTrg, &QRadioButton::clicked, this, [this]() { preview->setTrgMode(MasterSet::INSIDE_TRG); });
 
     connect(dispatch,
             &ProtocolDispatch::onlineDataReady,
@@ -564,9 +562,7 @@ void MainWindow::initSignalSlot()
         thread->start();
     });
 
-    connect(offlineWaveForm, &OfflineWaveform::sendSampleFrameNumber, this, [this](qint32 number) {
-        ui->lineEdit_validFrameNum->setText(QString::number(number));
-    });
+    connect(offlineWaveForm, &OfflineWaveform::sendSampleFrameNumber, this, [this](qint32 number) { ui->lineEdit_validFrameNum->setText(QString::number(number)); });
 
     connect(offlineWaveForm, &OfflineWaveform::sendSampleFrameNumber, this, [this](qint32 number) {
         ui->slider_framePos->setMaximum(number);
@@ -665,9 +661,7 @@ void MainWindow::initSignalSlot()
         ui->btn_startUpdate->setEnabled(true);
     });
 
-    connect(updateFlash, &UpdateBin::updatedBytes, this, [this](qint32 bytes) {
-        ui->pBar_updateBin->setValue(bytes);
-    });
+    connect(updateFlash, &UpdateBin::updatedBytes, this, [this](qint32 bytes) { ui->pBar_updateBin->setValue(bytes); });
 
     connect(ui->btn_norFlashRead, &QPushButton::clicked, this, [this]() {
         uint32_t addr;
@@ -1178,9 +1172,7 @@ void MainWindow::initSignalSlot()
         ui->plainTextEdit_ADSetLog->appendPlainText(ui->comboBox_ADChSelect->currentText() + ": " + ui->lineEdit_ADValue->text() + "V");
     });
 
-    connect(ui->btn_ADReadAll, &QPushButton::pressed, this, [this]() {
-        QMessageBox::warning(this, "warning", "还未实现此功能");
-    });
+    connect(ui->btn_ADReadAll, &QPushButton::pressed, this, [this]() { QMessageBox::warning(this, "warning", "还未实现此功能"); });
 
     /*
      * gps信息处理
