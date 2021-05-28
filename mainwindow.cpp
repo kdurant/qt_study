@@ -280,6 +280,8 @@ void MainWindow::uiConfig()
         itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
         itemList.first()->setHidden(false);
 
+        ui->label_pmtGateTime->show();
+        ui->label_pmtDelayTime->show();
         ui->lineEdit_pmtDelayTime->show();
         ui->lineEdit_pmtGateTime->show();
     }
@@ -1383,8 +1385,8 @@ void MainWindow::plotColormapSettings()
         QCPColorMap *colorMap = new QCPColorMap(customPlot->xAxis, customPlot->yAxis);
         widget2QCPColorMapList.append(colorMap);
 
-        int nx = 180;
-        int ny = 1024;
+        int nx = 180;   // 角度
+        int ny = 1024;  // AD采样数字值，最大1024
 
         colorMap->data()->setSize(nx, ny);                                 // nx*ny(cells)
         colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 1024));  // span the coordinate range
@@ -1461,7 +1463,7 @@ void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
                 value = allCh[offset].value[keyIndex];
 
             int frameN = (int)(((allCh[offset].motorCnt % 163840) / 163840.0) * 180);
-            colorMapData->setCell(frameN, key, value);
+            //            colorMapData->setCell(frameN, key, value);
         }
 
         colorMap->rescaleDataRange();

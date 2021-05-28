@@ -155,7 +155,7 @@ QString LaserType2::getStatus()
         isRecvNewData = false;
         if(recvData.contains("AM: O"))
             return "close";
-        else
+        else if(recvData.contains("AM: C"))
             return "open";
     }
     return "exception";
