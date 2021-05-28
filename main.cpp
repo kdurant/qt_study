@@ -16,7 +16,7 @@
 #include <QFile>
 
 const QString logFilePath = "debug.log";
-bool          logToFile   = true;
+bool          logToFile   = false;
 
 void customMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
