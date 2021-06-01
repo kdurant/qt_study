@@ -22,8 +22,9 @@ public:
     // 所以可以根据上传数据的长度来判断GPS设备类型，进而解析数据
     enum GPS_FRAME_LEN
     {
-        APPLANIX_LEN  = 115,
-        DISK_DATA_LEN = 88
+        APPLANIX_LEN     = 115,
+        DISK_DATA_LEN    = 88,
+        PREVIEW_DATA_LEN = 64,
     };
 
 private:
@@ -116,7 +117,7 @@ public slots:
         else if(frame.size() == DISK_DATA_LEN)
         {
             gps.week = frame.mid(8, 4).toHex().toUInt(nullptr, 16);
-            // TODO: 不同GPS型号解析的类型的方式不同，后续完善
+            // TODO: 不同GPS型号对秒的存储方式不同，所以解析的类型的方式不同，后续完善
             gps.current_week_ms = BspConfig::ba2int(frame.mid(12, 8));
             gps.latitude        = byteArrayToDouble(frame.mid(48, 8));
             gps.longitude       = byteArrayToDouble(frame.mid(56, 8));

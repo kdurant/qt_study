@@ -487,9 +487,16 @@ void MainWindow::initSignalSlot()
         QVector<quint8> sampleData;
         for(auto &i : data)  // 数据格式转换
             sampleData.append(i);
+
         QVector<WaveExtract::WaveformInfo> allCh;
 
         WaveExtract::getWaveform(radarType, sampleData, allCh);
+
+        QByteArray convert;
+        for(int i = 0; i < 88; i++)
+            convert.append(sampleData[i]);
+        gps->parserGpsData(convert);  //  耗时小于1ms
+
         for(int n = 0; n < allCh.size(); n++)
         {
             if(allCh.size() != 8)  // 只有第一段波形
