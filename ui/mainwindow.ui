@@ -1097,9 +1097,9 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>-76</y>
+              <y>0</y>
               <width>274</width>
-              <height>639</height>
+              <height>665</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1112,20 +1112,6 @@
                 <string>实时采集参数</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_9">
-                <item row="6" column="0">
-                 <widget class="QLabel" name="label_sumThreshold">
-                  <property name="text">
-                   <string>和阈值：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_16">
-                  <property name="text">
-                   <string>抽样率：</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="3" column="0">
                  <widget class="QLabel" name="label_18">
                   <property name="text">
@@ -1133,8 +1119,15 @@
                   </property>
                  </widget>
                 </item>
-                <item row="9" column="1">
-                 <widget class="QLineEdit" name="lineEdit_compressRatio">
+                <item row="11" column="0">
+                 <widget class="QLabel" name="label_pmtDelayTime">
+                  <property name="text">
+                   <string>PMT延迟时间(ns)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="lineEdit_sampleLen">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -1143,35 +1136,15 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_15">
+                <item row="13" column="1">
+                 <widget class="QPushButton" name="btn_sampleEnable">
                   <property name="text">
-                   <string>采样长度：</string>
+                   <string>开始采集</string>
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="1">
-                 <widget class="QLineEdit" name="lineEdit_secondLen">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="9" column="0">
-                 <widget class="QLabel" name="label_compressRatio">
-                  <property name="text">
-                   <string>压缩比：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QLineEdit" name="lineEdit_firstStartPos">
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="lineEdit_sampleRate">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -1193,130 +1166,21 @@
                   </property>
                  </widget>
                 </item>
-                <item row="6" column="1">
-                 <widget class="QLineEdit" name="lineEdit_sumThreshold">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0">
-                 <widget class="QLabel" name="label_secondStartPos">
-                  <property name="text">
-                   <string>第二段提取位置：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="8" column="1">
-                 <widget class="QLineEdit" name="lineEdit_compressLen">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item row="12" column="0">
-                 <widget class="QPushButton" name="btn_setPreviewPara">
-                  <property name="text">
-                   <string>设置</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QLineEdit" name="lineEdit_firstLen">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item row="12" column="1">
-                 <widget class="QPushButton" name="btn_sampleEnable">
-                  <property name="text">
-                   <string>开始采集</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="5" column="0">
-                 <widget class="QLabel" name="label_secondLen">
-                  <property name="text">
-                   <string>第二段提取长度：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="7" column="1">
-                 <widget class="QLineEdit" name="lineEdit_subThreshold">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="lineEdit_sampleLen">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_17">
-                  <property name="text">
-                   <string>第一段提取位置：</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="10" column="0">
-                 <widget class="QLabel" name="label_pmtDelayTime">
+                 <widget class="QLabel" name="label_compressRatio">
                   <property name="text">
-                   <string>PMT延迟时间(ns)</string>
+                   <string>压缩比：</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
-                 <widget class="QLineEdit" name="lineEdit_sampleRate">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item row="8" column="0">
-                 <widget class="QLabel" name="label_compressLen">
+                <item row="6" column="0">
+                 <widget class="QLabel" name="label_sumThreshold">
                   <property name="text">
-                   <string>压缩长度：</string>
+                   <string>和阈值：</string>
                   </property>
                  </widget>
                 </item>
-                <item row="7" column="0">
-                 <widget class="QLabel" name="label_subThreshold">
-                  <property name="text">
-                   <string>值阈值：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="11" column="0">
-                 <widget class="QLabel" name="label_pmtGateTime">
-                  <property name="text">
-                   <string>PMT门控时间(ns)</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="10" column="1">
+                <item row="11" column="1">
                  <widget class="QLineEdit" name="lineEdit_pmtDelayTime">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1332,7 +1196,68 @@
                   </property>
                  </widget>
                 </item>
-                <item row="11" column="1">
+                <item row="5" column="0">
+                 <widget class="QLabel" name="label_secondLen">
+                  <property name="text">
+                   <string>第二段提取长度：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="1">
+                 <widget class="QLineEdit" name="lineEdit_sumThreshold">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLineEdit" name="lineEdit_firstLen">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_16">
+                  <property name="text">
+                   <string>抽样率：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="9" column="1">
+                 <widget class="QLineEdit" name="lineEdit_compressLen">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLineEdit" name="lineEdit_firstStartPos">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+                <item row="12" column="0">
+                 <widget class="QLabel" name="label_pmtGateTime">
+                  <property name="text">
+                   <string>PMT门控时间(ns)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="12" column="1">
                  <widget class="QLineEdit" name="lineEdit_pmtGateTime">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -1345,6 +1270,104 @@
                   </property>
                   <property name="text">
                    <string>500</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="label_secondStartPos">
+                  <property name="text">
+                   <string>第二段提取位置：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_15">
+                  <property name="text">
+                   <string>采样长度：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="13" column="0">
+                 <widget class="QPushButton" name="btn_setPreviewPara">
+                  <property name="text">
+                   <string>设置</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="1">
+                 <widget class="QLineEdit" name="lineEdit_subThreshold">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+                <item row="10" column="1">
+                 <widget class="QLineEdit" name="lineEdit_compressRatio">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_17">
+                  <property name="text">
+                   <string>第一段提取位置：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="1">
+                 <widget class="QLineEdit" name="lineEdit_secondLen">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="0">
+                 <widget class="QLabel" name="label_subThreshold">
+                  <property name="text">
+                   <string>值阈值：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="9" column="0">
+                 <widget class="QLabel" name="label_compressLen">
+                  <property name="text">
+                   <string>压缩长度：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="8" column="0">
+                 <widget class="QLabel" name="label_sampleDelay">
+                  <property name="text">
+                   <string>采样延迟(ns)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="8" column="1">
+                 <widget class="QLineEdit" name="lineEdit_sampleDelay">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>触发信号来临时，延迟多少时间才开始采集数据</string>
+                  </property>
+                  <property name="text">
+                   <string>1000</string>
                   </property>
                  </widget>
                 </item>
@@ -1501,8 +1524,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>285</width>
-              <height>563</height>
+              <width>194</width>
+              <height>368</height>
              </rect>
             </property>
             <attribute name="label">

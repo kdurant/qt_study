@@ -187,6 +187,8 @@ void MainWindow::uiConfig()
     ui->lineEdit_pmtGateTime->hide();
     ui->label_laserPower->hide();
     ui->comboBox_laserPower->hide();
+    ui->label_sampleDelay->hide();
+    ui->lineEdit_sampleDelay->hide();
 
     //ui->tabWidget->setTabEnabled(4, false);
     ui->tabWidget->setTabEnabled(5, false);
@@ -210,11 +212,9 @@ void MainWindow::uiConfig()
     {
         setWindowTitle(tr("双波长雷达控制软件"));
         ui->lineEdit_radarType->setText("双波长雷达");
-        ui->label_subThreshold->hide();
-        ui->lineEdit_subThreshold->hide();
 
-        ui->label_sumThreshold->hide();
-        ui->lineEdit_sumThreshold->hide();
+        ui->label_sampleDelay->show();
+        ui->lineEdit_sampleDelay->show();
     }
     else if(radarType == BspConfig::RADAR_TPYE_OCEAN)
     {
@@ -413,6 +413,7 @@ void MainWindow::initSignalSlot()
         int     secondLen      = ui->lineEdit_secondLen->text().toInt();
         int     sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
         int     valueThreshold = ui->lineEdit_subThreshold->text().toInt();
+        int     sampleDelay    = ui->lineEdit_sampleDelay->text().toInt();
         quint16 pmtDelayTime   = ui->lineEdit_pmtDelayTime->text().toUInt();
         quint16 pmtGateTime    = ui->lineEdit_pmtGateTime->text().toUInt();
 
@@ -450,6 +451,10 @@ void MainWindow::initSignalSlot()
         if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
         {
             preview->setPmtDelayAndGateTime(pmtDelayTime, pmtGateTime);
+        }
+        if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+        {
+            preview->setSampleDelay((sampleDelay >> 3) << 3);
         }
     });
 

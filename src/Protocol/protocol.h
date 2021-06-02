@@ -36,15 +36,16 @@ public:
         ALGO_B_VALUE_THRE = 0x00000027,
 
         // 海洋雷达参数
-        FIRST_POS        = 0x00000029,
-        FIRST_LEN        = 0x0000002a,
-        SECOND_POS       = 0x0000002e,
-        SECOND_LEN       = 0x00000030,
-        SUM_THRE         = 0x0000002b,
-        VALUE_THRE       = 0x0000002c,
-        COMPRESS_LEN     = 0x00200001,
-        COMPRESS_RATIO   = 0x00200002,
-        PMT_CONTROL_TIME = 0x00000032,
+        FIRST_POS         = 0x00000029,
+        FIRST_LEN         = 0x0000002a,
+        SECOND_POS        = 0x0000002e,
+        SECOND_LEN        = 0x00000030,
+        SUM_THRE          = 0x0000002b,
+        VALUE_THRE        = 0x0000002c,
+        COMPRESS_LEN      = 0x00200001,
+        COMPRESS_RATIO    = 0x00200002,
+        PMT_CONTROL_TIME  = 0x00000032,
+        SAMPLE_DELAY_TIME = 0x00000033,
     };
     enum laser
     {
