@@ -223,8 +223,8 @@ void MainWindow::uiConfig()
         ui->lineEdit_laserCurrent->setToolTip("3500 <= current <=4500");
         ui->lineEdit_laserCurrent->setValidator(new QIntValidator(0, 1000, this));
 
-        QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
-        QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
+        QStringList DA1List{"MPPC_532", "PMT_532", "MPPC_486", "PMT486"};
+        QStringList AD1List{"APD TEMP", "MPPC_532", "PMT_532", "MPPC_486", "PMT486"};
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_ADChSelect->addItems(AD1List);
     }
