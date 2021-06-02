@@ -399,217 +399,200 @@ void MainWindow::initSignalSlot()
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagram()));
 
     // 发送已经打包好的数据
-    connect(dispatch, &ProtocolDispatch::frameDataReady, this, [this](QByteArray frame)
-            { udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort); });
+    connect(dispatch, &ProtocolDispatch::frameDataReady, this, [this](QByteArray frame) { udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort); });
 
-    connect(dispatch, &ProtocolDispatch::errorDataReady, this, [this](QString &error)
-            { ui->statusBar->showMessage(error, 3); });
+    connect(dispatch, &ProtocolDispatch::errorDataReady, this, [this](QString &error) { ui->statusBar->showMessage(error, 3); });
 
     /*
      * 读取系统参数信息相关逻辑 
      */
     connect(devInfo, &DevInfo::sendDataReady, dispatch, &ProtocolDispatch::encode);
     connect(dispatch, &ProtocolDispatch::infoDataReady, devInfo, &DevInfo::setNewData);
-    connect(ui->btn_ReadSysInfo, &QPushButton::pressed, this, [this]()
-            { getSysInfo(); });
+    connect(ui->btn_ReadSysInfo, &QPushButton::pressed, this, [this]() { getSysInfo(); });
 
     /*
      * 波形预览相关逻辑
      */
     connect(preview, &AdSampleControll::sendDataReady, dispatch, &ProtocolDispatch::encode);
 
-    connect(ui->btn_setPreviewPara, &QPushButton::pressed, this, [this]()
+    connect(ui->btn_setPreviewPara, &QPushButton::pressed, this, [this]() {
+        int     totalSampleLen = ui->lineEdit_sampleLen->text().toInt();
+        int     previewRatio   = ui->lineEdit_sampleRate->text().toInt();
+        int     firstPos       = ui->lineEdit_firstStartPos->text().toInt();
+        int     firstLen       = ui->lineEdit_firstLen->text().toInt();
+        int     secondPos      = ui->lineEdit_secondStartPos->text().toInt();
+        int     secondLen      = ui->lineEdit_secondLen->text().toInt();
+        int     sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
+        int     valueThreshold = ui->lineEdit_subThreshold->text().toInt();
+        int     sampleDelay    = ui->lineEdit_sampleDelay->text().toInt();
+        quint16 pmtDelayTime   = ui->lineEdit_pmtDelayTime->text().toUInt();
+        quint16 pmtGateTime    = ui->lineEdit_pmtGateTime->text().toUInt();
+
+        if(secondPos < firstPos + firstLen)
+        {
+            QMessageBox::critical(NULL, "错误", "第二段起始位置需要小于第一段起始位置+第一段采样长度");
+            return;
+        }
+
+        preview->setTotalSampleLen(totalSampleLen);
+        preview->setPreviewRatio(previewRatio);
+
+        if(radarType == BspConfig::RADAR_TPYE_LAND)
+        {
+            preview->setAlgoAPos((firstPos >> 3) << 3);
+            preview->setAlgoALen((firstLen >> 3) << 3);
+            preview->setAlgoBPos((secondPos >> 3) << 3);
+            preview->setAlgoBSumThre(sumThreshold);
+            preview->setAlgoBValueThre(valueThreshold);
+            return;
+        }
+
+        if(secondPos + secondLen >= totalSampleLen)
+        {
+            QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
+            return;
+        }
+        preview->setFirstPos(firstPos);
+        preview->setFirstLen(firstLen);
+        preview->setSecondPos(secondPos);
+        preview->setSecondLen(secondLen);
+        preview->setSumThreshold(sumThreshold);
+        preview->setValueThreshold(valueThreshold);
+
+        if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
+        {
+            preview->setPmtDelayAndGateTime(pmtDelayTime, pmtGateTime);
+        }
+        if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+        {
+            preview->setSampleDelay((sampleDelay >> 3) << 3);
+        }
+    });
+
+    connect(ui->btn_sampleEnable, &QPushButton::pressed, this, [this]() {
+        QByteArray frame;
+        quint32    status;
+
+        if(ui->btn_sampleEnable->text() == "开始采集")
+        {
+            status = 0x01010101;
+            ui->btn_sampleEnable->setText("停止采集");
+        }
+        else
+        {
+            if(sysStatus.ssdStoreStatus)
             {
-                int     totalSampleLen = ui->lineEdit_sampleLen->text().toInt();
-                int     previewRatio   = ui->lineEdit_sampleRate->text().toInt();
-                int     firstPos       = ui->lineEdit_firstStartPos->text().toInt();
-                int     firstLen       = ui->lineEdit_firstLen->text().toInt();
-                int     secondPos      = ui->lineEdit_secondStartPos->text().toInt();
-                int     secondLen      = ui->lineEdit_secondLen->text().toInt();
-                int     sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
-                int     valueThreshold = ui->lineEdit_subThreshold->text().toInt();
-                int     sampleDelay    = ui->lineEdit_sampleDelay->text().toInt();
-                quint16 pmtDelayTime   = ui->lineEdit_pmtDelayTime->text().toUInt();
-                quint16 pmtGateTime    = ui->lineEdit_pmtGateTime->text().toUInt();
+                QMessageBox::warning(NULL, "警告", "请先停止存储数据");
+                return;
+            }
+            status = 0;
+            ui->btn_sampleEnable->setText("开始采集");
+        }
+        preview->setPreviewEnable(status);
+    });
 
-                if(secondPos < firstPos + firstLen)
-                {
-                    QMessageBox::critical(NULL, "错误", "第二段起始位置需要小于第一段起始位置+第一段采样长度");
-                    return;
-                }
+    connect(ui->rbtn_previewOutsideTrg, &QRadioButton::clicked, this, [this]() { preview->setTrgMode(MasterSet::OUTSIDE_TRG); });
 
-                preview->setTotalSampleLen(totalSampleLen);
-                preview->setPreviewRatio(previewRatio);
-
-                if(radarType == BspConfig::RADAR_TPYE_LAND)
-                {
-                    preview->setAlgoAPos((firstPos >> 3) << 3);
-                    preview->setAlgoALen((firstLen >> 3) << 3);
-                    preview->setAlgoBPos((secondPos >> 3) << 3);
-                    preview->setAlgoBSumThre(sumThreshold);
-                    preview->setAlgoBValueThre(valueThreshold);
-                    return;
-                }
-
-                if(secondPos + secondLen >= totalSampleLen)
-                {
-                    QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
-                    return;
-                }
-                preview->setFirstPos(firstPos);
-                preview->setFirstLen(firstLen);
-                preview->setSecondPos(secondPos);
-                preview->setSecondLen(secondLen);
-                preview->setSumThreshold(sumThreshold);
-                preview->setValueThreshold(valueThreshold);
-
-                if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
-                {
-                    preview->setPmtDelayAndGateTime(pmtDelayTime, pmtGateTime);
-                }
-                if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
-                {
-                    preview->setSampleDelay((sampleDelay >> 3) << 3);
-                }
-            });
-
-    connect(ui->btn_sampleEnable, &QPushButton::pressed, this, [this]()
-            {
-                QByteArray frame;
-                quint32    status;
-
-                if(ui->btn_sampleEnable->text() == "开始采集")
-                {
-                    status = 0x01010101;
-                    ui->btn_sampleEnable->setText("停止采集");
-                }
-                else
-                {
-                    if(sysStatus.ssdStoreStatus)
-                    {
-                        QMessageBox::warning(NULL, "警告", "请先停止存储数据");
-                        return;
-                    }
-                    status = 0;
-                    ui->btn_sampleEnable->setText("开始采集");
-                }
-                preview->setPreviewEnable(status);
-            });
-
-    connect(ui->rbtn_previewOutsideTrg, &QRadioButton::clicked, this, [this]()
-            { preview->setTrgMode(MasterSet::OUTSIDE_TRG); });
-
-    connect(ui->rbtn_previewInsideTrg, &QRadioButton::clicked, this, [this]()
-            { preview->setTrgMode(MasterSet::INSIDE_TRG); });
+    connect(ui->rbtn_previewInsideTrg, &QRadioButton::clicked, this, [this]() { preview->setTrgMode(MasterSet::INSIDE_TRG); });
 
     connect(dispatch,
             &ProtocolDispatch::onlineDataReady,
             onlineWaveForm,
             &OnlineWaveform::setNewData);
-    connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data)
+    connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data) {
+        QVector<quint8> sampleData;
+        for(auto &i : data)  // 数据格式转换
+            sampleData.append(i);
+
+        QVector<WaveExtract::WaveformInfo> allCh;
+
+        WaveExtract::getWaveform(radarType, sampleData, allCh);
+
+        QByteArray convert;
+        for(int i = 0; i < 88; i++)
+            convert.append(sampleData[i]);
+        gps->parserGpsData(convert);  //  耗时小于1ms
+
+        for(int n = 0; n < allCh.size(); n++)
+        {
+            if(allCh.size() != 8)  // 只有第一段波形
             {
-                QVector<quint8> sampleData;
-                for(auto &i : data)  // 数据格式转换
-                    sampleData.append(i);
+                ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
+                ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
+            }
+            else
+                ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
+        }
+        if(autoZoomPlot)
+            ui->sampleDataPlot->rescaleAxes();
+        ui->sampleDataPlot->replot();
 
-                QVector<WaveExtract::WaveformInfo> allCh;
-
-                WaveExtract::getWaveform(radarType, sampleData, allCh);
-
-                QByteArray convert;
-                for(int i = 0; i < 88; i++)
-                    convert.append(sampleData[i]);
-                gps->parserGpsData(convert);  //  耗时小于1ms
-
-                for(int n = 0; n < allCh.size(); n++)
-                {
-                    if(allCh.size() != 8)  // 只有第一段波形
-                    {
-                        ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
-                        ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
-                    }
-                    else
-                        ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
-                }
-                if(autoZoomPlot)
-                    ui->sampleDataPlot->rescaleAxes();
-                ui->sampleDataPlot->replot();
-
-                updateColormap(allCh);
-            });
+        updateColormap(allCh);
+    });
 
     /*
      * 图表控制相关逻辑
      */
-    connect(ui->checkBox_autoZoom, &QCheckBox::stateChanged, this, [this](int state)
-            {
-                if(state == Qt::Checked)
-                    autoZoomPlot = true;
-                else
-                    autoZoomPlot = false;
-            });
-    connect(ui->checkBox_ch0Enable, &QCheckBox::stateChanged, this, [this](int state)
-            {
-                bool status = state == Qt::Unchecked ? false : true;
-                ui->sampleDataPlot->graph(0)->setVisible(status);
-                ui->sampleDataPlot->graph(1)->setVisible(status);
-                ui->sampleDataPlot->replot();
-            });
-    connect(ui->checkBox_ch1Enable, &QCheckBox::stateChanged, this, [this](int state)
-            {
-                bool status = state == Qt::Unchecked ? false : true;
-                ui->sampleDataPlot->graph(2)->setVisible(status);
-                ui->sampleDataPlot->graph(3)->setVisible(status);
-                ui->sampleDataPlot->replot();
-            });
-    connect(ui->checkBox_ch2Enable, &QCheckBox::stateChanged, this, [this](int state)
-            {
-                bool status = state == Qt::Unchecked ? false : true;
-                ui->sampleDataPlot->graph(4)->setVisible(status);
-                ui->sampleDataPlot->graph(5)->setVisible(status);
-                ui->sampleDataPlot->replot();
-            });
-    connect(ui->checkBox_ch3Enable, &QCheckBox::stateChanged, this, [this](int state)
-            {
-                bool status = state == Qt::Unchecked ? false : true;
-                ui->sampleDataPlot->graph(6)->setVisible(status);
-                ui->sampleDataPlot->graph(7)->setVisible(status);
-                ui->sampleDataPlot->replot();
-            });
+    connect(ui->checkBox_autoZoom, &QCheckBox::stateChanged, this, [this](int state) {
+        if(state == Qt::Checked)
+            autoZoomPlot = true;
+        else
+            autoZoomPlot = false;
+    });
+    connect(ui->checkBox_ch0Enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool status = state == Qt::Unchecked ? false : true;
+        ui->sampleDataPlot->graph(0)->setVisible(status);
+        ui->sampleDataPlot->graph(1)->setVisible(status);
+        ui->sampleDataPlot->replot();
+    });
+    connect(ui->checkBox_ch1Enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool status = state == Qt::Unchecked ? false : true;
+        ui->sampleDataPlot->graph(2)->setVisible(status);
+        ui->sampleDataPlot->graph(3)->setVisible(status);
+        ui->sampleDataPlot->replot();
+    });
+    connect(ui->checkBox_ch2Enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool status = state == Qt::Unchecked ? false : true;
+        ui->sampleDataPlot->graph(4)->setVisible(status);
+        ui->sampleDataPlot->graph(5)->setVisible(status);
+        ui->sampleDataPlot->replot();
+    });
+    connect(ui->checkBox_ch3Enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool status = state == Qt::Unchecked ? false : true;
+        ui->sampleDataPlot->graph(6)->setVisible(status);
+        ui->sampleDataPlot->graph(7)->setVisible(status);
+        ui->sampleDataPlot->replot();
+    });
 
-    connect(ui->btn_axisRangeSet, &QPushButton::pressed, this, [this]()
-            {
-                quint32 xMin = ui->lineEdit_axisXmin->text().toUInt(nullptr, 10);
-                quint32 xMax = ui->lineEdit_axisXmax->text().toUInt(nullptr, 10);
-                ui->sampleDataPlot->xAxis->setRange(xMin, xMax);
+    connect(ui->btn_axisRangeSet, &QPushButton::pressed, this, [this]() {
+        quint32 xMin = ui->lineEdit_axisXmin->text().toUInt(nullptr, 10);
+        quint32 xMax = ui->lineEdit_axisXmax->text().toUInt(nullptr, 10);
+        ui->sampleDataPlot->xAxis->setRange(xMin, xMax);
 
-                quint32 yMin = ui->lineEdit_axisYmin->text().toUInt(nullptr, 10);
-                quint32 yMax = ui->lineEdit_axisYmax->text().toUInt(nullptr, 10);
-                ui->sampleDataPlot->yAxis->setRange(yMin, yMax);
+        quint32 yMin = ui->lineEdit_axisYmin->text().toUInt(nullptr, 10);
+        quint32 yMax = ui->lineEdit_axisYmax->text().toUInt(nullptr, 10);
+        ui->sampleDataPlot->yAxis->setRange(yMin, yMax);
 
-                ui->sampleDataPlot->replot();
-            });
+        ui->sampleDataPlot->replot();
+    });
     /*
      * 离线显示数据波形相关逻辑
      */
-    connect(ui->btn_selectOfflineFile, &QPushButton::pressed, this, [this]()
-            {
-                QString showFileName = QFileDialog::getOpenFileName(this, tr(""), "", tr("*.bin"));  //选择路径
-                if(showFileName.size() == 0)
-                    return;
-                ui->lineEdit_selectShowFile->setText(showFileName);
-                offlineWaveForm->setWaveFile(showFileName);
-                thread->start();
-            });
+    connect(ui->btn_selectOfflineFile, &QPushButton::pressed, this, [this]() {
+        QString showFileName = QFileDialog::getOpenFileName(this, tr(""), "", tr("*.bin"));  //选择路径
+        if(showFileName.size() == 0)
+            return;
+        ui->lineEdit_selectShowFile->setText(showFileName);
+        offlineWaveForm->setWaveFile(showFileName);
+        thread->start();
+    });
 
-    connect(offlineWaveForm, &OfflineWaveform::sendSampleFrameNumber, this, [this](qint32 number)
-            { ui->lineEdit_validFrameNum->setText(QString::number(number)); });
+    connect(offlineWaveForm, &OfflineWaveform::sendSampleFrameNumber, this, [this](qint32 number) { ui->lineEdit_validFrameNum->setText(QString::number(number)); });
 
-    connect(offlineWaveForm, &OfflineWaveform::sendSampleFrameNumber, this, [this](qint32 number)
-            {
-                ui->slider_framePos->setMaximum(number);
-                ui->spin_framePos->setMaximum(number);
-            });
+    connect(offlineWaveForm, &OfflineWaveform::sendSampleFrameNumber, this, [this](qint32 number) {
+        ui->slider_framePos->setMaximum(number);
+        ui->spin_framePos->setMaximum(number);
+    });
     connect(ui->spin_framePos,
             static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
             ui->slider_framePos,
@@ -622,159 +605,151 @@ void MainWindow::initSignalSlot()
 
     connect(ui->bt_showWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
     connect(ui->btn_stopShowWave, SIGNAL(pressed()), this, SLOT(on_bt_showWave_clicked()));
-    connect(ui->btn_showMotorCnt, &QPushButton::pressed, this, [this]()
-            {
-                QVector<double> motorCnt = offlineWaveForm->getMotorCnt();
-                QVector<double> x;
-                for(int i = 0; i < motorCnt.size(); i++)
-                    x.append(i);
+    connect(ui->btn_showMotorCnt, &QPushButton::pressed, this, [this]() {
+        QVector<double> motorCnt = offlineWaveForm->getMotorCnt();
+        QVector<double> x;
+        for(int i = 0; i < motorCnt.size(); i++)
+            x.append(i);
 
-                ui->sampleDataPlot->graph(0)->setData(x, motorCnt);
-                ui->sampleDataPlot->rescaleAxes();
-                ui->sampleDataPlot->replot();
-            });
+        ui->sampleDataPlot->graph(0)->setData(x, motorCnt);
+        ui->sampleDataPlot->rescaleAxes();
+        ui->sampleDataPlot->replot();
+    });
 
-    connect(ui->btn_showGpsSubTime, &QPushButton::pressed, this, [this]()
-            {
-                QVector<double> y = offlineWaveForm->getGpsSubTime();
-                QVector<double> x;
-                for(int i = 0; i < y.size(); i++)
-                    x.append(i);
+    connect(ui->btn_showGpsSubTime, &QPushButton::pressed, this, [this]() {
+        QVector<double> y = offlineWaveForm->getGpsSubTime();
+        QVector<double> x;
+        for(int i = 0; i < y.size(); i++)
+            x.append(i);
 
-                ui->sampleDataPlot->graph(2)->setData(x, y);
-                ui->sampleDataPlot->rescaleAxes();
-                ui->sampleDataPlot->replot();
-            });
+        ui->sampleDataPlot->graph(2)->setData(x, y);
+        ui->sampleDataPlot->rescaleAxes();
+        ui->sampleDataPlot->replot();
+    });
     /*
      * Nor Flash操作，远程更新相关逻辑
      */
 
     connect(dispatch, &ProtocolDispatch::flashDataReady, updateFlash, &UpdateBin::setDataFrame);
     connect(updateFlash, &UpdateBin::flashCommandReadySet, dispatch, &ProtocolDispatch::encode);
-    connect(ui->btn_norFlashWrite, &QPushButton::pressed, this, [this]()
+    connect(ui->btn_norFlashWrite, &QPushButton::pressed, this, [this]() {
+        uint32_t addr;
+        if(ui->rBtnDecAddr->isChecked())
+        {
+            addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
+        }
+        else
+        {
+            addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+        }
+
+        QByteArray data;
+        for(int i = 0; i < 256; i++)
+        {
+            data.append(i);
+        }
+        ui->btn_norFlashWrite->setEnabled(false);
+        updateFlash->flashErase(addr);
+
+        updateFlash->pageWrite(addr, data);
+        ui->btn_norFlashWrite->setEnabled(true);
+    });
+
+    connect(ui->btn_selectUpdateFile, &QPushButton::pressed, this, [this]() {
+        QString updateFilePath = QFileDialog::getOpenFileName(this, tr(""), "", tr("*"));  //选择路径
+        if(updateFilePath.size() == 0)
+            return;
+        ui->lineEdit_updateFilePath->setText(updateFilePath);
+    });
+
+    connect(ui->btn_startUpdate, &QPushButton::pressed, this, [this]() {
+        QString updateFilePath = ui->lineEdit_updateFilePath->text();
+        if(updateFilePath.isEmpty())
+        {
+            QMessageBox::warning(this, "warning", "请先选择文件");
+            return;
+        }
+        if(!updateFlash->checkBinFormat(updateFilePath))
+        {
+            QMessageBox::warning(this, "warning", "文件格式错误，请重新选择文件");
+            return;
+        }
+        ui->pBar_updateBin->setValue(0);
+        ui->pBar_updateBin->setMaximum(QFile(updateFilePath).size());
+        ui->btn_startUpdate->setEnabled(false);
+
+        if(updateFlash->flashUpdate(updateFilePath))
+            QMessageBox::information(this, "information", "本次升级成功，断电重启后生效");
+        else
+            QMessageBox::warning(this, "warning", "本次升级失败，请重新尝试（不要断电）");
+
+        ui->btn_startUpdate->setEnabled(true);
+    });
+
+    connect(updateFlash, &UpdateBin::updatedBytes, this, [this](qint32 bytes) { ui->pBar_updateBin->setValue(bytes); });
+
+    connect(ui->btn_norFlashRead, &QPushButton::clicked, this, [this]() {
+        uint32_t addr;
+        if(ui->rBtnDecAddr->isChecked())
+        {
+            addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
+        }
+        else
+        {
+            addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+        }
+        QByteArray recv = updateFlash->pageRead(addr);
+        ui->plain_NorDebugInfo->appendPlainText(recv.toHex());
+    });
+
+    connect(ui->btn_norFlashReadFile, &QPushButton::clicked, this, [this]() {
+        uint32_t startAddr, sectorNum;
+        if(ui->rBtnDecAddr->isChecked())
+        {
+            startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
+            sectorNum = ui->lineEdit_NorFlashReadLen->text().toInt(nullptr, 10) / 256;
+        }
+        else
+        {
+            startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
+            sectorNum = ui->lineEdit_NorFlashReadLen->text().toInt(nullptr, 16) / 256;
+        }
+
+        ui->pBarNorFlashRead->setValue(0);
+        ui->pBarNorFlashRead->setMaximum(sectorNum - 1);
+        ui->btn_norFlashReadFile->setEnabled(false);
+
+        uint32_t   currentAddr;
+        QByteArray ba;
+
+        QString fileName = QString("addr_0x%1.bin").arg(QString::number(startAddr, 16));
+
+        QFile file(fileName);
+        file.open(QIODevice::ReadWrite);
+
+        QByteArray errorResult(256, 0xee);
+        for(uint32_t i = 0; i < sectorNum; i++)
+        {
+            ui->pBarNorFlashRead->setValue(i);
+
+            currentAddr     = startAddr + 256 * i;
+            QByteArray data = updateFlash->pageReadWithCheck(currentAddr);
+            if(data == errorResult)
             {
-                uint32_t addr;
-                if(ui->rBtnDecAddr->isChecked())
-                {
-                    addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
-                }
-                else
-                {
-                    addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
-                }
+                qDebug() << "error addr at: " << currentAddr;
+            }
 
-                QByteArray data;
-                for(int i = 0; i < 256; i++)
-                {
-                    data.append(i);
-                }
-                ui->btn_norFlashWrite->setEnabled(false);
-                updateFlash->flashErase(addr);
-
-                updateFlash->pageWrite(addr, data);
-                ui->btn_norFlashWrite->setEnabled(true);
-            });
-
-    connect(ui->btn_selectUpdateFile, &QPushButton::pressed, this, [this]()
+            if(ui->checkBox_norFlashBitSwap->isChecked())
             {
-                QString updateFilePath = QFileDialog::getOpenFileName(this, tr(""), "", tr("*"));  //选择路径
-                if(updateFilePath.size() == 0)
-                    return;
-                ui->lineEdit_updateFilePath->setText(updateFilePath);
-            });
+                for(auto &i : data)
+                    i = Common::bitSwap(i);
+            }
+            file.write(data);
+        }
+        file.close();
 
-    connect(ui->btn_startUpdate, &QPushButton::pressed, this, [this]()
-            {
-                QString updateFilePath = ui->lineEdit_updateFilePath->text();
-                if(updateFilePath.isEmpty())
-                {
-                    QMessageBox::warning(this, "warning", "请先选择文件");
-                    return;
-                }
-                if(!updateFlash->checkBinFormat(updateFilePath))
-                {
-                    QMessageBox::warning(this, "warning", "文件格式错误，请重新选择文件");
-                    return;
-                }
-                ui->pBar_updateBin->setValue(0);
-                ui->pBar_updateBin->setMaximum(QFile(updateFilePath).size());
-                ui->btn_startUpdate->setEnabled(false);
-
-                if(updateFlash->flashUpdate(updateFilePath))
-                    QMessageBox::information(this, "information", "本次升级成功，断电重启后生效");
-                else
-                    QMessageBox::warning(this, "warning", "本次升级失败，请重新尝试（不要断电）");
-
-                ui->btn_startUpdate->setEnabled(true);
-            });
-
-    connect(updateFlash, &UpdateBin::updatedBytes, this, [this](qint32 bytes)
-            { ui->pBar_updateBin->setValue(bytes); });
-
-    connect(ui->btn_norFlashRead, &QPushButton::clicked, this, [this]()
-            {
-                uint32_t addr;
-                if(ui->rBtnDecAddr->isChecked())
-                {
-                    addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
-                }
-                else
-                {
-                    addr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
-                }
-                QByteArray recv = updateFlash->pageRead(addr);
-                ui->plain_NorDebugInfo->appendPlainText(recv.toHex());
-            });
-
-    connect(ui->btn_norFlashReadFile, &QPushButton::clicked, this, [this]()
-            {
-                uint32_t startAddr, sectorNum;
-                if(ui->rBtnDecAddr->isChecked())
-                {
-                    startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 10);
-                    sectorNum = ui->lineEdit_NorFlashReadLen->text().toInt(nullptr, 10) / 256;
-                }
-                else
-                {
-                    startAddr = ui->lineEdit_NorFlashStartAddr->text().toInt(nullptr, 16);
-                    sectorNum = ui->lineEdit_NorFlashReadLen->text().toInt(nullptr, 16) / 256;
-                }
-
-                ui->pBarNorFlashRead->setValue(0);
-                ui->pBarNorFlashRead->setMaximum(sectorNum - 1);
-                ui->btn_norFlashReadFile->setEnabled(false);
-
-                uint32_t   currentAddr;
-                QByteArray ba;
-
-                QString fileName = QString("addr_0x%1.bin").arg(QString::number(startAddr, 16));
-
-                QFile file(fileName);
-                file.open(QIODevice::ReadWrite);
-
-                QByteArray errorResult(256, 0xee);
-                for(uint32_t i = 0; i < sectorNum; i++)
-                {
-                    ui->pBarNorFlashRead->setValue(i);
-
-                    currentAddr     = startAddr + 256 * i;
-                    QByteArray data = updateFlash->pageReadWithCheck(currentAddr);
-                    if(data == errorResult)
-                    {
-                        qDebug() << "error addr at: " << currentAddr;
-                    }
-
-                    if(ui->checkBox_norFlashBitSwap->isChecked())
-                    {
-                        for(auto &i : data)
-                            i = Common::bitSwap(i);
-                    }
-                    file.write(data);
-                }
-                file.close();
-
-                ui->btn_norFlashReadFile->setEnabled(true);
-            });
+        ui->btn_norFlashReadFile->setEnabled(true);
+    });
 
     /*
      * 激光器相关处理
@@ -789,57 +764,55 @@ void MainWindow::initSignalSlot()
     {
         connect(laser3Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser3Driver, &LaserType3::setNewData);
-        connect(laser3Driver, &LaserType3::laserInfoReady, this, [this](LaserType3::LaserInfo &info)
-                {
-                    QList<QTreeWidgetItem *> itemList;
+        connect(laser3Driver, &LaserType3::laserInfoReady, this, [this](LaserType3::LaserInfo &info) {
+            QList<QTreeWidgetItem *> itemList;
 
-                    itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
-                    itemList.first()->setText(1, QString::number(info.freq_outside));
+            itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_outside));
 
-                    itemList = ui->treeWidget_laser->findItems("内触发频率(Hz)", Qt::MatchExactly);
-                    itemList.first()->setText(1, QString::number(info.freq_inside));
+            itemList = ui->treeWidget_laser->findItems("内触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_inside));
 
-                    itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
-                    itemList.first()->setText(1, QString::number(info.work_time));
+            itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.work_time));
 
-                    itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
-                    itemList.first()->setText(1, QString("%1").arg(QString::number(info.status_bit, 2), 8, QLatin1Char('0')));
-                    itemList.first()->child(0)->setText(1, QString::number((info.status_bit >> 0) & 0x01));
-                    itemList.first()->child(1)->setText(1, QString::number((info.status_bit >> 1) & 0x01));
+            itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.status_bit, 2), 8, QLatin1Char('0')));
+            itemList.first()->child(0)->setText(1, QString::number((info.status_bit >> 0) & 0x01));
+            itemList.first()->child(1)->setText(1, QString::number((info.status_bit >> 1) & 0x01));
 
-                    itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
-                    itemList.first()->setText(1, QString("%1").arg(QString::number(info.error_bit, 2), 8, QLatin1Char('0')));
-                    for(int i = 0; i < 5; i++)
-                        itemList.first()->child(i)->setText(1, QString::number((info.error_bit >> i) & 0x01));
-                });
+            itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.error_bit, 2), 8, QLatin1Char('0')));
+            for(int i = 0; i < 5; i++)
+                itemList.first()->child(i)->setText(1, QString::number((info.error_bit >> i) & 0x01));
+        });
     }
     else if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
     {
         connect(laser5Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser5Driver, &LaserType5::setNewData);
-        connect(laser5Driver, &LaserType5::laserInfoReady, this, [this](LaserType5::LaserInfo &info)
-                {
-                    QList<QTreeWidgetItem *> itemList;
+        connect(laser5Driver, &LaserType5::laserInfoReady, this, [this](LaserType5::LaserInfo &info) {
+            QList<QTreeWidgetItem *> itemList;
 
-                    itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
-                    itemList.first()->setText(1, QString::number(info.freq_outside));
+            itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_outside));
 
-                    itemList = ui->treeWidget_laser->findItems("内触发频率(Hz)", Qt::MatchExactly);
-                    itemList.first()->setText(1, QString::number(info.freq_inside));
+            itemList = ui->treeWidget_laser->findItems("内触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_inside));
 
-                    itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
-                    itemList.first()->setText(1, QString::number(info.work_time));
+            itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.work_time));
 
-                    itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
-                    itemList.first()->setText(1, QString("%1").arg(QString::number(info.status_bit, 2), 8, QLatin1Char('0')));
-                    itemList.first()->child(0)->setText(1, QString::number((info.status_bit >> 0) & 0x01));
-                    itemList.first()->child(1)->setText(1, QString::number((info.status_bit >> 1) & 0x01));
+            itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.status_bit, 2), 8, QLatin1Char('0')));
+            itemList.first()->child(0)->setText(1, QString::number((info.status_bit >> 0) & 0x01));
+            itemList.first()->child(1)->setText(1, QString::number((info.status_bit >> 1) & 0x01));
 
-                    itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
-                    itemList.first()->setText(1, QString("%1").arg(QString::number(info.error_bit, 2), 8, QLatin1Char('0')));
-                    for(int i = 0; i < 5; i++)
-                        itemList.first()->child(i)->setText(1, QString::number((info.error_bit >> i) & 0x01));
-                });
+            itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.error_bit, 2), 8, QLatin1Char('0')));
+            for(int i = 0; i < 5; i++)
+                itemList.first()->child(i)->setText(1, QString::number((info.error_bit >> i) & 0x01));
+        });
     }
     else if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
     {
@@ -853,161 +826,155 @@ void MainWindow::initSignalSlot()
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser2Driver, &LaserType2::setNewData);
     }
 
-    connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]()
-            {
-                bool status = false;
-                switch(radarType)
-                {
-                    case BspConfig::RADAR_TPYE_LAND:
-                        laser2Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
-                        status = laser2Driver->open();
-                        break;
-                    case BspConfig::RADAR_TPYE_DRONE:
-                        laser3Driver->setFreq(4000);
-                        status = laser3Driver->open();
-                        break;
-                    case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                        laser5Driver->setFreq(100);
-                        status = laser5Driver->open();
-                        break;
+    connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]() {
+        bool status = false;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                laser2Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                status = laser2Driver->open();
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                laser3Driver->setFreq(4000);
+                status = laser3Driver->open();
+                break;
+            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+                laser5Driver->setFreq(100);
+                status = laser5Driver->open();
+                break;
 
-                    case BspConfig::RADAR_TPYE_UNDER_WATER:
-                        laser4Driver->setFreq(5000);
-                        status = laser4Driver->open();
-                        break;
-                    default:
-                        break;
-                }
-                if(!status)
-                    QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
-            });
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                laser4Driver->setFreq(5000);
+                status = laser4Driver->open();
+                break;
+            default:
+                break;
+        }
+        if(!status)
+            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
+    });
 
-    connect(ui->btn_laserClose, &QPushButton::pressed, this, [this]()
-            {
-                bool status = false;
-                switch(radarType)
-                {
-                    case BspConfig::RADAR_TPYE_LAND:
-                        status = laser2Driver->close();
-                        break;
-                    case BspConfig::RADAR_TPYE_DRONE:
-                        status = laser3Driver->close();
-                        break;
-                    case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                        status = laser5Driver->close();
-                        break;
-                    case BspConfig::RADAR_TPYE_UNDER_WATER:
-                        status = laser4Driver->close();
-                        break;
-                    default:
-                        break;
-                }
-                if(!status)
-                    QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
-            });
+    connect(ui->btn_laserClose, &QPushButton::pressed, this, [this]() {
+        bool status = false;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                status = laser2Driver->close();
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                status = laser3Driver->close();
+                break;
+            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+                status = laser5Driver->close();
+                break;
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                status = laser4Driver->close();
+                break;
+            default:
+                break;
+        }
+        if(!status)
+            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
+    });
 
-    connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]()
-            {
-                bool status = false;
-                switch(radarType)
-                {
-                    case BspConfig::RADAR_TPYE_LAND:
-                        status = laser2Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt());
-                        break;
-                    case BspConfig::RADAR_TPYE_DRONE:
-                        // 上位机界面单位mA， 设置1000mA(0x3e8), 设置下去的值：100, 单位是0.01A，结果还是1000mA
-                        status = laser3Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
-                        break;
-                    case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                        status = laser5Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
-                        break;
-                    case BspConfig::RADAR_TPYE_UNDER_WATER:
-                        status = laser4Driver->setPower(ui->lineEdit_laserCurrent->text().toInt() / 10);
-                        break;
-                    default:
-                        break;
-                }
-                if(status == false)
-                    QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
-            });
+    connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]() {
+        bool status = false;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                status = laser2Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt());
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                // 上位机界面单位mA， 设置1000mA(0x3e8), 设置下去的值：100, 单位是0.01A，结果还是1000mA
+                status = laser3Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                break;
+            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+                status = laser5Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                break;
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                status = laser4Driver->setPower(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                break;
+            default:
+                break;
+        }
+        if(status == false)
+            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
+    });
 
-    connect(ui->rbtn_triggerInside, &QRadioButton::clicked, this, [this]()
-            {
-                bool status = false;
-                switch(radarType)
-                {
-                    case BspConfig::RADAR_TPYE_LAND:
-                        status = laser2Driver->setMode(LaserController::IN_SIDE);
-                        break;
-                    case BspConfig::RADAR_TPYE_DRONE:
-                        status = laser3Driver->setMode(LaserController::IN_SIDE);
-                        break;
-                    case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                        status = laser5Driver->setMode(LaserController::IN_SIDE);
-                        break;
-                    case BspConfig::RADAR_TPYE_UNDER_WATER:
-                        status = laser4Driver->setMode(LaserController::IN_SIDE);
-                        break;
-                    default:
-                        break;
-                }
-                if(status == false)
-                    QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
-            });
+    connect(ui->rbtn_triggerInside, &QRadioButton::clicked, this, [this]() {
+        bool status = false;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                status = laser2Driver->setMode(LaserController::IN_SIDE);
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                status = laser3Driver->setMode(LaserController::IN_SIDE);
+                break;
+            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+                status = laser5Driver->setMode(LaserController::IN_SIDE);
+                break;
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                status = laser4Driver->setMode(LaserController::IN_SIDE);
+                break;
+            default:
+                break;
+        }
+        if(status == false)
+            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
+    });
 
-    connect(ui->rbtn_triggerOutside, &QRadioButton::clicked, this, [this]()
-            {
-                bool status = false;
-                switch(radarType)
-                {
-                    case BspConfig::RADAR_TPYE_LAND:
-                        status = laser2Driver->setMode(LaserController::OUT_SIDE);
-                        break;
-                    case BspConfig::RADAR_TPYE_DRONE:
-                        status = laser3Driver->setMode(LaserController::OUT_SIDE);
-                        break;
-                    case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                        status = laser5Driver->setMode(LaserController::OUT_SIDE);
-                        break;
-                    case BspConfig::RADAR_TPYE_UNDER_WATER:
-                        status = laser4Driver->setMode(LaserController::OUT_SIDE);
-                        break;
-                    default:
-                        break;
-                }
-                if(status == false)
-                    QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
-            });
+    connect(ui->rbtn_triggerOutside, &QRadioButton::clicked, this, [this]() {
+        bool status = false;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                status = laser2Driver->setMode(LaserController::OUT_SIDE);
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                status = laser3Driver->setMode(LaserController::OUT_SIDE);
+                break;
+            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+                status = laser5Driver->setMode(LaserController::OUT_SIDE);
+                break;
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                status = laser4Driver->setMode(LaserController::OUT_SIDE);
+                break;
+            default:
+                break;
+        }
+        if(status == false)
+            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
+    });
 
-    connect(ui->btn_laserReadInfo, &QPushButton::pressed, this, [this]()
-            {
-                QList<QTreeWidgetItem *> itemList;
-                switch(radarType)
-                {
-                    case BspConfig::RADAR_TPYE_LAND:
-                        itemList = ui->treeWidget_laser->findItems("激光器状态", Qt::MatchExactly);
-                        itemList.first()->setText(1, laser2Driver->getStatus());
-                        itemList = ui->treeWidget_laser->findItems("外触发频率", Qt::MatchExactly);
-                        itemList.first()->setText(1, laser2Driver->getFreq());
-                        itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
-                        itemList.first()->setText(1, laser2Driver->getCurrent());
-                        itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
-                        itemList.first()->setText(1, laser2Driver->getTemp());
-                        break;
-                    case BspConfig::RADAR_TPYE_DRONE:
-                        while(laser3Driver->getStatus() != true)
-                            ;
-                        break;
-                    case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                        while(laser5Driver->getStatus() != true)
-                            ;
-                        break;
-                    case BspConfig::RADAR_TPYE_UNDER_WATER:
-                        break;
-                    default:
-                        break;
-                }
-            });
+    connect(ui->btn_laserReadInfo, &QPushButton::pressed, this, [this]() {
+        QList<QTreeWidgetItem *> itemList;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                itemList = ui->treeWidget_laser->findItems("激光器状态", Qt::MatchExactly);
+                itemList.first()->setText(1, laser2Driver->getStatus());
+                itemList = ui->treeWidget_laser->findItems("外触发频率", Qt::MatchExactly);
+                itemList.first()->setText(1, laser2Driver->getFreq());
+                itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
+                itemList.first()->setText(1, laser2Driver->getCurrent());
+                itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
+                itemList.first()->setText(1, laser2Driver->getTemp());
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                while(laser3Driver->getStatus() != true)
+                    ;
+                break;
+            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+                while(laser5Driver->getStatus() != true)
+                    ;
+                break;
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                break;
+            default:
+                break;
+        }
+    });
 
     /*
      * 电机相关逻辑
@@ -1015,404 +982,381 @@ void MainWindow::initSignalSlot()
     connect(epos2Driver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
 
     connect(dispatch, &ProtocolDispatch::motorDataReady, epos2Driver, &EPOS2::setNewData);
-    connect(ui->btn_motorReadSpeed, &QPushButton::pressed, this, [this]()
+    connect(ui->btn_motorReadSpeed, &QPushButton::pressed, this, [this]() {
+        qint32 speed = 0;
+        speed        = epos2Driver->getActualVelocity();
+        ui->lineEdit_motorShowSpeed->setText(QString::number(speed, 10));
+    });
+
+    connect(ui->btn_motorReadPosition, &QPushButton::pressed, this, [this]() {
+        quint32 postion = 0;
+        postion         = epos2Driver->getActualPosition();
+        ui->lineEdit_motorShowPosition->setText(QString::number(postion, 10));
+    });
+
+    connect(ui->btn_motorStart, &QPushButton::pressed, this, [this]() {
+        quint16 speed = ui->lineEdit_motorTargetSpeed->text().toInt(nullptr, 10);
+
+        epos2Driver->run(speed);
+    });
+
+    connect(ui->btn_motorInit, &QPushButton::pressed, this, [this]() {
+        ui->btn_motorInit->setEnabled(false);
+        epos2Driver->init();
+        ui->label_motorInfo->setText("电机初始化已完成");
+        ui->btn_motorInit->setEnabled(true);
+    });
+
+    connect(ui->btn_motorMoveHome, &QPushButton::pressed, this, [this]() {
+        ui->btn_motorMoveHome->setEnabled(false);
+        epos2Driver->moveToHome();
+        ui->label_motorInfo->setText("电机归零后需要重新初始化，才能正常转动");
+        ui->btn_motorMoveHome->setEnabled(true);
+    });
+
+    connect(ui->btn_motorMovePostion, &QPushButton::pressed, this, [this]() {
+        quint32 position = ui->lineEdit_motorTargetPosition->text().toUInt();
+        if(position > 163840)
+        {
+            QMessageBox::warning(this, "warning", "电机位置不能大于163840");
+            return;
+        }
+        epos2Driver->moveToPosition(position);
+    });
+    connect(ui->btn_motorSweep, &QPushButton::pressed, this, [this]() {
+        quint32     start_pos = ui->lineEdit_motorSweepStartAngle->text().toUInt();
+        quint32     end_pos   = ui->lineEdit_motorSweepEndAngle->text().toUInt();
+        static bool running   = false;
+        if(start_pos > end_pos)
+        {
+            QMessageBox::warning(this, "warning", "参数设置错误");
+            return;
+        }
+        else if(start_pos == end_pos)
+        {
+            epos2Driver->moveToPosition(0);
+            running = false;
+        }
+        else
+        {
+            running   = true;
+            start_pos = (start_pos / 360.0) * 163840;
+            end_pos   = (end_pos / 360.0) * 163840;
+
+            epos2Driver->moveToPosition(0);
+        }
+        qDebug() << "running value = " << running;
+
+        quint32 current_pos = 0;
+        quint32 range_min   = 0;
+        quint32 range_max   = 0;
+        while(running)
+        {
+            qDebug() << "running value(in while) = " << running;
+            range_min = end_pos * 0.95;
+            range_max = end_pos * 1.05;
+            epos2Driver->moveToPosition(end_pos);
+
+            current_pos = epos2Driver->getActualPosition();
+            while(current_pos < range_min)
             {
-                qint32 speed = 0;
-                speed        = epos2Driver->getActualVelocity();
-                ui->lineEdit_motorShowSpeed->setText(QString::number(speed, 10));
-            });
+                current_pos = epos2Driver->getActualPosition();
+                QEventLoop waitLoop;
+                QTimer::singleShot(5, &waitLoop, &QEventLoop::quit);
+                waitLoop.exec();
+            }
 
-    connect(ui->btn_motorReadPosition, &QPushButton::pressed, this, [this]()
+            range_min = start_pos * 0.95;
+            range_max = start_pos * 1.05;
+            epos2Driver->moveToPosition(start_pos);
+
+            current_pos = epos2Driver->getActualPosition();
+            while(current_pos > range_max)
             {
-                quint32 postion = 0;
-                postion         = epos2Driver->getActualPosition();
-                ui->lineEdit_motorShowPosition->setText(QString::number(postion, 10));
-            });
-
-    connect(ui->btn_motorStart, &QPushButton::pressed, this, [this]()
-            {
-                quint16 speed = ui->lineEdit_motorTargetSpeed->text().toInt(nullptr, 10);
-
-                epos2Driver->run(speed);
-            });
-
-    connect(ui->btn_motorInit, &QPushButton::pressed, this, [this]()
-            {
-                ui->btn_motorInit->setEnabled(false);
-                epos2Driver->init();
-                ui->label_motorInfo->setText("电机初始化已完成");
-                ui->btn_motorInit->setEnabled(true);
-            });
-
-    connect(ui->btn_motorMoveHome, &QPushButton::pressed, this, [this]()
-            {
-                ui->btn_motorMoveHome->setEnabled(false);
-                epos2Driver->moveToHome();
-                ui->label_motorInfo->setText("电机归零后需要重新初始化，才能正常转动");
-                ui->btn_motorMoveHome->setEnabled(true);
-            });
-
-    connect(ui->btn_motorMovePostion, &QPushButton::pressed, this, [this]()
-            {
-                quint32 position = ui->lineEdit_motorTargetPosition->text().toUInt();
-                if(position > 163840)
-                {
-                    QMessageBox::warning(this, "warning", "电机位置不能大于163840");
-                    return;
-                }
-                epos2Driver->moveToPosition(position);
-            });
-    connect(ui->btn_motorSweep, &QPushButton::pressed, this, [this]()
-            {
-                quint32     start_pos = ui->lineEdit_motorSweepStartAngle->text().toUInt();
-                quint32     end_pos   = ui->lineEdit_motorSweepEndAngle->text().toUInt();
-                static bool running   = false;
-                if(start_pos > end_pos)
-                {
-                    QMessageBox::warning(this, "warning", "参数设置错误");
-                    return;
-                }
-                else if(start_pos == end_pos)
-                {
-                    epos2Driver->moveToPosition(0);
-                    running = false;
-                }
-                else
-                {
-                    running   = true;
-                    start_pos = (start_pos / 360.0) * 163840;
-                    end_pos   = (end_pos / 360.0) * 163840;
-
-                    epos2Driver->moveToPosition(0);
-                }
-                qDebug() << "running value = " << running;
-
-                quint32 current_pos = 0;
-                quint32 range_min   = 0;
-                quint32 range_max   = 0;
-                while(running)
-                {
-                    qDebug() << "running value(in while) = " << running;
-                    range_min = end_pos * 0.95;
-                    range_max = end_pos * 1.05;
-                    epos2Driver->moveToPosition(end_pos);
-
-                    current_pos = epos2Driver->getActualPosition();
-                    while(current_pos < range_min)
-                    {
-                        current_pos = epos2Driver->getActualPosition();
-                        QEventLoop waitLoop;
-                        QTimer::singleShot(5, &waitLoop, &QEventLoop::quit);
-                        waitLoop.exec();
-                    }
-
-                    range_min = start_pos * 0.95;
-                    range_max = start_pos * 1.05;
-                    epos2Driver->moveToPosition(start_pos);
-
-                    current_pos = epos2Driver->getActualPosition();
-                    while(current_pos > range_max)
-                    {
-                        current_pos = epos2Driver->getActualPosition();
-                        QEventLoop waitLoop;
-                        QTimer::singleShot(5, &waitLoop, &QEventLoop::quit);
-                        waitLoop.exec();
-                    }
-                }
-            });
+                current_pos = epos2Driver->getActualPosition();
+                QEventLoop waitLoop;
+                QTimer::singleShot(5, &waitLoop, &QEventLoop::quit);
+                waitLoop.exec();
+            }
+        }
+    });
 
     /*
      * 采集数据保存相关逻辑
      */
     connect(ssd, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
     connect(dispatch, &ProtocolDispatch::ssdDataReady, ssd, &SaveWave::setNewData);
-    connect(ui->btn_ssdSearchSpace, &QPushButton::pressed, this, [this]()
-            {
-                if(sysStatus.ssdStoreStatus)
-                {
-                    QMessageBox::warning(this, "warning", "不能在写文件时检索数据");
-                    return;
-                }
-                ui->btn_ssdSearchSpace->setEnabled(false);
+    connect(ui->btn_ssdSearchSpace, &QPushButton::pressed, this, [this]() {
+        if(sysStatus.ssdStoreStatus)
+        {
+            QMessageBox::warning(this, "warning", "不能在写文件时检索数据");
+            return;
+        }
+        ui->btn_ssdSearchSpace->setEnabled(false);
 
-                ui->tableWidget_fileList->clearContents();
-                ui->tableWidget_fileList->setRowCount(1);
+        ui->tableWidget_fileList->clearContents();
+        ui->tableWidget_fileList->setRowCount(1);
 
-                SaveWave::ValidFileInfo fileInfo;
-                quint32                 startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt();
+        SaveWave::ValidFileInfo fileInfo;
+        quint32                 startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt();
 
-                ssd->inquireSpace(startUnit, fileInfo);
+        ssd->inquireSpace(startUnit, fileInfo);
 
-                switch(fileInfo.status)
-                {
-                    case SaveWave::FileStatus::FILE_INFO_FULL:
-                        ui->lineEdit_ssdAvailFileUnit->setText(QString::number(fileInfo.fileUnit + 2, 16));
-                        ui->lineEdit_ssdAvailDataUnit->setText(QString::number(fileInfo.endUnit + 1, 16));
-                        break;
-                    case SaveWave::FileStatus::FILE_POSITION_ERROR:
-                        QMessageBox::warning(this, "warning", "上次文件信息写入出错, 请断电更换硬盘！");
-                        break;
-                    case SaveWave::FileStatus::FILE_INFO_NONE:
-                        QMessageBox::warning(this, "warning", "没有读取到硬盘数据，确认网络连接正常");
-                        break;
-                }
+        switch(fileInfo.status)
+        {
+            case SaveWave::FileStatus::FILE_INFO_FULL:
+                ui->lineEdit_ssdAvailFileUnit->setText(QString::number(fileInfo.fileUnit + 2, 16));
+                ui->lineEdit_ssdAvailDataUnit->setText(QString::number(fileInfo.endUnit + 1, 16));
+                break;
+            case SaveWave::FileStatus::FILE_POSITION_ERROR:
+                QMessageBox::warning(this, "warning", "上次文件信息写入出错, 请断电更换硬盘！");
+                break;
+            case SaveWave::FileStatus::FILE_INFO_NONE:
+                QMessageBox::warning(this, "warning", "没有读取到硬盘数据，确认网络连接正常");
+                break;
+        }
 
-                ui->btn_ssdSearchSpace->setEnabled(true);
+        ui->btn_ssdSearchSpace->setEnabled(true);
 
-                // 显示已经查询到的文件信息
-            });
-    connect(ssd, &SaveWave::fileDataReady, this, [this](SaveWave::ValidFileInfo &fileInfo)
-            {
-                int row = ui->tableWidget_fileList->rowCount();
-                ui->tableWidget_fileList->setCellWidget(row - 1, 0, new QLabel(fileInfo.name));
+        // 显示已经查询到的文件信息
+    });
+    connect(ssd, &SaveWave::fileDataReady, this, [this](SaveWave::ValidFileInfo &fileInfo) {
+        int row = ui->tableWidget_fileList->rowCount();
+        ui->tableWidget_fileList->setCellWidget(row - 1, 0, new QLabel(fileInfo.name));
 
-                ui->tableWidget_fileList->setCellWidget(row - 1, 1, new QLabel(QString::number(fileInfo.startUnit)));
-                ui->tableWidget_fileList->setCellWidget(row - 1, 2, new QLabel(QString::number(fileInfo.endUnit)));
-                ui->tableWidget_fileList->setCellWidget(row - 1, 3, new QLabel(QString::number(fileInfo.startUnit, 16)));
-                ui->tableWidget_fileList->setCellWidget(row - 1, 4, new QLabel(QString::number(fileInfo.endUnit, 16)));
+        ui->tableWidget_fileList->setCellWidget(row - 1, 1, new QLabel(QString::number(fileInfo.startUnit)));
+        ui->tableWidget_fileList->setCellWidget(row - 1, 2, new QLabel(QString::number(fileInfo.endUnit)));
+        ui->tableWidget_fileList->setCellWidget(row - 1, 3, new QLabel(QString::number(fileInfo.startUnit, 16)));
+        ui->tableWidget_fileList->setCellWidget(row - 1, 4, new QLabel(QString::number(fileInfo.endUnit, 16)));
 
-                quint32 fileSize = (fileInfo.endUnit - fileInfo.startUnit) * 16;
-                QString size     = QString("%1GB / %2MB").arg(fileSize / 1024.0 / 1024).arg(fileSize / 1024.0);
-                ui->tableWidget_fileList->setCellWidget(row - 1, 5, new QLabel(size));
-                ui->tableWidget_fileList->setRowCount(row + 1);
-            });
+        quint32 fileSize = (fileInfo.endUnit - fileInfo.startUnit) * 16;
+        QString size     = QString("%1GB / %2MB").arg(fileSize / 1024.0 / 1024).arg(fileSize / 1024.0);
+        ui->tableWidget_fileList->setCellWidget(row - 1, 5, new QLabel(size));
+        ui->tableWidget_fileList->setRowCount(row + 1);
+    });
 
-    connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this]()
-            {
-                if(!sysStatus.adCaptureStatus)
-                {
-                    QMessageBox::warning(this, "warning", "请先开始采集");
-                    return;
-                }
+    connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this]() {
+        if(!sysStatus.adCaptureStatus)
+        {
+            QMessageBox::warning(this, "warning", "请先开始采集");
+            return;
+        }
 
-                ui->btn_ssdEnableStore->setEnabled(false);
+        ui->btn_ssdEnableStore->setEnabled(false);
 
-                quint32 fileUnit = ui->lineEdit_ssdAvailFileUnit->text().toUInt(nullptr, 16);
-                QString fileName = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
-                if(ui->lineEdit_ssdStoreFileName->text().length() != 0)
-                    fileName.append(ui->lineEdit_ssdStoreFileName->text().length());
-                ssd->setSaveFileName(fileUnit, fileName);
+        quint32 fileUnit = ui->lineEdit_ssdAvailFileUnit->text().toUInt(nullptr, 16);
+        QString fileName = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
+        if(ui->lineEdit_ssdStoreFileName->text().length() != 0)
+            fileName.append(ui->lineEdit_ssdStoreFileName->text().length());
+        ssd->setSaveFileName(fileUnit, fileName);
 
-                quint32 dataUnit = ui->lineEdit_ssdAvailDataUnit->text().toUInt(nullptr, 16);
-                ssd->setSaveFileAddr(dataUnit);
-                ssd->enableStoreFile(0x01);
-            });
+        quint32 dataUnit = ui->lineEdit_ssdAvailDataUnit->text().toUInt(nullptr, 16);
+        ssd->setSaveFileAddr(dataUnit);
+        ssd->enableStoreFile(0x01);
+    });
 
-    connect(ui->btn_ssdDisableStore, &QPushButton::pressed, this, [this]()
-            {
-                QMessageBox message(QMessageBox::NoIcon, "停止存储", "真的要停止存储吗", QMessageBox::Yes | QMessageBox::No, NULL);
-                if(message.exec() == QMessageBox::No)
-                    return;
-                ui->btn_ssdEnableStore->setEnabled(true);
-                ssd->enableStoreFile(0x00);
-            });
+    connect(ui->btn_ssdDisableStore, &QPushButton::pressed, this, [this]() {
+        QMessageBox message(QMessageBox::NoIcon, "停止存储", "真的要停止存储吗", QMessageBox::Yes | QMessageBox::No, NULL);
+        if(message.exec() == QMessageBox::No)
+            return;
+        ui->btn_ssdEnableStore->setEnabled(true);
+        ssd->enableStoreFile(0x00);
+    });
 
     /*
      * DA设置相关逻辑
      */
     connect(daDriver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
-    connect(ui->btn_DASetValue, &QPushButton::pressed, this, [this]()
-            {
-                if(ui->lineEdit_DAValue->text().isEmpty())
-                {
-                    QMessageBox::warning(this, "warning", "请输入有效数据");
-                    return;
-                }
-                quint32 chNum       = ui->comboBox_DAChSelect->currentIndex();
-                double  analogValue = ui->lineEdit_DAValue->text().toDouble(nullptr);
-                qint32  digitValue  = 0;
-                switch(radarType)
-                {
-                    case BspConfig::RADAR_TPYE_LAND:
-                        digitValue = static_cast<quint32>((analogValue - 3.434) / 0.017);
-                        break;
-                    case BspConfig::RADAR_TPYE_OCEAN:
-                    case BspConfig::RADAR_TPYE_DRONE:
-                    case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                    case BspConfig::RADAR_TPYE_UNDER_WATER:
-                        if(chNum == 0)
-                            digitValue = static_cast<qint32>((analogValue - 8.208) / 0.113);
-                        else if(chNum == 1)
-                            digitValue = static_cast<qint32>((analogValue + 0.007) / 0.001);
-                        else if(chNum == 2)
-                            digitValue = static_cast<qint32>((analogValue - 0.003) / 0.001);
-                        else if(chNum == 3)
-                            digitValue = static_cast<qint32>((analogValue + 0.002) / 0.001);
-                        break;
-                    default:
-                        break;
-                }
-                if(digitValue < 0)
-                    digitValue = 0;
-                daDriver->setChannalValue(chNum, digitValue);
-                ui->plainTextEdit_DASetLog->appendPlainText(ui->comboBox_DAChSelect->currentText() + ": " + ui->lineEdit_DAValue->text() + "V");
-            });
+    connect(ui->btn_DASetValue, &QPushButton::pressed, this, [this]() {
+        if(ui->lineEdit_DAValue->text().isEmpty())
+        {
+            QMessageBox::warning(this, "warning", "请输入有效数据");
+            return;
+        }
+        quint32 chNum       = ui->comboBox_DAChSelect->currentIndex();
+        double  analogValue = ui->lineEdit_DAValue->text().toDouble(nullptr);
+        qint32  digitValue  = 0;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                digitValue = static_cast<quint32>((analogValue - 3.434) / 0.017);
+                break;
+            case BspConfig::RADAR_TPYE_OCEAN:
+            case BspConfig::RADAR_TPYE_DRONE:
+            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+            case BspConfig::RADAR_TPYE_UNDER_WATER:
+                if(chNum == 0)
+                    digitValue = static_cast<qint32>((analogValue - 8.208) / 0.113);
+                else if(chNum == 1)
+                    digitValue = static_cast<qint32>((analogValue + 0.007) / 0.001);
+                else if(chNum == 2)
+                    digitValue = static_cast<qint32>((analogValue - 0.003) / 0.001);
+                else if(chNum == 3)
+                    digitValue = static_cast<qint32>((analogValue + 0.002) / 0.001);
+                break;
+            default:
+                break;
+        }
+        if(digitValue < 0)
+            digitValue = 0;
+        daDriver->setChannalValue(chNum, digitValue);
+        ui->plainTextEdit_DASetLog->appendPlainText(ui->comboBox_DAChSelect->currentText() + ": " + ui->lineEdit_DAValue->text() + "V");
+    });
 
-    connect(ui->btn_DAClearAll, &QPushButton::pressed, this, [this]()
-            {
-                for(int i = 0; i < 4; i++)
-                {
-                    daDriver->setChannalValue(i, 0);
-                    ui->plainTextEdit_DASetLog->appendPlainText(ui->comboBox_DAChSelect->itemText(i) + ": 0V");
-                }
-            });
+    connect(ui->btn_DAClearAll, &QPushButton::pressed, this, [this]() {
+        for(int i = 0; i < 4; i++)
+        {
+            daDriver->setChannalValue(i, 0);
+            ui->plainTextEdit_DASetLog->appendPlainText(ui->comboBox_DAChSelect->itemText(i) + ": 0V");
+        }
+    });
 
     /*
      * AD设置相关逻辑
      */
     connect(dispatch, &ProtocolDispatch::ADDataReady, adDriver, &ADControl::setNewData);
     connect(adDriver, &ADControl::sendDataReady, dispatch, &ProtocolDispatch::encode);
-    connect(ui->btn_ADReadValue, &QPushButton::pressed, this, [this]()
+    connect(ui->btn_ADReadValue, &QPushButton::pressed, this, [this]() {
+        quint32 chNum       = ui->comboBox_ADChSelect->currentIndex();
+        qint32  digitValue  = adDriver->getChannalValue(chNum);
+        double  analogValue = 0;
+        if(digitValue < 0)
+            ui->lineEdit_ADValue->setText(QString::number(digitValue, 10));
+        else
+        {
+            switch(chNum)
             {
-                quint32 chNum       = ui->comboBox_ADChSelect->currentIndex();
-                qint32  digitValue  = adDriver->getChannalValue(chNum);
-                double  analogValue = 0;
-                if(digitValue < 0)
-                    ui->lineEdit_ADValue->setText(QString::number(digitValue, 10));
-                else
-                {
-                    switch(chNum)
-                    {
-                        case 0:
-                            analogValue = (digitValue / 4095.00) * 5;
-                            break;
-                        case 1:
-                            analogValue = (digitValue - 12.95) / 817.8;
-                            break;
-                        case 2:
-                            analogValue = (digitValue - 1.712) / 817.4;
-                            break;
-                        case 3:
-                            analogValue = (digitValue - 0.634) / 818.4;
-                            break;
-                        case 4:
-                            analogValue = (digitValue + 1.392) / 822.7;
-                            break;
-                    }
-                    ui->lineEdit_ADValue->setText(QString::number(analogValue, 'g', 2));
-                }
-                ui->plainTextEdit_ADSetLog->appendPlainText(ui->comboBox_ADChSelect->currentText() + ": " + ui->lineEdit_ADValue->text() + "V");
-            });
+                case 0:
+                    analogValue = (digitValue / 4095.00) * 5;
+                    break;
+                case 1:
+                    analogValue = (digitValue - 12.95) / 817.8;
+                    break;
+                case 2:
+                    analogValue = (digitValue - 1.712) / 817.4;
+                    break;
+                case 3:
+                    analogValue = (digitValue - 0.634) / 818.4;
+                    break;
+                case 4:
+                    analogValue = (digitValue + 1.392) / 822.7;
+                    break;
+            }
+            ui->lineEdit_ADValue->setText(QString::number(analogValue, 'g', 2));
+        }
+        ui->plainTextEdit_ADSetLog->appendPlainText(ui->comboBox_ADChSelect->currentText() + ": " + ui->lineEdit_ADValue->text() + "V");
+    });
 
-    connect(ui->btn_ADReadAll, &QPushButton::pressed, this, [this]()
-            { QMessageBox::warning(this, "warning", "还未实现此功能"); });
+    connect(ui->btn_ADReadAll, &QPushButton::pressed, this, [this]() { QMessageBox::warning(this, "warning", "还未实现此功能"); });
 
     /*
      * gps信息处理
      */
     connect(dispatch, &ProtocolDispatch::gpsDataReady, gps, &GpsInfo::parserGpsData);
-    connect(gps, &GpsInfo::gpsDataReady, this, [this](BspConfig::Gps_Info &data)
-            {
-                QList<QTreeWidgetItem *> itemList;
+    connect(gps, &GpsInfo::gpsDataReady, this, [this](BspConfig::Gps_Info &data) {
+        QList<QTreeWidgetItem *> itemList;
 
-                itemList = ui->treeWidget_attitude->findItems("GPS信息", Qt::MatchExactly);
-                itemList.first()->child(0)->setText(1, QString::number(data.week));
-                itemList.first()->child(1)->setText(1, QString::number(data.current_week_ms));
-                itemList.first()->child(2)->setText(1, QString::number(data.latitude, 'g', 6));
-                itemList.first()->child(3)->setText(1, QString::number(data.longitude, 'g', 6));
-                itemList.first()->child(4)->setText(1, QString::number(data.altitude, 'g', 6));
-                itemList.first()->child(5)->setText(1, QString::number(data.roll, 'g', 6));
-                itemList.first()->child(6)->setText(1, QString::number(data.pitch, 'g', 6));
-                itemList.first()->child(7)->setText(1, QString::number(data.heading, 'g', 6));
-            });
+        itemList = ui->treeWidget_attitude->findItems("GPS信息", Qt::MatchExactly);
+        itemList.first()->child(0)->setText(1, QString::number(data.week));
+        itemList.first()->child(1)->setText(1, QString::number(data.current_week_ms));
+        itemList.first()->child(2)->setText(1, QString::number(data.latitude, 'g', 6));
+        itemList.first()->child(3)->setText(1, QString::number(data.longitude, 'g', 6));
+        itemList.first()->child(4)->setText(1, QString::number(data.altitude, 'g', 6));
+        itemList.first()->child(5)->setText(1, QString::number(data.roll, 'g', 6));
+        itemList.first()->child(6)->setText(1, QString::number(data.pitch, 'g', 6));
+        itemList.first()->child(7)->setText(1, QString::number(data.heading, 'g', 6));
+    });
 
-    connect(ui->btn_cameraFreq, &QPushButton::pressed, this, [this]()
-            {
-                uint32_t second = ui->lineEdit_cameraFreq->text().toUInt(nullptr, 10);
-                if(second > 4)
-                {
-                    QMessageBox::warning(this, "warning", "最大拍照间隔4s，请重新设置");
-                }
-                uint32_t   value = second * 1000000000 / 8;
-                QByteArray frame = BspConfig::int2ba(value);
-                dispatch->encode(MasterSet::CAMERA_FREQ_SET, 4, frame);
-            });
+    connect(ui->btn_cameraFreq, &QPushButton::pressed, this, [this]() {
+        uint32_t second = ui->lineEdit_cameraFreq->text().toUInt(nullptr, 10);
+        if(second > 4)
+        {
+            QMessageBox::warning(this, "warning", "最大拍照间隔4s，请重新设置");
+        }
+        uint32_t   value = second * 1000000000 / 8;
+        QByteArray frame = BspConfig::int2ba(value);
+        dispatch->encode(MasterSet::CAMERA_FREQ_SET, 4, frame);
+    });
 
     /*
      * 姿态传感器信息处理
      */
     connect(dispatch, &ProtocolDispatch::attitudeDataReady, attitude, &AttitudeSensor::parserFrame);
-    connect(attitude, &AttitudeSensor::sendAttitudeResult, this, [this](AttitudeSensor::AttitudeInfo accelerate, AttitudeSensor::AttitudeInfo angularVelocity, AttitudeSensor::AttitudeInfo angular, AttitudeSensor::AttitudeInfo magneticField)
-            {
-                QList<QTreeWidgetItem *> itemList;
+    connect(attitude, &AttitudeSensor::sendAttitudeResult, this, [this](AttitudeSensor::AttitudeInfo accelerate, AttitudeSensor::AttitudeInfo angularVelocity, AttitudeSensor::AttitudeInfo angular, AttitudeSensor::AttitudeInfo magneticField) {
+        QList<QTreeWidgetItem *> itemList;
 
-                itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
-                itemList.first()->child(0)->child(0)->setText(1, QString::number(accelerate.x, 'g', 6));
-                itemList.first()->child(0)->child(1)->setText(1, QString::number(accelerate.y, 'g', 6));
-                itemList.first()->child(0)->child(2)->setText(1, QString::number(accelerate.z, 'g', 6));
-                itemList.first()->child(0)->child(3)->setText(1, QString::number(accelerate.temp, 'g', 6));
+        itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
+        itemList.first()->child(0)->child(0)->setText(1, QString::number(accelerate.x, 'g', 6));
+        itemList.first()->child(0)->child(1)->setText(1, QString::number(accelerate.y, 'g', 6));
+        itemList.first()->child(0)->child(2)->setText(1, QString::number(accelerate.z, 'g', 6));
+        itemList.first()->child(0)->child(3)->setText(1, QString::number(accelerate.temp, 'g', 6));
 
-                itemList.first()->child(1)->child(0)->setText(1, QString::number(angularVelocity.x, 'g', 6));
-                itemList.first()->child(1)->child(1)->setText(1, QString::number(angularVelocity.y, 'g', 6));
-                itemList.first()->child(1)->child(2)->setText(1, QString::number(angularVelocity.z, 'g', 6));
-                itemList.first()->child(1)->child(3)->setText(1, QString::number(angularVelocity.temp, 'g', 6));
+        itemList.first()->child(1)->child(0)->setText(1, QString::number(angularVelocity.x, 'g', 6));
+        itemList.first()->child(1)->child(1)->setText(1, QString::number(angularVelocity.y, 'g', 6));
+        itemList.first()->child(1)->child(2)->setText(1, QString::number(angularVelocity.z, 'g', 6));
+        itemList.first()->child(1)->child(3)->setText(1, QString::number(angularVelocity.temp, 'g', 6));
 
-                itemList.first()->child(2)->child(0)->setText(1, QString::number(angular.x, 'g', 6));
-                itemList.first()->child(2)->child(1)->setText(1, QString::number(angular.y, 'g', 6));
-                itemList.first()->child(2)->child(2)->setText(1, QString::number(angular.z, 'g', 6));
-                itemList.first()->child(2)->child(3)->setText(1, QString::number(angular.temp, 'g', 6));
+        itemList.first()->child(2)->child(0)->setText(1, QString::number(angular.x, 'g', 6));
+        itemList.first()->child(2)->child(1)->setText(1, QString::number(angular.y, 'g', 6));
+        itemList.first()->child(2)->child(2)->setText(1, QString::number(angular.z, 'g', 6));
+        itemList.first()->child(2)->child(3)->setText(1, QString::number(angular.temp, 'g', 6));
 
-                itemList.first()->child(3)->child(0)->setText(1, QString::number(magneticField.x, 'g', 6));
-                itemList.first()->child(3)->child(1)->setText(1, QString::number(magneticField.y, 'g', 6));
-                itemList.first()->child(3)->child(2)->setText(1, QString::number(magneticField.z, 'g', 6));
-                itemList.first()->child(3)->child(3)->setText(1, QString::number(magneticField.temp, 'g', 6));
-            });
+        itemList.first()->child(3)->child(0)->setText(1, QString::number(magneticField.x, 'g', 6));
+        itemList.first()->child(3)->child(1)->setText(1, QString::number(magneticField.y, 'g', 6));
+        itemList.first()->child(3)->child(2)->setText(1, QString::number(magneticField.z, 'g', 6));
+        itemList.first()->child(3)->child(3)->setText(1, QString::number(magneticField.temp, 'g', 6));
+    });
 
     /*
      * 伪彩色图标设置
      */
-    connect(ui->checkBox_colorMap0_enable, &QCheckBox::stateChanged, this, [this](int state)
-            {
-                bool         status     = state == Qt::Unchecked ? false : true;
-                QCustomPlot *customPlot = widget2CustomPlotList.at(0);
-                customPlot->setVisible(status);
-            });
-    connect(ui->checkBox_colorMap1_enable, &QCheckBox::stateChanged, this, [this](int state)
-            {
-                bool         status     = state == Qt::Unchecked ? false : true;
-                QCustomPlot *customPlot = widget2CustomPlotList.at(1);
-                customPlot->setVisible(status);
-            });
-    connect(ui->checkBox_colorMap2_enable, &QCheckBox::stateChanged, this, [this](int state)
-            {
-                bool         status     = state == Qt::Unchecked ? false : true;
-                QCustomPlot *customPlot = widget2CustomPlotList.at(2);
-                customPlot->setVisible(status);
-            });
-    connect(ui->checkBox_colorMap3_enable, &QCheckBox::stateChanged, this, [this](int state)
-            {
-                bool         status     = state == Qt::Unchecked ? false : true;
-                QCustomPlot *customPlot = widget2CustomPlotList.at(3);
-                customPlot->setVisible(status);
-            });
+    connect(ui->checkBox_colorMap0_enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool         status     = state == Qt::Unchecked ? false : true;
+        QCustomPlot *customPlot = widget2CustomPlotList.at(0);
+        customPlot->setVisible(status);
+    });
+    connect(ui->checkBox_colorMap1_enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool         status     = state == Qt::Unchecked ? false : true;
+        QCustomPlot *customPlot = widget2CustomPlotList.at(1);
+        customPlot->setVisible(status);
+    });
+    connect(ui->checkBox_colorMap2_enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool         status     = state == Qt::Unchecked ? false : true;
+        QCustomPlot *customPlot = widget2CustomPlotList.at(2);
+        customPlot->setVisible(status);
+    });
+    connect(ui->checkBox_colorMap3_enable, &QCheckBox::stateChanged, this, [this](int state) {
+        bool         status     = state == Qt::Unchecked ? false : true;
+        QCustomPlot *customPlot = widget2CustomPlotList.at(3);
+        customPlot->setVisible(status);
+    });
 
-    connect(ui->btn_colorMap, &QPushButton::pressed, this, [this]()
-            {
-                int xMin = ui->lineEdit_colorMapXmin->text().toInt();
-                int xMax = ui->lineEdit_colorMapXmax->text().toInt();
-                int yMin = ui->lineEdit_colorMapYmin->text().toInt();
-                int yMax = ui->lineEdit_colorMapYmax->text().toInt();
-                int nx   = xMax - xMin;
-                int ny   = yMax - yMin;
-                int i    = 0;
-                if(ui->comboBox_colorMap->currentText() == "通道0")
-                    i = 0;
-                else if(ui->comboBox_colorMap->currentText() == "通道1")
-                    i = 1;
-                else if(ui->comboBox_colorMap->currentText() == "通道2")
-                    i = 2;
-                else if(ui->comboBox_colorMap->currentText() == "通道3")
-                    i = 3;
+    connect(ui->btn_colorMap, &QPushButton::pressed, this, [this]() {
+        int xMin = ui->lineEdit_colorMapXmin->text().toInt();
+        int xMax = ui->lineEdit_colorMapXmax->text().toInt();
+        int yMin = ui->lineEdit_colorMapYmin->text().toInt();
+        int yMax = ui->lineEdit_colorMapYmax->text().toInt();
+        int nx   = xMax - xMin;
+        int ny   = yMax - yMin;
+        int i    = 0;
+        if(ui->comboBox_colorMap->currentText() == "通道0")
+            i = 0;
+        else if(ui->comboBox_colorMap->currentText() == "通道1")
+            i = 1;
+        else if(ui->comboBox_colorMap->currentText() == "通道2")
+            i = 2;
+        else if(ui->comboBox_colorMap->currentText() == "通道3")
+            i = 3;
 
-                QCPColorMap *colorMap = widget2QCPColorMapList.at(i);
-                colorMap->data()->setSize(nx, ny);  // nx*ny(cells)
-                colorMap->data()->setRange(QCPRange(xMin, xMax), QCPRange(yMin, yMax));
+        QCPColorMap *colorMap = widget2QCPColorMapList.at(i);
+        colorMap->data()->setSize(nx, ny);  // nx*ny(cells)
+        colorMap->data()->setRange(QCPRange(xMin, xMax), QCPRange(yMin, yMax));
 
-                QCustomPlot *customPlot = widget2CustomPlotList.at(i);
+        QCustomPlot *customPlot = widget2CustomPlotList.at(i);
 
-                colorMap->rescaleDataRange();
-                customPlot->replot();
-            });
+        colorMap->rescaleDataRange();
+        customPlot->replot();
+    });
 }
 
 void MainWindow::setToolBar()
@@ -1429,19 +1373,14 @@ void MainWindow::setToolBar()
         ui->mainToolBar->addAction(act[i]);
     }
 
-    connect(act[0], &QAction::triggered, this, [this]()
-            { ui->tabWidget->setCurrentIndex(0); });
-    connect(act[1], &QAction::triggered, this, [this]()
-            { ui->tabWidget->setCurrentIndex(1); });
-    connect(act[2], &QAction::triggered, this, [this]()
-            { ui->tabWidget->setCurrentIndex(2); });
-    connect(act[3], &QAction::triggered, this, [this]()
-            { ui->tabWidget->setCurrentIndex(3); });
-    connect(act[4], &QAction::triggered, this, [this]()
-            {
-                ui->dockWidget_left->show();
-                ui->dockWidget_right->show();
-            });
+    connect(act[0], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(0); });
+    connect(act[1], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(1); });
+    connect(act[2], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(2); });
+    connect(act[3], &QAction::triggered, this, [this]() { ui->tabWidget->setCurrentIndex(3); });
+    connect(act[4], &QAction::triggered, this, [this]() {
+        ui->dockWidget_left->show();
+        ui->dockWidget_right->show();
+    });
 }
 
 void MainWindow::plotLineSettings()

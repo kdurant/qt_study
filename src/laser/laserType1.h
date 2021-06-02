@@ -33,6 +33,8 @@ public:
 
     bool setLD2DlyTime(quint16 value);
 
+    bool getStatus(void);
+
 public slots:
     void setNewData(QByteArray& data)
     {

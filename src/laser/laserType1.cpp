@@ -22,23 +22,25 @@ bool LaserType1::setMode(LaserController::OpenMode mode)
 
 bool LaserType1::open()
 {
-    quint8     data[8] = {0x55, 0xAA, 0x01, 0x02, 0x00, 0x01, 0x33, 0xcc};
-    QByteArray array;
-    for(int i = 0; i < 8; i++)
+    QVector<quint8> command{0x55, 0xAA, 0x01, 0x01, 0x00, 0x02, 0x33, 0xcc};
+    QByteArray      frame;
+    for(int i = 0; i < command.length(); i++)
     {
-        array.append(data[i] & 0xff);
+        frame.append(command[i] & 0xff);
     }
+    emit sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
     return true;
 }
 
 bool LaserType1::close()
 {
-    quint8     data[8] = {0x55, 0xAA, 0x01, 0x02, 0x00, 0x02, 0x33, 0xcc};
-    QByteArray array;
-    for(int i = 0; i < 8; i++)
+    QVector<quint8> command{0x55, 0xAA, 0x01, 0x02, 0x00, 0x02, 0x33, 0xcc};
+    QByteArray      frame;
+    for(int i = 0; i < command.length(); i++)
     {
-        array.append(data[i] & 0xff);
+        frame.append(command[i] & 0xff);
     }
+    emit sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
     return true;
 }
 
@@ -68,6 +70,7 @@ bool LaserType1::setPower(quint16 power)
 
     array.append((char)0x33);
     array.append((char)0xCC);
+    emit sendDataReady(MasterSet::LASER_PENETRATE, array.length(), array);
 
     return true;
 }
@@ -84,6 +87,24 @@ bool LaserType1::setLD2DlyTime(quint16 value)
     array.append((quint8)(0x00ff & value));
     array.append(0x33);
     array.append(0xcc);
+
+    return true;
+}
+
+bool LaserType1::getStatus(void)
+{
+    QVector<quint8> command{0x55, 0xAA, 0x01, 0xaa, 0x00, 0x00, 0x33, 0xcc};
+    QByteArray      frame;
+    for(int i = 0; i < command.length(); i++)
+    {
+        frame.append(command[i] & 0xff);
+    }
+    emit sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
+
+    QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
+    connect(this, &LaserType1::responseDataReady, &waitLoop, &QEventLoop::quit);
+    QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
+    waitLoop.exec();
 
     return true;
 }
