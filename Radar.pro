@@ -35,6 +35,7 @@ SOURCES += \
     src/Protocol/AdSampleControl.cpp \
     src/laser/laserType3.cpp \
     src/laser/laserType4.cpp \
+    src/laser/laserType5.cpp \
     src/saveWave/SaveWave.cpp \
     src/wave/OfflineWaveform.cpp \
     src/wave/OnlineWaveform.cpp \
@@ -59,6 +60,7 @@ HEADERS += \
     src/gpsInfo/gpsInfo.h \
     src/laser/laserType3.h \
     src/laser/laserType4.h \
+    src/laser/laserType5.h \
     src/saveWave/SaveWave.h \
     src/wave/OfflineWaveform.h \
     src/wave/OnlineWaveform.h \

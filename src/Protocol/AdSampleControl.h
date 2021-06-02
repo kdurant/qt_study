@@ -89,6 +89,13 @@ public:
         sleepWithoutBlock(interval);
     }
 
+    void setSampleDelay(int data)
+    {
+        QByteArray frame = BspConfig::int2ba(data);
+        emit       sendDataReady(MasterSet::COMPRESS_RATIO, 4, frame);
+        sleepWithoutBlock(interval);
+    }
+
     void setPmtDelayAndGateTime(quint16 delay, quint16 high)
     {
         quint32    data  = ((delay >> 3) << 16) + (high >> 3);
