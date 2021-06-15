@@ -475,7 +475,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>5</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -1946,12 +1946,12 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_30">
            <property name="text">
-            <string>触发频率(s)：</string>
+            <string>延迟时间(s)：</string>
            </property>
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="lineEdit_cameraFreq">
+          <widget class="QLineEdit" name="lineEdit_cameraDlyTime">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -1969,10 +1969,20 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="btn_cameraFreq">
+         <item row="1" column="0">
+          <widget class="QPushButton" name="btn_cameraEnable">
+           <property name="toolTip">
+            <string>使能相机，在指定延迟时间后，根据PPS信号产生触发</string>
+           </property>
            <property name="text">
-            <string>设置</string>
+            <string>开始</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="btn_cameraDisable">
+           <property name="text">
+            <string>结束</string>
            </property>
           </widget>
          </item>

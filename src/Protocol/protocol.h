@@ -80,7 +80,8 @@ public:
     {
         DA_SET_VALUE    = 0x00000004,
         AD_GET_VALUE    = 0x00000005,
-        CAMERA_FREQ_SET = 0x0000000D,
+        CAMERA_FREQ_SET = 0x0000000D,  // 无人机雷达中当作延迟时间来用
+        CAMERA_ENABLE   = 0x0000000E,
         TRG_MODE        = 0x00700001,
     };
 

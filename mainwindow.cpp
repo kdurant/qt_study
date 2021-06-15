@@ -177,7 +177,7 @@ void MainWindow::uiConfig()
     ui->lineEdit_compressLen->setValidator(decValidator);
     ui->lineEdit_compressRatio->setValidator(decValidator);
     ui->lineEdit_ssdSearchStartUnit->setValidator(hexValidator);
-    ui->lineEdit_cameraFreq->setValidator(decValidator);
+    ui->lineEdit_cameraDlyTime->setValidator(decValidator);
     ui->lineEdit_pmtDelayTime->setValidator(decValidator);
     ui->lineEdit_pmtGateTime->setValidator(decValidator);
 
@@ -1286,15 +1286,17 @@ void MainWindow::initSignalSlot()
         itemList.first()->child(7)->setText(1, QString::number(data.heading, 'g', 6));
     });
 
-    connect(ui->btn_cameraFreq, &QPushButton::pressed, this, [this]() {
-        uint32_t second = ui->lineEdit_cameraFreq->text().toUInt(nullptr, 10);
-        if(second > 4)
-        {
-            QMessageBox::warning(this, "warning", "最大拍照间隔4s，请重新设置");
-        }
-        uint32_t   value = second * 1000000000 / 8;
-        QByteArray frame = BspConfig::int2ba(value);
+    connect(ui->btn_cameraEnable, &QPushButton::pressed, this, [this]() {
+        uint32_t   second = ui->lineEdit_cameraDlyTime->text().toUInt(nullptr, 10);
+        QByteArray frame  = BspConfig::int2ba(second);
         dispatch->encode(MasterSet::CAMERA_FREQ_SET, 4, frame);
+        frame = BspConfig::int2ba(0x01);
+        dispatch->encode(MasterSet::CAMERA_ENABLE, 4, frame);
+    });
+
+    connect(ui->btn_cameraDisable, &QPushButton::pressed, this, [this]() {
+        QByteArray frame = BspConfig::int2ba(0x00);
+        dispatch->encode(MasterSet::CAMERA_ENABLE, 4, frame);
     });
 
     /*
