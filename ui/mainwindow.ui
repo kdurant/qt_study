@@ -1962,7 +1962,7 @@
             <string/>
            </property>
            <property name="text">
-            <string>1</string>
+            <string>300</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

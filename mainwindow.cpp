@@ -199,9 +199,11 @@ void MainWindow::uiConfig()
     ui->groupBox_norFlashTest->hide();
     ui->tabWidget->setCurrentIndex(0);
 
+    QString title;
+
     if(radarType == BspConfig::RADAR_TPYE_760)
     {
-        setWindowTitle(tr("760雷达控制软件"));
+        title = "760雷达控制软件";
         ui->lineEdit_radarType->setText("760雷达");
         ui->label_secondStartPos->hide();
         ui->label_secondLen->hide();
@@ -214,7 +216,7 @@ void MainWindow::uiConfig()
     }
     else if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
     {
-        setWindowTitle(tr("双波长雷达控制软件"));
+        title = "双波长雷达控制软件";
         ui->lineEdit_radarType->setText("双波长雷达");
 
         ui->label_sampleDelay->show();
@@ -233,7 +235,7 @@ void MainWindow::uiConfig()
     }
     else if(radarType == BspConfig::RADAR_TPYE_OCEAN)
     {
-        setWindowTitle(tr("海洋雷达控制软件"));
+        title = "海洋雷达控制软件";
         ui->lineEdit_radarType->setText("海洋雷达");
         ui->label_laserCurrent->hide();
         ui->lineEdit_laserCurrent->hide();
@@ -242,7 +244,7 @@ void MainWindow::uiConfig()
     }
     else if(radarType == BspConfig::RADAR_TPYE_LAND)
     {
-        setWindowTitle(tr("陆地雷达控制软件"));
+        title = "陆地雷达控制软件";
         ui->lineEdit_radarType->setText("陆地雷达");
         ui->label_triggerMode->hide();
         ui->rbtn_triggerInside->hide();
@@ -261,7 +263,7 @@ void MainWindow::uiConfig()
     }
     else if(radarType == BspConfig::RADAR_TPYE_DRONE)
     {
-        setWindowTitle(tr("无人机雷达控制软件"));
+        title = "无人机雷达控制软件";
         ui->lineEdit_radarType->setText("无人机雷达");
         ui->label_laserPower->hide();
         ui->comboBox_laserPower->hide();
@@ -278,10 +280,12 @@ void MainWindow::uiConfig()
         ui->label_laserCurrent->hide();
         ui->lineEdit_laserCurrent->hide();
         ui->btn_laserSetCurrent->hide();
+
+        ui->tabWidget->setTabEnabled(5, true);
     }
     else if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
     {
-        setWindowTitle(tr("水下预警雷达控制软件"));
+        title = "水下预警雷达控制软件";
         ui->lineEdit_radarType->setText("水下预警雷达");
 
         QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
@@ -300,8 +304,9 @@ void MainWindow::uiConfig()
     }
     else
     {
-        setWindowTitle(tr("[xx]雷达控制软件"));
+        title = "[xx]雷达控制软件";
     }
+    setWindowTitle(title + QString(SOFT_VERSION));
     ui->checkBox_autoZoom->setChecked(true);
 
     //    sysStatus.label_udpLinkStatus = new QLabel("通信连接状态: 未连接");
