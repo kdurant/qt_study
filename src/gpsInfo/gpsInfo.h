@@ -35,21 +35,15 @@ private:
      * @param ppData
      * @return
      */
-    double getDouble(unsigned char **ppData)
+    double getDouble(unsigned char *ppData)
     {
         double         retValue;
         unsigned char *pBytes;
 
         pBytes = (unsigned char *)(&retValue) + 7;
 
-        *pBytes-- = *(*ppData)++;
-        *pBytes-- = *(*ppData)++;
-        *pBytes-- = *(*ppData)++;
-        *pBytes-- = *(*ppData)++;
-        *pBytes-- = *(*ppData)++;
-        *pBytes-- = *(*ppData)++;
-        *pBytes-- = *(*ppData)++;
-        *pBytes   = *(*ppData)++;
+        for(int i = 0; i < 8; i++)
+            *(pBytes - i) = *(ppData + i);
 
         return retValue;
     }
@@ -86,33 +80,33 @@ public slots:
             {
                 pData[i] = frame.mid(offset + 10, 8).at(i);
             }
-            gps.latitude = getDouble(&pData);
+            gps.latitude = getDouble(pData);
             for(int i = 0; i < 8; i++)
             {
                 pData[i] = frame.mid(offset + 18, 8).at(i);
             }
-            gps.longitude = getDouble(&pData);
+            gps.longitude = getDouble(pData);
             for(int i = 0; i < 8; i++)
             {
                 pData[i] = frame.mid(offset + 26, 8).at(i);
             }
-            gps.altitude = getDouble(&pData);
+            gps.altitude = getDouble(pData);
 
             for(int i = 0; i < 8; i++)
             {
                 pData[i] = frame.mid(offset + 50, 8).at(i);
             }
-            gps.roll = getDouble(&pData);
+            gps.roll = getDouble(pData);
             for(int i = 0; i < 8; i++)
             {
                 pData[i] = frame.mid(offset + 58, 8).at(i);
             }
-            gps.pitch = getDouble(&pData);
+            gps.pitch = getDouble(pData);
             for(int i = 0; i < 8; i++)
             {
                 pData[i] = frame.mid(offset + 66, 8).at(i);
             }
-            gps.heading = getDouble(&pData);
+            gps.heading = getDouble(pData);
         }
         else if(frame.size() == DISK_DATA_LEN)
         {
