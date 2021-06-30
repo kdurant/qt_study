@@ -36,6 +36,7 @@ SOURCES += \
     src/laser/laserType3.cpp \
     src/laser/laserType4.cpp \
     src/laser/laserType5.cpp \
+    src/laser/laserType6.cpp \
     src/saveWave/SaveWave.cpp \
     src/wave/OfflineWaveform.cpp \
     src/wave/OnlineWaveform.cpp \
@@ -61,6 +62,7 @@ HEADERS += \
     src/laser/laserType3.h \
     src/laser/laserType4.h \
     src/laser/laserType5.h \
+    src/laser/laserType6.h \
     src/saveWave/SaveWave.h \
     src/wave/OfflineWaveform.h \
     src/wave/OnlineWaveform.h \

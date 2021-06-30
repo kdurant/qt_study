@@ -14,12 +14,13 @@ class BspConfig
 public:
     enum RadarType
     {
-        RADAR_TPYE_OCEAN       = 0x00,
-        RADAR_TPYE_LAND        = 0x01,
-        RADAR_TPYE_760         = 0x02,
-        RADAR_TPYE_DOUBLE_WAVE = 0x03,
-        RADAR_TPYE_DRONE       = 0x04,
-        RADAR_TPYE_UNDER_WATER = 0x05,
+        RADAR_TPYE_OCEAN            = 0x00,
+        RADAR_TPYE_LAND             = 0x01,
+        RADAR_TPYE_760              = 0x02,
+        RADAR_TPYE_DOUBLE_WAVE      = 0x03,
+        RADAR_TPYE_DRONE            = 0x04,
+        RADAR_TPYE_UNDER_WATER      = 0x05,
+        RADAR_TPYE_SECOND_INSTITUDE = 0x06,
     };
 
     struct Gps_Info

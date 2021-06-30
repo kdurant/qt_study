@@ -14,6 +14,7 @@
 //    7	TEC2温度设置	55 AA 02 02 XX XX 33 CC   55 AA 02 02 XX XX 33 CC
 class LaserType1 : public LaserController
 {
+    Q_OBJECT
 private:
     bool       isRecvNewData;  // 是否收到数据
     QByteArray recvData;
