@@ -1,5 +1,6 @@
 #ifndef COMMON_H
 #define COMMON_H
+#include <QtCore>
 
 class Common
 {
@@ -266,6 +267,13 @@ public:
         };
 
         return bitSwapTable[c];
+    }
+
+    static void sleepWithoutBlock(qint32 interval)
+    {
+        QEventLoop waitLoop;
+        QTimer::singleShot(interval, &waitLoop, &QEventLoop::quit);
+        waitLoop.exec();
     }
 };
 
