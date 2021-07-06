@@ -112,7 +112,7 @@ DEFINES += GIT_HASH=\\\"$$GIT_HASH\\\"
 GIT_DATE = $$system(git --git-dir $$PWD/.git --work-tree $$PWD log -1 --format=%cs )
 DEFINES += GIT_DATE=\\\"$$GIT_DATE\\\"
 
-VERSION = 0.113
+VERSION = 0.115
 DEFINES += SOFT_VERSION=\"\\\"$$VERSION\\\"\"
 
 #TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH

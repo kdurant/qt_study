@@ -21,10 +21,10 @@ public:
     }
     struct LaserInfo
     {
-        int temp;
-        int status;  // on or off
-        int error;
-        int current;
+        QString temp;
+        QString status;  // on or off
+        QString error;
+        QString current;
     };
 
     bool setMode(OpenMode mode) override;
@@ -43,16 +43,15 @@ public:
         return s.mid(start, end - start);
     }
 
-    bool checkError(void);
-    int  getPower(void);
-    int  getTemp(void);
-    bool setHighVoltStatus(int value);
-    bool setJitterFree(void);
+    bool    checkError(void);
+    QString getPower(void);
+    QString getTemp(void);
+    bool    setHighVoltStatus(int value);
+    bool    setJitterFree(void);
 
-    int  getError(void);
-    bool clearError(void);
-    int  getWorkStatus(void);
-    int  getLDcurrent(void);
+    QString getError(void);
+    bool    clearError(void);
+    QString getWorkStatus(void);
 
 signals:
     void laserInfoReady(LaserInfo& data);  // 接收到响应数据

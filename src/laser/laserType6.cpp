@@ -4,9 +4,9 @@ bool LaserType6::setMode(LaserController::OpenMode mode)
 {
     QString s = "p102 ";
     if(mode == IN_SIDE)
-        s.append(" 0");
+        s.append("0");
     else
-        s.append(" 1");
+        s.append("1");
     s.append("\r\n");
     QByteArray frame = s.toUtf8();
     emit       sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
@@ -32,8 +32,6 @@ bool LaserType6::close()
     QString    s     = "p1 0\r\n";
     QByteArray frame = s.toUtf8();
     emit       sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
-
-    Common::sleepWithoutBlock(15000);
 
     s     = "p15 0\r\n";
     frame = s.toUtf8();
@@ -73,9 +71,10 @@ bool LaserType6::setPower(quint16 power)
 bool LaserType6::getInfo(void)
 {
     LaserInfo info{0, 0, 0, 0};
-    info.temp   = getTemp();
-    info.status = getWorkStatus();
-    info.error  = getError();
+    info.temp    = getTemp();
+    info.status  = getWorkStatus();
+    info.error   = getError();
+    info.current = getPower();
 
     emit laserInfoReady(info);
     return true;
@@ -91,14 +90,22 @@ bool LaserType6::checkError(void)
     QString frame = "g10\r\n";
 }
 
-int LaserType6::getPower(void)
+QString LaserType6::getPower(void)
 {
     QString    s     = "g3\r\n";
     QByteArray frame = s.toUtf8();
     emit       sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
+
+    QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
+    connect(this, &LaserType6::responseDataReady, &waitLoop, &QEventLoop::quit);
+    QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
+    waitLoop.exec();
+
+    QString v = getValueField(recvData);
+    return v;
 }
 
-int LaserType6::getTemp(void)
+QString LaserType6::getTemp(void)
 {
     QString    s     = "g322\r\n";
     QByteArray frame = s.toUtf8();
@@ -110,7 +117,7 @@ int LaserType6::getTemp(void)
     waitLoop.exec();
 
     QString v = getValueField(recvData);
-    return v.toUInt(nullptr, 10);
+    return v;
 }
 
 bool LaserType6::setHighVoltStatus(int value)
@@ -125,13 +132,13 @@ bool LaserType6::setHighVoltStatus(int value)
 
 bool LaserType6::setJitterFree()
 {
-    QString    s     = "p322 21\r\n";
+    QString    s     = "p122 21\r\n";
     QByteArray frame = s.toUtf8();
     emit       sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
     return true;
 }
 
-int LaserType6::getError()
+QString LaserType6::getError()
 {
     QString    s     = "g10\r\n";
     QByteArray frame = s.toUtf8();
@@ -143,7 +150,7 @@ int LaserType6::getError()
     waitLoop.exec();
 
     QString v = getValueField(recvData);
-    return v.toUInt(nullptr, 10);
+    return v;
 }
 
 bool LaserType6::clearError()
@@ -154,7 +161,7 @@ bool LaserType6::clearError()
     return true;
 }
 
-int LaserType6::getWorkStatus()
+QString LaserType6::getWorkStatus()
 {
     QString    s     = "g1\r\n";
     QByteArray frame = s.toUtf8();
@@ -166,20 +173,6 @@ int LaserType6::getWorkStatus()
     waitLoop.exec();
 
     QString v = getValueField(recvData);
-    return v.toUInt(nullptr, 10);
+    return v;
 }
 
-int LaserType6::getLDcurrent()
-{
-    QString    s     = "g30\r\n";
-    QByteArray frame = s.toUtf8();
-    emit       sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
-
-    QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
-    connect(this, &LaserType6::responseDataReady, &waitLoop, &QEventLoop::quit);
-    QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
-    waitLoop.exec();
-
-    QString v = getValueField(recvData);
-    return v.toUInt(nullptr, 10);
-}
