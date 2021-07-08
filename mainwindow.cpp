@@ -1241,7 +1241,7 @@ void MainWindow::initSignalSlot()
         quint32 fileUnit = ui->lineEdit_ssdAvailFileUnit->text().toUInt(nullptr, 16);
         QString fileName = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
         if(ui->lineEdit_ssdStoreFileName->text().length() != 0)
-            fileName.append(ui->lineEdit_ssdStoreFileName->text().length());
+            fileName.append(ui->lineEdit_ssdStoreFileName->text());
         ssd->setSaveFileName(fileUnit, fileName);
 
         quint32 dataUnit = ui->lineEdit_ssdAvailDataUnit->text().toUInt(nullptr, 16);
