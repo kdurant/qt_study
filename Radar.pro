@@ -15,6 +15,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = Radar
 TEMPLATE = app
 
+VERSION = 0.115
+DEFINES += SOFT_VERSION=\"\\\"$$VERSION\\\"\"
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
@@ -112,8 +114,6 @@ DEFINES += GIT_HASH=\\\"$$GIT_HASH\\\"
 GIT_DATE = $$system(git --git-dir $$PWD/.git --work-tree $$PWD log -1 --format=%cs )
 DEFINES += GIT_DATE=\\\"$$GIT_DATE\\\"
 
-VERSION = 0.115
-DEFINES += SOFT_VERSION=\"\\\"$$VERSION\\\"\"
 
 #TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH
 TARGET = Radar_$$VERSION

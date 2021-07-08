@@ -488,6 +488,14 @@ void MainWindow::initSignalSlot()
             preview->setAlgoBValueThre(valueThreshold);
             return;
         }
+        if(radarType == BspConfig::RADAR_TPYE_SECOND_INSTITUDE)
+        {
+            if(firstLen + secondLen < 400)
+            {
+                QMessageBox::warning(NULL, "警告", "第一段采样长度+第二段采样长度需要大于400");
+                return;
+            }
+        }
 
         if(secondPos + secondLen >= totalSampleLen)
         {
