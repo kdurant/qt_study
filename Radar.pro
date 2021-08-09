@@ -32,7 +32,6 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     noteinfo.cpp \
-    src/Protocol/AdSampleControl.cpp \
     src/laser/laserType3.cpp \
     src/laser/laserType4.cpp \
     src/laser/laserType5.cpp \
@@ -46,7 +45,6 @@ SOURCES += \
     save.cpp \
     src/DevInfo/DevInfo.cpp \
     src/UpdateBin/UpdateBin.cpp \
-    src/Protocol/ProtocolDispatch.cpp \
     src/laser/LaserController.cpp \
     src/laser/laserType1.cpp \
     src/motor/MotorController.cpp \
@@ -56,7 +54,6 @@ HEADERS += \
     common.h \
     src/ADControll/ADControl.h \
     src/DAControll/DAControl.h \
-    src/Protocol/AdSampleControl.h \
     src/attitudeSensor/AttitudeSensor.h \
     src/gpsInfo/gpsInfo.h \
     src/laser/laserType3.h \
@@ -75,12 +72,13 @@ HEADERS += \
     save.h \
     src/DevInfo/DevInfo.h \
     src/UpdateBin/UpdateBin.h \
-    src/Protocol/protocol.h \
-    src/Protocol/ProtocolDispatch.h \
     src/laser/LaserController.h \
     src/laser/laserType1.h \
     src/motor/MotorController.h \
     src/motor/Epos2Controller.h
+
+
+include(./src/Protocol/protocol.pri)
 
 INCLUDEPATH += ./src/Protocol
 INCLUDEPATH += ./src/UpdateBin
