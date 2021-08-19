@@ -96,7 +96,7 @@ void MainWindow::initParameter()
             radarType = BspConfig::RADAR_TPYE_DRONE;
             break;
         case 5:
-            radarType = BspConfig::RADAR_TPYE_UNDER_WATER;
+            radarType = BspConfig::RADAR_TYPE_WATER_GUARD;
             break;
         case 6:
             radarType = BspConfig::RADAR_TPYE_SECOND_INSTITUDE;
@@ -287,7 +287,7 @@ void MainWindow::uiConfig()
 
         ui->tabWidget->setTabEnabled(5, true);
     }
-    else if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
+    else if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
         title = "水下预警雷达控制软件";
         ui->lineEdit_radarType->setText("水下预警雷达");
@@ -375,7 +375,7 @@ void MainWindow::uiConfig()
             ui->treeWidget_laser->resizeColumnToContents(0);
             ui->treeWidget_laser->expandAll();
             break;
-        case BspConfig::RADAR_TPYE_UNDER_WATER:
+        case BspConfig::RADAR_TYPE_WATER_GUARD:
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流(mA)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "激光头温度(°)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "LD温度(°)"));
@@ -493,7 +493,7 @@ void MainWindow::initSignalSlot()
         preview->setSumThreshold(sumThreshold);
         preview->setValueThreshold(valueThreshold);
 
-        if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
+        if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
         {
             preview->setPmtDelayAndGateTime(pmtDelayTime, pmtGateTime);
         }
@@ -856,7 +856,7 @@ void MainWindow::initSignalSlot()
                 itemList.first()->child(i)->setText(1, QString::number((info.error_bit >> i) & 0x01));
         });
     }
-    else if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
+    else if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
         connect(laser4Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser4Driver, &LaserType4::setNewData);
@@ -890,7 +890,7 @@ void MainWindow::initSignalSlot()
                 status = laser5Driver->open();
                 break;
 
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
                 laser4Driver->setFreq(5000);
                 status = laser4Driver->open();
                 break;
@@ -923,7 +923,7 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
                 status = laser5Driver->close();
                 break;
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laser4Driver->close();
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
@@ -950,7 +950,7 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
                 status = laser5Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
                 break;
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laser4Driver->setPower(ui->lineEdit_laserCurrent->text().toInt() / 10);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
@@ -976,7 +976,7 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
                 status = laser5Driver->setMode(LaserController::IN_SIDE);
                 break;
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laser4Driver->setMode(LaserController::IN_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
@@ -1002,7 +1002,7 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
                 status = laser5Driver->setMode(LaserController::OUT_SIDE);
                 break;
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laser4Driver->setMode(LaserController::OUT_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
@@ -1037,7 +1037,7 @@ void MainWindow::initSignalSlot()
                 while(laser5Driver->getStatus() != true)
                     ;
                 break;
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 break;
@@ -1254,7 +1254,7 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_OCEAN:
             case BspConfig::RADAR_TPYE_DRONE:
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 if(chNum == 0)
                     digitValue = static_cast<qint32>((analogValue - 8.208) / 0.113);

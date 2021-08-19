@@ -2,7 +2,7 @@
 #define BSP_CONFIG_H
 #include <QtCore>
 #define CONCAT_(x, y) x##y
-#define CONCAT(x, y) CONCAT_(x, y)
+#define CONCAT(x, y)  CONCAT_(x, y)
 
 #define CHECKTIME(x)                     \
     QElapsedTimer CONCAT(sb_, __LINE__); \
@@ -19,7 +19,7 @@ public:
         RADAR_TPYE_760              = 0x02,
         RADAR_TPYE_DOUBLE_WAVE      = 0x03,
         RADAR_TPYE_DRONE            = 0x04,
-        RADAR_TPYE_UNDER_WATER      = 0x05,
+        RADAR_TPYE_WATER_GUARD      = 0x05,
         RADAR_TPYE_SECOND_INSTITUDE = 0x06,
     };
 
