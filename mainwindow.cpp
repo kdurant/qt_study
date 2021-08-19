@@ -203,6 +203,8 @@ void MainWindow::uiConfig()
     ui->groupBox_norFlashTest->hide();
     ui->tabWidget->setCurrentIndex(0);
 
+    ui->tabWidget_main->setTabEnabled(1, false);
+
     QString title;
 
     if(radarType == BspConfig::RADAR_TPYE_760)
@@ -305,6 +307,10 @@ void MainWindow::uiConfig()
         ui->label_pmtDelayTime->show();
         ui->lineEdit_pmtDelayTime->show();
         ui->lineEdit_pmtGateTime->show();
+
+        ui->tabWidget_main->setTabEnabled(0, false);
+        ui->tabWidget_main->setTabEnabled(1, true);
+        ui->tabWidget_main->setCurrentIndex(1);
     }
     else if(radarType == BspConfig::RADAR_TPYE_SECOND_INSTITUDE)
     {
