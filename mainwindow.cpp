@@ -1949,6 +1949,16 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
             ui->waterGuardPlot_ch2->graph(1)->setData(allCh[2].pos, allCh[2].value);
             ui->waterGuardPlot_ch2->rescaleAxes();
             ui->waterGuardPlot_ch2->replot();
+
+            double angle;
+            angle = allCh[0].motorCnt * 360 / 163840.0;
+            qDebug() << "angle = " << angle;
+            if(angle > 0 && angle < 180)
+            {
+                ui->waterGuardColor_ch0->setData(allCh[0].value, angle);
+                ui->waterGuardColor_ch1->setData(allCh[1].value, angle);
+                ui->waterGuardColor_ch2->setData(allCh[2].value, angle);
+            }
         }
     }
     else

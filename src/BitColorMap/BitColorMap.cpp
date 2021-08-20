@@ -54,7 +54,7 @@ int BitColorMap::data2rgb(int data, int *r, int *g, int *b)
     return 0;
 }
 
-int BitColorMap::setData(QVector<int> &line, double angle)
+int BitColorMap::setData(QVector<double> &line, double angle)
 {
     //    drawLineColorWithAngle(image, QColor(62, 62, 62), 1);
 
@@ -109,7 +109,7 @@ void BitColorMap::drawHalfCircle(QImage *img)
     }
 }
 
-void BitColorMap::drawLineWithAngle(QImage *img, QVector<int> &data, double angle)
+void BitColorMap::drawLineWithAngle(QImage *img, QVector<double> &data, double angle)
 {
     double radius = img->width() / 2 - 1;
     double x, y;
