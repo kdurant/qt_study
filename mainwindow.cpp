@@ -560,70 +560,7 @@ void MainWindow::initSignalSlot()
         for(auto &i : data)  // 数据格式转换
             sampleData.append(i);
 
-        QVector<WaveExtract::WaveformInfo> allCh;
-
-        WaveExtract::getWaveform(radarType, sampleData, allCh);
-
-        QByteArray convert;
-        for(int i = 0; i < 88; i++)
-            convert.append(sampleData[i]);
-        gps->parserGpsData(convert);  //  耗时小于1ms
-
-        if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
-        {
-            if(allCh.size() == 4)
-            {
-                for(int i = 0; i < 3; i++)
-                {
-                    if(waterGuard[i].isSaveBase)
-                    {
-                        waterGuard[i].isSaveBase = false;
-                        waterGuard[i].base.pos   = allCh[i].pos;
-                        waterGuard[i].base.value = allCh[i].value;
-
-                        waterGuard[i].diff.pos = allCh[i].pos;
-                        for(int m = 0; m < allCh[i].value.size(); m++)
-                        {
-                            waterGuard[i].diff.value[m] = allCh[i].value[m] - waterGuard[i].base.value[m];
-                        }
-                        if(i == 0)
-                            ui->waterGuardPlot_ch0->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
-                        else if(i == 1)
-                            ui->waterGuardPlot_ch1->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
-                        else if(i == 2)
-                            ui->waterGuardPlot_ch2->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
-                    }
-                }
-                ui->waterGuardPlot_ch0->graph(1)->setData(allCh[0].pos, allCh[0].value);
-                ui->waterGuardPlot_ch0->rescaleAxes();
-                ui->waterGuardPlot_ch0->replot();
-
-                ui->waterGuardPlot_ch1->graph(1)->setData(allCh[0].pos, allCh[0].value);
-                ui->waterGuardPlot_ch1->rescaleAxes();
-                ui->waterGuardPlot_ch1->replot();
-
-                ui->waterGuardPlot_ch2->graph(1)->setData(allCh[0].pos, allCh[0].value);
-                ui->waterGuardPlot_ch2->rescaleAxes();
-                ui->waterGuardPlot_ch2->replot();
-            }
-        }
-        else
-        {
-            for(int n = 0; n < allCh.size(); n++)
-            {
-                if(allCh.size() != 8)  // 只有第一段波形
-                {
-                    ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
-                    ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
-                }
-                else
-                    ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
-            }
-            if(autoZoomPlot)
-                ui->sampleDataPlot->rescaleAxes();
-            ui->sampleDataPlot->replot();
-        }
-
+        showSampleData(sampleData);
         //        updateColormap(allCh);
     });
 
@@ -1833,28 +1770,10 @@ void MainWindow::on_bt_showWave_clicked()
             ui->spin_framePos->setValue(i);
             QVector<quint8> sampleData = offlineWaveForm->getFrameData(i);  // 耗时小于1ms
 
-            QVector<WaveExtract::WaveformInfo> allCh;
-            if(WaveExtract::getWaveform(radarType, sampleData, allCh) == -1)  // 耗时小于1ms
-            {
-                QMessageBox::warning(this, "警告", "数据格式和当前雷达类型不匹配");
-                return;
-            }
-
-            QByteArray convert;
-            for(int i = 0; i < 88; i++)
-                convert.append(sampleData[i]);
-            gps->parserGpsData(convert);  //  耗时小于1ms
-
-            for(int n = 0; n < allCh.size(); n++)
-            {  //  耗时小于1ms
-                ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
-            }
-            if(autoZoomPlot)
-                ui->sampleDataPlot->rescaleAxes();
-            ui->sampleDataPlot->replot();  // 耗时1-20ms，造成界面上的卡顿
+            showSampleData(sampleData);
 
             // ///////////
-            updateColormap(allCh);
+            // updateColormap(allCh);
 
             if(interval_time == 0)
             {
@@ -1976,4 +1895,75 @@ QString MainWindow::read_ip_address()
         }
     }
     return 0;
+}
+
+void MainWindow::showSampleData(QVector<quint8> &sampleData)
+{
+    QVector<WaveExtract::WaveformInfo> allCh;
+
+    if(WaveExtract::getWaveform(radarType, sampleData, allCh) == -1)  // 耗时小于1ms
+    {
+        QMessageBox::warning(this, "警告", "数据格式和当前雷达类型不匹配");
+        return;
+    }
+
+    QByteArray convert;
+    for(int i = 0; i < 88; i++)
+        convert.append(sampleData[i]);
+    gps->parserGpsData(convert);  //  耗时小于1ms
+
+    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+    {
+        if(allCh.size() == 4)
+        {
+            for(int i = 0; i < 3; i++)
+            {
+                if(waterGuard[i].isSaveBase)
+                {
+                    waterGuard[i].isSaveBase = false;
+                    waterGuard[i].base.pos   = allCh[i].pos;
+                    waterGuard[i].base.value = allCh[i].value;
+
+                    waterGuard[i].diff.pos = allCh[i].pos;
+                    for(int m = 0; m < allCh[i].value.size(); m++)
+                    {
+                        waterGuard[i].diff.value[m] = allCh[i].value[m] - waterGuard[i].base.value[m];
+                    }
+                    if(i == 0)
+                        ui->waterGuardPlot_ch0->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
+                    else if(i == 1)
+                        ui->waterGuardPlot_ch1->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
+                    else if(i == 2)
+                        ui->waterGuardPlot_ch2->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
+                }
+            }
+            ui->waterGuardPlot_ch0->graph(1)->setData(allCh[0].pos, allCh[0].value);
+            ui->waterGuardPlot_ch0->rescaleAxes();
+            ui->waterGuardPlot_ch0->replot();
+
+            ui->waterGuardPlot_ch1->graph(1)->setData(allCh[0].pos, allCh[0].value);
+            ui->waterGuardPlot_ch1->rescaleAxes();
+            ui->waterGuardPlot_ch1->replot();
+
+            ui->waterGuardPlot_ch2->graph(1)->setData(allCh[0].pos, allCh[0].value);
+            ui->waterGuardPlot_ch2->rescaleAxes();
+            ui->waterGuardPlot_ch2->replot();
+        }
+    }
+    else
+    {
+        for(int n = 0; n < allCh.size(); n++)
+        {
+            if(allCh.size() != 8)  // 只有第一段波形
+            {
+                ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
+                ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
+            }
+            else
+                ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
+        }
+        if(autoZoomPlot)
+            ui->sampleDataPlot->rescaleAxes();
+        ui->sampleDataPlot->replot();
+    }
 }

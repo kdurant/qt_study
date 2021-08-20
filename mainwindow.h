@@ -80,6 +80,8 @@ public:
     void initSysInfoUi(void);
     void initFileListUi(void);
 
+    void showSampleData(QVector<quint8> &sampleData);
+
 protected:
     void closeEvent(QCloseEvent *event);
     void timerEvent(QTimerEvent *event);
