@@ -204,6 +204,7 @@ void MainWindow::uiConfig()
     ui->tabWidget->setCurrentIndex(0);
 
     ui->tabWidget_main->setTabEnabled(1, false);
+    ui->tabWidget_main->setTabEnabled(2, false);
 
     QString title;
 
@@ -539,6 +540,17 @@ void MainWindow::initSignalSlot()
         preview->setTrgMode(MasterSet::INSIDE_TRG);
     });
 
+    // 水下预警雷达相关设置
+    connect(ui->btn_ctrlCh0, &QPushButton::pressed, this, [this]() {
+        waterGuard[0].isSaveBase = true;
+    });
+    connect(ui->btn_ctrlCh1, &QPushButton::pressed, this, [this]() {
+        waterGuard[1].isSaveBase = true;
+    });
+    connect(ui->btn_ctrlCh2, &QPushButton::pressed, this, [this]() {
+        waterGuard[2].isSaveBase = true;
+    });
+
     connect(dispatch,
             &ProtocolDispatch::onlineDataReady,
             onlineWaveForm,
@@ -557,21 +569,62 @@ void MainWindow::initSignalSlot()
             convert.append(sampleData[i]);
         gps->parserGpsData(convert);  //  耗时小于1ms
 
-        for(int n = 0; n < allCh.size(); n++)
+        if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
         {
-            if(allCh.size() != 8)  // 只有第一段波形
+            if(allCh.size() == 4)
             {
-                ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
-                ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
-            }
-            else
-                ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
-        }
-        if(autoZoomPlot)
-            ui->sampleDataPlot->rescaleAxes();
-        ui->sampleDataPlot->replot();
+                for(int i = 0; i < 3; i++)
+                {
+                    if(waterGuard[i].isSaveBase)
+                    {
+                        waterGuard[i].isSaveBase = false;
+                        waterGuard[i].base.pos   = allCh[i].pos;
+                        waterGuard[i].base.value = allCh[i].value;
 
-        updateColormap(allCh);
+                        waterGuard[i].diff.pos = allCh[i].pos;
+                        for(int m = 0; m < allCh[i].value.size(); m++)
+                        {
+                            waterGuard[i].diff.value[m] = allCh[i].value[m] - waterGuard[i].base.value[m];
+                        }
+                        if(i == 0)
+                            ui->waterGuardPlot_ch0->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
+                        else if(i == 1)
+                            ui->waterGuardPlot_ch1->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
+                        else if(i == 2)
+                            ui->waterGuardPlot_ch2->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
+                    }
+                }
+                ui->waterGuardPlot_ch0->graph(1)->setData(allCh[0].pos, allCh[0].value);
+                ui->waterGuardPlot_ch0->rescaleAxes();
+                ui->waterGuardPlot_ch0->replot();
+
+                ui->waterGuardPlot_ch1->graph(1)->setData(allCh[0].pos, allCh[0].value);
+                ui->waterGuardPlot_ch1->rescaleAxes();
+                ui->waterGuardPlot_ch1->replot();
+
+                ui->waterGuardPlot_ch2->graph(1)->setData(allCh[0].pos, allCh[0].value);
+                ui->waterGuardPlot_ch2->rescaleAxes();
+                ui->waterGuardPlot_ch2->replot();
+            }
+        }
+        else
+        {
+            for(int n = 0; n < allCh.size(); n++)
+            {
+                if(allCh.size() != 8)  // 只有第一段波形
+                {
+                    ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
+                    ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
+                }
+                else
+                    ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
+            }
+            if(autoZoomPlot)
+                ui->sampleDataPlot->rescaleAxes();
+            ui->sampleDataPlot->replot();
+        }
+
+        //        updateColormap(allCh);
     });
 
     /*
@@ -1474,46 +1527,110 @@ void MainWindow::setToolBar()
 
 void MainWindow::plotLineSettings()
 {
-    //    ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    //ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
-    ui->sampleDataPlot->legend->setVisible(true);  //右上角指示曲线的缩略框
-    ui->sampleDataPlot->xAxis->setLabel(QStringLiteral("时间：ns"));
-    ui->sampleDataPlot->yAxis->setLabel(QStringLiteral("AD采样值"));
-
-    ui->sampleDataPlot->axisRect()->setRangeDrag(Qt::Horizontal);
-    ui->sampleDataPlot->axisRect()->setRangeZoom(Qt::Horizontal);
-    ui->sampleDataPlot->axisRect()->setRangeZoomAxes(ui->sampleDataPlot->xAxis, ui->sampleDataPlot->yAxis);
-    ui->sampleDataPlot->setSelectionRectMode(QCP::srmZoom);
-
     QSharedPointer<QCPAxisTickerFixed> intTicker(new QCPAxisTickerFixed);
     //设置刻度之间的步长为1
     intTicker->setTickStep(1);
     //设置缩放策略
     intTicker->setScaleStrategy(QCPAxisTickerFixed::ssMultiples);
-    //应用自定义整形ticker
-    ui->sampleDataPlot->xAxis->setTicker(intTicker);
 
-    for(int i = 0; i < 8; i++)
+    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
-        ui->sampleDataPlot->addGraph();
-        ui->sampleDataPlot->graph(i)->setScatterStyle(QCPScatterStyle::ssDisc);
+        QSharedPointer<QCPAxisTickerFixed> intTicker(new QCPAxisTickerFixed);
+        intTicker->setTickStep(1);
+        intTicker->setScaleStrategy(QCPAxisTickerFixed::ssMultiples);
+        ui->waterGuardPlot_ch0->legend->setVisible(true);
+        ui->waterGuardPlot_ch0->xAxis->setLabel(QStringLiteral("时间：ns"));
+        ui->waterGuardPlot_ch0->yAxis->setLabel(QStringLiteral("AD采样值"));
+        ui->waterGuardPlot_ch0->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+        ui->waterGuardPlot_ch0->axisRect()->setRangeDrag(Qt::Horizontal);
+        ui->waterGuardPlot_ch0->axisRect()->setRangeZoom(Qt::Horizontal);
+        ui->waterGuardPlot_ch0->axisRect()->setRangeZoomAxes(ui->sampleDataPlot->xAxis, ui->sampleDataPlot->yAxis);
+        ui->waterGuardPlot_ch0->setSelectionRectMode(QCP::srmZoom);
+        ui->waterGuardPlot_ch0->xAxis->setTicker(intTicker);
+        ui->waterGuardPlot_ch0->addGraph();
+        ui->waterGuardPlot_ch0->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
+        ui->waterGuardPlot_ch0->graph(0)->setPen(QPen(Qt::black));
+        ui->waterGuardPlot_ch0->graph(0)->setName("base");
+        ui->waterGuardPlot_ch0->addGraph();
+        ui->waterGuardPlot_ch0->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
+        ui->waterGuardPlot_ch0->graph(1)->setPen(QPen(Qt::red));
+        ui->waterGuardPlot_ch0->graph(1)->setName("real-time");
+
+        ui->waterGuardPlot_ch1->legend->setVisible(true);
+        ui->waterGuardPlot_ch1->xAxis->setLabel(QStringLiteral("时间：ns"));
+        ui->waterGuardPlot_ch1->yAxis->setLabel(QStringLiteral("AD采样值"));
+        ui->waterGuardPlot_ch1->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+        ui->waterGuardPlot_ch1->axisRect()->setRangeDrag(Qt::Horizontal);
+        ui->waterGuardPlot_ch1->axisRect()->setRangeZoom(Qt::Horizontal);
+        ui->waterGuardPlot_ch1->axisRect()->setRangeZoomAxes(ui->sampleDataPlot->xAxis, ui->sampleDataPlot->yAxis);
+        ui->waterGuardPlot_ch1->setSelectionRectMode(QCP::srmZoom);
+        ui->waterGuardPlot_ch1->xAxis->setTicker(intTicker);
+        ui->waterGuardPlot_ch1->addGraph();
+        ui->waterGuardPlot_ch1->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
+        ui->waterGuardPlot_ch1->graph(0)->setPen(QPen(Qt::black));
+        ui->waterGuardPlot_ch1->graph(0)->setName("base");
+        ui->waterGuardPlot_ch1->addGraph();
+        ui->waterGuardPlot_ch1->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
+        ui->waterGuardPlot_ch1->graph(1)->setPen(QPen(Qt::red));
+        ui->waterGuardPlot_ch1->graph(1)->setName("real-time");
+
+        ui->waterGuardPlot_ch2->legend->setVisible(true);
+        ui->waterGuardPlot_ch2->xAxis->setLabel(QStringLiteral("时间：ns"));
+        ui->waterGuardPlot_ch2->yAxis->setLabel(QStringLiteral("AD采样值"));
+        ui->waterGuardPlot_ch2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+        ui->waterGuardPlot_ch2->axisRect()->setRangeDrag(Qt::Horizontal);
+        ui->waterGuardPlot_ch2->axisRect()->setRangeZoom(Qt::Horizontal);
+        ui->waterGuardPlot_ch2->axisRect()->setRangeZoomAxes(ui->sampleDataPlot->xAxis, ui->sampleDataPlot->yAxis);
+        ui->waterGuardPlot_ch2->setSelectionRectMode(QCP::srmZoom);
+        ui->waterGuardPlot_ch2->xAxis->setTicker(intTicker);
+        ui->waterGuardPlot_ch2->addGraph();
+        ui->waterGuardPlot_ch2->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
+        ui->waterGuardPlot_ch2->graph(0)->setPen(QPen(Qt::black));
+        ui->waterGuardPlot_ch2->graph(0)->setName("base");
+        ui->waterGuardPlot_ch2->addGraph();
+        ui->waterGuardPlot_ch2->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
+        ui->waterGuardPlot_ch2->graph(1)->setPen(QPen(Qt::red));
+        ui->waterGuardPlot_ch2->graph(1)->setName("real-time");
     }
-    ui->sampleDataPlot->graph(0)->setPen(QPen(Qt::red));
-    ui->sampleDataPlot->graph(0)->setName("通道0第一段");
-    ui->sampleDataPlot->graph(1)->setPen(QPen(Qt::red));
-    ui->sampleDataPlot->graph(1)->setName("通道0第二段");
-    ui->sampleDataPlot->graph(2)->setPen(QPen(Qt::blue));
-    ui->sampleDataPlot->graph(2)->setName("通道1第一段");
-    ui->sampleDataPlot->graph(3)->setPen(QPen(Qt::blue));
-    ui->sampleDataPlot->graph(3)->setName("通道1第二段");
-    ui->sampleDataPlot->graph(4)->setPen(QPen(Qt::black));
-    ui->sampleDataPlot->graph(4)->setName("通道2第一段");
-    ui->sampleDataPlot->graph(5)->setPen(QPen(Qt::black));
-    ui->sampleDataPlot->graph(5)->setName("通道2第二段");
-    ui->sampleDataPlot->graph(6)->setPen(QPen(Qt::darkCyan));
-    ui->sampleDataPlot->graph(6)->setName("通道3第一段");
-    ui->sampleDataPlot->graph(7)->setPen(QPen(Qt::darkCyan));
-    ui->sampleDataPlot->graph(7)->setName("通道3第二段");
+    else
+    {
+        ui->sampleDataPlot->legend->setVisible(true);  //右上角指示曲线的缩略框
+        ui->sampleDataPlot->xAxis->setLabel(QStringLiteral("时间：ns"));
+        ui->sampleDataPlot->yAxis->setLabel(QStringLiteral("AD采样值"));
+
+        ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);  // 可以按住鼠标拖动图标，鼠标滚轮缩放图表
+
+        // 选择矩形区域缩放
+        // ui->sampleDataPlot->axisRect()->setRangeDrag(Qt::Horizontal);
+        // ui->sampleDataPlot->axisRect()->setRangeZoom(Qt::Horizontal);
+        // ui->sampleDataPlot->axisRect()->setRangeZoomAxes(ui->sampleDataPlot->xAxis, ui->sampleDataPlot->yAxis);
+        // ui->sampleDataPlot->setSelectionRectMode(QCP::srmZoom);
+
+        //应用自定义整形ticker
+        ui->sampleDataPlot->xAxis->setTicker(intTicker);
+
+        for(int i = 0; i < 8; i++)
+        {
+            ui->sampleDataPlot->addGraph();
+            ui->sampleDataPlot->graph(i)->setScatterStyle(QCPScatterStyle::ssDisc);
+        }
+        ui->sampleDataPlot->graph(0)->setPen(QPen(Qt::red));
+        ui->sampleDataPlot->graph(0)->setName("通道0第一段");
+        ui->sampleDataPlot->graph(1)->setPen(QPen(Qt::red));
+        ui->sampleDataPlot->graph(1)->setName("通道0第二段");
+        ui->sampleDataPlot->graph(2)->setPen(QPen(Qt::blue));
+        ui->sampleDataPlot->graph(2)->setName("通道1第一段");
+        ui->sampleDataPlot->graph(3)->setPen(QPen(Qt::blue));
+        ui->sampleDataPlot->graph(3)->setName("通道1第二段");
+        ui->sampleDataPlot->graph(4)->setPen(QPen(Qt::black));
+        ui->sampleDataPlot->graph(4)->setName("通道2第一段");
+        ui->sampleDataPlot->graph(5)->setPen(QPen(Qt::black));
+        ui->sampleDataPlot->graph(5)->setName("通道2第二段");
+        ui->sampleDataPlot->graph(6)->setPen(QPen(Qt::darkCyan));
+        ui->sampleDataPlot->graph(6)->setName("通道3第一段");
+        ui->sampleDataPlot->graph(7)->setPen(QPen(Qt::darkCyan));
+        ui->sampleDataPlot->graph(7)->setName("通道3第二段");
+    }
 }
 
 void MainWindow::plotColormapSettings()

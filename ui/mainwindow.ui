@@ -192,9 +192,9 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton">
+            <widget class="QPushButton" name="btn_ctrlCh0">
              <property name="text">
-              <string>pause</string>
+              <string>save</string>
              </property>
             </widget>
            </item>
@@ -218,7 +218,7 @@
            <item>
             <widget class="QPushButton" name="btn_ctrlCh1">
              <property name="text">
-              <string>pause</string>
+              <string>save</string>
              </property>
             </widget>
            </item>
@@ -242,7 +242,7 @@
            <item>
             <widget class="QPushButton" name="btn_ctrlCh2">
              <property name="text">
-              <string>pause</string>
+              <string>save</string>
              </property>
             </widget>
            </item>

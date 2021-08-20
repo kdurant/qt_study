@@ -156,6 +156,16 @@ private:
 
     QList<QCustomPlot *> widget2CustomPlotList;
     QList<QCPColorMap *> widget2QCPColorMapList;
+
+    // RADAR_TYPE_WATER_GUARD 用的变量
+    struct WaterGuard
+    {
+        bool                      isSaveBase;
+        WaveExtract::WaveformInfo base;
+        WaveExtract::WaveformInfo diff;
+    };
+
+    WaterGuard waterGuard[4];
 };
 
 #endif  // MAINWINDOW_H
