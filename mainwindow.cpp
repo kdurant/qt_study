@@ -43,6 +43,11 @@ MainWindow::MainWindow(QWidget *parent) :
     sysStatus.adCaptureStatus = false;
     sysStatus.ssdStoreStatus  = false;
 
+    for(int i = 0; i < 4; i++)
+    {
+        waterGuard[i].isSaveBase = false;
+    }
+
     offlineWaveForm->moveToThread(thread);
     connect(thread, SIGNAL(started()), offlineWaveForm, SLOT(getADsampleNumber()));
     connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), thread, SLOT(quit()));
@@ -1479,10 +1484,6 @@ void MainWindow::plotLineSettings()
         ui->waterGuardPlot_ch0->xAxis->setLabel(QStringLiteral("时间：ns"));
         ui->waterGuardPlot_ch0->yAxis->setLabel(QStringLiteral("AD采样值"));
         ui->waterGuardPlot_ch0->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-        ui->waterGuardPlot_ch0->axisRect()->setRangeDrag(Qt::Horizontal);
-        ui->waterGuardPlot_ch0->axisRect()->setRangeZoom(Qt::Horizontal);
-        ui->waterGuardPlot_ch0->axisRect()->setRangeZoomAxes(ui->sampleDataPlot->xAxis, ui->sampleDataPlot->yAxis);
-        ui->waterGuardPlot_ch0->setSelectionRectMode(QCP::srmZoom);
         ui->waterGuardPlot_ch0->xAxis->setTicker(intTicker);
         ui->waterGuardPlot_ch0->addGraph();
         ui->waterGuardPlot_ch0->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
@@ -1497,10 +1498,6 @@ void MainWindow::plotLineSettings()
         ui->waterGuardPlot_ch1->xAxis->setLabel(QStringLiteral("时间：ns"));
         ui->waterGuardPlot_ch1->yAxis->setLabel(QStringLiteral("AD采样值"));
         ui->waterGuardPlot_ch1->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-        ui->waterGuardPlot_ch1->axisRect()->setRangeDrag(Qt::Horizontal);
-        ui->waterGuardPlot_ch1->axisRect()->setRangeZoom(Qt::Horizontal);
-        ui->waterGuardPlot_ch1->axisRect()->setRangeZoomAxes(ui->sampleDataPlot->xAxis, ui->sampleDataPlot->yAxis);
-        ui->waterGuardPlot_ch1->setSelectionRectMode(QCP::srmZoom);
         ui->waterGuardPlot_ch1->xAxis->setTicker(intTicker);
         ui->waterGuardPlot_ch1->addGraph();
         ui->waterGuardPlot_ch1->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
@@ -1515,10 +1512,6 @@ void MainWindow::plotLineSettings()
         ui->waterGuardPlot_ch2->xAxis->setLabel(QStringLiteral("时间：ns"));
         ui->waterGuardPlot_ch2->yAxis->setLabel(QStringLiteral("AD采样值"));
         ui->waterGuardPlot_ch2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-        ui->waterGuardPlot_ch2->axisRect()->setRangeDrag(Qt::Horizontal);
-        ui->waterGuardPlot_ch2->axisRect()->setRangeZoom(Qt::Horizontal);
-        ui->waterGuardPlot_ch2->axisRect()->setRangeZoomAxes(ui->sampleDataPlot->xAxis, ui->sampleDataPlot->yAxis);
-        ui->waterGuardPlot_ch2->setSelectionRectMode(QCP::srmZoom);
         ui->waterGuardPlot_ch2->xAxis->setTicker(intTicker);
         ui->waterGuardPlot_ch2->addGraph();
         ui->waterGuardPlot_ch2->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
@@ -1914,6 +1907,18 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
 
     if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
+        QVector<WaveExtract::WaveformInfo> debugCh;
+        debugCh.append(allCh[0]);
+        debugCh.append(allCh[2]);
+        debugCh.append(allCh[4]);
+        debugCh.append(allCh[6]);
+
+        allCh.clear();
+        allCh.append(debugCh[0]);
+        allCh.append(debugCh[1]);
+        allCh.append(debugCh[2]);
+        allCh.append(debugCh[3]);
+
         if(allCh.size() == 4)
         {
             for(int i = 0; i < 3; i++)
@@ -1925,27 +1930,23 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
                     waterGuard[i].base.value = allCh[i].value;
 
                     waterGuard[i].diff.pos = allCh[i].pos;
-                    for(int m = 0; m < allCh[i].value.size(); m++)
-                    {
-                        waterGuard[i].diff.value[m] = allCh[i].value[m] - waterGuard[i].base.value[m];
-                    }
                     if(i == 0)
                         ui->waterGuardPlot_ch0->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
                     else if(i == 1)
-                        ui->waterGuardPlot_ch1->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
+                        ui->waterGuardPlot_ch1->graph(0)->setData(waterGuard[1].base.pos, waterGuard[1].base.value);
                     else if(i == 2)
-                        ui->waterGuardPlot_ch2->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
+                        ui->waterGuardPlot_ch2->graph(0)->setData(waterGuard[2].base.pos, waterGuard[2].base.value);
                 }
             }
             ui->waterGuardPlot_ch0->graph(1)->setData(allCh[0].pos, allCh[0].value);
             ui->waterGuardPlot_ch0->rescaleAxes();
             ui->waterGuardPlot_ch0->replot();
 
-            ui->waterGuardPlot_ch1->graph(1)->setData(allCh[0].pos, allCh[0].value);
+            ui->waterGuardPlot_ch1->graph(1)->setData(allCh[1].pos, allCh[1].value);
             ui->waterGuardPlot_ch1->rescaleAxes();
             ui->waterGuardPlot_ch1->replot();
 
-            ui->waterGuardPlot_ch2->graph(1)->setData(allCh[0].pos, allCh[0].value);
+            ui->waterGuardPlot_ch2->graph(1)->setData(allCh[2].pos, allCh[2].value);
             ui->waterGuardPlot_ch2->rescaleAxes();
             ui->waterGuardPlot_ch2->replot();
         }
