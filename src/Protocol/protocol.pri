@@ -1,3 +1,5 @@
+INCLUDEPATH += $$PWD
+
 HEADERS += \
            $$PWD/protocol.h \
            $$PWD/ProtocolDispatch.h \

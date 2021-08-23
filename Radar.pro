@@ -79,10 +79,6 @@ HEADERS += \
     src/motor/MotorController.h \
     src/motor/Epos2Controller.h
 
-
-
-INCLUDEPATH += ./src/BitColorMap
-INCLUDEPATH += ./src/Protocol
 INCLUDEPATH += ./src/UpdateBin
 INCLUDEPATH += ./src/wave
 INCLUDEPATH += ./src/motor

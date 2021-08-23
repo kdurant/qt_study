@@ -1509,6 +1509,7 @@ void MainWindow::plotLineSettings()
         ui->waterGuardPlot_ch1->graph(1)->setName("real-time");
 
         ui->waterGuardPlot_ch2->legend->setVisible(true);
+
         ui->waterGuardPlot_ch2->xAxis->setLabel(QStringLiteral("时间：ns"));
         ui->waterGuardPlot_ch2->yAxis->setLabel(QStringLiteral("AD采样值"));
         ui->waterGuardPlot_ch2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
