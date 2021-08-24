@@ -1469,93 +1469,42 @@ void MainWindow::plotLineSettings()
     //设置缩放策略
     intTicker->setScaleStrategy(QCPAxisTickerFixed::ssMultiples);
 
-    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+    ui->sampleDataPlot->legend->setVisible(true);  //右上角指示曲线的缩略框
+    ui->sampleDataPlot->xAxis->setLabel(QStringLiteral("时间：ns"));
+    ui->sampleDataPlot->yAxis->setLabel(QStringLiteral("AD采样值"));
+
+    ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);  // 可以按住鼠标拖动图标，鼠标滚轮缩放图表
+
+    // 选择矩形区域缩放
+    // ui->sampleDataPlot->axisRect()->setRangeDrag(Qt::Horizontal);
+    // ui->sampleDataPlot->axisRect()->setRangeZoom(Qt::Horizontal);
+    // ui->sampleDataPlot->axisRect()->setRangeZoomAxes(ui->sampleDataPlot->xAxis, ui->sampleDataPlot->yAxis);
+    // ui->sampleDataPlot->setSelectionRectMode(QCP::srmZoom);
+
+    //应用自定义整形ticker
+    ui->sampleDataPlot->xAxis->setTicker(intTicker);
+
+    for(int i = 0; i < 8; i++)
     {
-        QSharedPointer<QCPAxisTickerFixed> intTicker(new QCPAxisTickerFixed);
-        intTicker->setTickStep(1);
-        intTicker->setScaleStrategy(QCPAxisTickerFixed::ssMultiples);
-        ui->waterGuardPlot_ch0->legend->setVisible(true);
-        ui->waterGuardPlot_ch0->xAxis->setLabel(QStringLiteral("时间：ns"));
-        ui->waterGuardPlot_ch0->yAxis->setLabel(QStringLiteral("AD采样值"));
-        ui->waterGuardPlot_ch0->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-        ui->waterGuardPlot_ch0->xAxis->setTicker(intTicker);
-        ui->waterGuardPlot_ch0->addGraph();
-        ui->waterGuardPlot_ch0->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
-        ui->waterGuardPlot_ch0->graph(0)->setPen(QPen(Qt::black));
-        ui->waterGuardPlot_ch0->graph(0)->setName("base");
-        ui->waterGuardPlot_ch0->addGraph();
-        ui->waterGuardPlot_ch0->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
-        ui->waterGuardPlot_ch0->graph(1)->setPen(QPen(Qt::red));
-        ui->waterGuardPlot_ch0->graph(1)->setName("real-time");
-
-        ui->waterGuardPlot_ch1->legend->setVisible(true);
-        ui->waterGuardPlot_ch1->xAxis->setLabel(QStringLiteral("时间：ns"));
-        ui->waterGuardPlot_ch1->yAxis->setLabel(QStringLiteral("AD采样值"));
-        ui->waterGuardPlot_ch1->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-        ui->waterGuardPlot_ch1->xAxis->setTicker(intTicker);
-        ui->waterGuardPlot_ch1->addGraph();
-        ui->waterGuardPlot_ch1->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
-        ui->waterGuardPlot_ch1->graph(0)->setPen(QPen(Qt::black));
-        ui->waterGuardPlot_ch1->graph(0)->setName("base");
-        ui->waterGuardPlot_ch1->addGraph();
-        ui->waterGuardPlot_ch1->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
-        ui->waterGuardPlot_ch1->graph(1)->setPen(QPen(Qt::red));
-        ui->waterGuardPlot_ch1->graph(1)->setName("real-time");
-
-        ui->waterGuardPlot_ch2->legend->setVisible(true);
-
-        ui->waterGuardPlot_ch2->xAxis->setLabel(QStringLiteral("时间：ns"));
-        ui->waterGuardPlot_ch2->yAxis->setLabel(QStringLiteral("AD采样值"));
-        ui->waterGuardPlot_ch2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-        ui->waterGuardPlot_ch2->xAxis->setTicker(intTicker);
-        ui->waterGuardPlot_ch2->addGraph();
-        ui->waterGuardPlot_ch2->graph(0)->setScatterStyle(QCPScatterStyle::ssDisc);
-        ui->waterGuardPlot_ch2->graph(0)->setPen(QPen(Qt::black));
-        ui->waterGuardPlot_ch2->graph(0)->setName("base");
-        ui->waterGuardPlot_ch2->addGraph();
-        ui->waterGuardPlot_ch2->graph(1)->setScatterStyle(QCPScatterStyle::ssDisc);
-        ui->waterGuardPlot_ch2->graph(1)->setPen(QPen(Qt::red));
-        ui->waterGuardPlot_ch2->graph(1)->setName("real-time");
+        ui->sampleDataPlot->addGraph();
+        ui->sampleDataPlot->graph(i)->setScatterStyle(QCPScatterStyle::ssDisc);
     }
-    else
-    {
-        ui->sampleDataPlot->legend->setVisible(true);  //右上角指示曲线的缩略框
-        ui->sampleDataPlot->xAxis->setLabel(QStringLiteral("时间：ns"));
-        ui->sampleDataPlot->yAxis->setLabel(QStringLiteral("AD采样值"));
-
-        ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);  // 可以按住鼠标拖动图标，鼠标滚轮缩放图表
-
-        // 选择矩形区域缩放
-        // ui->sampleDataPlot->axisRect()->setRangeDrag(Qt::Horizontal);
-        // ui->sampleDataPlot->axisRect()->setRangeZoom(Qt::Horizontal);
-        // ui->sampleDataPlot->axisRect()->setRangeZoomAxes(ui->sampleDataPlot->xAxis, ui->sampleDataPlot->yAxis);
-        // ui->sampleDataPlot->setSelectionRectMode(QCP::srmZoom);
-
-        //应用自定义整形ticker
-        ui->sampleDataPlot->xAxis->setTicker(intTicker);
-
-        for(int i = 0; i < 8; i++)
-        {
-            ui->sampleDataPlot->addGraph();
-            ui->sampleDataPlot->graph(i)->setScatterStyle(QCPScatterStyle::ssDisc);
-        }
-        ui->sampleDataPlot->graph(0)->setPen(QPen(Qt::red));
-        ui->sampleDataPlot->graph(0)->setName("通道0第一段");
-        ui->sampleDataPlot->graph(1)->setPen(QPen(Qt::red));
-        ui->sampleDataPlot->graph(1)->setName("通道0第二段");
-        ui->sampleDataPlot->graph(2)->setPen(QPen(Qt::blue));
-        ui->sampleDataPlot->graph(2)->setName("通道1第一段");
-        ui->sampleDataPlot->graph(3)->setPen(QPen(Qt::blue));
-        ui->sampleDataPlot->graph(3)->setName("通道1第二段");
-        ui->sampleDataPlot->graph(4)->setPen(QPen(Qt::black));
-        ui->sampleDataPlot->graph(4)->setName("通道2第一段");
-        ui->sampleDataPlot->graph(5)->setPen(QPen(Qt::black));
-        ui->sampleDataPlot->graph(5)->setName("通道2第二段");
-        ui->sampleDataPlot->graph(6)->setPen(QPen(Qt::darkCyan));
-        ui->sampleDataPlot->graph(6)->setName("通道3第一段");
-        ui->sampleDataPlot->graph(7)->setPen(QPen(Qt::darkCyan));
-        ui->sampleDataPlot->graph(7)->setName("通道3第二段");
-    }
+    ui->sampleDataPlot->graph(0)->setPen(QPen(Qt::red));
+    ui->sampleDataPlot->graph(0)->setName("通道0第一段");
+    ui->sampleDataPlot->graph(1)->setPen(QPen(Qt::red));
+    ui->sampleDataPlot->graph(1)->setName("通道0第二段");
+    ui->sampleDataPlot->graph(2)->setPen(QPen(Qt::blue));
+    ui->sampleDataPlot->graph(2)->setName("通道1第一段");
+    ui->sampleDataPlot->graph(3)->setPen(QPen(Qt::blue));
+    ui->sampleDataPlot->graph(3)->setName("通道1第二段");
+    ui->sampleDataPlot->graph(4)->setPen(QPen(Qt::black));
+    ui->sampleDataPlot->graph(4)->setName("通道2第一段");
+    ui->sampleDataPlot->graph(5)->setPen(QPen(Qt::black));
+    ui->sampleDataPlot->graph(5)->setName("通道2第二段");
+    ui->sampleDataPlot->graph(6)->setPen(QPen(Qt::darkCyan));
+    ui->sampleDataPlot->graph(6)->setName("通道3第一段");
+    ui->sampleDataPlot->graph(7)->setPen(QPen(Qt::darkCyan));
+    ui->sampleDataPlot->graph(7)->setName("通道3第二段");
 }
 
 void MainWindow::plotColormapSettings()
@@ -1985,9 +1934,9 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
                 }
                 else
                 {
-                    ui->waterGuardColor_ch0->setData(allCh[0].value, angle);
-                    ui->waterGuardColor_ch1->setData(allCh[1].value, angle);
-                    ui->waterGuardColor_ch2->setData(allCh[2].value, angle);
+                    ui->waterGuardTimeColor0->setData(allCh[0].value, angle);
+                    ui->waterGuardTimeColor1->setData(allCh[1].value, angle);
+                    ui->waterGuardTimeColor2->setData(allCh[2].value, angle);
                 }
                 offset++;
             }

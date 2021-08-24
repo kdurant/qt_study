@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1274</width>
+    <width>1245</width>
     <height>842</height>
    </rect>
   </property>
@@ -187,12 +187,12 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_14">
            <item>
-            <widget class="QCustomPlot" name="waterGuardPlot_ch0" native="true">
+            <widget class="BitColorMap" name="waterGuardBaseColor0" native="true">
              <layout class="QHBoxLayout" name="horizontalLayout_3"/>
             </widget>
            </item>
            <item>
-            <widget class="BitColorMap" name="waterGuardColor_ch0" native="true"/>
+            <widget class="BitColorMap" name="waterGuardTimeColor0" native="true"/>
            </item>
           </layout>
          </widget>
@@ -204,12 +204,12 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_15">
            <item>
-            <widget class="QCustomPlot" name="waterGuardPlot_ch1" native="true">
+            <widget class="BitColorMap" name="waterGuardBaseColor1" native="true">
              <layout class="QHBoxLayout" name="horizontalLayout_4"/>
             </widget>
            </item>
            <item>
-            <widget class="BitColorMap" name="waterGuardColor_ch1" native="true"/>
+            <widget class="BitColorMap" name="waterGuardTimeColor1" native="true"/>
            </item>
           </layout>
          </widget>
@@ -221,12 +221,12 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_16">
            <item>
-            <widget class="QCustomPlot" name="waterGuardPlot_ch2" native="true">
+            <widget class="BitColorMap" name="waterGuardBaseColor2" native="true">
              <layout class="QHBoxLayout" name="horizontalLayout_7"/>
             </widget>
            </item>
            <item>
-            <widget class="BitColorMap" name="waterGuardColor_ch2" native="true"/>
+            <widget class="BitColorMap" name="waterGuardTimeColor2" native="true"/>
            </item>
           </layout>
          </widget>
@@ -446,7 +446,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1274</width>
+     <width>1245</width>
      <height>23</height>
     </rect>
    </property>
