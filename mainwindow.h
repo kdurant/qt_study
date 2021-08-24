@@ -162,12 +162,14 @@ private:
     // RADAR_TYPE_WATER_GUARD 用的变量
     struct WaterGuard
     {
-        bool                      isSaveBase;
-        WaveExtract::WaveformInfo base;
-        WaveExtract::WaveformInfo diff;
+        bool                                        isSaveBase;
+        bool                                        isValidRange;  // 保证从0°开始保存数据
+        WaveExtract::MOTOR_CNT_STATE                state;
+        QVector<QVector<WaveExtract::WaveformInfo>> base;
+        QVector<WaveExtract::WaveformInfo>          diff;
     };
 
-    WaterGuard waterGuard[4];
+    WaterGuard waterGuard;
 };
 
 #endif  // MAINWINDOW_H

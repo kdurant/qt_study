@@ -43,10 +43,9 @@ MainWindow::MainWindow(QWidget *parent) :
     sysStatus.adCaptureStatus = false;
     sysStatus.ssdStoreStatus  = false;
 
-    for(int i = 0; i < 4; i++)
-    {
-        waterGuard[i].isSaveBase = false;
-    }
+    waterGuard.isSaveBase   = false;
+    waterGuard.isValidRange = false;
+    waterGuard.state        = WaveExtract::MOTOR_CNT_STATE::IDLE;
 
     offlineWaveForm->moveToThread(thread);
     connect(thread, SIGNAL(started()), offlineWaveForm, SLOT(getADsampleNumber()));
@@ -546,14 +545,8 @@ void MainWindow::initSignalSlot()
     });
 
     // 水下预警雷达相关设置
-    connect(ui->btn_ctrlCh0, &QPushButton::pressed, this, [this]() {
-        waterGuard[0].isSaveBase = true;
-    });
-    connect(ui->btn_ctrlCh1, &QPushButton::pressed, this, [this]() {
-        waterGuard[1].isSaveBase = true;
-    });
-    connect(ui->btn_ctrlCh2, &QPushButton::pressed, this, [this]() {
-        waterGuard[2].isSaveBase = true;
+    connect(ui->btn_baseCapture, &QPushButton::pressed, this, [this]() {
+        waterGuard.isSaveBase = true;
     });
 
     connect(dispatch,
@@ -1922,23 +1915,59 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
 
         if(allCh.size() == 4)
         {
-            for(int i = 0; i < 3; i++)
+            switch(waterGuard.state)
             {
-                if(waterGuard[i].isSaveBase)
-                {
-                    waterGuard[i].isSaveBase = false;
-                    waterGuard[i].base.pos   = allCh[i].pos;
-                    waterGuard[i].base.value = allCh[i].value;
+                case WaveExtract::MOTOR_CNT_STATE::IDLE:
+                    if(waterGuard.isSaveBase)
+                    {
+                        waterGuard.base.clear();
+                        waterGuard.base.resize(3);
+                        waterGuard.state = WaveExtract::MOTOR_CNT_STATE::WAIT_START;
+                        ui->btn_baseCapture->setEnabled(false);
+                    }
+                    break;
+                case WaveExtract::MOTOR_CNT_STATE::WAIT_START:
+                    if(allCh[0].motorCnt < 500)
+                    {
+                        waterGuard.isValidRange = true;
+                        waterGuard.state        = WaveExtract::MOTOR_CNT_STATE::WAIT_END;
+                    }
+                    break;
+                case WaveExtract::MOTOR_CNT_STATE::WAIT_END:
+                    if(allCh[0].motorCnt > 163840 / 2 - 1)
+                    {
+                        waterGuard.isValidRange = false;
+                        waterGuard.isSaveBase   = false;
+                        waterGuard.state        = WaveExtract::MOTOR_CNT_STATE::IDLE;
+                        ui->btn_baseCapture->setEnabled(true);
+                    }
+                    break;
+                default:
+                    waterGuard.isValidRange = false;
+                    waterGuard.isSaveBase   = false;
+                    break;
+            }
 
-                    waterGuard[i].diff.pos = allCh[i].pos;
-                    if(i == 0)
-                        ui->waterGuardPlot_ch0->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
-                    else if(i == 1)
-                        ui->waterGuardPlot_ch1->graph(0)->setData(waterGuard[1].base.pos, waterGuard[1].base.value);
-                    else if(i == 2)
-                        ui->waterGuardPlot_ch2->graph(0)->setData(waterGuard[2].base.pos, waterGuard[2].base.value);
+            //                    waterGuard[i].isSaveBase = false;
+            //                    waterGuard[i].base.pos   = allCh[i].pos;
+            //                    waterGuard[i].base.value = allCh[i].value;
+
+            //                    waterGuard[i].diff.pos = allCh[i].pos;
+            //                    if(i == 0)
+            //                        ui->waterGuardPlot_ch0->graph(0)->setData(waterGuard[0].base.pos, waterGuard[0].base.value);
+            //                    else if(i == 1)
+            //                        ui->waterGuardPlot_ch1->graph(0)->setData(waterGuard[1].base.pos, waterGuard[1].base.value);
+            //                    else if(i == 2)
+            //                        ui->waterGuardPlot_ch2->graph(0)->setData(waterGuard[2].base.pos, waterGuard[2].base.value);
+
+            if(waterGuard.isValidRange == true)
+            {
+                for(int i = 0; i < 3; i++)
+                {
+                    waterGuard.base[i].append(allCh[i]);
                 }
             }
+
             ui->waterGuardPlot_ch0->graph(1)->setData(allCh[0].pos, allCh[0].value);
             ui->waterGuardPlot_ch0->rescaleAxes();
             ui->waterGuardPlot_ch0->replot();
@@ -1953,7 +1982,7 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
 
             double angle;
             angle = allCh[0].motorCnt * 360 / 163840.0;
-            qDebug() << "angle = " << angle;
+            qDebug() << "motorCnt = " << allCh[0].motorCnt << ",angle = " << angle;
             if(angle > 0 && angle < 180)
             {
                 ui->waterGuardColor_ch0->setData(allCh[0].value, angle);

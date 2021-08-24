@@ -20,6 +20,13 @@ public:
         QVector<double> value;     // 相当于y轴
     };
 
+    enum MOTOR_CNT_STATE
+    {
+        IDLE,
+        WAIT_START,
+        WAIT_END,
+    };
+
     WaveExtract() = default;
 
     static bool isFrameHead(QVector<quint8> frameData, int offset);

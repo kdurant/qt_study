@@ -54,23 +54,31 @@ int BitColorMap::data2rgb(int data, int *r, int *g, int *b)
     return 0;
 }
 
+/**
+ * @brief BitColorMap::setData
+ * 使用固定深度的显存。当显存存满数据后，先取出显出对应位置的数据，使用默认颜色，清除显示
+ * 然后再显示新的数据
+ * @param line, 数据
+ * @param angle， 角度
+ * @return
+ */
 int BitColorMap::setData(QVector<double> &line, double angle)
 {
     //    drawLineColorWithAngle(image, QColor(62, 62, 62), 1);
 
-    LaneData lane;
-    lane.data  = line;
-    lane.angle = angle;
+    LaneData new_data;
+    new_data.data  = line;
+    new_data.angle = angle;
+    LaneData old_data;
 
-    int offset          = count % lineNum;
-    videoMemory[offset] = lane;
-    count++;
+    int offset = count % lineNum;
 
     if(count >= lineNum)
     {
-        lane = videoMemory[offset];
-        drawLineColorWithAngle(image, QColor(62, 62, 62), lane.angle);
+        old_data = videoMemory[offset];
+        drawLineColorWithAngle(image, QColor(62, 62, 62), old_data.angle);
 
+        videoMemory[offset] = new_data;
         for(int i = 0; i < videoMemory.size(); i++)
         {
             drawLineWithAngle(image, videoMemory[i].data, videoMemory[i].angle);
@@ -79,12 +87,14 @@ int BitColorMap::setData(QVector<double> &line, double angle)
     }
     else
     {
+        videoMemory[offset] = new_data;
         for(int i = 0; i < count; i++)
         {
             drawLineWithAngle(image, videoMemory[i].data, videoMemory[i].angle);
             update();
         }
     }
+    count++;
     return 0;
 }
 
@@ -147,7 +157,7 @@ void BitColorMap::drawLineColorWithAngle(QImage *img, QColor color, double angle
         x *= i;
         y *= i;
         x = radius - x;
-        y = 1.5 * radius - y;
+        y = 1.5 * (img->height() / 2) - y;
 
         img->setPixelColor(x, y, color);
     }

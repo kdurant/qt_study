@@ -192,13 +192,6 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="btn_ctrlCh0">
-             <property name="text">
-              <string>save</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="BitColorMap" name="waterGuardColor_ch0" native="true"/>
            </item>
           </layout>
@@ -216,13 +209,6 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="btn_ctrlCh1">
-             <property name="text">
-              <string>save</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="BitColorMap" name="waterGuardColor_ch1" native="true"/>
            </item>
           </layout>
@@ -237,13 +223,6 @@
            <item>
             <widget class="QCustomPlot" name="waterGuardPlot_ch2" native="true">
              <layout class="QHBoxLayout" name="horizontalLayout_7"/>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="btn_ctrlCh2">
-             <property name="text">
-              <string>save</string>
-             </property>
             </widget>
            </item>
            <item>
@@ -451,6 +430,13 @@
         </item>
        </layout>
       </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="btn_baseCapture">
+      <property name="text">
+       <string>save</string>
+      </property>
      </widget>
     </item>
    </layout>
