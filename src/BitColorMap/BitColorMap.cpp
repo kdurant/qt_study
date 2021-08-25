@@ -3,7 +3,7 @@
 BitColorMap::BitColorMap(QWidget *parent) :
     QWidget(parent),
     img_size(300),
-    lineNum(180)
+    depth(180)
 {
     image = new QImage(img_size, (img_size >> 2) * 3, QImage::Format_RGB32);
     for(double i = 0; i < image->width(); i += 1)
@@ -71,9 +71,9 @@ int BitColorMap::setData(QVector<double> &line, double angle)
     new_data.angle = angle;
     LaneData old_data;
 
-    int offset = count % lineNum;
+    int offset = count % depth;
 
-    if(count >= lineNum)
+    if(count >= depth)
     {
         old_data = videoMemory[offset];
         drawLineColorWithAngle(image, QColor(62, 62, 62), old_data.angle);

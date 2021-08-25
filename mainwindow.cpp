@@ -43,11 +43,11 @@ MainWindow::MainWindow(QWidget *parent) :
     sysStatus.adCaptureStatus = false;
     sysStatus.ssdStoreStatus  = false;
 
-    waterGuard.startSaveBase = false;
-    waterGuard.isSavedBase   = false;
-    waterGuard.isValidRange  = false;
-    waterGuard.state         = WaveExtract::MOTOR_CNT_STATE::IDLE;
-
+    waterGuard.startSaveBase    = false;
+    waterGuard.isSavedBase      = false;
+    waterGuard.isValidRange     = false;
+    waterGuard.state            = WaveExtract::MOTOR_CNT_STATE::IDLE;
+    waterGuard.videoMemoryDepth = 180;
     offlineWaveForm->moveToThread(thread);
     connect(thread, SIGNAL(started()), offlineWaveForm, SLOT(getADsampleNumber()));
     connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), thread, SLOT(quit()));
@@ -77,9 +77,41 @@ MainWindow::~MainWindow()
 
 void MainWindow::initParameter()
 {
-    if(!configIni->contains("System/radarType"))
+    QFileInfo fileInfo("./config.ini");
+    if(!fileInfo.exists())
     {
-        QMessageBox::warning(this, "warning", "缺少配置文件");
+        QFile file("./config.ini");
+        file.open(QIODevice::WriteOnly);
+        file.write("; RADAR_TPYE_OCEAN = 0x00,\r\n");
+        file.write("; RADAR_TPYE_LAND = 0x01,\r\n");
+        file.write("; RADAR_TPYE_760 = 0x02,\r\n");
+        file.write("; RADAR_TPYE_DOUBLE_WAVE = 0x03,\r\n");
+        file.write("; RADAR_TPYE_DRONE = 0x04,\r\n");
+        file.write("; RADAR_TPYE_WATER_GUARD = 0x05,\r\n");
+        file.write("; RADAR_TPYE_SECOND_INSTITUDE = 0x06,\r\n");
+
+        file.write("\r\n[System]\r\n");
+        file.write("; release or debug\r\n");
+        file.write("mode=debug\r\n");
+        file.write("radarType=1\r\n");
+        file.write("localPort=6666\r\n");
+        file.write("radarIP=192.168.1.101\r\n");
+        file.write("radarPort=5555\r\n");
+        file.write("\r\n[WaterGuard]\r\n");
+        file.write("videmMemoryDepth=180\r\n");
+        file.write("\r\n[Preview]\r\n");
+        file.write("compressLen=0\r\n");
+        file.write("compressRatio=0\r\n");
+        file.write("firstLen=32\r\n");
+        file.write("firstStartPos=32\r\n");
+        file.write("sampleLen=6000\r\n");
+        file.write("sampleRate=4000\r\n");
+        file.write("secondLen=128\r\n");
+        file.write("secondStartPos=1280\r\n");
+        file.write("subThreshold=200\r\n");
+        file.write("sumThreshold=2000\r\n");
+
+        file.close();
     }
 
     //    radarType = configIni->value("System/radarType").toInt();
@@ -151,6 +183,15 @@ void MainWindow::initParameter()
     ui->lineEdit_subThreshold->setText(configIni->value("Preview/subThreshold").toString());
     ui->lineEdit_compressLen->setText(configIni->value("Preview/compressLen").toString());
     ui->lineEdit_compressRatio->setText(configIni->value("Preview/compressRatio").toString());
+
+    waterGuard.videoMemoryDepth = configIni->value("WaterGuard/videmMemoryDepth").toInt();
+
+    ui->waterGuardTimeColor0->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
+    ui->waterGuardTimeColor1->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
+    ui->waterGuardTimeColor2->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
+    ui->waterGuardBaseColor0->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
+    ui->waterGuardBaseColor1->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
+    ui->waterGuardBaseColor2->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
 }
 
 void MainWindow::saveParameter()
@@ -1898,18 +1939,22 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
                     waterGuard.startSaveBase = false;
                     break;
             }
+            int    offset = 0;
+            double angle;
+            angle = allCh[0].motorCnt * 360 / 163840.0;
+            qDebug() << "motorCnt = " << allCh[0].motorCnt << ",angle = " << angle;
+
             if(waterGuard.isValidRange == true)
             {
                 for(int i = 0; i < 3; i++)
                 {
                     waterGuard.base[i].append(allCh[i]);
                 }
-            }
 
-            int    offset = 0;
-            double angle;
-            angle = allCh[0].motorCnt * 360 / 163840.0;
-            qDebug() << "motorCnt = " << allCh[0].motorCnt << ",angle = " << angle;
+                ui->waterGuardBaseColor0->setData(allCh[0].value, angle);
+                ui->waterGuardBaseColor1->setData(allCh[1].value, angle);
+                ui->waterGuardBaseColor2->setData(allCh[2].value, angle);
+            }
 
             if(allCh[0].motorCnt > 0 && allCh[0].motorCnt < 163840 / 2 - 1)
             {
@@ -1929,6 +1974,12 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
                             {
                                 data.append(allCh[m].value[n] - angle_data.value[n]);
                             }
+                            if(m == 0)
+                                ui->waterGuardTimeColor0->setData(data, angle);
+                            else if(m == 1)
+                                ui->waterGuardTimeColor1->setData(data, angle);
+                            else if(m == 2)
+                                ui->waterGuardTimeColor2->setData(data, angle);
                         }
                     }
                 }

@@ -32,6 +32,11 @@ public:
         QTimer::singleShot(interval, &waitLoop, &QEventLoop::quit);
         waitLoop.exec();
     }
+    void setVideoMemoryDepth(int d)
+    {
+        depth = d;
+        videoMemory.resize(depth);
+    }
 
 protected:
     //    void resizeEvent(QResizeEvent *event);  //大小重置事件
@@ -43,8 +48,8 @@ private:
     QImage *image;
     int64_t count{0};  // 统计总共接收到了多少次数据
 
-    int               lineNum;  // 队列里缓存多少次采样数据
-    QVector<LaneData> videoMemory{lineNum};
+    int               depth;  // 队列里缓存多少次采样数据
+    QVector<LaneData> videoMemory;
 
 signals:
 };
