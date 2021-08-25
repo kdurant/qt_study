@@ -534,6 +534,9 @@ void MainWindow::initSignalSlot()
             return;
         }
 
+        if(firstLen + secondLen >= 1000)
+            QMessageBox::warning(NULL, "警告", "两段采样长度之和尽量不要大于1000");
+
         if(secondPos + secondLen >= totalSampleLen)
         {
             QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
