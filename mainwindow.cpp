@@ -604,7 +604,6 @@ void MainWindow::initSignalSlot()
             sampleData.append(i);
 
         showSampleData(sampleData);
-        //        updateColormap(allCh);
     });
 
     /*
@@ -1575,18 +1574,18 @@ void MainWindow::plotColormapSettings()
                                     QCP::Interaction::iRangeZoom);
         customPlot->axisRect()->setupFullAxesBox(true);  //四刻度轴
         customPlot->xAxis->setLabel("电机角度(°)");
-        customPlot->yAxis->setLabel("采样值");
+        customPlot->yAxis->setLabel("时间(ns), 偏移0");
         //if(i != 3)
         //customPlot->hide();
 
         QCPColorMap *colorMap = new QCPColorMap(customPlot->xAxis, customPlot->yAxis);
         widget2QCPColorMapList.append(colorMap);
 
-        int nx = 180;   // 角度
-        int ny = 1024;  // AD采样数字值，最大1024
+        int nx = 180;  // 角度, x轴
+        int ny = 500;  // 采样数据的距离，y轴
 
-        colorMap->data()->setSize(nx, ny);                                 // nx*ny(cells)
-        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 1024));  // span the coordinate range
+        colorMap->data()->setSize(nx, ny);                                // nx*ny(cells)
+        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 500));  // span the coordinate range
         colorMap->setDataScaleType(QCPAxis::ScaleType::stLinear);
 
         // add color scale:
@@ -1619,35 +1618,31 @@ void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
     QCustomPlot *    customPlot;
     QCPColorMap *    colorMap;
     QCPColorMapData *colorMapData;
-    int              offset = 0;
+    int              ch = 0;
     for(int i = 0; i < 4; ++i)
     {
         customPlot   = widget2CustomPlotList.at(i);
         colorMap     = widget2QCPColorMapList.at(i);
         colorMapData = colorMap->data();
 
-        for(int keyIndex = 0; keyIndex < allCh[0].pos.length(); ++keyIndex)
+        int y_offset = allCh[0].pos[0];
+        customPlot->yAxis->setLabel("时间(ns), 偏移" + QString::number(y_offset));
+        for(int keyIndex = 0; keyIndex < allCh[0].pos.length() && keyIndex < 500; ++keyIndex)
         {
             if(allCh.size() == 8)
-                offset = i * 2;
+                ch = i * 2;
 
-            int    key   = (int)allCh[offset].pos[keyIndex];
-            double value = 0;
-            if(i == 0)
+            int    x     = qFloor((allCh[ch].motorCnt * 360) / 163840.0);
+            int    y     = (int)allCh[ch].pos[keyIndex] - y_offset;
+            double value = allCh[ch].value[keyIndex];
+
+            if(x >= 180)
             {
-                value = 100;
-                if(key == 200)
-                    value = 200;
-                if(key == 250)
-                    value = 250;
-                if(key == 300)
-                    value = 300;
+                qDebug() << qFloor((allCh[ch].motorCnt * 360) / 163840.0);
+                return;
             }
-            else
-                value = allCh[offset].value[keyIndex];
 
-            int frameN = (int)(((allCh[offset].motorCnt % 163840) / 163840.0) * 180);
-            //            colorMapData->setCell(frameN, key, value);
+            colorMapData->setCell(x, y, value);
         }
 
         colorMap->rescaleDataRange();
@@ -1739,9 +1734,6 @@ void MainWindow::on_bt_showWave_clicked()
             QVector<quint8> sampleData = offlineWaveForm->getFrameData(i);  // 耗时小于1ms
 
             showSampleData(sampleData);
-
-            // ///////////
-            // updateColormap(allCh);
 
             if(interval_time == 0)
             {
@@ -2001,4 +1993,6 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
             ui->sampleDataPlot->rescaleAxes();
         ui->sampleDataPlot->replot();
     }
+
+    // updateColormap(allCh);
 }
