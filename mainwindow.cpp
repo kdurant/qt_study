@@ -1594,24 +1594,12 @@ void MainWindow::plotColormapSettings()
         customPlot->plotLayout()->addElement(0, 1, colorScale);  // add it to the right of the main axis rect
         colorScale->setType(QCPAxis::atRight);                   // scale shall be vertical bar with tick/axis labels right(default)
         colorMap->setColorScale(colorScale);
+        colorScale->setRangeDrag(false);
+        colorScale->setRangeZoom(false);
         colorScale->axis()->setLabel(QString("通道%1采样值").arg(i + 1));  // color scale name
 
         // set the color gradient of the color map to one of the presets:
         QCPColorGradient colorGradient;
-
-        QMap<double, QColor> map;
-        QList<QColor>        list;
-
-        list.append(Qt::black);
-        list.append(Qt::blue);
-        list.append(Qt::darkGray);
-        list.append(Qt::white);
-        for(int i = 0; i < 4; ++i)
-        {
-            map[i * 0.15 + 0.3] = list.at(i % list.size());
-        }
-        colorGradient.setColorStops(map);
-
         colorGradient.loadPreset(QCPColorGradient::gpSpectrum);
         colorMap->setGradient(colorGradient);
 
@@ -1621,7 +1609,6 @@ void MainWindow::plotColormapSettings()
 
         // rescale the data dimension such that all data points in the span lie in the visualized by the color gradient
         colorMap->rescaleDataRange();
-
         // rescale the key and value axes so the whole color map is visible;
         customPlot->rescaleAxes();
     }
