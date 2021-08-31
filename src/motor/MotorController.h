@@ -35,6 +35,15 @@ public:
         return false;
     }
 
+    virtual qint32 getActualVelocity(void)
+    {
+        return 0;
+    }
+    virtual qint32 getActualPosition(void)
+    {
+        return 0;
+    }
+
 signals:
     void sendDataReady(QByteArray& data);  // 需要发送的数据已经准备好
 
