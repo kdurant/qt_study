@@ -29,6 +29,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 include(./src/Protocol/protocol.pri)
 include(./src/BitColorMap/BitColorMap.pri)
+include(./src/motor/MotorController.pri)
 
 SOURCES += \
         main.cpp \
@@ -49,8 +50,6 @@ SOURCES += \
     src/UpdateBin/UpdateBin.cpp \
     src/laser/LaserController.cpp \
     src/laser/laserType1.cpp \
-    src/motor/MotorController.cpp \
-    src/motor/Epos2Controller.cpp
 
 HEADERS += \
     common.h \
@@ -76,12 +75,9 @@ HEADERS += \
     src/UpdateBin/UpdateBin.h \
     src/laser/LaserController.h \
     src/laser/laserType1.h \
-    src/motor/MotorController.h \
-    src/motor/Epos2Controller.h
 
 INCLUDEPATH += ./src/UpdateBin
 INCLUDEPATH += ./src/wave
-INCLUDEPATH += ./src/motor
 INCLUDEPATH += ./src/laser
 INCLUDEPATH += ./src/DevInfo
 INCLUDEPATH += ./src/saveWave

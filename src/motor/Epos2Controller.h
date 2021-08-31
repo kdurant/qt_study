@@ -12,8 +12,8 @@ public:
     bool init(void) override;
     bool start(void) override;
     bool stop(void) override;
+    bool run(quint16 speed) override;
 
-    bool run(quint16 speed);
     bool moveToPosition(quint32 postion);
     bool moveFixSpeed(quint32 speed);
     bool moveToHome(void);
