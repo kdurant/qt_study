@@ -250,7 +250,8 @@ void MainWindow::uiConfig()
     ui->tabWidget->setCurrentIndex(0);
 
     ui->tabWidget_main->setTabEnabled(1, false);
-    ui->tabWidget_main->setTabEnabled(2, false);
+    // ui->tabWidget_main->setTabEnabled(2, false);
+    ui->tabWidget_main->setCurrentIndex(0);
 
     QString title;
 
@@ -1574,7 +1575,7 @@ void MainWindow::plotColormapSettings()
                                     QCP::Interaction::iRangeZoom);
         customPlot->axisRect()->setupFullAxesBox(true);  //四刻度轴
         customPlot->xAxis->setLabel("电机角度(°)");
-        customPlot->yAxis->setLabel("时间(ns), 偏移0");
+        customPlot->yAxis->setLabel("时间(ns)");
         //if(i != 3)
         //customPlot->hide();
 
@@ -1595,7 +1596,6 @@ void MainWindow::plotColormapSettings()
         colorMap->setColorScale(colorScale);
         colorScale->setRangeDrag(false);
         colorScale->setRangeZoom(false);
-        colorScale->axis()->setLabel(QString("通道%1采样值").arg(i + 1));  // color scale name
 
         // set the color gradient of the color map to one of the presets:
         QCPColorGradient colorGradient;
@@ -1606,6 +1606,7 @@ void MainWindow::plotColormapSettings()
         QCPMarginGroup *marginGroup = new QCPMarginGroup(customPlot);
         customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 
+        colorMap->setDataRange(QCPRange(150, 1000));
         // rescale the data dimension such that all data points in the span lie in the visualized by the color gradient
         colorMap->rescaleDataRange();
         // rescale the key and value axes so the whole color map is visible;
@@ -1626,7 +1627,7 @@ void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
         colorMapData = colorMap->data();
 
         int y_offset = allCh[0].pos[0];
-        customPlot->yAxis->setLabel("时间(ns), 偏移" + QString::number(y_offset));
+        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0 + y_offset, 500 + y_offset));  // span the coordinate range
         for(int keyIndex = 0; keyIndex < allCh[0].pos.length() && keyIndex < 500; ++keyIndex)
         {
             if(allCh.size() == 8)
@@ -1644,10 +1645,8 @@ void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
 
             colorMapData->setCell(x, y, value);
         }
-
-        colorMap->rescaleDataRange();
-        customPlot->replot();
     }
+    customPlot->replot();
 }
 
 void MainWindow::initSysInfoUi()
@@ -1993,6 +1992,5 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
             ui->sampleDataPlot->rescaleAxes();
         ui->sampleDataPlot->replot();
     }
-
-    // updateColormap(allCh);
+    updateColormap(allCh);
 }
