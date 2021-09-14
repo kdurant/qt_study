@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1274</width>
+    <width>1245</width>
     <height>842</height>
    </rect>
   </property>
@@ -16,9 +16,9 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_12">
     <item>
-     <widget class="QTabWidget" name="tabWidget_2">
+     <widget class="QTabWidget" name="tabWidget_main">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
@@ -169,6 +169,64 @@
               <string>设置坐标范围</string>
              </property>
             </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_9">
+       <attribute name="title">
+        <string>信号预览</string>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <item>
+         <widget class="QGroupBox" name="groupBox_17">
+          <property name="title">
+           <string>channal 0</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_14">
+           <item>
+            <widget class="BitColorMap" name="waterGuardBaseColor0" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="BitColorMap" name="waterGuardTimeColor0" native="true"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_18">
+          <property name="title">
+           <string>channal 1</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_15">
+           <item>
+            <widget class="BitColorMap" name="waterGuardBaseColor1" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_4"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="BitColorMap" name="waterGuardTimeColor1" native="true"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_19">
+          <property name="title">
+           <string>channal 2</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_16">
+           <item>
+            <widget class="BitColorMap" name="waterGuardBaseColor2" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_7"/>
+            </widget>
+           </item>
+           <item>
+            <widget class="BitColorMap" name="waterGuardTimeColor2" native="true"/>
            </item>
           </layout>
          </widget>
@@ -374,6 +432,13 @@
       </widget>
      </widget>
     </item>
+    <item>
+     <widget class="QPushButton" name="btn_baseCapture">
+      <property name="text">
+       <string>save</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -381,7 +446,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1274</width>
+     <width>1245</width>
      <height>23</height>
     </rect>
    </property>
@@ -2222,6 +2287,12 @@
    <class>QCustomPlot</class>
    <extends>QWidget</extends>
    <header location="global">./src/third_lib/QCustomPlot/qcustomplot.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>BitColorMap</class>
+   <extends>QWidget</extends>
+   <header location="global">./src/BitColorMap/BitColorMap.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -29,12 +29,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+include(./src/Protocol/protocol.pri)
+include(./src/BitColorMap/BitColorMap.pri)
+include(./src/motor/MotorController.pri)
 
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
     noteinfo.cpp \
-    src/Protocol/AdSampleControl.cpp \
     src/laser/laserType3.cpp \
     src/laser/laserType4.cpp \
     src/laser/laserType5.cpp \
@@ -48,17 +50,13 @@ SOURCES += \
     save.cpp \
     src/DevInfo/DevInfo.cpp \
     src/UpdateBin/UpdateBin.cpp \
-    src/Protocol/ProtocolDispatch.cpp \
     src/laser/LaserController.cpp \
     src/laser/laserType1.cpp \
-    src/motor/MotorController.cpp \
-    src/motor/Epos2Controller.cpp
 
 HEADERS += \
     common.h \
     src/ADControll/ADControl.h \
     src/DAControll/DAControl.h \
-    src/Protocol/AdSampleControl.h \
     src/attitudeSensor/AttitudeSensor.h \
     src/gpsInfo/gpsInfo.h \
     src/laser/laserType3.h \
@@ -77,17 +75,11 @@ HEADERS += \
     save.h \
     src/DevInfo/DevInfo.h \
     src/UpdateBin/UpdateBin.h \
-    src/Protocol/protocol.h \
-    src/Protocol/ProtocolDispatch.h \
     src/laser/LaserController.h \
     src/laser/laserType1.h \
-    src/motor/MotorController.h \
-    src/motor/Epos2Controller.h
 
-INCLUDEPATH += ./src/Protocol
 INCLUDEPATH += ./src/UpdateBin
 INCLUDEPATH += ./src/wave
-INCLUDEPATH += ./src/motor
 INCLUDEPATH += ./src/laser
 INCLUDEPATH += ./src/DevInfo
 INCLUDEPATH += ./src/saveWave

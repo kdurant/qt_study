@@ -43,6 +43,11 @@ MainWindow::MainWindow(QWidget *parent) :
     sysStatus.adCaptureStatus = false;
     sysStatus.ssdStoreStatus  = false;
 
+    waterGuard.startSaveBase    = false;
+    waterGuard.isSavedBase      = false;
+    waterGuard.isValidRange     = false;
+    waterGuard.state            = WaveExtract::MOTOR_CNT_STATE::IDLE;
+    waterGuard.videoMemoryDepth = 180;
     offlineWaveForm->moveToThread(thread);
     connect(thread, SIGNAL(started()), offlineWaveForm, SLOT(getADsampleNumber()));
     connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), thread, SLOT(quit()));
@@ -72,9 +77,41 @@ MainWindow::~MainWindow()
 
 void MainWindow::initParameter()
 {
-    if(!configIni->contains("System/radarType"))
+    QFileInfo fileInfo("./config.ini");
+    if(!fileInfo.exists())
     {
-        QMessageBox::warning(this, "warning", "缺少配置文件");
+        QFile file("./config.ini");
+        file.open(QIODevice::WriteOnly);
+        file.write("; RADAR_TPYE_OCEAN = 0x00,\r\n");
+        file.write("; RADAR_TPYE_LAND = 0x01,\r\n");
+        file.write("; RADAR_TPYE_760 = 0x02,\r\n");
+        file.write("; RADAR_TPYE_DOUBLE_WAVE = 0x03,\r\n");
+        file.write("; RADAR_TPYE_DRONE = 0x04,\r\n");
+        file.write("; RADAR_TPYE_WATER_GUARD = 0x05,\r\n");
+        file.write("; RADAR_TPYE_SECOND_INSTITUDE = 0x06,\r\n");
+
+        file.write("\r\n[System]\r\n");
+        file.write("; release or debug\r\n");
+        file.write("mode=debug\r\n");
+        file.write("radarType=1\r\n");
+        file.write("localPort=6666\r\n");
+        file.write("radarIP=192.168.1.101\r\n");
+        file.write("radarPort=5555\r\n");
+        file.write("\r\n[WaterGuard]\r\n");
+        file.write("videmMemoryDepth=180\r\n");
+        file.write("\r\n[Preview]\r\n");
+        file.write("compressLen=0\r\n");
+        file.write("compressRatio=0\r\n");
+        file.write("firstLen=32\r\n");
+        file.write("firstStartPos=32\r\n");
+        file.write("sampleLen=6000\r\n");
+        file.write("sampleRate=4000\r\n");
+        file.write("secondLen=128\r\n");
+        file.write("secondStartPos=1280\r\n");
+        file.write("subThreshold=200\r\n");
+        file.write("sumThreshold=2000\r\n");
+
+        file.close();
     }
 
     //    radarType = configIni->value("System/radarType").toInt();
@@ -96,7 +133,7 @@ void MainWindow::initParameter()
             radarType = BspConfig::RADAR_TPYE_DRONE;
             break;
         case 5:
-            radarType = BspConfig::RADAR_TPYE_UNDER_WATER;
+            radarType = BspConfig::RADAR_TYPE_WATER_GUARD;
             break;
         case 6:
             radarType = BspConfig::RADAR_TPYE_SECOND_INSTITUDE;
@@ -146,6 +183,15 @@ void MainWindow::initParameter()
     ui->lineEdit_subThreshold->setText(configIni->value("Preview/subThreshold").toString());
     ui->lineEdit_compressLen->setText(configIni->value("Preview/compressLen").toString());
     ui->lineEdit_compressRatio->setText(configIni->value("Preview/compressRatio").toString());
+
+    waterGuard.videoMemoryDepth = configIni->value("WaterGuard/videmMemoryDepth").toInt();
+
+    ui->waterGuardTimeColor0->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
+    ui->waterGuardTimeColor1->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
+    ui->waterGuardTimeColor2->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
+    ui->waterGuardBaseColor0->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
+    ui->waterGuardBaseColor1->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
+    ui->waterGuardBaseColor2->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
 }
 
 void MainWindow::saveParameter()
@@ -202,6 +248,10 @@ void MainWindow::uiConfig()
     ui->tabWidget->setTabEnabled(5, false);
     ui->groupBox_norFlashTest->hide();
     ui->tabWidget->setCurrentIndex(0);
+
+    ui->tabWidget_main->setTabEnabled(1, false);
+    // ui->tabWidget_main->setTabEnabled(2, false);
+    ui->tabWidget_main->setCurrentIndex(0);
 
     QString title;
 
@@ -287,7 +337,7 @@ void MainWindow::uiConfig()
 
         ui->tabWidget->setTabEnabled(5, true);
     }
-    else if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
+    else if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
         title = "水下预警雷达控制软件";
         ui->lineEdit_radarType->setText("水下预警雷达");
@@ -305,6 +355,10 @@ void MainWindow::uiConfig()
         ui->label_pmtDelayTime->show();
         ui->lineEdit_pmtDelayTime->show();
         ui->lineEdit_pmtGateTime->show();
+
+        ui->tabWidget_main->setTabEnabled(0, false);
+        ui->tabWidget_main->setTabEnabled(1, true);
+        ui->tabWidget_main->setCurrentIndex(1);
     }
     else if(radarType == BspConfig::RADAR_TPYE_SECOND_INSTITUDE)
     {
@@ -375,7 +429,7 @@ void MainWindow::uiConfig()
             ui->treeWidget_laser->resizeColumnToContents(0);
             ui->treeWidget_laser->expandAll();
             break;
-        case BspConfig::RADAR_TPYE_UNDER_WATER:
+        case BspConfig::RADAR_TYPE_WATER_GUARD:
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流(mA)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "激光头温度(°)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "LD温度(°)"));
@@ -497,6 +551,9 @@ void MainWindow::initSignalSlot()
             }
         }
 
+        if(firstLen + secondLen >= 1000)
+            QMessageBox::warning(NULL, "警告", "两段采样长度之和尽量不要大于1000");
+
         if(secondPos + secondLen >= totalSampleLen)
         {
             QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
@@ -509,7 +566,7 @@ void MainWindow::initSignalSlot()
         preview->setSumThreshold(sumThreshold);
         preview->setValueThreshold(valueThreshold);
 
-        if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
+        if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
         {
             preview->setPmtDelayAndGateTime(pmtDelayTime, pmtGateTime);
         }
@@ -549,6 +606,11 @@ void MainWindow::initSignalSlot()
         preview->setTrgMode(MasterSet::INSIDE_TRG);
     });
 
+    // 水下预警雷达相关设置
+    connect(ui->btn_baseCapture, &QPushButton::pressed, this, [this]() {
+        waterGuard.startSaveBase = true;
+    });
+
     connect(dispatch,
             &ProtocolDispatch::onlineDataReady,
             onlineWaveForm,
@@ -558,30 +620,7 @@ void MainWindow::initSignalSlot()
         for(auto &i : data)  // 数据格式转换
             sampleData.append(i);
 
-        QVector<WaveExtract::WaveformInfo> allCh;
-
-        WaveExtract::getWaveform(radarType, sampleData, allCh);
-
-        QByteArray convert;
-        for(int i = 0; i < 88; i++)
-            convert.append(sampleData[i]);
-        gps->parserGpsData(convert);  //  耗时小于1ms
-
-        for(int n = 0; n < allCh.size(); n++)
-        {
-            if(allCh.size() != 8)  // 只有第一段波形
-            {
-                ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
-                ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
-            }
-            else
-                ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
-        }
-        if(autoZoomPlot)
-            ui->sampleDataPlot->rescaleAxes();
-        ui->sampleDataPlot->replot();
-
-        updateColormap(allCh);
+        showSampleData(sampleData);
     });
 
     /*
@@ -872,7 +911,7 @@ void MainWindow::initSignalSlot()
                 itemList.first()->child(i)->setText(1, QString::number((info.error_bit >> i) & 0x01));
         });
     }
-    else if(radarType == BspConfig::RADAR_TPYE_UNDER_WATER)
+    else if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
         connect(laser4Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser4Driver, &LaserType4::setNewData);
@@ -921,7 +960,7 @@ void MainWindow::initSignalSlot()
                 status = laser5Driver->open();
                 break;
 
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
                 laser4Driver->setFreq(5000);
                 status = laser4Driver->open();
                 break;
@@ -954,7 +993,7 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
                 status = laser5Driver->close();
                 break;
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laser4Driver->close();
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
@@ -981,7 +1020,7 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
                 status = laser5Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
                 break;
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laser4Driver->setPower(ui->lineEdit_laserCurrent->text().toInt() / 10);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
@@ -1007,7 +1046,7 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
                 status = laser5Driver->setMode(LaserController::IN_SIDE);
                 break;
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laser4Driver->setMode(LaserController::IN_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
@@ -1033,7 +1072,7 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
                 status = laser5Driver->setMode(LaserController::OUT_SIDE);
                 break;
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laser4Driver->setMode(LaserController::OUT_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
@@ -1068,7 +1107,7 @@ void MainWindow::initSignalSlot()
                 while(laser5Driver->getStatus() != true)
                     ;
                 break;
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 laser6Driver->getInfo();
@@ -1286,7 +1325,7 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_OCEAN:
             case BspConfig::RADAR_TPYE_DRONE:
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-            case BspConfig::RADAR_TPYE_UNDER_WATER:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 if(chNum == 0)
                     digitValue = static_cast<qint32>((analogValue - 8.208) / 0.113);
@@ -1500,22 +1539,24 @@ void MainWindow::setToolBar()
 
 void MainWindow::plotLineSettings()
 {
-    //    ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-    //ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectLegend | QCP::iSelectPlottables);
-    ui->sampleDataPlot->legend->setVisible(true);  //右上角指示曲线的缩略框
-    ui->sampleDataPlot->xAxis->setLabel(QStringLiteral("时间：ns"));
-    ui->sampleDataPlot->yAxis->setLabel(QStringLiteral("AD采样值"));
-
-    ui->sampleDataPlot->axisRect()->setRangeDrag(Qt::Horizontal);
-    ui->sampleDataPlot->axisRect()->setRangeZoom(Qt::Horizontal);
-    ui->sampleDataPlot->axisRect()->setRangeZoomAxes(ui->sampleDataPlot->xAxis, ui->sampleDataPlot->yAxis);
-    ui->sampleDataPlot->setSelectionRectMode(QCP::srmZoom);
-
     QSharedPointer<QCPAxisTickerFixed> intTicker(new QCPAxisTickerFixed);
     //设置刻度之间的步长为1
     intTicker->setTickStep(1);
     //设置缩放策略
     intTicker->setScaleStrategy(QCPAxisTickerFixed::ssMultiples);
+
+    ui->sampleDataPlot->legend->setVisible(true);  //右上角指示曲线的缩略框
+    ui->sampleDataPlot->xAxis->setLabel(QStringLiteral("时间：ns"));
+    ui->sampleDataPlot->yAxis->setLabel(QStringLiteral("AD采样值"));
+
+    ui->sampleDataPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);  // 可以按住鼠标拖动图标，鼠标滚轮缩放图表
+
+    // 选择矩形区域缩放
+    // ui->sampleDataPlot->axisRect()->setRangeDrag(Qt::Horizontal);
+    // ui->sampleDataPlot->axisRect()->setRangeZoom(Qt::Horizontal);
+    // ui->sampleDataPlot->axisRect()->setRangeZoomAxes(ui->sampleDataPlot->xAxis, ui->sampleDataPlot->yAxis);
+    // ui->sampleDataPlot->setSelectionRectMode(QCP::srmZoom);
+
     //应用自定义整形ticker
     ui->sampleDataPlot->xAxis->setTicker(intTicker);
 
@@ -1566,18 +1607,18 @@ void MainWindow::plotColormapSettings()
                                     QCP::Interaction::iRangeZoom);
         customPlot->axisRect()->setupFullAxesBox(true);  //四刻度轴
         customPlot->xAxis->setLabel("电机角度(°)");
-        customPlot->yAxis->setLabel("采样值");
+        customPlot->yAxis->setLabel("时间(ns)");
         //if(i != 3)
         //customPlot->hide();
 
         QCPColorMap *colorMap = new QCPColorMap(customPlot->xAxis, customPlot->yAxis);
         widget2QCPColorMapList.append(colorMap);
 
-        int nx = 180;   // 角度
-        int ny = 1024;  // AD采样数字值，最大1024
+        int nx = 180;  // 角度, x轴
+        int ny = 500;  // 采样数据的距离，y轴
 
-        colorMap->data()->setSize(nx, ny);                                 // nx*ny(cells)
-        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 1024));  // span the coordinate range
+        colorMap->data()->setSize(nx, ny);                                // nx*ny(cells)
+        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 500));  // span the coordinate range
         colorMap->setDataScaleType(QCPAxis::ScaleType::stLinear);
 
         // add color scale:
@@ -1585,24 +1626,11 @@ void MainWindow::plotColormapSettings()
         customPlot->plotLayout()->addElement(0, 1, colorScale);  // add it to the right of the main axis rect
         colorScale->setType(QCPAxis::atRight);                   // scale shall be vertical bar with tick/axis labels right(default)
         colorMap->setColorScale(colorScale);
-        colorScale->axis()->setLabel(QString("通道%1采样值").arg(i + 1));  // color scale name
+        colorScale->setRangeDrag(false);
+        colorScale->setRangeZoom(false);
 
         // set the color gradient of the color map to one of the presets:
         QCPColorGradient colorGradient;
-
-        QMap<double, QColor> map;
-        QList<QColor>        list;
-
-        list.append(Qt::black);
-        list.append(Qt::blue);
-        list.append(Qt::darkGray);
-        list.append(Qt::white);
-        for(int i = 0; i < 4; ++i)
-        {
-            map[i * 0.15 + 0.3] = list.at(i % list.size());
-        }
-        colorGradient.setColorStops(map);
-
         colorGradient.loadPreset(QCPColorGradient::gpSpectrum);
         colorMap->setGradient(colorGradient);
 
@@ -1610,9 +1638,9 @@ void MainWindow::plotColormapSettings()
         QCPMarginGroup *marginGroup = new QCPMarginGroup(customPlot);
         customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 
+        colorMap->setDataRange(QCPRange(150, 1000));
         // rescale the data dimension such that all data points in the span lie in the visualized by the color gradient
         colorMap->rescaleDataRange();
-
         // rescale the key and value axes so the whole color map is visible;
         customPlot->rescaleAxes();
     }
@@ -1623,40 +1651,34 @@ void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
     QCustomPlot *    customPlot;
     QCPColorMap *    colorMap;
     QCPColorMapData *colorMapData;
-    int              offset = 0;
+    int              ch = 0;
     for(int i = 0; i < 4; ++i)
     {
         customPlot   = widget2CustomPlotList.at(i);
         colorMap     = widget2QCPColorMapList.at(i);
         colorMapData = colorMap->data();
 
-        for(int keyIndex = 0; keyIndex < allCh[0].pos.length(); ++keyIndex)
+        int y_offset = allCh[0].pos[0];
+        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0 + y_offset, 500 + y_offset));  // span the coordinate range
+        for(int keyIndex = 0; keyIndex < allCh[0].pos.length() && keyIndex < 500; ++keyIndex)
         {
             if(allCh.size() == 8)
-                offset = i * 2;
+                ch = i * 2;
 
-            int    key   = (int)allCh[offset].pos[keyIndex];
-            double value = 0;
-            if(i == 0)
+            int    x     = qFloor((allCh[ch].motorCnt * 360) / 163840.0);
+            int    y     = (int)allCh[ch].pos[keyIndex] - y_offset;
+            double value = allCh[ch].value[keyIndex];
+
+            if(x >= 180)
             {
-                value = 100;
-                if(key == 200)
-                    value = 200;
-                if(key == 250)
-                    value = 250;
-                if(key == 300)
-                    value = 300;
+                qDebug() << qFloor((allCh[ch].motorCnt * 360) / 163840.0);
+                return;
             }
-            else
-                value = allCh[offset].value[keyIndex];
 
-            int frameN = (int)(((allCh[offset].motorCnt % 163840) / 163840.0) * 180);
-            //            colorMapData->setCell(frameN, key, value);
+            colorMapData->setCell(x, y, value);
         }
-
-        colorMap->rescaleDataRange();
-        customPlot->replot();
     }
+    customPlot->replot();
 }
 
 void MainWindow::initSysInfoUi()
@@ -1742,28 +1764,7 @@ void MainWindow::on_bt_showWave_clicked()
             ui->spin_framePos->setValue(i);
             QVector<quint8> sampleData = offlineWaveForm->getFrameData(i);  // 耗时小于1ms
 
-            QVector<WaveExtract::WaveformInfo> allCh;
-            if(WaveExtract::getWaveform(radarType, sampleData, allCh) == -1)  // 耗时小于1ms
-            {
-                QMessageBox::warning(this, "警告", "数据格式和当前雷达类型不匹配");
-                return;
-            }
-
-            QByteArray convert;
-            for(int i = 0; i < 88; i++)
-                convert.append(sampleData[i]);
-            gps->parserGpsData(convert);  //  耗时小于1ms
-
-            for(int n = 0; n < allCh.size(); n++)
-            {  //  耗时小于1ms
-                ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
-            }
-            if(autoZoomPlot)
-                ui->sampleDataPlot->rescaleAxes();
-            ui->sampleDataPlot->replot();  // 耗时1-20ms，造成界面上的卡顿
-
-            // ///////////
-            updateColormap(allCh);
+            showSampleData(sampleData);
 
             if(interval_time == 0)
             {
@@ -1885,4 +1886,143 @@ QString MainWindow::read_ip_address()
         }
     }
     return 0;
+}
+
+void MainWindow::showSampleData(QVector<quint8> &sampleData)
+{
+    QVector<WaveExtract::WaveformInfo> allCh;
+
+    if(WaveExtract::getWaveform(radarType, sampleData, allCh) == -1)  // 耗时小于1ms
+    {
+        QMessageBox::warning(this, "警告", "数据格式和当前雷达类型不匹配");
+        return;
+    }
+
+    QByteArray convert;
+    for(int i = 0; i < 88; i++)
+        convert.append(sampleData[i]);
+    gps->parserGpsData(convert);  //  耗时小于1ms
+
+    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+    {
+        QVector<WaveExtract::WaveformInfo> debugCh;
+        debugCh.append(allCh[0]);
+        debugCh.append(allCh[2]);
+        debugCh.append(allCh[4]);
+        debugCh.append(allCh[6]);
+
+        allCh.clear();
+        allCh.append(debugCh[0]);
+        allCh.append(debugCh[1]);
+        allCh.append(debugCh[2]);
+        allCh.append(debugCh[3]);
+
+        if(allCh.size() == 4)
+        {
+            switch(waterGuard.state)
+            {
+                case WaveExtract::MOTOR_CNT_STATE::IDLE:
+                    if(waterGuard.startSaveBase)
+                    {
+                        waterGuard.base.clear();
+                        waterGuard.base.resize(3);
+                        waterGuard.state = WaveExtract::MOTOR_CNT_STATE::WAIT_START;
+                        ui->btn_baseCapture->setEnabled(false);
+                    }
+                    break;
+                case WaveExtract::MOTOR_CNT_STATE::WAIT_START:
+                    if(allCh[0].motorCnt < 500)
+                    {
+                        waterGuard.isValidRange = true;
+                        waterGuard.state        = WaveExtract::MOTOR_CNT_STATE::WAIT_END;
+                    }
+                    break;
+                case WaveExtract::MOTOR_CNT_STATE::WAIT_END:
+                    if(allCh[0].motorCnt > 163840 / 2 - 1)
+                    {
+                        waterGuard.isValidRange  = false;
+                        waterGuard.startSaveBase = false;
+                        waterGuard.isSavedBase   = true;
+                        waterGuard.state         = WaveExtract::MOTOR_CNT_STATE::IDLE;
+                        ui->btn_baseCapture->setEnabled(true);
+                    }
+                    break;
+                default:
+                    waterGuard.isValidRange  = false;
+                    waterGuard.startSaveBase = false;
+                    break;
+            }
+            int    offset = 0;
+            double angle;
+            angle = allCh[0].motorCnt * 360 / 163840.0;
+            qDebug() << "motorCnt = " << allCh[0].motorCnt << ",angle = " << angle;
+
+            if(waterGuard.isValidRange == true)
+            {
+                for(int i = 0; i < 3; i++)
+                {
+                    waterGuard.base[i].append(allCh[i]);
+                }
+
+                ui->waterGuardBaseColor0->setData(allCh[0].value, angle);
+                ui->waterGuardBaseColor1->setData(allCh[1].value, angle);
+                ui->waterGuardBaseColor2->setData(allCh[2].value, angle);
+            }
+
+            if(allCh[0].motorCnt > 0 && allCh[0].motorCnt < 163840 / 2 - 1)
+            {
+                if(waterGuard.isSavedBase == true)
+                {
+                    for(int m = 0; m < 3; m++)  // 通道
+                    {
+                        QVector<double>                    data;
+                        QVector<WaveExtract::WaveformInfo> all_angle_data;
+                        all_angle_data = waterGuard.base[m];
+
+                        if(offset < all_angle_data.size())
+                        {
+                            WaveExtract::WaveformInfo angle_data = all_angle_data[offset];
+                            QVector<double>           data;
+                            for(int n = 0; n < angle_data.value.size(); n++)
+                            {
+                                data.append(allCh[m].value[n] - angle_data.value[n]);
+                            }
+                            if(m == 0)
+                                ui->waterGuardTimeColor0->setData(data, angle);
+                            else if(m == 1)
+                                ui->waterGuardTimeColor1->setData(data, angle);
+                            else if(m == 2)
+                                ui->waterGuardTimeColor2->setData(data, angle);
+                        }
+                    }
+                }
+                else
+                {
+                    ui->waterGuardTimeColor0->setData(allCh[0].value, angle);
+                    ui->waterGuardTimeColor1->setData(allCh[1].value, angle);
+                    ui->waterGuardTimeColor2->setData(allCh[2].value, angle);
+                }
+                offset++;
+            }
+            else
+                offset = 0;
+        }
+    }
+    else
+    {
+        for(int n = 0; n < allCh.size(); n++)
+        {
+            if(allCh.size() != 8)  // 只有第一段波形
+            {
+                ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
+                ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
+            }
+            else
+                ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
+        }
+        if(autoZoomPlot)
+            ui->sampleDataPlot->rescaleAxes();
+        ui->sampleDataPlot->replot();
+    }
+    updateColormap(allCh);
 }

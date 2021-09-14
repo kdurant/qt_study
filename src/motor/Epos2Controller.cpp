@@ -357,7 +357,7 @@ bool EPOS2::setTargetVelocity(quint16 velocity)
     return true;
 }
 
-qint32 EPOS2::getActualVelocity()
+qint32 EPOS2::getActualVelocity(void)
 {
     qint32           speed = 0;
     QVector<quint16> word{0x1001, 0x606C, 0x0100};
@@ -429,7 +429,7 @@ bool EPOS2::setTargetPosition(quint32 value)
     return true;
 }
 
-qint32 EPOS2::getActualPosition()
+qint32 EPOS2::getActualPosition(void)
 {
     qint32 postion = 0;
     //    QVector<quint16> word{0x0260, 0xB001, 0x0030, 0x0000};

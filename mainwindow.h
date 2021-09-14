@@ -80,6 +80,8 @@ public:
     void initSysInfoUi(void);
     void initFileListUi(void);
 
+    void showSampleData(QVector<quint8> &sampleData);
+
 protected:
     void closeEvent(QCloseEvent *event);
     void timerEvent(QTimerEvent *event);
@@ -156,6 +158,20 @@ private:
 
     QList<QCustomPlot *> widget2CustomPlotList;
     QList<QCPColorMap *> widget2QCPColorMapList;
+
+    // RADAR_TYPE_WATER_GUARD 用的变量
+    struct WaterGuard
+    {
+        bool                                        startSaveBase;
+        bool                                        isSavedBase;
+        bool                                        isValidRange;  // 保证从0°开始保存数据
+        int                                         videoMemoryDepth;
+        WaveExtract::MOTOR_CNT_STATE                state;
+        QVector<QVector<WaveExtract::WaveformInfo>> base;
+        QVector<WaveExtract::WaveformInfo>          diff;
+    };
+
+    WaterGuard waterGuard;
 };
 
 #endif  // MAINWINDOW_H

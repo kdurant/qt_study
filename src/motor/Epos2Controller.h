@@ -12,8 +12,11 @@ public:
     bool init(void) override;
     bool start(void) override;
     bool stop(void) override;
+    bool run(quint16 speed) override;
 
-    bool run(quint16 speed);
+    qint32 getActualVelocity(void) override;
+    qint32 getActualPosition(void) override;
+
     bool moveToPosition(quint32 postion);
     bool moveFixSpeed(quint32 speed);
     bool moveToHome(void);
@@ -91,14 +94,12 @@ public:
     bool       setProfileDeceleration(quint16 value);
     QByteArray setMaxAcceleration(quint16 value);
 
-    bool   setTargetVelocity(quint16 velocity);
-    qint32 getActualVelocity();
+    bool setTargetVelocity(quint16 velocity);
 
     QByteArray setPositionControlWord();
     bool       setProfilePositionMode();
     bool       setProfileVelocity(quint16 value);
     bool       setTargetPosition(quint32 value);
-    qint32     getActualPosition();
 
     bool setAbsolutePositionStartImmdeitaly(void);
 
