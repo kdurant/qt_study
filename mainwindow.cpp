@@ -445,6 +445,14 @@ void MainWindow::uiConfig()
             ui->treeWidget_laser->resizeColumnToContents(0);
             break;
         case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "开关"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "温度"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "错误码"));
+            ui->treeWidget_laser->addTopLevelItems(topItems);
+
+            ui->treeWidget_laser->resizeColumnToContents(0);
+            ui->treeWidget_laser->expandAll();
             break;
         default:
             break;
@@ -910,6 +918,21 @@ void MainWindow::initSignalSlot()
     {
         connect(laser6Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser6Driver, &LaserType6::setNewData);
+        connect(laser6Driver, &LaserType6::laserInfoReady, this, [this](LaserType6::LaserInfo &info) {
+            QList<QTreeWidgetItem *> itemList;
+
+            itemList = ui->treeWidget_laser->findItems("开关", Qt::MatchExactly);
+            itemList.first()->setText(1, info.status);
+
+            itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
+            itemList.first()->setText(1, info.current);
+
+            itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
+            itemList.first()->setText(1, info.temp);
+
+            itemList = ui->treeWidget_laser->findItems("错误码", Qt::MatchExactly);
+            itemList.first()->setText(1, info.error);
+        });
     }
 
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]() {
@@ -1079,6 +1102,7 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
+                laser6Driver->getInfo();
                 break;
             default:
                 break;
@@ -1207,7 +1231,7 @@ void MainWindow::initSignalSlot()
         ui->tableWidget_fileList->setRowCount(1);
 
         SaveWave::ValidFileInfo fileInfo;
-        quint32                 startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt();
+        quint32                 startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt(nullptr, 16);
 
         ssd->inquireSpace(startUnit, fileInfo);
 

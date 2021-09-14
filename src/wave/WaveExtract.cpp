@@ -108,6 +108,7 @@ int WaveExtract::getWaveform(BspConfig::RadarType                type,
             case BspConfig::RADAR_TPYE_OCEAN:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+            case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 if(isChDataHead(frameData, offset))  // 如果这里检查失败，很可能是陆地雷达数据
                     offset += 4;
                 else
