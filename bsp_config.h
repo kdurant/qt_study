@@ -26,7 +26,7 @@ public:
     struct Gps_Info
     {
         qint32 week;
-        qint32 current_week_ms;
+        double current_week_ms;
         double latitude;
         double longitude;
         double altitude;

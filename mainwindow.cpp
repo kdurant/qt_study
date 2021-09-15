@@ -1402,7 +1402,7 @@ void MainWindow::initSignalSlot()
 
         itemList = ui->treeWidget_attitude->findItems("GPS信息", Qt::MatchExactly);
         itemList.first()->child(0)->setText(1, QString::number(data.week));
-        itemList.first()->child(1)->setText(1, QString::number(data.current_week_ms));
+        itemList.first()->child(1)->setText(1, QString::number(data.current_week_ms, 'g', 10));
         itemList.first()->child(2)->setText(1, QString::number(data.latitude, 'g', 6));
         itemList.first()->child(3)->setText(1, QString::number(data.longitude, 'g', 6));
         itemList.first()->child(4)->setText(1, QString::number(data.altitude, 'g', 6));
