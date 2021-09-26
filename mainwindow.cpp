@@ -542,6 +542,14 @@ void MainWindow::initSignalSlot()
             preview->setAlgoBValueThre(valueThreshold);
             return;
         }
+        if(radarType == BspConfig::RADAR_TPYE_SECOND_INSTITUDE)
+        {
+            if(firstLen + secondLen < 400)
+            {
+                QMessageBox::warning(NULL, "警告", "第一段采样长度+第二段采样长度需要大于400");
+                return;
+            }
+        }
 
         if(firstLen + secondLen >= 1000)
             QMessageBox::warning(NULL, "警告", "两段采样长度之和尽量不要大于1000");
@@ -1277,7 +1285,7 @@ void MainWindow::initSignalSlot()
         quint32 fileUnit = ui->lineEdit_ssdAvailFileUnit->text().toUInt(nullptr, 16);
         QString fileName = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
         if(ui->lineEdit_ssdStoreFileName->text().length() != 0)
-            fileName.append(ui->lineEdit_ssdStoreFileName->text().length());
+            fileName.append(ui->lineEdit_ssdStoreFileName->text());
         ssd->setSaveFileName(fileUnit, fileName);
 
         quint32 dataUnit = ui->lineEdit_ssdAvailDataUnit->text().toUInt(nullptr, 16);

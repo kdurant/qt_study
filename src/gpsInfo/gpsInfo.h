@@ -3,6 +3,7 @@
 
 #include <QtCore>
 #include "bsp_config.h"
+#include "common.h"
 
 /**
  * 目前总共使用过三种GPS
@@ -22,9 +23,10 @@ public:
     // 所以可以根据上传数据的长度来判断GPS设备类型，进而解析数据
     enum GPS_FRAME_LEN
     {
-        APPLANIX_LEN     = 115,
-        DISK_DATA_LEN    = 88,
-        PREVIEW_DATA_LEN = 64,
+        APPLANIX_LEN     = 115,  // 第一个字节0x02
+        NOVATEL_LEN      = 115,  // 前3个字节数据0xAA,0x44,0x13
+        DISK_DATA_LEN    = 88,   // 硬盘数据里包括帧头的GPS数据
+        PREVIEW_DATA_LEN = 64,   // 预览数据里的GPS数据
     };
 
 private:
@@ -47,22 +49,59 @@ private:
 
         return retValue;
     }
-
-    /**
-     * @brief 硬盘数据中的GPS信息
-     * @param bytes
-     * @return
-     */
-    double byteArrayToDouble(QByteArray bytes)
+    void paserGpsData_APPLANIX(QByteArray &frame)
     {
-        double  fltRtn = 0.f;
-        uint8_t cTmp[8];
+        int offset          = 7;
+        gps.week            = frame.mid(offset + 2, 2).toHex().toUInt(nullptr, 16);
+        gps.current_week_ms = BspConfig::ba2int(frame.mid(offset + 4, 4));
+        unsigned char  data[8];
+        unsigned char *pData = data;
         for(int i = 0; i < 8; i++)
-            cTmp[i] = bytes[7 - i];
-        memcpy(&fltRtn, cTmp, 8);
-        return fltRtn;
+        {
+            pData[i] = frame.mid(offset + 10, 8).at(i);
+        }
+        gps.latitude = getDouble(pData);
+        for(int i = 0; i < 8; i++)
+        {
+            pData[i] = frame.mid(offset + 18, 8).at(i);
+        }
+        gps.longitude = getDouble(pData);
+        for(int i = 0; i < 8; i++)
+        {
+            pData[i] = frame.mid(offset + 26, 8).at(i);
+        }
+        gps.altitude = getDouble(pData);
+
+        for(int i = 0; i < 8; i++)
+        {
+            pData[i] = frame.mid(offset + 50, 8).at(i);
+        }
+        gps.roll = getDouble(pData);
+        for(int i = 0; i < 8; i++)
+        {
+            pData[i] = frame.mid(offset + 58, 8).at(i);
+        }
+        gps.pitch = getDouble(pData);
+        for(int i = 0; i < 8; i++)
+        {
+            pData[i] = frame.mid(offset + 66, 8).at(i);
+        }
+        gps.heading = getDouble(pData);
     }
 
+    void paserGpsData_NOVATEL(QByteArray &frame)
+    {
+        int offset = 12;
+        gps.week   = Common::ba2int(frame.mid(offset, 4), 0);
+        // TODO: 不同GPS型号对秒的存储方式不同，所以解析的类型的方式不同，后续完善
+        gps.current_week_ms = Common::byteArrayToDouble(frame.mid(offset + 4, 8), 1);
+        gps.latitude        = Common::byteArrayToDouble(frame.mid(offset + 12, 8), 1);
+        gps.longitude       = Common::byteArrayToDouble(frame.mid(offset + 20, 8), 1);
+        gps.altitude        = Common::byteArrayToDouble(frame.mid(offset + 28, 8), 1);
+        gps.roll            = Common::byteArrayToDouble(frame.mid(offset + 60, 8), 1);
+        gps.pitch           = Common::byteArrayToDouble(frame.mid(offset + 68, 8), 1);
+        gps.heading         = Common::byteArrayToDouble(frame.mid(offset + 76, 8), 1);
+    }
 signals:
     void gpsDataReady(BspConfig::Gps_Info &data);  // 接收到响应数据
 
@@ -71,54 +110,22 @@ public slots:
     {
         if(frame.size() == APPLANIX_LEN)
         {
-            int offset          = 7;
-            gps.week            = frame.mid(offset + 2, 2).toHex().toUInt(nullptr, 16);
-            gps.current_week_ms = BspConfig::ba2int(frame.mid(offset + 4, 4));
-            unsigned char  data[8];
-            unsigned char *pData = data;
-            for(int i = 0; i < 8; i++)
-            {
-                pData[i] = frame.mid(offset + 10, 8).at(i);
-            }
-            gps.latitude = getDouble(pData);
-            for(int i = 0; i < 8; i++)
-            {
-                pData[i] = frame.mid(offset + 18, 8).at(i);
-            }
-            gps.longitude = getDouble(pData);
-            for(int i = 0; i < 8; i++)
-            {
-                pData[i] = frame.mid(offset + 26, 8).at(i);
-            }
-            gps.altitude = getDouble(pData);
-
-            for(int i = 0; i < 8; i++)
-            {
-                pData[i] = frame.mid(offset + 50, 8).at(i);
-            }
-            gps.roll = getDouble(pData);
-            for(int i = 0; i < 8; i++)
-            {
-                pData[i] = frame.mid(offset + 58, 8).at(i);
-            }
-            gps.pitch = getDouble(pData);
-            for(int i = 0; i < 8; i++)
-            {
-                pData[i] = frame.mid(offset + 66, 8).at(i);
-            }
-            gps.heading = getDouble(pData);
+            if(frame.front() == char(0x02))
+                paserGpsData_APPLANIX(frame);
+            else
+                paserGpsData_NOVATEL(frame);
         }
         else if(frame.size() == DISK_DATA_LEN)
         {
             gps.week = frame.mid(8, 4).toHex().toUInt(nullptr, 16);
             // TODO: 不同GPS型号对秒的存储方式不同，所以解析的类型的方式不同，后续完善
             gps.current_week_ms = BspConfig::ba2int(frame.mid(12, 8));
-            gps.latitude        = byteArrayToDouble(frame.mid(48, 8));
-            gps.longitude       = byteArrayToDouble(frame.mid(56, 8));
-            gps.altitude        = byteArrayToDouble(frame.mid(64, 8));
-            gps.roll            = byteArrayToDouble(frame.mid(40, 8));
-            gps.pitch           = byteArrayToDouble(frame.mid(32, 8));
-            gps.heading         = byteArrayToDouble(frame.mid(24, 8));
+            gps.latitude        = Common::byteArrayToDouble(frame.mid(48, 8), 0);
+            gps.longitude       = Common::byteArrayToDouble(frame.mid(56, 8), 0);
+            gps.altitude        = Common::byteArrayToDouble(frame.mid(64, 8), 0);
+            gps.roll            = Common::byteArrayToDouble(frame.mid(40, 8), 0);
+            gps.pitch           = Common::byteArrayToDouble(frame.mid(32, 8), 0);
+            gps.heading         = Common::byteArrayToDouble(frame.mid(24, 8), 0);
         }
         emit gpsDataReady(gps);
     }

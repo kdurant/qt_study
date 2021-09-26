@@ -41,24 +41,28 @@ public:
     }
     void setFirstPos(int data)
     {
+        data             = (data >> 3) << 3;
         QByteArray frame = BspConfig::int2ba(data);
         emit       sendDataReady(MasterSet::FIRST_POS, 4, frame);
         sleepWithoutBlock(interval);
     }
     void setFirstLen(int data)
     {
+        data             = (data >> 3) << 3;
         QByteArray frame = BspConfig::int2ba(data);
         emit       sendDataReady(MasterSet::FIRST_LEN, 4, frame);
         sleepWithoutBlock(interval);
     }
     void setSecondPos(int data)
     {
+        data             = (data >> 3) << 3;
         QByteArray frame = BspConfig::int2ba(data);
         emit       sendDataReady(MasterSet::SECOND_POS, 4, frame);
         sleepWithoutBlock(interval);
     }
     void setSecondLen(int data)
     {
+        data             = (data >> 3) << 3;
         QByteArray frame = BspConfig::int2ba(data);
         emit       sendDataReady(MasterSet::SECOND_LEN, 4, frame);
         sleepWithoutBlock(interval);
@@ -78,12 +82,14 @@ public:
     }
     void setCompressLen(int data)
     {
+        data             = (data >> 3) << 3;
         QByteArray frame = BspConfig::int2ba(data);
         emit       sendDataReady(MasterSet::COMPRESS_LEN, 4, frame);
         sleepWithoutBlock(interval);
     }
     void setCompressRatio(int data)
     {
+        data             = (data >> 3) << 3;
         QByteArray frame = BspConfig::int2ba(data);
         emit       sendDataReady(MasterSet::COMPRESS_RATIO, 4, frame);
         sleepWithoutBlock(interval);
@@ -91,6 +97,7 @@ public:
 
     void setSampleDelay(int data)
     {
+        data             = (data >> 3) << 3;
         QByteArray frame = BspConfig::int2ba(data);
         emit       sendDataReady(MasterSet::COMPRESS_RATIO, 4, frame);
         sleepWithoutBlock(interval);
@@ -113,30 +120,35 @@ public:
 
     void setAlgoAPos(int data)
     {
+        data             = (data >> 3) << 3;
         QByteArray frame = BspConfig::int2ba(data);
         emit       sendDataReady(MasterSet::ALGO_A_POS, 4, frame);
         sleepWithoutBlock(interval);
     }
     void setAlgoALen(int data)
     {
+        data             = (data >> 3) << 3;
         QByteArray frame = BspConfig::int2ba(data);
         emit       sendDataReady(MasterSet::ALGO_A_LEN, 4, frame);
         sleepWithoutBlock(interval);
     }
     void setAlgoBPos(int data)
     {
+        data             = (data >> 3) << 3;
         QByteArray frame = BspConfig::int2ba(data);
         emit       sendDataReady(MasterSet::ALGO_B_POS, 4, frame);
         sleepWithoutBlock(interval);
     }
     void setAlgoBSumThre(int data)
     {
+        data             = (data >> 3) << 3;
         QByteArray frame = BspConfig::int2ba(data);
         emit       sendDataReady(MasterSet::ALGO_B_SUM_THRE, 4, frame);
         sleepWithoutBlock(interval);
     }
     void setAlgoBValueThre(int data)
     {
+        data             = (data >> 3) << 3;
         QByteArray frame = BspConfig::int2ba(data);
         emit       sendDataReady(MasterSet::ALGO_B_VALUE_THRE, 4, frame);
         sleepWithoutBlock(interval);

@@ -275,6 +275,80 @@ public:
         QTimer::singleShot(interval, &waitLoop, &QEventLoop::quit);
         waitLoop.exec();
     }
+
+    /**
+    * @brief 
+    * 0x12345678
+    * 大端模式
+    * 低地址 ----------> 高地址
+    *  0x12     0x34    0x56    0x78
+    * 小端模式
+    * 低地址 ----------> 高地址
+    * 0x78      0x56    0x34    0x12
+    *
+    * @param ba
+    * @param mode, 1, 大端模式; 0, 小端模式
+    *
+    * QByteArray, 0x00, 0x00, 0x00, 0x05
+    * 大端模式：0x05
+    * 小端模式：83886080
+    *
+    * @return 
+    */
+    static quint32 ba2int(QByteArray ba, int mode)
+    {
+        assert(ba.size() == 4);
+        quint32 ret;
+        if(mode == 1)
+            ret = (static_cast<uint32_t>(ba[0]) << 24) +
+                  (static_cast<uint32_t>(ba[1]) << 16) +
+                  (static_cast<uint32_t>(ba[2]) << 8) +
+                  (static_cast<uint32_t>(ba[3]) << 0);
+        else
+            ret = (static_cast<uint32_t>(ba[3]) << 24) +
+                  (static_cast<uint32_t>(ba[2]) << 16) +
+                  (static_cast<uint32_t>(ba[1]) << 8) +
+                  (static_cast<uint32_t>(ba[0]) << 0);
+        return ret;
+    }
+
+    /**
+    * @brief 
+    * 0x12345678
+    * 大端模式, 高位字节存放在内存的低地址端
+    * 低地址 ----------> 高地址
+    *  0x12     0x34    0x56    0x78
+    * 小端模式, 低位字节存放在内存的低地址端
+    * 低地址 ----------> 高地址
+    * 0x78      0x56    0x34    0x12
+    *
+    * @param ba
+    * @param mode, 1, 大端模式; 0, 小端模式
+    *
+    * QByteArray, 0x9a, 0x99, 0x99, 0x99, 0x41, 0x6b, 0x08, 0x41
+    * 大端模式：200040
+    * 小端模式：-1.54235e-180
+    *
+    * @return 
+    */
+    static double byteArrayToDouble(const QByteArray &bytes, int mode)
+    {
+        assert(bytes.size() == 8);
+        double  fltRtn = 0.f;
+        uint8_t cTmp[8];
+        if(mode == 1)
+        {
+            for(int i = 0; i < 8; i++)
+                cTmp[i] = bytes[i];
+        }
+        else
+        {
+            for(int i = 0; i < 8; i++)
+                cTmp[i] = bytes[7 - i];
+        }
+        memcpy(&fltRtn, cTmp, 8);
+        return fltRtn;
+    }
 };
 
 #endif  // COMMON_H
