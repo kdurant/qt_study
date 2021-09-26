@@ -485,20 +485,10 @@
         <string>设备信息</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_17">
-        <item row="2" column="1">
-         <widget class="QCheckBox" name="checkBox_autoReadSysInfo">
-          <property name="text">
-           <string>自动读取</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QPushButton" name="btn_ReadSysInfo">
           <property name="text">
-           <string>读取系统信息</string>
+           <string>读取系统参数</string>
           </property>
          </widget>
         </item>
@@ -506,6 +496,16 @@
          <widget class="QLabel" name="label_4">
           <property name="text">
            <string>设备类型：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QCheckBox" name="checkBox_autoReadSysInfo">
+          <property name="text">
+           <string>自动读取</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -525,6 +525,20 @@
           </property>
           <property name="placeholderText">
            <string>请在配置文件中指定设备类型</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_35">
+          <property name="text">
+           <string>软件版本：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLabel" name="label_fpgaVer">
+          <property name="text">
+           <string/>
           </property>
          </widget>
         </item>
@@ -892,7 +906,7 @@
               <x>0</x>
               <y>0</y>
               <width>291</width>
-              <height>288</height>
+              <height>270</height>
              </rect>
             </property>
             <attribute name="label">

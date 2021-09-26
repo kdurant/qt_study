@@ -61,7 +61,7 @@ signals:
      * @brief 系统状态不转发，直接返回
      * @param data
      */
-    void infoDataReady(QByteArray &data);
+    void infoDataReady(const QByteArray &data);
 
     /**
      * @brief 通过信号将数据传递给预览数据处理模块

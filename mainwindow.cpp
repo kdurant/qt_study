@@ -611,10 +611,7 @@ void MainWindow::initSignalSlot()
         waterGuard.startSaveBase = true;
     });
 
-    connect(dispatch,
-            &ProtocolDispatch::onlineDataReady,
-            onlineWaveForm,
-            &OnlineWaveform::setNewData);
+    connect(dispatch, &ProtocolDispatch::onlineDataReady, onlineWaveForm, &OnlineWaveform::setNewData);
     connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data) {
         QVector<quint8> sampleData;
         for(auto &i : data)  // 数据格式转换
@@ -1894,14 +1891,27 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
 
     if(WaveExtract::getWaveform(radarType, sampleData, allCh) == -1)  // 耗时小于1ms
     {
-        QMessageBox::warning(this, "警告", "数据格式和当前雷达类型不匹配");
+        ui->statusBar->showMessage("数据格式和当前雷达类型不匹配", 3);
         return;
     }
 
-    QByteArray convert;
+    QByteArray frame_head;
     for(int i = 0; i < 88; i++)
-        convert.append(sampleData[i]);
-    gps->parserGpsData(convert);  //  耗时小于1ms
+        frame_head.append(sampleData[i]);
+    gps->parserGpsData(frame_head);  //  耗时小于1ms
+
+    uint8_t type = frame_head[84];
+    if(type != radarType)
+    {
+        ui->statusBar->showMessage("配置的雷达类型与系统参数中雷达类型不一致", 3);
+    }
+    QByteArray version;
+    version += 'v';
+    version += frame_head[85];
+    version += '.';
+    version += frame_head[86];
+    version += frame_head[87];
+    ui->label_fpgaVer->setText(version);
 
     if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {

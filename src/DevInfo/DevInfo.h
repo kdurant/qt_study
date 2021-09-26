@@ -65,7 +65,7 @@ private:
     QVector<ParaInfo> sysPara;
 
 public slots:
-    void setNewData(QByteArray& data)
+    void setNewData(const QByteArray& data)
     {
         recvData = data;
         emit responseDataReady();
