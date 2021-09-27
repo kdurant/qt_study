@@ -1788,6 +1788,13 @@ void MainWindow::getSysInfo()
     if(devInfo->getSysPara(sysParaInfo))
     {
         ui->statusBar->showMessage(tr("系统通信正常"), 0);
+
+        if(devInfo->getRadarType() != radarType)
+        {
+            ui->statusBar->showMessage("底层配置的雷达类型(" + QString::number(devInfo->getRadarType()) + ")与上位机配置的雷达类型不一致", 0);
+        }
+        ui->label_fpgaVer->setText(devInfo->getFpgaVer());
+
         for(int i = 0; i < sysParaInfo.length(); i++)
         {
             if(i == 0)  // 软件版本
@@ -1904,7 +1911,7 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
     uint8_t type = frame_head[84];
     if(type != radarType)
     {
-        ui->statusBar->showMessage("配置的雷达类型与系统参数中雷达类型不一致", 3);
+        ui->statusBar->showMessage("底层配置的雷达类型(" + QString::number(type) + ")与上位机配置的雷达类型不一致", 0);
     }
     QByteArray version;
     version += 'v';

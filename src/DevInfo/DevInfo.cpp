@@ -19,6 +19,16 @@ bool DevInfo::getSysPara(QVector<DevInfo::ParaInfo>& ret)
     {
         sysPara[i].value = recvData.mid(sysPara[i].offset, sysPara[i].len);
     }
+
+    radarType = recvData[248];
+
+    fpgaVer.clear();
+    fpgaVer += 'v';
+    fpgaVer += recvData[249];
+    fpgaVer += '.';
+    fpgaVer += recvData[250];
+    fpgaVer += recvData[251];
+
     recvData.clear();
     ret = sysPara;
 

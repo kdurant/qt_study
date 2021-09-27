@@ -54,6 +54,14 @@ public:
     }
 
     bool getSysPara(QVector<DevInfo::ParaInfo>& ret);
+    int  getRadarType(void)
+    {
+        return radarType;
+    }
+    QString getFpgaVer(void)
+    {
+        return fpgaVer;
+    }
 
 signals:
     void sendDataReady(qint32 command, qint32 data_len, QByteArray& data);  // 需要发送的数据已经准备好
@@ -63,6 +71,8 @@ signals:
 private:
     QByteArray        recvData;
     QVector<ParaInfo> sysPara;
+    int               radarType;
+    QString           fpgaVer;
 
 public slots:
     void setNewData(const QByteArray& data)
