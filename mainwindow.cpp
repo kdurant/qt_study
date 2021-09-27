@@ -343,6 +343,9 @@ void MainWindow::uiConfig()
         title = "水下预警雷达控制软件";
         ui->lineEdit_radarType->setText("水下预警雷达");
 
+        ui->comboBox_laserFreq->addItem("2000");
+        ui->comboBox_laserFreq->addItem("5000");
+
         QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
         QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
         ui->comboBox_DAChSelect->addItems(DA1List);
@@ -1797,9 +1800,7 @@ void MainWindow::getSysInfo()
 
         for(int i = 0; i < sysParaInfo.length(); i++)
         {
-            if(i == 0)  // 软件版本
-                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(sysParaInfo[i].value));
-            else if(i == 4)  // 波形存储状态
+            if(i == 4)  // 波形存储状态
             {
                 ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16))));
                 qint32 value = BspConfig::ba2int(sysParaInfo[i].value);
