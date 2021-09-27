@@ -89,6 +89,7 @@ void MainWindow::initParameter()
         file.write("; RADAR_TPYE_DRONE = 0x04,\r\n");
         file.write("; RADAR_TPYE_WATER_GUARD = 0x05,\r\n");
         file.write("; RADAR_TPYE_SECOND_INSTITUDE = 0x06,\r\n");
+        file.write("; RADAR_TPYE_BIG_FLARE = 0x07,\r\n");
 
         file.write("\r\n[System]\r\n");
         file.write("; release or debug\r\n");
@@ -1791,7 +1792,7 @@ void MainWindow::getSysInfo()
         {
             if(i == 0)  // 软件版本
                 ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(sysParaInfo[i].value));
-            else if(i == 5)  // 波形存储状态
+            else if(i == 4)  // 波形存储状态
             {
                 ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16))));
                 qint32 value = BspConfig::ba2int(sysParaInfo[i].value);
@@ -1806,7 +1807,7 @@ void MainWindow::getSysInfo()
                     sysStatus.label_ssdStoreStatus->setText("存储状态：停止存储");
                 }
             }
-            else if(i == 6)  //  数据采集状态
+            else if(i == 5)  //  数据采集状态
             {
                 if(sysParaInfo[i].value.contains(QByteArray(4, 0x01)))
                 {
@@ -1821,11 +1822,11 @@ void MainWindow::getSysInfo()
                     sysStatus.label_adCaptureStatus->setText("采集状态：停止采集");
                 }
             }
-            else if(i == 8)  // sata底层读写状态机
+            else if(i == 7)  // sata底层读写状态机
             {
                 ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16), 2)));
             }
-            else if(i == 9)  // 文件读写状态机
+            else if(i == 8)  // 文件读写状态机
             {
                 quint16 value = sysParaInfo[i].value[1] * 256 + sysParaInfo[i].value[0];
                 ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(value, 2)));

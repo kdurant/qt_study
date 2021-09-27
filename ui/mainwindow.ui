@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget_main">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
@@ -531,7 +531,7 @@
         <item row="4" column="0">
          <widget class="QLabel" name="label_35">
           <property name="text">
-           <string>软件版本：</string>
+           <string>底层软件版本：</string>
           </property>
          </widget>
         </item>
@@ -554,7 +554,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -1176,9 +1176,9 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>-102</y>
+              <y>0</y>
               <width>274</width>
-              <height>683</height>
+              <height>665</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1459,76 +1459,8 @@
                 <string>保存文件</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_8">
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="lineEdit_ssdSearchStartUnit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>0</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="2" column="1">
                  <widget class="QLineEdit" name="lineEdit_ssdAvailFileUnit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0">
-                 <widget class="QLabel" name="label_5">
-                  <property name="text">
-                   <string>存储文件名(选填)：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="btn_ssdSearchSpace">
-                  <property name="text">
-                   <string>检索文件</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QLineEdit" name="lineEdit_ssdAvailDataUnit">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label">
-                  <property name="text">
-                   <string>可用数据Unit(hex)：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="5" column="0">
-                 <widget class="QPushButton" name="btn_ssdEnableStore">
-                  <property name="text">
-                   <string>开始存储</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="5" column="1">
-                 <widget class="QPushButton" name="btn_ssdDisableStore">
-                  <property name="text">
-                   <string>停止存储</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="1">
-                 <widget class="QLineEdit" name="lineEdit_ssdStoreFileName">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                     <horstretch>0</horstretch>
@@ -1550,7 +1482,62 @@
                   </property>
                  </widget>
                 </item>
-                <item row="7" column="0">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_8">
+                  <property name="text">
+                   <string>检索起始Unit(hex)：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <widget class="QLineEdit" name="lineEdit_ssdStoreFileName">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="label_5">
+                  <property name="text">
+                   <string>存储文件名(选填)：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="0">
+                 <widget class="QPushButton" name="btn_ssdEnableStore">
+                  <property name="text">
+                   <string>开始存储</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="btn_ssdSearchSpace">
+                  <property name="text">
+                   <string>检索文件</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="1">
+                 <widget class="QPushButton" name="btn_ssdDisableStore">
+                  <property name="text">
+                   <string>停止存储</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLineEdit" name="lineEdit_ssdAvailDataUnit">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+                <item row="6" column="0">
                  <spacer name="verticalSpacer">
                   <property name="orientation">
                    <enum>Qt::Vertical</enum>
@@ -1563,17 +1550,23 @@
                   </property>
                  </spacer>
                 </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_8">
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label">
                   <property name="text">
-                   <string>检索起始Unit(hex)：</string>
+                   <string>可用数据Unit(hex)：</string>
                   </property>
                  </widget>
                 </item>
-                <item row="6" column="0" colspan="2">
-                 <widget class="QLabel" name="label_35">
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="lineEdit_ssdSearchStartUnit">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="text">
-                   <string/>
+                   <string>0</string>
                   </property>
                  </widget>
                 </item>
@@ -1611,7 +1604,7 @@
               <x>0</x>
               <y>0</y>
               <width>194</width>
-              <height>366</height>
+              <height>368</height>
              </rect>
             </property>
             <attribute name="label">

@@ -32,7 +32,7 @@ public:
 
     DevInfo()
     {
-        sysPara.append({"FPGA版本: ", QByteArray(4, 0x00), 248, 8});
+        // sysPara.append({"FPGA版本: ", QByteArray(4, 0x00), 248, 8});
         sysPara.append({"激光重频(Hz): ", QByteArray(4, 0x00), 0, 4});
         sysPara.append({"AD采样长度: ", QByteArray(4, 0x00), 4, 4});
         sysPara.append({"AD预览抽样率: ", QByteArray(4, 0x00), 8, 4});
