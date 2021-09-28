@@ -1,5 +1,7 @@
 #ifndef LASERTYPE4_H
 #define LASERTYPE4_H
+#include "common.h"
+#include "bsp_config.h"
 #include "protocol.h"
 #include "ProtocolDispatch.h"
 #include "LaserController.h"
@@ -38,7 +40,8 @@ public:
         qint8  headTemp;
 
         // 驱动板返回状态
-        quint16 current;  // unit: 0.01A
+        quint32 expected_current;
+        quint32 real_current;  // unit: 0.01A
 
         quint32 ldTemp;            // 0-3000000(正值),3000000-6000000(负值)  温度值*10000,精确到小数点后第四位
         quint32 laserCrystalTemp;  // 激光晶体温度
@@ -51,6 +54,13 @@ public:
 
     bool close(void) override;
     bool setPower(quint16 power) override;
+
+    bool setFreq(qint32 freq) override
+    {
+        QByteArray frame = BspConfig::int2ba(freq);
+        emit       sendDataReady(MasterSet::LASER_FREQ, 4, frame);
+        return true;
+    }
 
     void getStatus(QByteArray& data);
 

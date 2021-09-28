@@ -300,15 +300,15 @@ public:
         assert(ba.size() == 4);
         quint32 ret;
         if(mode == 1)
-            ret = (static_cast<uint32_t>(ba[0]) << 24) +
-                  (static_cast<uint32_t>(ba[1]) << 16) +
-                  (static_cast<uint32_t>(ba[2]) << 8) +
-                  (static_cast<uint32_t>(ba[3]) << 0);
+            ret = ((static_cast<uint8_t>(ba[0])) << 24) +
+                  ((static_cast<uint8_t>(ba[1])) << 16) +
+                  ((static_cast<uint8_t>(ba[2])) << 8) +
+                  ((static_cast<uint8_t>(ba[3])) << 0);
         else
-            ret = (static_cast<uint32_t>(ba[3]) << 24) +
-                  (static_cast<uint32_t>(ba[2]) << 16) +
-                  (static_cast<uint32_t>(ba[1]) << 8) +
-                  (static_cast<uint32_t>(ba[0]) << 0);
+            ret = ((static_cast<uint8_t>(ba[3])) << 24) +
+                  ((static_cast<uint8_t>(ba[2])) << 16) +
+                  ((static_cast<uint8_t>(ba[1])) << 8) +
+                  ((static_cast<uint8_t>(ba[0])) << 0);
         return ret;
     }
 

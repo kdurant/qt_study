@@ -434,7 +434,8 @@ void MainWindow::uiConfig()
             ui->treeWidget_laser->expandAll();
             break;
         case BspConfig::RADAR_TYPE_WATER_GUARD:
-            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流(mA)"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流设定值(mA)"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流实际值(mA)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "激光头温度(°)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "LD温度(°)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "激光晶体温度(°)"));
@@ -962,7 +963,7 @@ void MainWindow::initSignalSlot()
                 break;
 
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                laser4Driver->setFreq(5000);
+                laser4Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 status = laser4Driver->open();
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
@@ -1853,8 +1854,11 @@ void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
 {
     QList<QTreeWidgetItem *> itemList;
 
-    itemList = ui->treeWidget_laser->findItems("电流(mA)", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.current * 10));
+    itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);
+    itemList.first()->setText(1, QString::number(info.expected_current * 10));
+
+    itemList = ui->treeWidget_laser->findItems("电流实际值(mA)", Qt::MatchExactly);
+    itemList.first()->setText(1, QString::number(info.real_current * 10));
 
     itemList = ui->treeWidget_laser->findItems("激光头温度(°)", Qt::MatchExactly);
     itemList.first()->setText(1, QString::number(info.headTemp));

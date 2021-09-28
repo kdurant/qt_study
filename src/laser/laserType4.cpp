@@ -50,12 +50,13 @@ bool LaserType4::setPower(quint16 power)
     {
         frame.append(command[i] & 0xff);
     }
-    emit sendDataReady(MasterSet::LASER_ENABLE, frame.length(), frame);
+    emit sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
     return true;
 }
 
 void LaserType4::getStatus(QByteArray &data)
 {
+    QByteArray frame;
     switch(data[2])
     {
         case 0x00:
@@ -64,16 +65,22 @@ void LaserType4::getStatus(QByteArray &data)
             info.headTemp  = data[34];
             break;
         case 0x0a:
-            info.current = data.mid(6, 2).toHex().toUInt();
+            info.expected_current = ((static_cast<uint8_t>(data[4])) << 8) +
+                                    ((static_cast<uint8_t>(data[5])) << 0);
+            info.real_current = ((static_cast<uint8_t>(data[6])) << 8) +
+                                ((static_cast<uint8_t>(data[7])) << 0);
             break;
         case 0x3c:
-            info.ldTemp = data.mid(8, 4).toHex().toUInt();
+            frame       = data.mid(8, 4);
+            info.ldTemp = Common::ba2int(frame, 1);
             break;
         case 0x3e:
-            info.laserCrystalTemp = data.mid(8, 4).toHex().toUInt();
+            frame                 = data.mid(8, 4);
+            info.laserCrystalTemp = Common::ba2int(frame, 1);
             break;
         case 0x3f:
-            info.multiCrystalTemp = data.mid(8, 4).toHex().toUInt();
+            frame                 = data.mid(8, 4);
+            info.multiCrystalTemp = Common::ba2int(frame, 1);
             break;
         default:
             break;

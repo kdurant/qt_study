@@ -21,7 +21,7 @@ public:
 
     bool close(void) override;
 
-    bool    setFreq(qint32 freq);
+    bool    setFreq(qint32 freq) override;
     bool    setCurrent(qint32 current);
     QString getCurrent(void);
     QString getFreq(void);
