@@ -177,7 +177,7 @@
       </widget>
       <widget class="QWidget" name="tab_9">
        <attribute name="title">
-        <string>信号预览</string>
+        <string>雷达格式预览</string>
        </attribute>
        <layout class="QHBoxLayout" name="horizontalLayout_8">
         <item>
@@ -433,6 +433,14 @@
      </widget>
     </item>
     <item>
+     <widget class="QLabel" name="label_37">
+      <property name="text">
+       <string>第一排为0-180°的基准数据，电机保存按钮后就不在更新
+第二排为通道的实时数据减去基准数据后的值</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QPushButton" name="btn_baseCapture">
       <property name="text">
        <string>save</string>
@@ -554,7 +562,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -568,7 +576,11 @@
           <number>12</number>
          </property>
          <item row="0" column="1">
-          <widget class="QComboBox" name="comboBox_laserFreq"/>
+          <widget class="QComboBox" name="comboBox_laserFreq">
+           <property name="toolTip">
+            <string>打开激光器时，才会设置新的重频</string>
+           </property>
+          </widget>
          </item>
          <item row="4" column="0">
           <widget class="QLabel" name="label_laserCurrent">
@@ -656,6 +668,9 @@
          </item>
          <item row="7" column="0">
           <widget class="QPushButton" name="btn_laserOpen">
+           <property name="toolTip">
+            <string>1. 设置外触发频率；2.打开激光器</string>
+           </property>
            <property name="text">
             <string>打开激光器</string>
            </property>
@@ -906,7 +921,7 @@
               <x>0</x>
               <y>0</y>
               <width>291</width>
-              <height>270</height>
+              <height>268</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1176,7 +1191,7 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
+              <y>-122</y>
               <width>274</width>
               <height>665</height>
              </rect>
@@ -1604,7 +1619,7 @@
               <x>0</x>
               <y>0</y>
               <width>194</width>
-              <height>368</height>
+              <height>366</height>
              </rect>
             </property>
             <attribute name="label">

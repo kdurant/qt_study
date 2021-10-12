@@ -35,5 +35,7 @@ public:
     static int getWaveform(BspConfig::RadarType   type,
                            QVector<quint8> &      frameData,
                            QVector<WaveformInfo> &ret);
+    static int getWaveFromLand(QVector<quint8> &frameData, QVector<WaveformInfo> &ret);
+    static int getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveformInfo> &ret);
 };
 #endif

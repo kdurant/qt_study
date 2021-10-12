@@ -343,6 +343,8 @@ void MainWindow::uiConfig()
         title = "水下预警雷达控制软件";
         ui->lineEdit_radarType->setText("水下预警雷达");
 
+        ui->comboBox_laserFreq->addItem("100");
+        ui->comboBox_laserFreq->addItem("1000");
         ui->comboBox_laserFreq->addItem("2000");
         ui->comboBox_laserFreq->addItem("5000");
 
@@ -360,7 +362,7 @@ void MainWindow::uiConfig()
         ui->lineEdit_pmtDelayTime->show();
         ui->lineEdit_pmtGateTime->show();
 
-        ui->tabWidget_main->setTabEnabled(0, false);
+        // ui->tabWidget_main->setTabEnabled(0, false);
         ui->tabWidget_main->setTabEnabled(1, true);
         ui->tabWidget_main->setCurrentIndex(1);
     }
@@ -1900,11 +1902,19 @@ QString MainWindow::read_ip_address()
 
 void MainWindow::showSampleData(QVector<quint8> &sampleData)
 {
+    int                                ret = -1;
     QVector<WaveExtract::WaveformInfo> allCh;
 
-    if(WaveExtract::getWaveform(radarType, sampleData, allCh) == -1)  // 耗时小于1ms
+    ret = WaveExtract::getWaveform(radarType, sampleData, allCh);
+
+    if(ret == -1)  // 耗时小于1ms
     {
         ui->statusBar->showMessage("数据格式和当前雷达类型不匹配", 3);
+        return;
+    }
+    else if(ret == -2)
+    {
+        ui->statusBar->showMessage("实际数据长度小于理论数据长度", 3);
         return;
     }
 
@@ -1926,112 +1936,112 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
     version += frame_head[87];
     ui->label_fpgaVer->setText(version);
 
-    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
-    {
-        QVector<WaveExtract::WaveformInfo> debugCh;
-        debugCh.append(allCh[0]);
-        debugCh.append(allCh[2]);
-        debugCh.append(allCh[4]);
-        debugCh.append(allCh[6]);
+    //  if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+    //  {
+    //      //        QVector<WaveExtract::WaveformInfo> debugCh;
+    //      //        debugCh.append(allCh[0]);
+    //      //        debugCh.append(allCh[2]);
+    //      //        debugCh.append(allCh[4]);
+    //      //        debugCh.append(allCh[6]);
 
-        allCh.clear();
-        allCh.append(debugCh[0]);
-        allCh.append(debugCh[1]);
-        allCh.append(debugCh[2]);
-        allCh.append(debugCh[3]);
+    //      //        allCh.clear();
+    //      //        allCh.append(debugCh[0]);
+    //      //        allCh.append(debugCh[1]);
+    //      //        allCh.append(debugCh[2]);
+    //      //        allCh.append(debugCh[3]);
 
-        if(allCh.size() == 4)
-        {
-            switch(waterGuard.state)
-            {
-                case WaveExtract::MOTOR_CNT_STATE::IDLE:
-                    if(waterGuard.startSaveBase)
-                    {
-                        waterGuard.base.clear();
-                        waterGuard.base.resize(3);
-                        waterGuard.state = WaveExtract::MOTOR_CNT_STATE::WAIT_START;
-                        ui->btn_baseCapture->setEnabled(false);
-                    }
-                    break;
-                case WaveExtract::MOTOR_CNT_STATE::WAIT_START:
-                    if(allCh[0].motorCnt < 500)
-                    {
-                        waterGuard.isValidRange = true;
-                        waterGuard.state        = WaveExtract::MOTOR_CNT_STATE::WAIT_END;
-                    }
-                    break;
-                case WaveExtract::MOTOR_CNT_STATE::WAIT_END:
-                    if(allCh[0].motorCnt > 163840 / 2 - 1)
-                    {
-                        waterGuard.isValidRange  = false;
-                        waterGuard.startSaveBase = false;
-                        waterGuard.isSavedBase   = true;
-                        waterGuard.state         = WaveExtract::MOTOR_CNT_STATE::IDLE;
-                        ui->btn_baseCapture->setEnabled(true);
-                    }
-                    break;
-                default:
-                    waterGuard.isValidRange  = false;
-                    waterGuard.startSaveBase = false;
-                    break;
-            }
-            int    offset = 0;
-            double angle;
-            angle = allCh[0].motorCnt * 360 / 163840.0;
-            qDebug() << "motorCnt = " << allCh[0].motorCnt << ",angle = " << angle;
+    //      if(allCh.size() == 4)
+    //      {
+    //          switch(waterGuard.state)
+    //          {
+    //              case WaveExtract::MOTOR_CNT_STATE::IDLE:
+    //                  if(waterGuard.startSaveBase)
+    //                  {
+    //                      waterGuard.base.clear();
+    //                      waterGuard.base.resize(3);
+    //                      waterGuard.state = WaveExtract::MOTOR_CNT_STATE::WAIT_START;
+    //                      ui->btn_baseCapture->setEnabled(false);
+    //                  }
+    //                  break;
+    //              case WaveExtract::MOTOR_CNT_STATE::WAIT_START:
+    //                  if(allCh[0].motorCnt < 500)
+    //                  {
+    //                      waterGuard.isValidRange = true;
+    //                      waterGuard.state        = WaveExtract::MOTOR_CNT_STATE::WAIT_END;
+    //                  }
+    //                  break;
+    //              case WaveExtract::MOTOR_CNT_STATE::WAIT_END:
+    //                  if(allCh[0].motorCnt > 163840 / 2 - 1)
+    //                  {
+    //                      waterGuard.isValidRange  = false;
+    //                      waterGuard.startSaveBase = false;
+    //                      waterGuard.isSavedBase   = true;
+    //                      waterGuard.state         = WaveExtract::MOTOR_CNT_STATE::IDLE;
+    //                      ui->btn_baseCapture->setEnabled(true);
+    //                  }
+    //                  break;
+    //              default:
+    //                  waterGuard.isValidRange  = false;
+    //                  waterGuard.startSaveBase = false;
+    //                  break;
+    //          }
+    //          int    offset = 0;
+    //          double angle;
+    //          angle = allCh[0].motorCnt * 360 / 163840.0;
+    //          qDebug() << "motorCnt = " << allCh[0].motorCnt << ",angle = " << angle;
 
-            if(waterGuard.isValidRange == true)
-            {
-                for(int i = 0; i < 3; i++)
-                {
-                    waterGuard.base[i].append(allCh[i]);
-                }
+    //          if(waterGuard.isValidRange == true)
+    //          {
+    //              for(int i = 0; i < 3; i++)
+    //              {
+    //                  waterGuard.base[i].append(allCh[i]);
+    //              }
 
-                ui->waterGuardBaseColor0->setData(allCh[0].value, angle);
-                ui->waterGuardBaseColor1->setData(allCh[1].value, angle);
-                ui->waterGuardBaseColor2->setData(allCh[2].value, angle);
-            }
+    //              ui->waterGuardBaseColor0->setData(allCh[0].value, angle);
+    //              ui->waterGuardBaseColor1->setData(allCh[1].value, angle);
+    //              ui->waterGuardBaseColor2->setData(allCh[2].value, angle);
+    //          }
 
-            if(allCh[0].motorCnt > 0 && allCh[0].motorCnt < 163840 / 2 - 1)
-            {
-                if(waterGuard.isSavedBase == true)
-                {
-                    for(int m = 0; m < 3; m++)  // 通道
-                    {
-                        QVector<double>                    data;
-                        QVector<WaveExtract::WaveformInfo> all_angle_data;
-                        all_angle_data = waterGuard.base[m];
+    //          if(allCh[0].motorCnt > 0 && allCh[0].motorCnt < 163840 / 2 - 1)
+    //          {
+    //              if(waterGuard.isSavedBase == true)
+    //              {
+    //                  for(int m = 0; m < 3; m++)  // 通道
+    //                  {
+    //                      QVector<double>                    data;
+    //                      QVector<WaveExtract::WaveformInfo> all_angle_data;
+    //                      all_angle_data = waterGuard.base[m];
 
-                        if(offset < all_angle_data.size())
-                        {
-                            WaveExtract::WaveformInfo angle_data = all_angle_data[offset];
-                            QVector<double>           data;
-                            for(int n = 0; n < angle_data.value.size(); n++)
-                            {
-                                data.append(allCh[m].value[n] - angle_data.value[n]);
-                            }
-                            if(m == 0)
-                                ui->waterGuardTimeColor0->setData(data, angle);
-                            else if(m == 1)
-                                ui->waterGuardTimeColor1->setData(data, angle);
-                            else if(m == 2)
-                                ui->waterGuardTimeColor2->setData(data, angle);
-                        }
-                    }
-                }
-                else
-                {
-                    ui->waterGuardTimeColor0->setData(allCh[0].value, angle);
-                    ui->waterGuardTimeColor1->setData(allCh[1].value, angle);
-                    ui->waterGuardTimeColor2->setData(allCh[2].value, angle);
-                }
-                offset++;
-            }
-            else
-                offset = 0;
-        }
-    }
-    else
+    //                      if(offset < all_angle_data.size())
+    //                      {
+    //                          WaveExtract::WaveformInfo angle_data = all_angle_data[offset];
+    //                          QVector<double>           data;
+    //                          for(int n = 0; n < angle_data.value.size(); n++)
+    //                          {
+    //                              data.append(allCh[m].value[n] - angle_data.value[n]);
+    //                          }
+    //                          if(m == 0)
+    //                              ui->waterGuardTimeColor0->setData(data, angle);
+    //                          else if(m == 1)
+    //                              ui->waterGuardTimeColor1->setData(data, angle);
+    //                          else if(m == 2)
+    //                              ui->waterGuardTimeColor2->setData(data, angle);
+    //                      }
+    //                  }
+    //              }
+    //              else
+    //              {
+    //                  ui->waterGuardTimeColor0->setData(allCh[0].value, angle);
+    //                  ui->waterGuardTimeColor1->setData(allCh[1].value, angle);
+    //                  ui->waterGuardTimeColor2->setData(allCh[2].value, angle);
+    //              }
+    //              offset++;
+    //          }
+    //          else
+    //              offset = 0;
+    //      }
+    //  }
+    //    else
     {
         for(int n = 0; n < allCh.size(); n++)
         {

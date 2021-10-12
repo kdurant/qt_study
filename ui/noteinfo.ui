@@ -47,7 +47,11 @@ localparam IDLE   = 0,  // 空闲
            ADDR   = 1,  // 写命令
            DATA   = 2,  // 写数据
            RESP   = 3;  // 读数据
-</string>
+
+水下预警雷达：
+	设第一段采样数据长度:m,则总共采样长度:L
+	L = 128  + 8 * m
+ </string>
      </property>
     </widget>
    </item>
