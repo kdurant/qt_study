@@ -357,6 +357,11 @@ void MainWindow::uiConfig()
         itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
         itemList.first()->setHidden(false);
 
+        ui->lineEdit_secondStartPos->setEnabled(false);
+        ui->lineEdit_secondLen->setEnabled(false);
+        ui->lineEdit_sumThreshold->setEnabled(false);
+        ui->lineEdit_subThreshold->setEnabled(false);
+
         ui->label_pmtGateTime->show();
         ui->label_pmtDelayTime->show();
         ui->lineEdit_pmtDelayTime->show();
@@ -610,6 +615,26 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->rbtn_previewInsideTrg, &QRadioButton::clicked, this, [this]() {
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                laser2Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+                laser3Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                break;
+            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+                laser5Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                break;
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
+                laser4Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                break;
+            case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
+                laser6Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                break;
+            default:
+                break;
+        }
         preview->setTrgMode(MasterSet::INSIDE_TRG);
     });
 
@@ -624,7 +649,7 @@ void MainWindow::initSignalSlot()
         for(auto &i : data)  // 数据格式转换
             sampleData.append(i);
 
-        showSampleData(sampleData);
+        //        showSampleData(sampleData);
     });
 
     /*
