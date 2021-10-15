@@ -312,6 +312,23 @@ public:
         return ret;
     }
 
+    static quint32 ba2int(QVector<quint8> ba, int mode)
+    {
+        assert(ba.size() == 4);
+        quint32 ret;
+        if(mode == 1)
+            ret = ((static_cast<uint8_t>(ba[0])) << 24) +
+                  ((static_cast<uint8_t>(ba[1])) << 16) +
+                  ((static_cast<uint8_t>(ba[2])) << 8) +
+                  ((static_cast<uint8_t>(ba[3])) << 0);
+        else
+            ret = ((static_cast<uint8_t>(ba[3])) << 24) +
+                  ((static_cast<uint8_t>(ba[2])) << 16) +
+                  ((static_cast<uint8_t>(ba[1])) << 8) +
+                  ((static_cast<uint8_t>(ba[0])) << 0);
+        return ret;
+    }
+
     /**
     * @brief 
     * 0x12345678

@@ -13,6 +13,9 @@ bool WaveExtract::isFrameHead(QVector<quint8> frameData, int offset)
 
 bool WaveExtract::isChDataHead(QVector<quint8> frameData, int offset)
 {
+    if(frameData.size() < offset + 4)
+        return false;
+
     if(frameData.size() < offset + 1)
         return false;
     else
@@ -58,7 +61,7 @@ int WaveExtract::getWaveFromLand(QVector<quint8> &frameData, QVector<WaveExtract
     int          start_pos = 0;
     int          len       = 0;
     int          offset    = 88;
-    ch.motorCnt            = BspConfig::ba2int(frameData.mid(76, 4));
+    ch.motorCnt            = Common::ba2int(frameData.mid(76, 4), 1);  //BspConfig::ba2int(frameData.mid(76, 4));
 
     quint8 skipPointNum = 0;
     while(offset < frameData.size())
@@ -128,22 +131,27 @@ int WaveExtract::getWaveFromLand(QVector<quint8> &frameData, QVector<WaveExtract
 * @param frameData
 * @param ret
 *
-* @return -1, 帧头信息错误; -2, 实际数据长度小于理论值 
+* @return -1, 帧头信息错误; -2, 实际数据长度小于理论值; -3, 通道头信息错误
 */
 int WaveExtract::getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveExtract::WaveformInfo> &ret)
 {
+    if(frameData.size() < 88)
+        return -1;
     if(!isFrameHead(frameData, 0))
         return -1;
 
     WaveformInfo ch;
-    int          first_start_pos  = 0;
-    int          first_len        = 0;
-    int          second_start_pos = 0;
-    int          second_len       = 0;
+    //    ch.motorCnt = BspConfig::ba2int(frameData.mid(76, 4));
+    ch.motorCnt = Common::ba2int(frameData.mid(76, 4), 1);
+
+    int first_start_pos  = 0;
+    int first_len        = 0;
+    int second_start_pos = 0;
+    int second_len       = 0;
 
     int index = 88;
     if(isChDataHead(frameData, index) == false)
-        return -1;
+        return -3;
 
     index += 6;
     first_start_pos = (frameData.at(index) << 8) + frameData.at(index + 1);
@@ -171,6 +179,7 @@ int WaveExtract::getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveE
         4*(n*2 + 4)
     */
 
+#if 1
     int expect_len = 0;
     expect_len += 128 + 8 * first_len;
     if(second_len > 0)
@@ -180,15 +189,14 @@ int WaveExtract::getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveE
     if(frameData.size() != expect_len)
         return -2;
 
-    int offset  = 88;
-    ch.motorCnt = BspConfig::ba2int(frameData.mid(76, 4));
+    int offset = 88;
 
     while(offset < frameData.size())
     {
         if(isChDataHead(frameData, offset))
             offset += 4;
         else
-            return -1;
+            return -3;
 
         // 第一段数据
         offset += 2;  // 跳过通道号
@@ -211,7 +219,6 @@ int WaveExtract::getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveE
         // 如果第一段数据结束后的数据就是帧头标志，那么说明没有第二段数据
         if(isChDataHead(frameData, offset))
             continue;
-
         // 第二段数据 offset += 2;
         second_start_pos = (frameData.at(offset) << 8) + frameData.at(offset + 1);
         offset += 2;
@@ -228,5 +235,6 @@ int WaveExtract::getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveE
         ch.pos.clear();
         ch.value.clear();
     }
+#endif
     return 0;
 }

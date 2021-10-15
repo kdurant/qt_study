@@ -25,6 +25,8 @@ private:
     qint32     curPckNumber{0};
     qint32     prePckNumber{0xffff};
 
+    QVector<quint32> number;
+
 public:
     OnlineWaveform()
     {

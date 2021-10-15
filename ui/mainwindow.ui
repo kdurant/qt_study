@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget_main">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
@@ -36,6 +36,20 @@
            <string>图表设置</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_18">
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="checkBox_autoZoom">
+             <property name="text">
+              <string>自动缩放</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QLabel" name="label_34">
+             <property name="text">
+              <string>y轴min</string>
+             </property>
+            </widget>
+           </item>
            <item row="2" column="1">
             <widget class="QLineEdit" name="lineEdit_axisXmin">
              <property name="sizePolicy">
@@ -56,63 +70,10 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
-            <widget class="QLineEdit" name="lineEdit_axisXmax">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>1024</string>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="2">
             <widget class="QLabel" name="label_32">
              <property name="text">
               <string>x轴max</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="3">
-            <widget class="QLineEdit" name="lineEdit_axisYmin">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>100</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="label_21">
-             <property name="text">
-              <string>x轴min</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QCheckBox" name="checkBox_ch0Enable">
-             <property name="text">
-              <string>ch0</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QCheckBox" name="checkBox_ch1Enable">
-             <property name="text">
-              <string>ch1</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -139,6 +100,66 @@
              </property>
             </widget>
            </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="checkBox_ch0Enable">
+             <property name="text">
+              <string>ch0</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QCheckBox" name="checkBox_ch1Enable">
+             <property name="text">
+              <string>ch1</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QLineEdit" name="lineEdit_axisXmax">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>1024</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="label_21">
+             <property name="text">
+              <string>x轴min</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="QLineEdit" name="lineEdit_axisYmin">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="text">
+              <string>100</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QPushButton" name="btn_axisRangeSet">
+             <property name="text">
+              <string>设置坐标范围</string>
+             </property>
+            </widget>
+           </item>
            <item row="0" column="4">
             <widget class="QCheckBox" name="checkBox_ch3Enable">
              <property name="text">
@@ -146,27 +167,6 @@
              </property>
              <property name="checked">
               <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QLabel" name="label_34">
-             <property name="text">
-              <string>y轴min</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="5">
-            <widget class="QCheckBox" name="checkBox_autoZoom">
-             <property name="text">
-              <string>自动缩放</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="5">
-            <widget class="QPushButton" name="btn_axisRangeSet">
-             <property name="text">
-              <string>设置坐标范围</string>
              </property>
             </widget>
            </item>
@@ -564,7 +564,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -1183,7 +1183,7 @@
         <attribute name="title">
          <string>Preview</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout">
+        <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
          <item>
           <widget class="QToolBox" name="toolBox">
            <property name="currentIndex">
@@ -1193,9 +1193,9 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>-122</y>
-              <width>274</width>
-              <height>665</height>
+              <y>-214</y>
+              <width>297</width>
+              <height>752</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1246,6 +1246,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
                   </property>
                  </widget>
                 </item>
@@ -1322,7 +1325,7 @@
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_16">
                   <property name="text">
-                   <string>抽样率：</string>
+                   <string>采集数据抽样率：</string>
                   </property>
                  </widget>
                 </item>
@@ -1584,6 +1587,52 @@
                   </property>
                   <property name="text">
                    <string>0</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="groupBox_20">
+               <property name="title">
+                <string>预览刷新控制</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_20">
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="lineEdit_updateUI_intervalTime">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="text">
+                   <string>100</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="btn_updateUI_intervalTime">
+                  <property name="text">
+                   <string>设置</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QCheckBox" name="checkBox_isRerfreshUI">
+                  <property name="text">
+                   <string>更新图表</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_38">
+                  <property name="text">
+                   <string>更新图表间隔时间(ms)</string>
                   </property>
                  </widget>
                 </item>

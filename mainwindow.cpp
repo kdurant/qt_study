@@ -31,7 +31,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     devInfo = new DevInfo();
 
-    timer1s = startTimer(1000);
+    timer1s        = startTimer(1000);
+    timerRefreshUI = startTimer(100);
 
     ssd = new SaveWave();
 
@@ -343,8 +344,6 @@ void MainWindow::uiConfig()
         title = "水下预警雷达控制软件";
         ui->lineEdit_radarType->setText("水下预警雷达");
 
-        ui->comboBox_laserFreq->addItem("100");
-        ui->comboBox_laserFreq->addItem("1000");
         ui->comboBox_laserFreq->addItem("2000");
         ui->comboBox_laserFreq->addItem("5000");
 
@@ -521,6 +520,10 @@ void MainWindow::initSignalSlot()
     /*
      * 波形预览相关逻辑
      */
+    connect(ui->btn_updateUI_intervalTime, &QPushButton::pressed, this, [this]() {
+        int time       = ui->lineEdit_updateUI_intervalTime->text().toUInt(nullptr, 10);
+        timerRefreshUI = startTimer(time);
+    });
     connect(preview, &AdSampleControll::sendDataReady, dispatch, &ProtocolDispatch::encode);
 
     connect(ui->btn_setPreviewPara, &QPushButton::pressed, this, [this]() {
@@ -594,6 +597,8 @@ void MainWindow::initSignalSlot()
 
         if(ui->btn_sampleEnable->text() == "开始采集")
         {
+            testCnt = 0;
+            qDebug() << "start: testCnt = " << testCnt;
             status = 0x01010101;
             ui->btn_sampleEnable->setText("停止采集");
         }
@@ -606,6 +611,7 @@ void MainWindow::initSignalSlot()
             }
             status = 0;
             ui->btn_sampleEnable->setText("开始采集");
+            qDebug() << "stop: testCnt = " << testCnt;
         }
         preview->setPreviewEnable(status);
     });
@@ -645,11 +651,12 @@ void MainWindow::initSignalSlot()
 
     connect(dispatch, &ProtocolDispatch::onlineDataReady, onlineWaveForm, &OnlineWaveform::setNewData);
     connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data) {
+        testCnt += data.size();
         QVector<quint8> sampleData;
         for(auto &i : data)  // 数据格式转换
             sampleData.append(i);
 
-        //        showSampleData(sampleData);
+        showSampleData(sampleData);
     });
 
     /*
@@ -1762,6 +1769,11 @@ void MainWindow::timerEvent(QTimerEvent *event)
         if(ui->checkBox_autoReadSysInfo->isChecked())
             getSysInfo();
     }
+    if(timerRefreshUI == event->timerId())
+    {
+        if(ui->checkBox_isRerfreshUI->isChecked())
+            refreshUIFlag = true;
+    }
 }
 
 void MainWindow::on_actionNote_triggered()
@@ -1934,12 +1946,17 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
 
     if(ret == -1)  // 耗时小于1ms
     {
-        ui->statusBar->showMessage("数据格式和当前雷达类型不匹配", 3);
+        ui->statusBar->showMessage("帧头标志数据错误", 3);
         return;
     }
     else if(ret == -2)
     {
         ui->statusBar->showMessage("实际数据长度小于理论数据长度", 3);
+        return;
+    }
+    else if(ret == -3)
+    {
+        ui->statusBar->showMessage("通道标志数据错误", 3);
         return;
     }
 
@@ -1961,126 +1978,131 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
     version += frame_head[87];
     ui->label_fpgaVer->setText(version);
 
-    //  if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
-    //  {
-    //      //        QVector<WaveExtract::WaveformInfo> debugCh;
-    //      //        debugCh.append(allCh[0]);
-    //      //        debugCh.append(allCh[2]);
-    //      //        debugCh.append(allCh[4]);
-    //      //        debugCh.append(allCh[6]);
-
-    //      //        allCh.clear();
-    //      //        allCh.append(debugCh[0]);
-    //      //        allCh.append(debugCh[1]);
-    //      //        allCh.append(debugCh[2]);
-    //      //        allCh.append(debugCh[3]);
-
-    //      if(allCh.size() == 4)
-    //      {
-    //          switch(waterGuard.state)
-    //          {
-    //              case WaveExtract::MOTOR_CNT_STATE::IDLE:
-    //                  if(waterGuard.startSaveBase)
-    //                  {
-    //                      waterGuard.base.clear();
-    //                      waterGuard.base.resize(3);
-    //                      waterGuard.state = WaveExtract::MOTOR_CNT_STATE::WAIT_START;
-    //                      ui->btn_baseCapture->setEnabled(false);
-    //                  }
-    //                  break;
-    //              case WaveExtract::MOTOR_CNT_STATE::WAIT_START:
-    //                  if(allCh[0].motorCnt < 500)
-    //                  {
-    //                      waterGuard.isValidRange = true;
-    //                      waterGuard.state        = WaveExtract::MOTOR_CNT_STATE::WAIT_END;
-    //                  }
-    //                  break;
-    //              case WaveExtract::MOTOR_CNT_STATE::WAIT_END:
-    //                  if(allCh[0].motorCnt > 163840 / 2 - 1)
-    //                  {
-    //                      waterGuard.isValidRange  = false;
-    //                      waterGuard.startSaveBase = false;
-    //                      waterGuard.isSavedBase   = true;
-    //                      waterGuard.state         = WaveExtract::MOTOR_CNT_STATE::IDLE;
-    //                      ui->btn_baseCapture->setEnabled(true);
-    //                  }
-    //                  break;
-    //              default:
-    //                  waterGuard.isValidRange  = false;
-    //                  waterGuard.startSaveBase = false;
-    //                  break;
-    //          }
-    //          int    offset = 0;
-    //          double angle;
-    //          angle = allCh[0].motorCnt * 360 / 163840.0;
-    //          qDebug() << "motorCnt = " << allCh[0].motorCnt << ",angle = " << angle;
-
-    //          if(waterGuard.isValidRange == true)
-    //          {
-    //              for(int i = 0; i < 3; i++)
-    //              {
-    //                  waterGuard.base[i].append(allCh[i]);
-    //              }
-
-    //              ui->waterGuardBaseColor0->setData(allCh[0].value, angle);
-    //              ui->waterGuardBaseColor1->setData(allCh[1].value, angle);
-    //              ui->waterGuardBaseColor2->setData(allCh[2].value, angle);
-    //          }
-
-    //          if(allCh[0].motorCnt > 0 && allCh[0].motorCnt < 163840 / 2 - 1)
-    //          {
-    //              if(waterGuard.isSavedBase == true)
-    //              {
-    //                  for(int m = 0; m < 3; m++)  // 通道
-    //                  {
-    //                      QVector<double>                    data;
-    //                      QVector<WaveExtract::WaveformInfo> all_angle_data;
-    //                      all_angle_data = waterGuard.base[m];
-
-    //                      if(offset < all_angle_data.size())
-    //                      {
-    //                          WaveExtract::WaveformInfo angle_data = all_angle_data[offset];
-    //                          QVector<double>           data;
-    //                          for(int n = 0; n < angle_data.value.size(); n++)
-    //                          {
-    //                              data.append(allCh[m].value[n] - angle_data.value[n]);
-    //                          }
-    //                          if(m == 0)
-    //                              ui->waterGuardTimeColor0->setData(data, angle);
-    //                          else if(m == 1)
-    //                              ui->waterGuardTimeColor1->setData(data, angle);
-    //                          else if(m == 2)
-    //                              ui->waterGuardTimeColor2->setData(data, angle);
-    //                      }
-    //                  }
-    //              }
-    //              else
-    //              {
-    //                  ui->waterGuardTimeColor0->setData(allCh[0].value, angle);
-    //                  ui->waterGuardTimeColor1->setData(allCh[1].value, angle);
-    //                  ui->waterGuardTimeColor2->setData(allCh[2].value, angle);
-    //              }
-    //              offset++;
-    //          }
-    //          else
-    //              offset = 0;
-    //      }
-    //  }
-    //    else
+    if(refreshUIFlag)
     {
-        for(int n = 0; n < allCh.size(); n++)
+        refreshUIFlag = false;
+
+        if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
         {
-            if(allCh.size() != 8)  // 只有第一段波形
+            //        QVector<WaveExtract::WaveformInfo> debugCh;
+            //        debugCh.append(allCh[0]);
+            //        debugCh.append(allCh[2]);
+            //        debugCh.append(allCh[4]);
+            //        debugCh.append(allCh[6]);
+
+            //        allCh.clear();
+            //        allCh.append(debugCh[0]);
+            //        allCh.append(debugCh[1]);
+            //        allCh.append(debugCh[2]);
+            //        allCh.append(debugCh[3]);
+
+            if(allCh.size() == 4)
             {
-                ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
-                ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
+                switch(waterGuard.state)
+                {
+                    case WaveExtract::MOTOR_CNT_STATE::IDLE:
+                        if(waterGuard.startSaveBase)
+                        {
+                            waterGuard.base.clear();
+                            waterGuard.base.resize(3);
+                            waterGuard.state = WaveExtract::MOTOR_CNT_STATE::WAIT_START;
+                            ui->btn_baseCapture->setEnabled(false);
+                        }
+                        break;
+                    case WaveExtract::MOTOR_CNT_STATE::WAIT_START:
+                        if(allCh[0].motorCnt < 500)
+                        {
+                            waterGuard.isValidRange = true;
+                            waterGuard.state        = WaveExtract::MOTOR_CNT_STATE::WAIT_END;
+                        }
+                        break;
+                    case WaveExtract::MOTOR_CNT_STATE::WAIT_END:
+                        if(allCh[0].motorCnt > 163840 / 2 - 1)
+                        {
+                            waterGuard.isValidRange  = false;
+                            waterGuard.startSaveBase = false;
+                            waterGuard.isSavedBase   = true;
+                            waterGuard.state         = WaveExtract::MOTOR_CNT_STATE::IDLE;
+                            ui->btn_baseCapture->setEnabled(true);
+                        }
+                        break;
+                    default:
+                        waterGuard.isValidRange  = false;
+                        waterGuard.startSaveBase = false;
+                        break;
+                }
+                int    offset = 0;
+                double angle;
+                angle = allCh[0].motorCnt * 360 / 163840.0;
+                qDebug() << "motorCnt = " << allCh[0].motorCnt << ",angle = " << angle;
+
+                if(waterGuard.isValidRange == true)
+                {
+                    for(int i = 0; i < 3; i++)
+                    {
+                        waterGuard.base[i].append(allCh[i]);
+                    }
+
+                    ui->waterGuardBaseColor0->setData(allCh[0].value, angle);
+                    ui->waterGuardBaseColor1->setData(allCh[1].value, angle);
+                    ui->waterGuardBaseColor2->setData(allCh[2].value, angle);
+                }
+
+                if(allCh[0].motorCnt > 0 && allCh[0].motorCnt < 163840 / 2 - 1)
+                {
+                    if(waterGuard.isSavedBase == true)
+                    {
+                        for(int m = 0; m < 3; m++)  // 通道
+                        {
+                            QVector<double>                    data;
+                            QVector<WaveExtract::WaveformInfo> all_angle_data;
+                            all_angle_data = waterGuard.base[m];
+
+                            if(offset < all_angle_data.size())
+                            {
+                                WaveExtract::WaveformInfo angle_data = all_angle_data[offset];
+                                QVector<double>           data;
+                                for(int n = 0; n < angle_data.value.size(); n++)
+                                {
+                                    data.append(allCh[m].value[n] - angle_data.value[n]);
+                                }
+                                if(m == 0)
+                                    ui->waterGuardTimeColor0->setData(data, angle);
+                                else if(m == 1)
+                                    ui->waterGuardTimeColor1->setData(data, angle);
+                                else if(m == 2)
+                                    ui->waterGuardTimeColor2->setData(data, angle);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ui->waterGuardTimeColor0->setData(allCh[0].value, angle);
+                        ui->waterGuardTimeColor1->setData(allCh[1].value, angle);
+                        ui->waterGuardTimeColor2->setData(allCh[2].value, angle);
+                    }
+                    offset++;
+                }
+                else
+                    offset = 0;
+                updateColormap(allCh);
             }
-            else
-                ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
         }
-        if(autoZoomPlot)
-            ui->sampleDataPlot->rescaleAxes();
-        ui->sampleDataPlot->replot();
+        //        else
+        {
+            for(int n = 0; n < allCh.size(); n++)
+            {
+                if(allCh.size() != 8)  // 只有第一段波形
+                {
+                    ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
+                    ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
+                }
+                else
+                    ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
+            }
+            if(autoZoomPlot)
+                ui->sampleDataPlot->rescaleAxes();
+            ui->sampleDataPlot->replot();
+        }
     }
-    updateColormap(allCh);
 }

@@ -5,6 +5,7 @@
  */
 
 #include "bsp_config.h"
+#include "common.h"
 #include <QtCore>
 
 class WaveExtract : public QObject

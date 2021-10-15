@@ -117,6 +117,8 @@ private:
     QSettings *     configIni;
     QThread *       thread;
     qint32          timer1s;
+    qint32          timerRefreshUI;
+    bool            refreshUIFlag{false};
 
     BspConfig::RadarType radarType;
 
@@ -172,6 +174,8 @@ private:
     };
 
     WaterGuard waterGuard;
+
+    qint64 testCnt{0};
 };
 
 #endif  // MAINWINDOW_H

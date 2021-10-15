@@ -9,10 +9,12 @@
  */
 void OnlineWaveform::getSampleData(QByteArray &frame)
 {
-    qint32 data_len = 0;
     if(!isRecvNewData)
         return;
     curPckNumber = ProtocolDispatch::getPckNum(frame);
+
+    qint32 data_len = ProtocolDispatch::getDataLen(frame);
+    //    number.append(curPckNumber);
 
     if(curPckNumber == 0)
     {
@@ -21,17 +23,16 @@ void OnlineWaveform::getSampleData(QByteArray &frame)
             if(isFrameHead(fullSampleWave) != true)
             {
                 fullSampleWave.clear();
+                fullSampleWave.append(frame.mid(FrameField::DATA_POS, data_len));
                 return;
             }
             emit fullSampleDataReady(fullSampleWave);
             fullSampleWave.clear();
         }
-        data_len = ProtocolDispatch::getDataLen(frame);
         fullSampleWave.append(frame.mid(FrameField::DATA_POS, data_len));
     }
     else  // 持续接收一次采样数据
     {
-        data_len = ProtocolDispatch::getDataLen(frame);
         fullSampleWave.append(frame.mid(FrameField::DATA_POS, data_len));
     }
 
