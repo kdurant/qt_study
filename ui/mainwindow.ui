@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget_main">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
@@ -1217,6 +1217,9 @@
                 </item>
                 <item row="11" column="0">
                  <widget class="QLabel" name="label_pmtDelayTime">
+                  <property name="toolTip">
+                   <string>相对于触发信号的延迟</string>
+                  </property>
                   <property name="text">
                    <string>PMT延迟时间(ns)</string>
                   </property>
@@ -1351,6 +1354,9 @@
                 </item>
                 <item row="12" column="0">
                  <widget class="QLabel" name="label_pmtGateTime">
+                  <property name="toolTip">
+                   <string>经过PMT延迟时间后产生的高电平时间</string>
+                  </property>
                   <property name="text">
                    <string>PMT门控时间(ns)</string>
                   </property>

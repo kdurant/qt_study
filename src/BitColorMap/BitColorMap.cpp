@@ -1,9 +1,7 @@
 #include "BitColorMap.h"
 
 BitColorMap::BitColorMap(QWidget *parent) :
-    QWidget(parent),
-    img_size(300),
-    depth(180)
+    QWidget(parent)
 {
     image = new QImage(img_size, (img_size >> 2) * 3, QImage::Format_RGB32);
     for(double i = 0; i < image->width(); i += 1)
@@ -64,8 +62,12 @@ int BitColorMap::data2rgb(int data, int *r, int *g, int *b)
  */
 int BitColorMap::setData(QVector<double> &line, double angle)
 {
-    //    drawLineColorWithAngle(image, QColor(62, 62, 62), 1);
+    drawLineWithAngle(image, line, angle);
+    update();
+    return 0;
 
+    //    drawLineColorWithAngle(image, QColor(62, 62, 62), 1);
+#if 0
     LaneData new_data;
     new_data.data  = line;
     new_data.angle = angle;
@@ -82,7 +84,6 @@ int BitColorMap::setData(QVector<double> &line, double angle)
         for(int i = 0; i < videoMemory.size(); i++)
         {
             drawLineWithAngle(image, videoMemory[i].data, videoMemory[i].angle);
-            update();
         }
     }
     else
@@ -91,11 +92,12 @@ int BitColorMap::setData(QVector<double> &line, double angle)
         for(int i = 0; i < count; i++)
         {
             drawLineWithAngle(image, videoMemory[i].data, videoMemory[i].angle);
-            update();
         }
     }
+    //    update();
     count++;
     return 0;
+#endif
 }
 
 void BitColorMap::drawHalfCircle(QImage *img)
@@ -121,24 +123,26 @@ void BitColorMap::drawHalfCircle(QImage *img)
 
 void BitColorMap::drawLineWithAngle(QImage *img, QVector<double> &data, double angle)
 {
+    angle         = (int)angle;
     double radius = img->width() / 2 - 1;
     double x, y;
     int    r = 0;
     int    g = 0;
     int    b = 0;
+
     //    for(int i = 1; i < img->width() / 2 && i < data.size(); i++)
     for(int i = 1; i < img->width() / 2; i++)
     {
-        x = cos((angle * pi) / 180);
-        y = sin((angle * pi) / 180);
+        x = qCos((angle * pi) / 180);
+        y = qSin((angle * pi) / 180);
         x *= i;
         y *= i;
         x = radius - x;
         y = 1.5 * (img->height() / 2) - y;
 
         data2rgb(data[i], &r, &g, &b);
-
         img->setPixelColor(x, y, QColor(r, g, b));
+
         //        img->setPixelColor(x, y + 1, QColor(r, g, b));
         //        img->setPixelColor(x + 1, y, QColor(r, g, b));
         //        img->setPixelColor(x + 1, y + 1, QColor(r, g, b));

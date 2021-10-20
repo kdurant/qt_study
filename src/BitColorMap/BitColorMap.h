@@ -37,18 +37,22 @@ public:
         depth = d;
         videoMemory.resize(depth);
     }
+    void refreshUI(void)
+    {
+        update();
+    }
 
 protected:
     //    void resizeEvent(QResizeEvent *event);  //大小重置事件
     void paintEvent(QPaintEvent *event);
 
 private:
-    int     img_size;
+    int     img_size{400};
     double  pi{3.1415926};
     QImage *image;
     int64_t count{0};  // 统计总共接收到了多少次数据
 
-    int               depth;  // 队列里缓存多少次采样数据
+    int               depth{2};  // 队列里缓存多少次采样数据
     QVector<LaneData> videoMemory;
 
 signals:

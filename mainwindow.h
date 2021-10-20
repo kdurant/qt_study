@@ -165,7 +165,7 @@ private:
     struct WaterGuard
     {
         bool                                        startSaveBase;
-        bool                                        isSavedBase;
+        bool                                        isSavedBase;   // 以及保存了用于比较的数据
         bool                                        isValidRange;  // 保证从0°开始保存数据
         int                                         videoMemoryDepth;
         WaveExtract::MOTOR_CNT_STATE                state;
@@ -175,7 +175,8 @@ private:
 
     WaterGuard waterGuard;
 
-    qint64 testCnt{0};
+    qint64           testCnt{0};
+    QVector<QString> testString;
 };
 
 #endif  // MAINWINDOW_H
