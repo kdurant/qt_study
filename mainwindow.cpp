@@ -2001,9 +2001,10 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
 
         if(allCh.size() == 4)
         {
-            int    offset = 0;
-            double angle;
-            angle = allCh[0].motorCnt * 360 / 163840.0;
+            int     offset          = 0;
+            quint32 angle_90_offset = 109778;
+            double  angle;
+            angle = (allCh[0].motorCnt - (angle_90_offset - 40960)) * 360 / 163840.0;  // 角度偏移修正
 #if 1
             switch(waterGuard.state)
             {
@@ -2017,14 +2018,15 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
                     }
                     break;
                 case WaveExtract::MOTOR_CNT_STATE::WAIT_START:
-                    if(allCh[0].motorCnt < 500)
+                    if(allCh[0].motorCnt > (angle_90_offset - 40960) &&
+                       allCh[0].motorCnt < (angle_90_offset - 40960) + 500)
                     {
                         waterGuard.isValidRange = true;
                         waterGuard.state        = WaveExtract::MOTOR_CNT_STATE::WAIT_END;
                     }
                     break;
                 case WaveExtract::MOTOR_CNT_STATE::WAIT_END:
-                    if(allCh[0].motorCnt > 163840 / 2 - 1)
+                    if(allCh[0].motorCnt > (angle_90_offset + 40960))
                     {
                         waterGuard.isValidRange  = false;
                         waterGuard.startSaveBase = false;
@@ -2042,7 +2044,7 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
             if(waterGuard.isValidRange == true)
             {
                 for(int i = 0; i < 3; i++)
-                {
+                {  // 保存每个通道的基本数据，用于比较
                     waterGuard.base[i].append(allCh[i]);
                 }
 
@@ -2051,7 +2053,8 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
                 ui->waterGuardBaseColor2->setData(allCh[2].value, angle);
             }
 #endif
-            if(allCh[0].motorCnt > 0 && allCh[0].motorCnt < 163840 / 2 - 1)
+
+            if(allCh[0].motorCnt > (angle_90_offset - 40960) && allCh[0].motorCnt < (angle_90_offset + 40960))
             {
 #if 1
                 if(waterGuard.isSavedBase == true)  // 有了基底后，要先减去基底
@@ -2062,7 +2065,7 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
                         QVector<WaveExtract::WaveformInfo> all_angle_data;
                         all_angle_data = waterGuard.base[m];
 
-                        if(offset < all_angle_data.size())
+                        if(offset < all_angle_data.size())  // 保证索引不会出界
                         {
                             WaveExtract::WaveformInfo angle_data = all_angle_data[offset];
                             QVector<double>           data;
@@ -2086,6 +2089,7 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
                     ui->waterGuardTimeColor2->setData(allCh[2].value, angle);
                 }
                 offset++;
+
 #endif
             }
             else

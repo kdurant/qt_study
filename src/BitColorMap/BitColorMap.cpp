@@ -140,7 +140,7 @@ void BitColorMap::drawLineWithAngle(QImage *img, QVector<double> &data, double a
         x = radius - x;
         y = 1.5 * (img->height() / 2) - y;
 
-        data2rgb(data[i], &r, &g, &b);
+        data2rgb(data[i * 2], &r, &g, &b);  // 间隔取点，不然显示不了
         img->setPixelColor(x, y, QColor(r, g, b));
 
         //        img->setPixelColor(x, y + 1, QColor(r, g, b));
