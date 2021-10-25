@@ -42,6 +42,12 @@ public:
         update();
     }
 
+    void clearUI(void)
+    {
+        image->fill(0);
+        // drawHalfCircle(image);
+    }
+
 protected:
     //    void resizeEvent(QResizeEvent *event);  //大小重置事件
     void paintEvent(QPaintEvent *event);

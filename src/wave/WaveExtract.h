@@ -24,14 +24,15 @@ public:
     enum MOTOR_CNT_STATE
     {
         IDLE,
-        WAIT_START,
+        WAIT_START,  // 电机计数重新进入开始范围, 要开始保存数据了
+        LOAD_DATA,
         WAIT_END,
     };
 
     WaveExtract() = default;
 
-    static bool isFrameHead(QVector<quint8> frameData, int offset);
-    static bool isChDataHead(QVector<quint8> frameData, int offset);
+    static bool isFrameHead(QVector<quint8> &frameData, int offset);
+    static bool isChDataHead(QVector<quint8> &frameData, int offset);
 
     static int getWaveform(BspConfig::RadarType   type,
                            QVector<quint8> &      frameData,

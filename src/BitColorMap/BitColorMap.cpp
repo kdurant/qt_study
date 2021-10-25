@@ -4,7 +4,7 @@ BitColorMap::BitColorMap(QWidget *parent) :
     QWidget(parent)
 {
     image = new QImage(img_size, (img_size >> 2) * 3, QImage::Format_RGB32);
-    for(double i = 0; i < image->width(); i += 1)
+    for(double i = 0; i < image->width(); i += 1)  // change background color
     {
         for(int j = 0; j < image->height(); ++j)
         {
@@ -63,41 +63,7 @@ int BitColorMap::data2rgb(int data, int *r, int *g, int *b)
 int BitColorMap::setData(QVector<double> &line, double angle)
 {
     drawLineWithAngle(image, line, angle);
-    update();
     return 0;
-
-    //    drawLineColorWithAngle(image, QColor(62, 62, 62), 1);
-#if 0
-    LaneData new_data;
-    new_data.data  = line;
-    new_data.angle = angle;
-    LaneData old_data;
-
-    int offset = count % depth;
-
-    if(count >= depth)
-    {
-        old_data = videoMemory[offset];
-        drawLineColorWithAngle(image, QColor(62, 62, 62), old_data.angle);
-
-        videoMemory[offset] = new_data;
-        for(int i = 0; i < videoMemory.size(); i++)
-        {
-            drawLineWithAngle(image, videoMemory[i].data, videoMemory[i].angle);
-        }
-    }
-    else
-    {
-        videoMemory[offset] = new_data;
-        for(int i = 0; i < count; i++)
-        {
-            drawLineWithAngle(image, videoMemory[i].data, videoMemory[i].angle);
-        }
-    }
-    //    update();
-    count++;
-    return 0;
-#endif
 }
 
 void BitColorMap::drawHalfCircle(QImage *img)
@@ -115,15 +81,11 @@ void BitColorMap::drawHalfCircle(QImage *img)
         y += 1.5 * (img->height() / 2);
 
         img->setPixelColor(x, y, QColor(Qt::red));
-        //        img->setPixelColor(x, y + 1, QColor(Qt::red));
-        //        img->setPixelColor(x + 1, y, QColor(Qt::red));
-        //        img->setPixelColor(x + 1, y + 1, QColor(Qt::red));
     }
 }
 
 void BitColorMap::drawLineWithAngle(QImage *img, QVector<double> &data, double angle)
 {
-    angle         = (int)angle;
     double radius = img->width() / 2 - 1;
     double x, y;
     int    r = 0;
@@ -142,11 +104,6 @@ void BitColorMap::drawLineWithAngle(QImage *img, QVector<double> &data, double a
 
         data2rgb(data[i * 2], &r, &g, &b);  // 间隔取点，不然显示不了
         img->setPixelColor(x, y, QColor(r, g, b));
-
-        //        img->setPixelColor(x, y + 1, QColor(r, g, b));
-        //        img->setPixelColor(x + 1, y, QColor(r, g, b));
-        //        img->setPixelColor(x + 1, y + 1, QColor(r, g, b));
-        //        img->setPixelColor(x, y, QColor(Qt::blue));
     }
 }
 

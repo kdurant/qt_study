@@ -119,6 +119,7 @@ private:
     qint32          timer1s;
     qint32          timerRefreshUI;
     bool            refreshUIFlag{false};
+    bool            refreshRadarFlag{false};
 
     BspConfig::RadarType radarType;
 
@@ -165,8 +166,7 @@ private:
     struct WaterGuard
     {
         bool                                        startSaveBase;
-        bool                                        isSavedBase;   // 以及保存了用于比较的数据
-        bool                                        isValidRange;  // 保证从0°开始保存数据
+        bool                                        isSavedBase;  // 以及保存了用于比较的数据
         int                                         videoMemoryDepth;
         WaveExtract::MOTOR_CNT_STATE                state;
         QVector<QVector<WaveExtract::WaveformInfo>> base;
@@ -174,6 +174,7 @@ private:
     };
 
     WaterGuard waterGuard;
+    QMutex     mutex;
 
     qint64           testCnt{0};
     QVector<QString> testString;
