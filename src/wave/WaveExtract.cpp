@@ -1,6 +1,6 @@
 #include "WaveExtract.h"
 
-bool WaveExtract::isFrameHead(QVector<quint8> &frameData, int offset)
+bool WaveExtract::isFrameHead(const QVector<quint8> &frameData, int offset)
 {
     return (frameData.at(offset + 0) == 0x01 && frameData.at(offset + 1) == 0x23 && frameData.at(offset + 2) == 0x45 && frameData.at(offset + 3) == 0x67);
 }
@@ -8,10 +8,10 @@ bool WaveExtract::isFrameHead(QVector<quint8> &frameData, int offset)
  * @brief 判断frameData在offset位置的连续4个数，是否是通道数据的起始标志
  * @param frameData
  * @param offset
- * @return 
+ * @return
  */
 
-bool WaveExtract::isChDataHead(QVector<quint8> &frameData, int offset)
+bool WaveExtract::isChDataHead(const QVector<quint8> &frameData, int offset)
 {
     if(frameData.size() < offset + 4)
         return false;
@@ -24,18 +24,16 @@ bool WaveExtract::isChDataHead(QVector<quint8> &frameData, int offset)
  * @param type
  * @param data
  * @param ret
- * @return 
+ * @return
  */
 
-int WaveExtract::getWaveform(BspConfig::RadarType                type,
-                             QVector<quint8> &                   frameData,
-                             QVector<WaveExtract::WaveformInfo> &ret)
+void WaveExtract::getWaveform(BspConfig::RadarType   type,
+                              const QVector<quint8> &frameData)
 {
-    int result = -1;
     switch(type)
     {
         case BspConfig::RADAR_TPYE_LAND:
-            result = getWaveFromLand(frameData, ret);
+            getWaveFromLand(frameData);
             break;
         case BspConfig::RADAR_TPYE_760:
             break;
@@ -44,16 +42,18 @@ int WaveExtract::getWaveform(BspConfig::RadarType                type,
         case BspConfig::RADAR_TYPE_WATER_GUARD:
         case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
         case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
-            result = getWaveFromWaterGuard(frameData, ret);
+            getWaveFromWaterGuard(frameData);
             break;
     }
-    return result;
 }
 
-int WaveExtract::getWaveFromLand(QVector<quint8> &frameData, QVector<WaveExtract::WaveformInfo> &ret)
+void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
 {
+    int status = -1;
+
+    QVector<WaveExtract::WaveformInfo> ret;
     if(!isFrameHead(frameData, 0))
-        return -1;
+        status = -1;
 
     WaveformInfo ch;
     int          start_pos = 0;
@@ -82,7 +82,7 @@ int WaveExtract::getWaveFromLand(QVector<quint8> &frameData, QVector<WaveExtract
 
         if(offset == frameData.size())  // 数据分析结束
         {
-            return 0;
+            status = 0;
         }
 
         /*
@@ -120,24 +120,27 @@ int WaveExtract::getWaveFromLand(QVector<quint8> &frameData, QVector<WaveExtract
             }
         }
     }
-    return 0;
+    status = 0;
+    emit formatedWaveReady(ret, status);
 }
 
 /**
-* @brief 
+* @brief
 *
 * @param frameData
 * @param ret
 *
 * @return -1, 帧头信息错误; -2, 实际数据长度小于理论值; -3, 通道头信息错误
 */
-int WaveExtract::getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveExtract::WaveformInfo> &ret)
+void WaveExtract::getWaveFromWaterGuard(const QVector<quint8> &frameData)
 {
     int frame_size = frameData.size();
+    int status;
     if(frame_size < 88)
-        return -1;
+        status = -1;
     if(!isFrameHead(frameData, 0))
-        return -1;
+        status = -1;
+    QVector<WaveExtract::WaveformInfo> ret;
 
     WaveformInfo ch;
     //    ch.motorCnt = BspConfig::ba2int(frameData.mid(76, 4));
@@ -150,7 +153,7 @@ int WaveExtract::getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveE
 
     int index = 88;
     if(isChDataHead(frameData, index) == false)
-        return -3;
+        status = -3;
 
     index += 6;
     first_start_pos = (frameData.at(index) << 8) + frameData.at(index + 1);
@@ -174,7 +177,7 @@ int WaveExtract::getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveE
     水下预警雷达：
         设第一段采样数据长度:m, 则总共采样长度:L
         L = 128  + 8 * m
-        第二段采样长度: n 
+        第二段采样长度: n
         4*(n*2 + 4)
     */
 
@@ -185,7 +188,7 @@ int WaveExtract::getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveE
 
     // 全部长度小于4个通道第一段数据的总和
     if(frame_size != expect_len)
-        return -2;
+        status = -2;
 
     int offset = 88;
 
@@ -195,7 +198,10 @@ int WaveExtract::getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveE
         if(isChDataHead(frameData, offset))
             offset += 4;
         else
-            return -3;
+        {
+            status = -3;
+            break;
+        }
 #endif
 
         // 第一段数据
@@ -214,7 +220,10 @@ int WaveExtract::getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveE
         ch.value.clear();
 
         if(offset == frame_size)  // 数据分析结束
-            return 0;
+        {
+            status = 0;
+            break;
+        }
 
         // 如果第一段数据结束后的数据就是帧头标志，那么说明没有第二段数据
         if(isChDataHead(frameData, offset))
@@ -238,5 +247,6 @@ int WaveExtract::getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveE
         ch.value.clear();
 #endif
     }
-    return 0;
+    status = 0;
+    emit formatedWaveReady(ret, status);
 }

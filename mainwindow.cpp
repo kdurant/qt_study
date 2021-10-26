@@ -9,12 +9,17 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
+    qRegisterMetaType<BspConfig::RadarType>("BspConfig::RadarType");
+    qRegisterMetaType<WaveExtract::WaveformInfo>("WaveExtract::WaveformInfo");
+    qRegisterMetaType<QVector<quint8>>("QVector<quint8>");
+    qRegisterMetaType<QVector<WaveExtract::WaveformInfo>>("QVector<WaveformInfo>");
 
     dispatch        = new ProtocolDispatch();
     preview         = new AdSampleControll();
     updateFlash     = new UpdateBin();
     offlineWaveForm = new OfflineWaveform();
     onlineWaveForm  = new OnlineWaveform();
+    waveExtract     = new WaveExtract();
 
     daDriver = new DAControl();
     adDriver = new ADControl();
@@ -48,9 +53,15 @@ MainWindow::MainWindow(QWidget *parent) :
     waterGuard.isSavedBase      = false;
     waterGuard.state            = WaveExtract::MOTOR_CNT_STATE::IDLE;
     waterGuard.videoMemoryDepth = 180;
+
     offlineWaveForm->moveToThread(thread);
-    connect(thread, SIGNAL(started()), offlineWaveForm, SLOT(getADsampleNumber()));
+    connect(this, SIGNAL(startPaserSampleNumber()), offlineWaveForm, SLOT(getADsampleNumber()));
     connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), thread, SLOT(quit()));
+
+    waveExtract->moveToThread(thread);
+    thread->start();
+    connect(this, &MainWindow::sampleDataReady, waveExtract, &WaveExtract::getWaveform);
+    connect(waveExtract, &WaveExtract::formatedWaveReady, this, &MainWindow::showSampleData);
 
     //    connect(waveShow, SIGNAL(finishSampleFrameNumber()), waveShow, SLOT(deleteLater()));
     //    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
@@ -497,7 +508,7 @@ void MainWindow::initSignalSlot()
     });
 
     /*
-     * 读取系统参数信息相关逻辑 
+     * 读取系统参数信息相关逻辑
      */
     connect(devInfo, &DevInfo::sendDataReady, dispatch, &ProtocolDispatch::encode);
     connect(dispatch, &ProtocolDispatch::infoDataReady, devInfo, &DevInfo::setNewData);
@@ -648,11 +659,10 @@ void MainWindow::initSignalSlot()
     connect(dispatch, &ProtocolDispatch::onlineDataReady, onlineWaveForm, &OnlineWaveform::setNewData);
     connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data) {
         testCnt += data.size();
-        QVector<quint8> sampleData;
+        sampleData.clear();
         for(auto &i : data)  // 数据格式转换
             sampleData.append(i);
-
-        showSampleData(sampleData);
+        emit sampleDataReady(radarType, sampleData);
     });
 
     /*
@@ -709,7 +719,7 @@ void MainWindow::initSignalSlot()
             return;
         ui->lineEdit_selectShowFile->setText(showFileName);
         offlineWaveForm->setWaveFile(showFileName);
-        thread->start();
+        emit startPaserSampleNumber();
     });
 
     connect(offlineWaveForm, &OfflineWaveform::sendSampleFrameNumber, this, [this](qint32 number) {
@@ -1708,7 +1718,6 @@ void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
 
             if(x >= 180)
             {
-                // qDebug() << qFloor((allCh[ch].motorCnt * 360) / 163840.0);
                 return;
             }
 
@@ -1805,7 +1814,7 @@ void MainWindow::on_bt_showWave_clicked()
             ui->spin_framePos->setValue(i);
             QVector<quint8> sampleData = offlineWaveForm->getFrameData(i);  // 耗时小于1ms
 
-            showSampleData(sampleData);
+            // showSampleData(sampleData);
 
             if(interval_time == 0)
             {
@@ -1937,30 +1946,27 @@ QString MainWindow::read_ip_address()
     return 0;
 }
 
-void MainWindow::showSampleData(QVector<quint8> &sampleData)
+void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh, int status)
 {
-    int                                ret = -1;
-    QVector<WaveExtract::WaveformInfo> allCh;
+    //    ret = waveExtract->getWaveform(radarType, sampleData, allCh);
 
-    ret = WaveExtract::getWaveform(radarType, sampleData, allCh);
-
-    if(ret == -1)  // 耗时小于1ms
+    if(status == -1)  // 耗时小于1ms
     {
         // ui->statusBar->showMessage("帧头标志数据错误", 3);
         return;
     }
-    else if(ret == -2)
+    else if(status == -2)
     {
         // ui->statusBar->showMessage("实际数据长度小于理论数据长度", 3);
         return;
     }
-    else if(ret == -3)
+    else if(status == -3)
     {
         // ui->statusBar->showMessage("通道标志数据错误", 3);
         return;
     }
 
-#if 1
+#if 0
     QByteArray frame_head;
     for(int i = 0; i < 88; i++)
         frame_head.append(sampleData[i]);
@@ -1978,6 +1984,8 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
     version += frame_head[86];
     version += frame_head[87];
     ui->label_fpgaVer->setText(version);
+#endif
+
     if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
         //        QVector<WaveExtract::WaveformInfo> debugCh;
@@ -2061,7 +2069,6 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
 #endif
             if(allCh[0].motorCnt < start_range && allCh[0].motorCnt > start_range - 1000)
             {
-                qDebug() << "!!!!!!!!!clear color";
                 ui->waterGuardTimeColor0->clearUI();
                 ui->waterGuardTimeColor1->clearUI();
                 ui->waterGuardTimeColor2->clearUI();
@@ -2069,8 +2076,6 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
             if(allCh[0].motorCnt > start_range && allCh[0].motorCnt < stop_range)
             {
 #if 1
-                qDebug() << "angle = " << angle;
-
                 refreshRadarFlag = true;
                 if(waterGuard.isSavedBase == true)  // 有了基底后，要先减去基底
                 {
@@ -2116,7 +2121,6 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
                     // 刷新雷达图
                     //                    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
                     {
-                        qDebug() << "------------------------------- ";
                         ui->waterGuardTimeColor0->refreshUI();
                         ui->waterGuardTimeColor1->refreshUI();
                         ui->waterGuardTimeColor2->refreshUI();
@@ -2151,5 +2155,4 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
             // updateColormap(allCh);
         }
     }
-#endif
 }

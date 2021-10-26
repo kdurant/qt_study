@@ -31,13 +31,14 @@ public:
 
     WaveExtract() = default;
 
-    static bool isFrameHead(QVector<quint8> &frameData, int offset);
-    static bool isChDataHead(QVector<quint8> &frameData, int offset);
+    static bool isFrameHead(const QVector<quint8> &frameData, int offset);
+    static bool isChDataHead(const QVector<quint8> &frameData, int offset);
 
-    static int getWaveform(BspConfig::RadarType   type,
-                           QVector<quint8> &      frameData,
-                           QVector<WaveformInfo> &ret);
-    static int getWaveFromLand(QVector<quint8> &frameData, QVector<WaveformInfo> &ret);
-    static int getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveformInfo> &ret);
+    void getWaveform(BspConfig::RadarType type, const QVector<quint8> &frameData);
+    void getWaveFromLand(const QVector<quint8> &frameData);
+    void getWaveFromWaterGuard(const QVector<quint8> &frameData);
+
+signals:
+    void formatedWaveReady(const QVector<WaveformInfo> &wave, int status);
 };
 #endif
