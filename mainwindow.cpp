@@ -98,8 +98,6 @@ void MainWindow::initParameter()
         file.write("localPort=6666\r\n");
         file.write("radarIP=192.168.1.101\r\n");
         file.write("radarPort=5555\r\n");
-        file.write("\r\n[WaterGuard]\r\n");
-        file.write("videmMemoryDepth=180\r\n");
         file.write("\r\n[Preview]\r\n");
         file.write("compressLen=0\r\n");
         file.write("compressRatio=0\r\n");
@@ -184,18 +182,6 @@ void MainWindow::initParameter()
     ui->lineEdit_subThreshold->setText(configIni->value("Preview/subThreshold").toString());
     ui->lineEdit_compressLen->setText(configIni->value("Preview/compressLen").toString());
     ui->lineEdit_compressRatio->setText(configIni->value("Preview/compressRatio").toString());
-
-    if(configIni->contains("WaterGuard/videmMemoryDepth"))
-        waterGuard.videoMemoryDepth = configIni->value("WaterGuard/videmMemoryDepth").toInt();
-    else
-        QMessageBox::warning(NULL, "警告", "配置文件里缺少参数videmMemoryDepth");
-
-    ui->waterGuardTimeColor0->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
-    ui->waterGuardTimeColor1->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
-    ui->waterGuardTimeColor2->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
-    ui->waterGuardBaseColor0->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
-    ui->waterGuardBaseColor1->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
-    ui->waterGuardBaseColor2->setVideoMemoryDepth(waterGuard.videoMemoryDepth);
 }
 
 void MainWindow::saveParameter()
@@ -2073,10 +2059,18 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
             }
 
 #endif
-
+            if(allCh[0].motorCnt < start_range && allCh[0].motorCnt > start_range - 1000)
+            {
+                qDebug() << "!!!!!!!!!clear color";
+                ui->waterGuardTimeColor0->clearUI();
+                ui->waterGuardTimeColor1->clearUI();
+                ui->waterGuardTimeColor2->clearUI();
+            }
             if(allCh[0].motorCnt > start_range && allCh[0].motorCnt < stop_range)
             {
 #if 1
+                qDebug() << "angle = " << angle;
+
                 refreshRadarFlag = true;
                 if(waterGuard.isSavedBase == true)  // 有了基底后，要先减去基底
                 {
@@ -2105,7 +2099,6 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
                 }
                 else
                 {
-                    qDebug() << "angle = " << angle;
                     ui->waterGuardTimeColor0->setData(allCh[0].value, angle);
                     ui->waterGuardTimeColor1->setData(allCh[1].value, angle);
                     ui->waterGuardTimeColor2->setData(allCh[2].value, angle);
@@ -2116,6 +2109,7 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
             }
             else
             {
+                offset = 0;
                 if(refreshRadarFlag)
                 {
                     refreshRadarFlag = false;
@@ -2123,16 +2117,11 @@ void MainWindow::showSampleData(QVector<quint8> &sampleData)
                     //                    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
                     {
                         qDebug() << "------------------------------- ";
-                        ui->waterGuardTimeColor0->clearUI();
-                        ui->waterGuardTimeColor1->clearUI();
-                        ui->waterGuardTimeColor2->clearUI();
                         ui->waterGuardTimeColor0->refreshUI();
                         ui->waterGuardTimeColor1->refreshUI();
                         ui->waterGuardTimeColor2->refreshUI();
                     }
                 }
-
-                offset = 0;
             }
         }
     }
