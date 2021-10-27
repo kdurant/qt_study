@@ -21,6 +21,14 @@ public:
         QVector<double> value;     // 相当于y轴
     };
 
+    struct WaveSettings
+    {
+        int first_start_pos;
+        int first_len;
+        int second_start_pos;
+        int second_len;
+    };
+
     enum MOTOR_CNT_STATE
     {
         IDLE,
@@ -37,6 +45,7 @@ public:
     void getWaveform(BspConfig::RadarType type, const QVector<quint8> &frameData);
     void getWaveFromLand(const QVector<quint8> &frameData);
     void getWaveFromWaterGuard(const QVector<quint8> &frameData);
+    int  getSettingsFromWaterGuard(const QVector<quint8> &frameData, WaveSettings &settings);
 
 signals:
     void formatedWaveReady(const QVector<WaveformInfo> &wave, int status);

@@ -134,61 +134,20 @@ void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
 */
 void WaveExtract::getWaveFromWaterGuard(const QVector<quint8> &frameData)
 {
-    int frame_size = frameData.size();
-    int status;
-    if(frame_size < 88)
-        status = -1;
-    if(!isFrameHead(frameData, 0))
-        status = -1;
+    WaveSettings                       settings;
     QVector<WaveExtract::WaveformInfo> ret;
+    if(getSettingsFromWaterGuard(frameData, settings) == -1)
+    {
+        emit formatedWaveReady(ret, -1);
+        return;
+    }
+    int status     = -1;
+    int frame_size = frameData.size();
 
+#if 1
     WaveformInfo ch;
     //    ch.motorCnt = BspConfig::ba2int(frameData.mid(76, 4));
     ch.motorCnt = Common::ba2int(frameData.mid(76, 4), 1);
-
-    int first_start_pos  = 0;
-    int first_len        = 0;
-    int second_start_pos = 0;
-    int second_len       = 0;
-
-    int index = 88;
-    if(isChDataHead(frameData, index) == false)
-        status = -3;
-
-    index += 6;
-    first_start_pos = (frameData.at(index) << 8) + frameData.at(index + 1);
-    index += 2;
-    first_len = (frameData.at(index) << 8) + frameData.at(index + 1);
-    index += 2;
-    index += first_len * 2;
-    if(isChDataHead(frameData, index))
-    {
-        second_start_pos = 0;
-        second_len       = 0;
-    }
-    else
-    {
-        second_start_pos = (frameData.at(index) << 8) + frameData.at(index + 1);
-        index += 2;
-        second_len = (frameData.at(index) << 8) + frameData.at(index + 1);
-    }
-
-    /*
-    水下预警雷达：
-        设第一段采样数据长度:m, 则总共采样长度:L
-        L = 128  + 8 * m
-        第二段采样长度: n
-        4*(n*2 + 4)
-    */
-
-    int expect_len = 0;
-    expect_len += 128 + 8 * first_len;
-    if(second_len > 0)
-        expect_len += 4 * (second_len * 2 + 4);
-
-    // 全部长度小于4个通道第一段数据的总和
-    if(frame_size != expect_len)
-        status = -2;
 
     int offset = 88;
 
@@ -209,9 +168,9 @@ void WaveExtract::getWaveFromWaterGuard(const QVector<quint8> &frameData)
         offset += 2;  // 跳过第一段起始位置
         offset += 2;  // 跳过第一段长度
 #if 1
-        for(int i = 0; i < first_len; i++)
+        for(int i = 0; i < settings.first_len; i++)
         {
-            ch.pos.append(i + first_start_pos);
+            ch.pos.append(i + settings.first_start_pos);
             ch.value.append((frameData.at(offset + 0) << 8) + frameData.at(offset + 1));
             offset += 2;
         }
@@ -231,14 +190,12 @@ void WaveExtract::getWaveFromWaterGuard(const QVector<quint8> &frameData)
 #endif
 #if 1
         // 第二段数据 offset += 2;
-        second_start_pos = (frameData.at(offset) << 8) + frameData.at(offset + 1);
         offset += 2;
-        second_len = (frameData.at(offset) << 8) + frameData.at(offset + 1);
         offset += 2;
 
-        for(int i = 0; i < second_len; i++)
+        for(int i = 0; i < settings.second_len; i++)
         {
-            ch.pos.append(i + second_start_pos);
+            ch.pos.append(i + settings.second_start_pos);
             ch.value.append((frameData.at(offset + 0) << 8) + frameData.at(offset + 1));
             offset += 2;
         }
@@ -249,4 +206,62 @@ void WaveExtract::getWaveFromWaterGuard(const QVector<quint8> &frameData)
     }
     status = 0;
     emit formatedWaveReady(ret, status);
+#endif
+}
+
+/**
+ * @brief WaveExtract::getSettingsFromWaterGuard
+ * @param frameData
+ * @param settings
+ * @return 0, 数据完整; -1, 数据不完整
+ */
+int WaveExtract::getSettingsFromWaterGuard(const QVector<quint8> &frameData, WaveExtract::WaveSettings &settings)
+{
+    int frame_size = frameData.size();
+    if(frame_size < 88)
+        return -1;
+    if(!isFrameHead(frameData, 0))
+        return -1;
+
+    int index = 88;
+    if(isChDataHead(frameData, index) == false)
+        return -1;
+
+    index += 6;
+    settings.first_start_pos = (frameData.at(index) << 8) + frameData.at(index + 1);
+    index += 2;
+    settings.first_len = (frameData.at(index) << 8) + frameData.at(index + 1);
+    index += 2;
+    index += settings.first_len * 2;
+
+    if(isChDataHead(frameData, index))
+    {
+        settings.second_start_pos = 0;
+        settings.second_len       = 0;
+    }
+    else
+    {
+        //        settings.second_start_pos = (frameData.at(index) << 8) + frameData.at(index + 1);
+        //        index += 2;
+        //        settings.second_len = (frameData.at(index) << 8) + frameData.at(index + 1);
+    }
+
+    /*
+    水下预警雷达：
+        设第一段采样数据长度:m, 则总共采样长度:L
+        L = 128  + 8 * m
+        第二段采样长度: n
+        4*(n*2 + 4)
+    */
+
+    int expect_len = 0;
+    expect_len += 128 + 8 * settings.first_len;
+    if(settings.second_len > 0)
+        expect_len += 4 * (settings.second_len * 2 + 4);
+
+    // 全部长度小于4个通道第一段数据的总和
+    if(frame_size != expect_len)
+        return -1;
+
+    return 0;
 }

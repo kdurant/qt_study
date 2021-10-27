@@ -60,8 +60,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     waveExtract->moveToThread(thread);
     thread->start();
-    connect(this, &MainWindow::sampleDataReady, waveExtract, &WaveExtract::getWaveform);
-    connect(waveExtract, &WaveExtract::formatedWaveReady, this, &MainWindow::showSampleData);
 
     //    connect(waveShow, SIGNAL(finishSampleFrameNumber()), waveShow, SLOT(deleteLater()));
     //    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
@@ -663,6 +661,15 @@ void MainWindow::initSignalSlot()
         for(auto &i : data)  // 数据格式转换
             sampleData.append(i);
         emit sampleDataReady(radarType, sampleData);
+    });
+    connect(this, &MainWindow::sampleDataReady, waveExtract, &WaveExtract::getWaveform);
+    connect(waveExtract, &WaveExtract::formatedWaveReady, this, &MainWindow::showSampleData);
+
+    connect(this, &MainWindow::sampleDataReady, this, [this](BspConfig::RadarType type, const QVector<quint8> &sampleData) {
+        QByteArray frame_head;
+        for(int i = 0; i < 88; i++)
+            frame_head.append(sampleData[i]);
+        gps->parserGpsData(frame_head);  //  耗时小于1ms
     });
 
     /*
@@ -1967,10 +1974,6 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
     }
 
 #if 0
-    QByteArray frame_head;
-    for(int i = 0; i < 88; i++)
-        frame_head.append(sampleData[i]);
-    gps->parserGpsData(frame_head);  //  耗时小于1ms
 
     uint8_t type = frame_head[84];
     // if(type != radarType)
@@ -2115,6 +2118,7 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
             else
             {
                 offset = 0;
+#if 1
                 if(refreshRadarFlag)
                 {
                     refreshRadarFlag = false;
@@ -2126,6 +2130,7 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
                         ui->waterGuardTimeColor2->refreshUI();
                     }
                 }
+#endif
             }
         }
     }
