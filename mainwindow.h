@@ -131,6 +131,8 @@ private:
 
     QHostAddress deviceIP;
     quint16      devicePort;
+    int8_t       fpgaRadarType{-1};  //fpga 内部固化的雷达类型
+    QByteArray   fpgaVersion{5, char(0)};
 
     ProtocolDispatch *dispatch;
 

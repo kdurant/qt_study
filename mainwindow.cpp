@@ -670,6 +670,13 @@ void MainWindow::initSignalSlot()
         for(int i = 0; i < 88; i++)
             frame_head.append(sampleData[i]);
         gps->parserGpsData(frame_head);  //  耗时小于1ms
+
+        fpgaRadarType  = frame_head[84];
+        fpgaVersion[0] = 'v';
+        fpgaVersion[1] = frame_head[85];
+        fpgaVersion[2] = '.';
+        fpgaVersion[3] = frame_head[86];
+        fpgaVersion[4] = frame_head[87];
     });
 
     /*
@@ -1785,6 +1792,12 @@ void MainWindow::timerEvent(QTimerEvent *event)
 
         if(ui->checkBox_autoReadSysInfo->isChecked())
             getSysInfo();
+        ui->label_fpgaVer->setText(fpgaVersion);
+
+        if(fpgaRadarType != -1 && fpgaRadarType != radarType)
+        {
+            ui->statusBar->showMessage("底层配置的雷达类型(" + QString::number(fpgaRadarType) + ")与上位机配置的雷达类型不一致", 0);
+        }
     }
     if(timerRefreshUI == event->timerId())
     {
@@ -1972,22 +1985,6 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
         // ui->statusBar->showMessage("通道标志数据错误", 3);
         return;
     }
-
-#if 0
-
-    uint8_t type = frame_head[84];
-    // if(type != radarType)
-    // {
-    // ui->statusBar->showMessage("底层配置的雷达类型(" + QString::number(type) + ")与上位机配置的雷达类型不一致", 0);
-    // }
-    QByteArray version;
-    version += 'v';
-    version += frame_head[85];
-    version += '.';
-    version += frame_head[86];
-    version += frame_head[87];
-    ui->label_fpgaVer->setText(version);
-#endif
 
     if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {

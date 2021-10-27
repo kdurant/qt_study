@@ -49,5 +49,8 @@ public:
 
 signals:
     void formatedWaveReady(const QVector<WaveformInfo> &wave, int status);
+
+private:
+    BspConfig::RadarType radarType;
 };
 #endif

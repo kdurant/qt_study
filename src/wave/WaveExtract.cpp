@@ -30,6 +30,7 @@ bool WaveExtract::isChDataHead(const QVector<quint8> &frameData, int offset)
 void WaveExtract::getWaveform(BspConfig::RadarType   type,
                               const QVector<quint8> &frameData)
 {
+    radarType = type;
     switch(type)
     {
         case BspConfig::RADAR_TPYE_LAND:
@@ -241,9 +242,14 @@ int WaveExtract::getSettingsFromWaterGuard(const QVector<quint8> &frameData, Wav
     }
     else
     {
-        //        settings.second_start_pos = (frameData.at(index) << 8) + frameData.at(index + 1);
-        //        index += 2;
-        //        settings.second_len = (frameData.at(index) << 8) + frameData.at(index + 1);
+        if(radarType != BspConfig::RADAR_TYPE_WATER_GUARD)
+        {
+            //Fatal: ASSERT failure in QVector<T>::at: "index out of range"
+            // 下面看起来没有问题的代码在udp速度过快时，会导致上面的错误
+            settings.second_start_pos = (frameData.at(index) << 8) + frameData.at(index + 1);
+            index += 2;
+            settings.second_len = (frameData.at(index) << 8) + frameData.at(index + 1);
+        }
     }
 
     /*
