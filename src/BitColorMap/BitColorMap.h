@@ -18,10 +18,10 @@ public:
     };
 
     int data2rgb(int data, int *r, int *g, int *b);
-    int setData(QVector<double> &line, double angle);
+    int setData(const QVector<double> &line, double angle);
 
     void drawHalfCircle(QImage *img);
-    void drawLineWithAngle(QImage *img, QVector<double> &data, double angle);
+    void drawLineWithAngle(QImage *img, const QVector<double> &data, double angle);
 
     // 用于清除已经画了的线
     void drawLineColorWithAngle(QImage *img, QColor color, double angle);

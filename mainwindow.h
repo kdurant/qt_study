@@ -80,11 +80,13 @@ public:
     void initSysInfoUi(void);
     void initFileListUi(void);
 
-    void showSampleData(QVector<quint8> &sampleData);
-
 protected:
     void closeEvent(QCloseEvent *event);
     void timerEvent(QTimerEvent *event);
+
+signals:
+    void sampleDataReady(BspConfig::RadarType type, const QVector<quint8> &sampleData);
+    void startPaserSampleNumber();
 
 private slots:
 
@@ -98,6 +100,7 @@ private slots:
     void showLaserInfo(LaserType4::LaserInfo &info);
 
     QString read_ip_address(void);
+    void    showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh, int status);
 
 private:
     struct __sys_status__
@@ -128,6 +131,8 @@ private:
 
     QHostAddress deviceIP;
     quint16      devicePort;
+    int8_t       fpgaRadarType{-1};  //fpga 内部固化的雷达类型
+    QByteArray   fpgaVersion{5, char(0)};
 
     ProtocolDispatch *dispatch;
 
@@ -136,6 +141,8 @@ private:
     OnlineWaveform *  onlineWaveForm;
     OfflineWaveform * offlineWaveForm;
     bool              running;
+    WaveExtract *     waveExtract;
+    QVector<quint8>   sampleData;
 
     DAControl *daDriver;
     ADControl *adDriver;

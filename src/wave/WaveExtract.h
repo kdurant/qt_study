@@ -21,6 +21,14 @@ public:
         QVector<double> value;     // 相当于y轴
     };
 
+    struct WaveSettings
+    {
+        int first_start_pos;
+        int first_len;
+        int second_start_pos;
+        int second_len;
+    };
+
     enum MOTOR_CNT_STATE
     {
         IDLE,
@@ -31,13 +39,18 @@ public:
 
     WaveExtract() = default;
 
-    static bool isFrameHead(QVector<quint8> &frameData, int offset);
-    static bool isChDataHead(QVector<quint8> &frameData, int offset);
+    static bool isFrameHead(const QVector<quint8> &frameData, int offset);
+    static bool isChDataHead(const QVector<quint8> &frameData, int offset);
 
-    static int getWaveform(BspConfig::RadarType   type,
-                           QVector<quint8> &      frameData,
-                           QVector<WaveformInfo> &ret);
-    static int getWaveFromLand(QVector<quint8> &frameData, QVector<WaveformInfo> &ret);
-    static int getWaveFromWaterGuard(QVector<quint8> &frameData, QVector<WaveformInfo> &ret);
+    void getWaveform(BspConfig::RadarType type, const QVector<quint8> &frameData);
+    void getWaveFromLand(const QVector<quint8> &frameData);
+    void getWaveFromWaterGuard(const QVector<quint8> &frameData);
+    int  getSettingsFromWaterGuard(const QVector<quint8> &frameData, WaveSettings &settings);
+
+signals:
+    void formatedWaveReady(const QVector<WaveformInfo> &wave, int status);
+
+private:
+    BspConfig::RadarType radarType;
 };
 #endif
