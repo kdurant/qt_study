@@ -13,10 +13,8 @@ bool WaveExtract::isFrameHead(const QVector<quint8> &frameData, int offset)
 
 bool WaveExtract::isChDataHead(const QVector<quint8> &frameData, int offset)
 {
-    if(frameData.size() < offset + 4)
-        return false;
-    else
-        return (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90 && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a);
+    assert(frameData.size() > offset + 4);
+    return (frameData.at(offset + 0) == 0xeb && frameData.at(offset + 1) == 0x90 && frameData.at(offset + 2) == 0xa5 && frameData.at(offset + 3) == 0x5a);
 }
 
 /**
@@ -235,6 +233,9 @@ int WaveExtract::getSettingsFromWaterGuard(const QVector<quint8> &frameData, Wav
     index += 2;
     index += settings.first_len * 2;
 
+    if(frame_size < index + 4)  // 数据已经丢失，还去计算第二段信息，会导致ASSERT failure in QVector<T>::at: "index out of range"
+        return -1;
+
     if(isChDataHead(frameData, index))
     {
         settings.second_start_pos = 0;
@@ -242,14 +243,9 @@ int WaveExtract::getSettingsFromWaterGuard(const QVector<quint8> &frameData, Wav
     }
     else
     {
-        if(radarType != BspConfig::RADAR_TYPE_WATER_GUARD)
-        {
-            //Fatal: ASSERT failure in QVector<T>::at: "index out of range"
-            // 下面看起来没有问题的代码在udp速度过快时，会导致上面的错误
-            settings.second_start_pos = (frameData.at(index) << 8) + frameData.at(index + 1);
-            index += 2;
-            settings.second_len = (frameData.at(index) << 8) + frameData.at(index + 1);
-        }
+        settings.second_start_pos = (frameData.at(index) << 8) + frameData.at(index + 1);
+        index += 2;
+        settings.second_len = (frameData.at(index) << 8) + frameData.at(index + 1);
     }
 
     /*

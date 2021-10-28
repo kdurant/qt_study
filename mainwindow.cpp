@@ -342,7 +342,6 @@ void MainWindow::uiConfig()
         ui->lineEdit_radarType->setText("水下预警雷达");
 
         ui->comboBox_laserFreq->addItem("2000");
-        ui->comboBox_laserFreq->addItem("5000");
 
         QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
         QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
