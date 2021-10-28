@@ -1398,14 +1398,21 @@ void MainWindow::initSignalSlot()
         if(digitValue < 0)
             digitValue = 0;
         daDriver->setChannalValue(chNum, digitValue);
-        ui->plainTextEdit_DASetLog->appendPlainText(ui->comboBox_DAChSelect->currentText() + ": " + ui->lineEdit_DAValue->text() + "V");
+        ui->plainTextEdit_DASetLog->appendPlainText(QDateTime::currentDateTime().toString("hh:mm:ss") +
+                                                    "-> " +
+                                                    ui->comboBox_DAChSelect->currentText() +
+                                                    ": " + ui->lineEdit_DAValue->text() +
+                                                    "V");
     });
 
     connect(ui->btn_DAClearAll, &QPushButton::pressed, this, [this]() {
         for(int i = 0; i < 4; i++)
         {
             daDriver->setChannalValue(i, 0);
-            ui->plainTextEdit_DASetLog->appendPlainText(ui->comboBox_DAChSelect->itemText(i) + ": 0V");
+            ui->plainTextEdit_DASetLog->appendPlainText(QDateTime::currentDateTime().toString("hh:mm:ss") +
+                                                        "-> " +
+                                                        ui->comboBox_DAChSelect->itemText(i) +
+                                                        ": 0V");
         }
     });
 
@@ -1442,7 +1449,11 @@ void MainWindow::initSignalSlot()
             }
             ui->lineEdit_ADValue->setText(QString::number(analogValue, 'g', 2));
         }
-        ui->plainTextEdit_ADSetLog->appendPlainText(ui->comboBox_ADChSelect->currentText() + ": " + ui->lineEdit_ADValue->text() + "V");
+        ui->plainTextEdit_ADSetLog->appendPlainText(QDateTime::currentDateTime().toString("hh:mm:ss") +
+                                                    "-> " +
+                                                    ui->comboBox_ADChSelect->currentText() +
+                                                    ": " +
+                                                    ui->lineEdit_ADValue->text() + "V");
     });
 
     connect(ui->btn_ADReadAll, &QPushButton::pressed, this, [this]() {
