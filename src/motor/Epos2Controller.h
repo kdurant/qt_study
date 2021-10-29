@@ -24,7 +24,7 @@ public:
 private:
     bool       isRecvNewData{false};  // 是否收到数据
     QByteArray recvData;
-    qint32     waitTime{1000};
+    qint32     waitTime{500};
 
     quint32 maxVelocity{3571};
     quint32 quickStopDeceleration{45};

@@ -1198,15 +1198,19 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_motorInit, &QPushButton::pressed, this, [this]() {
         ui->btn_motorInit->setEnabled(false);
-        epos2Driver->init();
-        ui->label_motorInfo->setText("电机初始化已完成");
+        if(epos2Driver->init())
+            ui->label_motorInfo->setText("电机初始化已完成");
+        else
+            QMessageBox::warning(this, "warning", "电机通信异常");
         ui->btn_motorInit->setEnabled(true);
     });
 
     connect(ui->btn_motorMoveHome, &QPushButton::pressed, this, [this]() {
         ui->btn_motorMoveHome->setEnabled(false);
-        epos2Driver->moveToHome();
-        ui->label_motorInfo->setText("电机归零后需要重新初始化，才能正常转动");
+        if(epos2Driver->moveToHome())
+            ui->label_motorInfo->setText("电机归零后需要重新初始化，才能正常转动");
+        else
+            QMessageBox::warning(this, "warning", "电机通信异常");
         ui->btn_motorMoveHome->setEnabled(true);
     });
 

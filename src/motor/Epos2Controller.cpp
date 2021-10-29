@@ -7,7 +7,8 @@
 bool EPOS2::init()
 {
     // 电机重新上电后，这4步是必须的
-    clearFault();
+    if(!clearFault())
+        return false;
     setShutdown();
     setHalt();
     setProfileVelocityMode();
@@ -86,7 +87,8 @@ bool EPOS2::moveFixSpeed(quint32 speed)
 
 bool EPOS2::moveToHome()
 {
-    clearFault();
+    if(!clearFault())
+        return false;
     setHomeMode();
     setPositiveSpeed();
     setShutdown();
