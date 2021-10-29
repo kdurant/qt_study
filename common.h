@@ -366,6 +366,31 @@ public:
         memcpy(&fltRtn, cTmp, 8);
         return fltRtn;
     }
+
+    /**
+    * @brief 返回数组中最大元素的索引
+    * 如果数组中有多于一个最大值，返回第一个最大值的索引
+    *
+    * @param arr
+    *
+    * @return 
+    */
+    template <typename T>
+    int maxIndexInVector(QVector<T> &arr)
+    {
+        T   max   = arr[0];
+        int index = 0;
+
+        for(int i = 0; i < arr.size(); i++)
+        {
+            if((arr[i] > max))
+            {
+                max   = arr[i];
+                index = i;
+            }
+        }
+        return index;
+    }
 };
 
 #endif  // COMMON_H
