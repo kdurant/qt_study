@@ -10,16 +10,16 @@ public:
 
 public:
     bool init(void) override;
-    bool start(void) override;
-    bool stop(void) override;
     bool run(quint16 speed) override;
 
     qint32 getActualVelocity(void) override;
     qint32 getActualPosition(void) override;
 
-    bool moveToPosition(quint32 postion);
-    bool moveFixSpeed(quint32 speed);
-    bool moveToHome(void);
+    bool moveToPosition(quint32 postion) override;
+    bool moveToHome(void) override;
+    bool moveFixSpeed(quint32 speed) override;
+
+    bool sweep(quint32 start_pos, quint32 end_pos);
 
 private:
     bool       isRecvNewData{false};  // 是否收到数据

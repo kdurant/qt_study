@@ -1177,8 +1177,8 @@ void MainWindow::initSignalSlot()
      * 电机相关逻辑
      */
     connect(epos2Driver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
-
     connect(dispatch, &ProtocolDispatch::motorDataReady, epos2Driver, &EPOS2::setNewData);
+
     connect(ui->btn_motorReadSpeed, &QPushButton::pressed, this, [this]() {
         qint32 speed = 0;
         speed        = epos2Driver->getActualVelocity();
@@ -1225,61 +1225,7 @@ void MainWindow::initSignalSlot()
         epos2Driver->moveToPosition(position);
     });
     connect(ui->btn_motorSweep, &QPushButton::pressed, this, [this]() {
-        quint32     start_pos = ui->lineEdit_motorSweepStartAngle->text().toUInt();
-        quint32     end_pos   = ui->lineEdit_motorSweepEndAngle->text().toUInt();
-        static bool running   = false;
-        if(start_pos > end_pos)
-        {
-            QMessageBox::warning(this, "warning", "参数设置错误");
-            return;
-        }
-        else if(start_pos == end_pos)
-        {
-            epos2Driver->moveToPosition(0);
-            running = false;
-        }
-        else
-        {
-            running   = true;
-            start_pos = (start_pos / 360.0) * 163840;
-            end_pos   = (end_pos / 360.0) * 163840;
-
-            epos2Driver->moveToPosition(0);
-        }
-        qDebug() << "running value = " << running;
-
-        quint32 current_pos = 0;
-        quint32 range_min   = 0;
-        quint32 range_max   = 0;
-        while(running)
-        {
-            qDebug() << "running value(in while) = " << running;
-            range_min = end_pos * 0.95;
-            range_max = end_pos * 1.05;
-            epos2Driver->moveToPosition(end_pos);
-
-            current_pos = epos2Driver->getActualPosition();
-            while(current_pos < range_min)
-            {
-                current_pos = epos2Driver->getActualPosition();
-                QEventLoop waitLoop;
-                QTimer::singleShot(5, &waitLoop, &QEventLoop::quit);
-                waitLoop.exec();
-            }
-
-            range_min = start_pos * 0.95;
-            range_max = start_pos * 1.05;
-            epos2Driver->moveToPosition(start_pos);
-
-            current_pos = epos2Driver->getActualPosition();
-            while(current_pos > range_max)
-            {
-                current_pos = epos2Driver->getActualPosition();
-                QEventLoop waitLoop;
-                QTimer::singleShot(5, &waitLoop, &QEventLoop::quit);
-                waitLoop.exec();
-            }
-        }
+        QMessageBox::warning(this, "warning", "未实现此功能");
     });
 
     /*

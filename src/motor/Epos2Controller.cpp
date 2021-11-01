@@ -21,16 +21,6 @@ bool EPOS2::init()
     return true;
 }
 
-bool EPOS2::start()
-{
-    return false;
-}
-
-bool EPOS2::stop()
-{
-    return false;
-}
-
 /**
  * @brief 需要在电机初始化后才能进行这个操作
  * @param speed
@@ -83,6 +73,68 @@ bool EPOS2::moveFixSpeed(quint32 speed)
     setTargetVelocity(speed);
     setEnableState();
     return true;
+}
+
+/**
+ * @brief 摆扫模式
+ * @param start_pos
+ * @param end_pos
+ * @return
+ */
+bool EPOS2::sweep(quint32 start_pos, quint32 end_pos)
+{
+    static bool running = false;
+    if(start_pos > end_pos)
+    {
+        return false;
+    }
+    else if(start_pos == end_pos)  // 停止条件
+    {
+        moveToPosition(0);
+        running = false;
+    }
+    else
+    {
+        running   = true;
+        start_pos = (start_pos / 360.0) * 163840;
+        end_pos   = (end_pos / 360.0) * 163840;
+
+        moveToPosition(0);
+    }
+    qDebug() << "running value = " << running;
+
+    quint32 current_pos = 0;
+    quint32 range_min   = 0;
+    quint32 range_max   = 0;
+    while(running)
+    {
+        qDebug() << "running value(in while) = " << running;
+        range_min = end_pos * 0.95;
+        range_max = end_pos * 1.05;
+        moveToPosition(end_pos);
+
+        current_pos = getActualPosition();
+        while(current_pos < range_min)
+        {
+            current_pos = getActualPosition();
+            QEventLoop waitLoop;
+            QTimer::singleShot(5, &waitLoop, &QEventLoop::quit);
+            waitLoop.exec();
+        }
+
+        range_min = start_pos * 0.95;
+        range_max = start_pos * 1.05;
+        moveToPosition(start_pos);
+
+        current_pos = getActualPosition();
+        while(current_pos > range_max)
+        {
+            current_pos = getActualPosition();
+            QEventLoop waitLoop;
+            QTimer::singleShot(5, &waitLoop, &QEventLoop::quit);
+            waitLoop.exec();
+        }
+    }
 }
 
 bool EPOS2::moveToHome()

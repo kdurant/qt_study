@@ -68,8 +68,6 @@ public:
 
 public:
     bool init(void) override;
-    bool start(void) override;
-    bool stop(void) override;
     bool run(quint16 speed) override;
 
 public:

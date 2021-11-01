@@ -10,23 +10,18 @@ class MontorController : public QObject
 public:
     MontorController() = default;
 
+    /**
+    * @brief 初始化电机
+    *
+    * @return 
+    */
     virtual bool init()
     {
         return false;
     };
 
-    virtual bool start()
-    {
-        return false;
-    };
-
-    virtual bool stop()
-    {
-        return false;
-    };
-
     /**
-     * @brief run, 控制电机以指定速度(r/s)运行
+     * @brief 在电机已经运动的情况下，锈点电机运动速度(r/s)
      * @param speed
      * @return
      */
@@ -35,10 +30,42 @@ public:
         return false;
     }
 
+    virtual bool moveToPosition(quint32 postion)
+    {
+        return false;
+    }
+
+    virtual bool moveToHome(void)
+    {
+        return false;
+    }
+
+    /**
+    * @brief 初始化电机，并让电机以指定速度运动
+    *
+    * @param speed
+    *
+    * @return 
+    */
+    virtual bool moveFixSpeed(quint32 speed)
+    {
+        return false;
+    }
+
+    /**
+    * @brief 读取电机实际的运动速度
+    *
+    * @return 
+    */
     virtual qint32 getActualVelocity(void)
     {
         return 0;
     }
+    /**
+    * @brief 读取电机实际的位置
+    *
+    * @return 
+    */
     virtual qint32 getActualPosition(void)
     {
         return 0;
