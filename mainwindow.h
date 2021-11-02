@@ -157,7 +157,8 @@ private:
     LaserType5 *     laser5Driver;
     LaserType6 *     laser6Driver;
 
-    EPOS2 *epos2Driver;
+    MontorController *motorController;
+    EPOS2 *           epos2Driver;
 
     DevInfo *                  devInfo;
     QVector<DevInfo::ParaInfo> sysParaInfo;

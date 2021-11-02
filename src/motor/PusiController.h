@@ -67,8 +67,13 @@ public:
     };
 
 public:
-    bool init(void) override;
-    bool run(quint16 speed) override;
+    bool   init(void) override;
+    bool   run(quint16 speed) override;
+    bool   moveToPosition(quint32 postion) override;
+    bool   moveToHome(void) override;
+    bool   moveFixSpeed(quint32 speed) override;
+    qint32 getActualVelocity(void) override;
+    qint32 getActualPosition(void) override;
 
 public:
     bool   turnStepsByNum(qint32 nSteps);

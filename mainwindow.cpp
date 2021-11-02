@@ -32,8 +32,6 @@ MainWindow::MainWindow(QWidget *parent) :
     laser5Driver = new LaserType5();
     laser6Driver = new LaserType6();
 
-    epos2Driver = new EPOS2();
-
     devInfo = new DevInfo();
 
     timer1s        = startTimer(1000);
@@ -191,6 +189,9 @@ void MainWindow::initParameter()
     ui->lineEdit_subThreshold->setText(configIni->value("Preview/subThreshold").toString());
     ui->lineEdit_compressLen->setText(configIni->value("Preview/compressLen").toString());
     ui->lineEdit_compressRatio->setText(configIni->value("Preview/compressRatio").toString());
+
+    if(radarType != BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+        motorController = new EPOS2();
 }
 
 void MainWindow::saveParameter()
@@ -1176,30 +1177,30 @@ void MainWindow::initSignalSlot()
     /*
      * 电机相关逻辑
      */
-    connect(epos2Driver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
-    connect(dispatch, &ProtocolDispatch::motorDataReady, epos2Driver, &EPOS2::setNewData);
+    connect(motorController, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
+    connect(dispatch, &ProtocolDispatch::motorDataReady, motorController, &MontorController::setNewData);
 
     connect(ui->btn_motorReadSpeed, &QPushButton::pressed, this, [this]() {
         qint32 speed = 0;
-        speed        = epos2Driver->getActualVelocity();
+        speed        = motorController->getActualVelocity();
         ui->lineEdit_motorShowSpeed->setText(QString::number(speed, 10));
     });
 
     connect(ui->btn_motorReadPosition, &QPushButton::pressed, this, [this]() {
         quint32 postion = 0;
-        postion         = epos2Driver->getActualPosition();
+        postion         = motorController->getActualPosition();
         ui->lineEdit_motorShowPosition->setText(QString::number(postion, 10));
     });
 
     connect(ui->btn_motorStart, &QPushButton::pressed, this, [this]() {
         quint16 speed = ui->lineEdit_motorTargetSpeed->text().toInt(nullptr, 10);
 
-        epos2Driver->run(speed);
+        motorController->run(speed);
     });
 
     connect(ui->btn_motorInit, &QPushButton::pressed, this, [this]() {
         ui->btn_motorInit->setEnabled(false);
-        if(epos2Driver->init())
+        if(motorController->init())
             ui->label_motorInfo->setText("电机初始化已完成");
         else
             QMessageBox::warning(this, "warning", "电机通信异常");
@@ -1208,7 +1209,7 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_motorMoveHome, &QPushButton::pressed, this, [this]() {
         ui->btn_motorMoveHome->setEnabled(false);
-        if(epos2Driver->moveToHome())
+        if(motorController->moveToHome())
             ui->label_motorInfo->setText("电机归零后需要重新初始化，才能正常转动");
         else
             QMessageBox::warning(this, "warning", "电机通信异常");
@@ -1222,7 +1223,7 @@ void MainWindow::initSignalSlot()
             QMessageBox::warning(this, "warning", "电机位置不能大于163840");
             return;
         }
-        epos2Driver->moveToPosition(position);
+        motorController->moveToPosition(position);
     });
     connect(ui->btn_motorSweep, &QPushButton::pressed, this, [this]() {
         QMessageBox::warning(this, "warning", "未实现此功能");

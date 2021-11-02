@@ -1,5 +1,40 @@
 #include "PusiController.h"
 
+bool PusiController::init()
+{
+    return false;
+}
+
+bool PusiController::run(quint16 speed)
+{
+    return false;
+}
+
+bool PusiController::moveToPosition(quint32 postion)
+{
+    return false;
+}
+
+bool PusiController::moveToHome()
+{
+    return false;
+}
+
+bool PusiController::moveFixSpeed(quint32 speed)
+{
+    return false;
+}
+
+qint32 PusiController::getActualVelocity()
+{
+    return false;
+}
+
+qint32 PusiController::getActualPosition()
+{
+    return false;
+}
+
 bool PusiController::turnStepsByNum(qint32 nSteps)
 {
     if(nSteps < 1)
@@ -450,4 +485,3 @@ qint32 PusiController::ReadAutoElectricReduceCoeff(void)
     emit sendDataReady(MasterSet::MOTOR_PENETRATE, frame.length(), frame);
     return true;
 }
-

@@ -15,7 +15,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = Radar
 TEMPLATE = app
 
-VERSION = 0.120
+VERSION = 0.121
 DEFINES += SOFT_VERSION=\"\\\"$$VERSION\\\"\"
 
 # The following define makes your compiler emit warnings if you use
