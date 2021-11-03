@@ -2,6 +2,7 @@
 #define MOTORCONTROLL_H
 #include <QtCore>
 
+#include "common.h"
 #include "protocol.h"
 
 class MontorController : public QObject

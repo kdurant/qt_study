@@ -45,6 +45,7 @@
 #include "laserType6.h"
 
 #include "Epos2Controller.h"
+#include "PusiController.h"
 
 #include "SaveWave.h"
 #include "gpsInfo.h"

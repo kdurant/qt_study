@@ -190,7 +190,9 @@ void MainWindow::initParameter()
     ui->lineEdit_compressLen->setText(configIni->value("Preview/compressLen").toString());
     ui->lineEdit_compressRatio->setText(configIni->value("Preview/compressRatio").toString());
 
-    if(radarType != BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+    if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+        motorController = new PusiController();
+    else
         motorController = new EPOS2();
 }
 
@@ -1187,9 +1189,9 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->btn_motorReadPosition, &QPushButton::pressed, this, [this]() {
-        quint32 postion = 0;
-        postion         = motorController->getActualPosition();
-        ui->lineEdit_motorShowPosition->setText(QString::number(postion, 10));
+        qint32 position = 0;
+        position        = motorController->getActualPosition();
+        ui->lineEdit_motorShowPosition->setText(QString::number(position, 10));
     });
 
     connect(ui->btn_motorStart, &QPushButton::pressed, this, [this]() {

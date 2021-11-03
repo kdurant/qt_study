@@ -19,6 +19,25 @@ public:
         DISABLE = 0x00000000,
     };
 
+    struct Status_Reg1
+    {
+        qint8 bit0_status;    // 0：IDLE；1：Busy
+        qint8 bit1_ext1;      // 0：无急停事件；1：有急停事件
+        qint8 bit2_ext2;      // 0：无急停事件；1：有急停事件
+        qint8 bit3_auto_dec;  // 0：自动衰减不使能；1：自动衰减使能
+        qint8 bit4_stall;     // 0：没有堵转；1：发生堵转
+    };
+
+    struct Status_Reg2
+    {
+        qint8 bit0_free_run;      // 0：脱机不使能；1：脱机使能
+        qint8 bit1_ext1_en;       // 0：不使能急停；1：使能急停
+        qint8 bit2_ext2_en;       // 0：不使能急停；1：使能急停
+        qint8 bit3_speed_mode;    // 0：位移模式；1：速度模式
+        qint8 bit4_dir;           // 0：反向；1：正向
+        qint8 bit5_offline_auto;  // 0：离线不自动运行；1：离线自动运行
+    };
+
     enum INSTRUCTION_SET
     {
         TURN_STEPS                        = 0x73,  // 转动给定的步数
@@ -80,7 +99,7 @@ public:
     bool   setSteps(qint32 nSteps);
     bool   clearBlockStatus(void);
     bool   saveAllParas();
-    bool   readCurrentPosition(void);
+    qint32 readCurrentPosition(void);
     bool   setMoveDirect(MOVE_DIRECT direct);
     bool   setMaxTurnSpeed(qint32 nSpeed);
     bool   ReadReduceCoeff(void);
@@ -94,7 +113,7 @@ public:
     bool   setAutoElectricReduceEnable(WORK_STATUS status);
     bool   setOfflineEnable(WORK_STATUS status);
     bool   setCurrentPosition(qint32 nCurrentPosition);
-    qint32 readControl1(void);
+    qint32 readControl1(Status_Reg1& ret);
     void   clearExit2MarkBit(void);
     void   clearExit1MarkBit(void);
     bool   readIO(qint32 nAddr);
@@ -113,11 +132,15 @@ public:
     bool   setSpeedCompensatoryFactor(qint32 data);
     bool   setAutoElectricReduceCoeff(qint32 nReduceCoeff);
     bool   setReduceCoeff(qint8 cAddr, qint32 nReduceCoeff);
-    bool   writeOrReadDuzhuanLen(qint32 nDuzhuanLen);
+    qint32 readBlockLen(void);
+    bool   writeBlockLen(qint32 len);
     bool   setStopSpeed(qint32 nStopSpeed);
     qint32 readBlockPosition(void);
-    bool   writeOrReadBlockRegister(qint32 data);
-    bool   writeOrReadDuzhuanTrigger(qint32 data);
+    qint32 readBlockRegister(void);
+    bool   writeBlockRegister(qint32 reg);
+
+    qint32 readBlockTriggerValue(void);
+    bool   writeBlockTriggerValue(qint32 value);
     qint32 ReadAutoElectricReduceCoeff(void);
 
 private:
@@ -125,7 +148,7 @@ private:
     bool   isInit{false};
 
     bool       isRecvNewData{false};  // 是否收到数据
-    int        delayMs{100};
+    int        delayMs{500};
     QByteArray recvData;
     qint32     waitTime{1000};
 
@@ -168,7 +191,12 @@ private:
 
     quint32 getData(QByteArray& data) const
     {
-        return (data[3] & 0x000000ff) + (data[4] << 8 & 0x0000ff00) + (data[5] << 16 & 0x00ff0000) + (data[6] << 24 & 0xff000000);
+        quint32 ret;
+        ret = ((static_cast<uint8_t>(data[6])) << 24) +
+              ((static_cast<uint8_t>(data[5])) << 16) +
+              ((static_cast<uint8_t>(data[4])) << 8) +
+              ((static_cast<uint8_t>(data[3])) << 0);
+        return ret;
     }
 
     bool compareCheckSum(QByteArray& data) const
@@ -182,7 +210,7 @@ private:
 
 public slots:
 
-    void setNewData(QByteArray& data)
+    void setNewData(QByteArray& data) override
     {
         isRecvNewData = true;
         recvData      = data;
@@ -191,6 +219,10 @@ public slots:
 
 public:
     quint16 calcFieldCRC(quint16* pDataArray, quint16 numberofWords);  //CRC-CCITT
+private:
+    Status_Reg1 reg1{0, 0, 0, 0, 0};
+    Status_Reg2 reg2{0, 0, 0, 0, 0, 0};
+    qint32      position;  // 电机当前的位置，归零后清零
 };
 
 #endif
