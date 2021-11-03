@@ -15,7 +15,7 @@ public:
     qint32 getActualVelocity(void) override;
     qint32 getActualPosition(void) override;
 
-    bool moveToPosition(quint32 postion) override;
+    bool moveToPosition(double postion) override;
     bool moveToHome(void) override;
     bool moveFixSpeed(quint32 speed) override;
 

@@ -22,7 +22,7 @@ bool PusiController::run(quint16 speed)
     return false;
 }
 
-bool PusiController::moveToPosition(quint32 postion)
+bool PusiController::moveToPosition(double postion)
 {
     return false;
 }

@@ -564,7 +564,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>3</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -853,35 +853,22 @@
          <item>
           <widget class="QToolBox" name="toolBox_motor">
            <property name="currentIndex">
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="page">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>171</width>
-              <height>91</height>
+              <width>297</width>
+              <height>268</height>
              </rect>
             </property>
             <attribute name="label">
              <string>定位模式</string>
             </attribute>
             <layout class="QGridLayout" name="gridLayout_12">
-             <item row="3" column="0">
-              <spacer name="verticalSpacer_8">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>140</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="0" column="1">
+             <item row="1" column="1">
               <widget class="QLineEdit" name="lineEdit_motorTargetPosition">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -894,24 +881,54 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
+             <item row="1" column="0">
               <widget class="QLabel" name="label_9">
                <property name="text">
-                <string>目标位置(qc)</string>
+                <string>目标位置</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
+             <item row="2" column="0">
               <widget class="QPushButton" name="btn_motorMovePostion">
                <property name="text">
                 <string>定位</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
+             <item row="4" column="0">
+              <spacer name="verticalSpacer_8">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>140</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="3" column="0">
               <widget class="QLabel" name="label_27">
                <property name="text">
                 <string>定位前电机需要归零</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QRadioButton" name="rbtn_GLH">
+               <property name="text">
+                <string>GLH</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QRadioButton" name="rbtn_POLARIZATION">
+               <property name="text">
+                <string>POLARIZATION</string>
                </property>
               </widget>
              </item>
@@ -922,8 +939,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>171</width>
-              <height>73</height>
+              <width>297</width>
+              <height>268</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1193,7 +1210,7 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>-226</y>
+              <y>0</y>
               <width>297</width>
               <height>752</height>
              </rect>

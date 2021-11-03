@@ -41,7 +41,7 @@ bool EPOS2::run(quint16 speed)
  * @param postion
  * @return 
  */
-bool EPOS2::moveToPosition(quint32 postion)
+bool EPOS2::moveToPosition(double postion)
 {
     clearFault();
     setProfilePositionMode();
@@ -49,7 +49,7 @@ bool EPOS2::moveToPosition(quint32 postion)
     setQuickstopDeceleration(45);
     setProfileAcceleration(45);
     setProfileDeceleration(45);
-    setTargetPosition(postion);
+    setTargetPosition(static_cast<quint32>(postion));
     setAbsolutePositionStartImmdeitaly();
     return true;
 }

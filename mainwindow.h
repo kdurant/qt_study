@@ -184,6 +184,7 @@ private:
 
     WaterGuard waterGuard;
     QMutex     mutex;
+    double     default_start_angle;
 
     qint64           testCnt{0};
     QVector<QString> testString;

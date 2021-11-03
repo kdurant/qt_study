@@ -255,8 +255,11 @@ void MainWindow::uiConfig()
     // ui->tabWidget_main->setTabEnabled(2, false);
     ui->tabWidget_main->setCurrentIndex(0);
 
-    QString title;
+    ui->toolBox_motor->setItemEnabled(2, false);
+    ui->rbtn_GLH->setVisible(false);
+    ui->rbtn_POLARIZATION->setVisible(false);
 
+    QString title;
     if(radarType == BspConfig::RADAR_TPYE_760)
     {
         title = "760雷达控制软件";
@@ -288,6 +291,11 @@ void MainWindow::uiConfig()
         QStringList AD1List{"APD TEMP", "MPPC_532", "PMT_532", "MPPC_486", "PMT486"};
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_ADChSelect->addItems(AD1List);
+
+        ui->toolBox_motor->setItemEnabled(1, false);
+
+        ui->rbtn_GLH->setVisible(true);
+        ui->rbtn_POLARIZATION->setVisible(true);
     }
     else if(radarType == BspConfig::RADAR_TPYE_OCEAN)
     {
@@ -1219,13 +1227,19 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->btn_motorMovePostion, &QPushButton::pressed, this, [this]() {
-        quint32 position = ui->lineEdit_motorTargetPosition->text().toUInt();
-        if(position > 163840)
+        if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
         {
-            QMessageBox::warning(this, "warning", "电机位置不能大于163840");
-            return;
         }
-        motorController->moveToPosition(position);
+        else
+        {
+            quint32 position = ui->lineEdit_motorTargetPosition->text().toUInt();
+            if(position > 163840)
+            {
+                QMessageBox::warning(this, "warning", "电机位置不能大于163840");
+                return;
+            }
+            motorController->moveToPosition(position);
+        }
     });
     connect(ui->btn_motorSweep, &QPushButton::pressed, this, [this]() {
         QMessageBox::warning(this, "warning", "未实现此功能");
