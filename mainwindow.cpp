@@ -296,6 +296,25 @@ void MainWindow::uiConfig()
 
         ui->rbtn_GLH->setVisible(true);
         ui->rbtn_POLARIZATION->setVisible(true);
+
+        connect(ui->rbtn_GLH, &QRadioButton::clicked, this, [this]() {
+            ui->label_motorInfo->setText("mrad(3.57-36)");
+
+            ui->lineEdit_motorTargetPosition->setText("10");
+            doubleWaveConfig.prev_angle     = 3.57;
+            doubleWaveConfig.step_ratio     = 3631;
+            doubleWaveConfig.min_view_angle = 3.57;
+            doubleWaveConfig.max_view_angle = 36;
+        });
+
+        connect(ui->rbtn_POLARIZATION, &QRadioButton::clicked, this, [this]() {
+            ui->label_motorInfo->setText("mrad(15-110)");
+            ui->lineEdit_motorTargetPosition->setText("30");
+            doubleWaveConfig.prev_angle     = 15;
+            doubleWaveConfig.step_ratio     = 1239.5;
+            doubleWaveConfig.min_view_angle = 15;
+            doubleWaveConfig.max_view_angle = 110;
+        });
     }
     else if(radarType == BspConfig::RADAR_TPYE_OCEAN)
     {
@@ -1229,6 +1248,27 @@ void MainWindow::initSignalSlot()
     connect(ui->btn_motorMovePostion, &QPushButton::pressed, this, [this]() {
         if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
         {
+            if(ui->rbtn_GLH->isChecked() == false && ui->rbtn_POLARIZATION->isChecked() == false)
+            {
+                QMessageBox::warning(this, "warning", "请先选择设备型号");
+                return;
+            }
+            double position = ui->lineEdit_motorTargetPosition->text().toDouble();
+
+            if(position < doubleWaveConfig.min_view_angle || position > doubleWaveConfig.max_view_angle)
+            {
+                QMessageBox::warning(this, "warning", "视场角范围设置错误，请重新设置");
+                return;
+            }
+            if(position > doubleWaveConfig.prev_angle)
+            {
+                motorController->moveToPosition((position - doubleWaveConfig.prev_angle) * doubleWaveConfig.step_ratio, 1);
+            }
+            else
+            {
+                motorController->moveToPosition((doubleWaveConfig.prev_angle - position) * doubleWaveConfig.step_ratio, 0);
+            }
+            doubleWaveConfig.prev_angle = position;
         }
         else
         {
@@ -1238,7 +1278,7 @@ void MainWindow::initSignalSlot()
                 QMessageBox::warning(this, "warning", "电机位置不能大于163840");
                 return;
             }
-            motorController->moveToPosition(position);
+            motorController->moveToPosition(position, 1);
         }
     });
     connect(ui->btn_motorSweep, &QPushButton::pressed, this, [this]() {

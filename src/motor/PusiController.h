@@ -88,7 +88,7 @@ public:
 public:
     bool   init(void) override;
     bool   run(quint16 speed) override;
-    bool   moveToPosition(double postion) override;
+    bool   moveToPosition(double postion, int direct) override;
     bool   moveToHome(void) override;
     bool   moveFixSpeed(quint32 speed) override;
     qint32 getActualVelocity(void) override;

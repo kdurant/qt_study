@@ -116,6 +116,14 @@ private:
         QLabel *label_adCaptureStatus;
     } sysStatus;
 
+    struct DoubleWaveConfig
+    {
+        double prev_angle;
+        double step_ratio;
+        double min_view_angle;
+        double max_view_angle;
+    } doubleWaveConfig;
+
     Ui::MainWindow *ui;
     QUdpSocket *    udpSocket;
     QSettings *     configIni;
@@ -184,7 +192,6 @@ private:
 
     WaterGuard waterGuard;
     QMutex     mutex;
-    double     default_start_angle;
 
     qint64           testCnt{0};
     QVector<QString> testString;

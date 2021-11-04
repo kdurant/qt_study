@@ -41,7 +41,7 @@ bool EPOS2::run(quint16 speed)
  * @param postion
  * @return 
  */
-bool EPOS2::moveToPosition(double postion)
+bool EPOS2::moveToPosition(double postion, int direct)
 {
     clearFault();
     setProfilePositionMode();
@@ -90,7 +90,7 @@ bool EPOS2::sweep(quint32 start_pos, quint32 end_pos)
     }
     else if(start_pos == end_pos)  // 停止条件
     {
-        moveToPosition(0);
+        moveToPosition(0, 1);
         running = false;
     }
     else
@@ -99,7 +99,7 @@ bool EPOS2::sweep(quint32 start_pos, quint32 end_pos)
         start_pos = (start_pos / 360.0) * 163840;
         end_pos   = (end_pos / 360.0) * 163840;
 
-        moveToPosition(0);
+        moveToPosition(0, 1);
     }
     qDebug() << "running value = " << running;
 
@@ -111,7 +111,7 @@ bool EPOS2::sweep(quint32 start_pos, quint32 end_pos)
         qDebug() << "running value(in while) = " << running;
         range_min = end_pos * 0.95;
         range_max = end_pos * 1.05;
-        moveToPosition(end_pos);
+        moveToPosition(end_pos, 1);
 
         current_pos = getActualPosition();
         while(current_pos < range_min)
@@ -124,7 +124,7 @@ bool EPOS2::sweep(quint32 start_pos, quint32 end_pos)
 
         range_min = start_pos * 0.95;
         range_max = start_pos * 1.05;
-        moveToPosition(start_pos);
+        moveToPosition(start_pos, 1);
 
         current_pos = getActualPosition();
         while(current_pos > range_max)

@@ -22,15 +22,28 @@ bool PusiController::run(quint16 speed)
     return false;
 }
 
-bool PusiController::moveToPosition(double postion)
+/**
+* @brief 步进电机，以当前位置为起点，移动指定step
+*
+* @param postion
+* @param direct, 1, 正向; 0, 反向
+*
+* @return 
+*/
+bool PusiController::moveToPosition(double postion, int direct)
 {
-    return false;
+    if(direct)
+        setMoveDirect(PusiController::POSITIVE);
+    else
+        setMoveDirect(PusiController::NEGTIVE);
+    return turnStepsByNum(postion);
 }
 
 bool PusiController::moveToHome()
 {
     bool status;
     int  postion;
+    int  reSendCnt = 0;
 
     writeBlockTriggerValue(0xff);
     writeBlockLen(0x2f);
@@ -43,7 +56,7 @@ bool PusiController::moveToHome()
 
     qDebug() << "step1: 反转，找EXT1";
     setMoveDirect(PusiController::NEGTIVE);  // 找EXT1
-    turnStepsByNum(10000);
+    turnStepsByNum(2000);
     readControl1(reg1);
     if(reg1.bit1_ext1 == 1)
     {
@@ -54,7 +67,7 @@ bool PusiController::moveToHome()
 
     qDebug() << "step2: 正转，找EXT2";
     setMoveDirect(PusiController::POSITIVE);  // 找EXT2
-    turnStepsByNum(10000);
+    turnStepsByNum(2000);
     readControl1(reg1);
     if(reg1.bit2_ext2 == 1)
     {
@@ -64,19 +77,32 @@ bool PusiController::moveToHome()
 
     qDebug() << "step3: 一直反转，直到找到EXT1";
     setMoveDirect(PusiController::NEGTIVE);
+    reSendCnt = 0;
     while(reg1.bit1_ext1 == 0)
     {
         status = turnStepsByNum(50000);  // 刚好是从EXT2到EXT1需要的步数
         readControl1(reg1);
+        reSendCnt++;
+        if(reSendCnt > 10)
+        {
+            return false;
+        }
     }
 
+    reSendCnt = 0;
     while(reg1.bit1_ext1 == 1 || reg1.bit2_ext2 == 1)
     {
         clearExit1MarkBit();
         clearExit2MarkBit();
         qDebug() << "step3-a: 清除EXT1，EXT2";
+        Common::sleepWithoutBlock(500);
+        readControl1(reg1);
+        reSendCnt++;
+        if(reSendCnt > 10)
+        {
+            return false;
+        }
     }
-    readControl1(reg1);
 
 start_pos:
     qDebug() << "step4: 正转1864step, 归零完成";

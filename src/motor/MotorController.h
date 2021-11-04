@@ -25,7 +25,7 @@ public:
      */
     virtual bool run(quint16 speed) = 0;
 
-    virtual bool moveToPosition(double postion) = 0;
+    virtual bool moveToPosition(double postion, int direct) = 0;
 
     virtual bool moveToHome(void) = 0;
 
