@@ -109,8 +109,8 @@ bool LaserType5::getStatus()
                                  (static_cast<quint8>(recvData[38]) << 16) +
                                  (static_cast<quint8>(recvData[39]) << 24);
 
-                info.status_bit = static_cast<quint8>(recvData[45]);
-                info.error_bit  = static_cast<quint8>(recvData[46]);
+                info.statusBit = static_cast<quint8>(recvData[45]);
+                info.errorBit  = static_cast<quint8>(recvData[46]);
                 emit laserInfoReady(info);
                 return true;
 

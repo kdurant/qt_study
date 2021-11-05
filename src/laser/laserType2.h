@@ -10,22 +10,37 @@ class LaserType2 : public LaserController
 public:
     LaserType2()
     {
-        isRecvNewData = false;
+        isRecvNewData         = false;
+        info.status           = -1;
+        info.work_time        = -1;
+        info.freq_outside     = -1;
+        info.freq_inside      = -1;
+        info.expected_current = -1;
+        info.real_current     = -1;
+        info.temp             = -1;
+        info.headTemp         = -1;
+        info.ldTemp           = -1;
+        info.laserCrystalTemp = -1;
+        info.multiCrystalTemp = -1;
+        info.statusBit        = 0;
+        info.errorBit         = 0;
     }
 
+    bool setMode(OpenMode mode) override;
     bool open(void) override;
-
     bool close(void) override;
+    bool setFreq(qint32 freq) override;
+    bool setCurrent(quint16 current) override;
+    bool getStatus(void) override;
 
-    bool    setFreq(qint32 freq) override;
-    bool    setCurrent(qint32 current);
+private:
     QString getCurrent(void);
     QString getFreq(void);
     QString getTemp(void);
-    QString getStatus(void);
+    QString getSwitch(void);
 
 public slots:
-    void setNewData(QByteArray& data)
+    void setNewData(QByteArray& data) override
     {
         isRecvNewData = true;
         recvData      = data;

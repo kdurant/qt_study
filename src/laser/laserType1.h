@@ -19,22 +19,34 @@ class LaserType1 : public LaserController
 public:
     LaserType1()
     {
-        isRecvNewData = false;
+        isRecvNewData         = false;
+        info.status           = -1;
+        info.work_time        = -1;
+        info.freq_outside     = -1;
+        info.freq_inside      = -1;
+        info.expected_current = -1;
+        info.real_current     = -1;
+        info.temp             = -1;
+        info.headTemp         = -1;
+        info.ldTemp           = -1;
+        info.laserCrystalTemp = -1;
+        info.multiCrystalTemp = -1;
+        info.statusBit        = 0;
+        info.errorBit         = 0;
     }
 
     bool setMode(OpenMode mode) override;
-
     bool open(void) override;
-
     bool close(void) override;
     bool setPower(quint16 power) override;
 
+    bool getStatus(void) override;
+
+private:
     bool setLD2DlyTime(quint16 value);
 
-    bool getStatus(void);
-
 public slots:
-    void setNewData(QByteArray& data)
+    void setNewData(QByteArray& data) override
     {
         recvData = data;
         emit responseDataReady();

@@ -24,11 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
     daDriver = new DAControl();
     adDriver = new ADControl();
 
-    laserDriver  = new LaserController();
     laser1Driver = new LaserType1();
     laser2Driver = new LaserType2();
     laser3Driver = new LaserType3();
-    laser4Driver = new LaserType4();
     laser5Driver = new LaserType5();
     laser6Driver = new LaserType6();
 
@@ -139,7 +137,8 @@ void MainWindow::initParameter()
             radarType = BspConfig::RADAR_TPYE_DRONE;
             break;
         case 5:
-            radarType = BspConfig::RADAR_TYPE_WATER_GUARD;
+            radarType   = BspConfig::RADAR_TYPE_WATER_GUARD;
+            laserDriver = new LaserType4();
             break;
         case 6:
             radarType = BspConfig::RADAR_TPYE_SECOND_INSTITUDE;
@@ -668,7 +667,7 @@ void MainWindow::initSignalSlot()
                 laser5Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                laser4Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 laser6Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
@@ -960,14 +959,14 @@ void MainWindow::initSignalSlot()
             itemList.first()->setText(1, QString::number(info.work_time));
 
             itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
-            itemList.first()->setText(1, QString("%1").arg(QString::number(info.status_bit, 2), 8, QLatin1Char('0')));
-            itemList.first()->child(0)->setText(1, QString::number((info.status_bit >> 0) & 0x01));
-            itemList.first()->child(1)->setText(1, QString::number((info.status_bit >> 1) & 0x01));
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
+            itemList.first()->child(0)->setText(1, QString::number((info.statusBit >> 0) & 0x01));
+            itemList.first()->child(1)->setText(1, QString::number((info.statusBit >> 1) & 0x01));
 
             itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
-            itemList.first()->setText(1, QString("%1").arg(QString::number(info.error_bit, 2), 8, QLatin1Char('0')));
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
             for(int i = 0; i < 5; i++)
-                itemList.first()->child(i)->setText(1, QString::number((info.error_bit >> i) & 0x01));
+                itemList.first()->child(i)->setText(1, QString::number((info.errorBit >> i) & 0x01));
         });
     }
     else if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
@@ -987,21 +986,21 @@ void MainWindow::initSignalSlot()
             itemList.first()->setText(1, QString::number(info.work_time));
 
             itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
-            itemList.first()->setText(1, QString("%1").arg(QString::number(info.status_bit, 2), 8, QLatin1Char('0')));
-            itemList.first()->child(0)->setText(1, QString::number((info.status_bit >> 0) & 0x01));
-            itemList.first()->child(1)->setText(1, QString::number((info.status_bit >> 1) & 0x01));
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
+            itemList.first()->child(0)->setText(1, QString::number((info.statusBit >> 0) & 0x01));
+            itemList.first()->child(1)->setText(1, QString::number((info.statusBit >> 1) & 0x01));
 
             itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
-            itemList.first()->setText(1, QString("%1").arg(QString::number(info.error_bit, 2), 8, QLatin1Char('0')));
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
             for(int i = 0; i < 5; i++)
-                itemList.first()->child(i)->setText(1, QString::number((info.error_bit >> i) & 0x01));
+                itemList.first()->child(i)->setText(1, QString::number((info.errorBit >> i) & 0x01));
         });
     }
     else if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
-        connect(laser4Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
-        connect(dispatch, &ProtocolDispatch::laserDataReady, laser4Driver, &LaserType4::setNewData);
-        connect(laser4Driver, &LaserType4::laserInfoReady, this, &MainWindow::showLaserInfo);
+        connect(laserDriver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
+        connect(dispatch, &ProtocolDispatch::laserDataReady, laserDriver, &LaserController::setNewData);
+        connect(laserDriver, &LaserController::laserInfoReady, this, &MainWindow::showLaserInfo);
     }
     else if(radarType == BspConfig::RADAR_TPYE_LAND)
     {
@@ -1016,16 +1015,16 @@ void MainWindow::initSignalSlot()
             QList<QTreeWidgetItem *> itemList;
 
             itemList = ui->treeWidget_laser->findItems("开关", Qt::MatchExactly);
-            itemList.first()->setText(1, info.status);
+            //            itemList.first()->setText(1, info.status);
 
             itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
-            itemList.first()->setText(1, info.current);
+            //            itemList.first()->setText(1, info.current);
 
             itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
-            itemList.first()->setText(1, info.temp);
+            //            itemList.first()->setText(1, info.temp);
 
             itemList = ui->treeWidget_laser->findItems("错误码", Qt::MatchExactly);
-            itemList.first()->setText(1, info.error);
+            //            itemList.first()->setText(1, info.error);
         });
     }
 
@@ -1047,8 +1046,8 @@ void MainWindow::initSignalSlot()
                 break;
 
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                laser4Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
-                status = laser4Driver->open();
+                laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                status = laserDriver->open();
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 ui->btn_laserOpen->setEnabled(false);
@@ -1080,7 +1079,7 @@ void MainWindow::initSignalSlot()
                 status = laser5Driver->close();
                 break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laser4Driver->close();
+                status = laserDriver->close();
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 status = laser6Driver->close();
@@ -1107,7 +1106,7 @@ void MainWindow::initSignalSlot()
                 status = laser5Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
                 break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laser4Driver->setPower(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                status = laserDriver->setPower(ui->lineEdit_laserCurrent->text().toInt() / 10);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 status = laser6Driver->setPower(ui->lineEdit_laserCurrent->text().toInt());
@@ -1133,7 +1132,7 @@ void MainWindow::initSignalSlot()
                 status = laser5Driver->setMode(LaserController::IN_SIDE);
                 break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laser4Driver->setMode(LaserController::IN_SIDE);
+                status = laserDriver->setMode(LaserController::IN_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 status = laser6Driver->setMode(LaserController::IN_SIDE);
@@ -1159,7 +1158,7 @@ void MainWindow::initSignalSlot()
                 status = laser5Driver->setMode(LaserController::OUT_SIDE);
                 break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laser4Driver->setMode(LaserController::OUT_SIDE);
+                status = laserDriver->setMode(LaserController::OUT_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 status = laser6Driver->setMode(LaserController::OUT_SIDE);
@@ -1177,13 +1176,13 @@ void MainWindow::initSignalSlot()
         {
             case BspConfig::RADAR_TPYE_LAND:
                 itemList = ui->treeWidget_laser->findItems("激光器状态", Qt::MatchExactly);
-                itemList.first()->setText(1, laser2Driver->getStatus());
+                //                itemList.first()->setText(1, laser2Driver->getStatus());
                 itemList = ui->treeWidget_laser->findItems("外触发频率", Qt::MatchExactly);
-                itemList.first()->setText(1, laser2Driver->getFreq());
+                //                itemList.first()->setText(1, laser2Driver->getFreq());
                 itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
-                itemList.first()->setText(1, laser2Driver->getCurrent());
+                //                itemList.first()->setText(1, laser2Driver->getCurrent());
                 itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
-                itemList.first()->setText(1, laser2Driver->getTemp());
+                //                itemList.first()->setText(1, laser2Driver->getTemp());
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
                 while(laser3Driver->getStatus() != true)
@@ -1196,7 +1195,7 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
-                laser6Driver->getInfo();
+                //                laser6Driver->getInfo();
                 break;
             default:
                 break;
@@ -1938,33 +1937,36 @@ void MainWindow::getSysInfo()
 
 void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
 {
-    QList<QTreeWidgetItem *> itemList;
+    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+    {
+        QList<QTreeWidgetItem *> itemList;
 
-    itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.expected_current * 10));
+        itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);
+        itemList.first()->setText(1, QString::number(info.expected_current * 10));
 
-    itemList = ui->treeWidget_laser->findItems("电流实际值(mA)", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.real_current * 10));
+        itemList = ui->treeWidget_laser->findItems("电流实际值(mA)", Qt::MatchExactly);
+        itemList.first()->setText(1, QString::number(info.real_current * 10));
 
-    itemList = ui->treeWidget_laser->findItems("激光头温度(°)", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.headTemp));
+        itemList = ui->treeWidget_laser->findItems("激光头温度(°)", Qt::MatchExactly);
+        itemList.first()->setText(1, QString::number(info.headTemp));
 
-    itemList = ui->treeWidget_laser->findItems("LD温度(°)", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.ldTemp * 0.0001, 'f', 4));
+        itemList = ui->treeWidget_laser->findItems("LD温度(°)", Qt::MatchExactly);
+        itemList.first()->setText(1, QString::number(info.ldTemp * 0.0001, 'f', 4));
 
-    itemList = ui->treeWidget_laser->findItems("激光晶体温度(°)", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.laserCrystalTemp * 0.0001, 'f', 4));
+        itemList = ui->treeWidget_laser->findItems("激光晶体温度(°)", Qt::MatchExactly);
+        itemList.first()->setText(1, QString::number(info.laserCrystalTemp * 0.0001, 'f', 4));
 
-    itemList = ui->treeWidget_laser->findItems("倍频晶体温度(°)", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.multiCrystalTemp * 0.0001, 'f', 4));
+        itemList = ui->treeWidget_laser->findItems("倍频晶体温度(°)", Qt::MatchExactly);
+        itemList.first()->setText(1, QString::number(info.multiCrystalTemp * 0.0001, 'f', 4));
 
-    itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
-    itemList.first()
-        ->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
+        itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
+        itemList.first()
+            ->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
 
-    itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
-    itemList.first()
-        ->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
+        itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
+        itemList.first()
+            ->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
+    }
 }
 
 QString MainWindow::read_ip_address()

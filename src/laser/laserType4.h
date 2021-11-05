@@ -6,7 +6,7 @@
 #include "ProtocolDispatch.h"
 #include "LaserController.h"
 
-// 水下雷达雷达激光控制器
+// 水下预警雷达雷达激光控制器
 // 5kHz/532nm/500uj 微脉冲激光器
 /*
 说明:
@@ -30,31 +30,26 @@ class LaserType4 : public LaserController
 public:
     LaserType4()
     {
-        isRecvNewData = false;
+        isRecvNewData         = false;
+        info.status           = -1;
+        info.work_time        = -1;
+        info.freq_outside     = -1;
+        info.freq_inside      = -1;
+        info.expected_current = -1;
+        info.real_current     = -1;
+        info.temp             = -1;
+        info.headTemp         = -1;
+        info.ldTemp           = -1;
+        info.laserCrystalTemp = -1;
+        info.multiCrystalTemp = -1;
+        info.statusBit        = 0;
+        info.errorBit         = 0;
     }
-    struct LaserInfo
-    {
-        // 主控板返回状态
-        quint8 statusBit;
-        quint8 errorBit;
-        qint8  headTemp;
-
-        // 驱动板返回状态
-        quint32 expected_current;
-        quint32 real_current;  // unit: 0.01A
-
-        quint32 ldTemp;            // 0-3000000(正值),3000000-6000000(负值)  温度值*10000,精确到小数点后第四位
-        quint32 laserCrystalTemp;  // 激光晶体温度
-        quint32 multiCrystalTemp;  // 倍频晶体温度
-    };
 
     bool setMode(OpenMode mode) override;
-
     bool open(void) override;
-
     bool close(void) override;
     bool setPower(quint16 power) override;
-
     bool setFreq(qint32 freq) override
     {
         QByteArray frame = BspConfig::int2ba(freq);
@@ -62,12 +57,11 @@ public:
         return true;
     }
 
-    void getStatus(QByteArray& data);
+    bool getStatus(void) override;
 
 private:
-    LaserInfo info{0, 0, 0, 0, 0, 0, 0, 0};
-
-    quint8 checksum(QVector<quint8>& data)
+    QByteArray frame;
+    quint8     checksum(QVector<quint8>& data)
     {
         quint8 ret = 0;
         for(int i = 0; i < 8; i++)
@@ -75,27 +69,22 @@ private:
         return ret;
     }
 
-signals:
-    void laserInfoReady(LaserInfo& data);  // 接收到响应数据
-
 public slots:
-    void setNewData(QByteArray& data)
+    void setNewData(QByteArray& data) override
     {
         recvData = data;
 
-        QByteArray frame;
-
         frame = data.mid(0, 40);
-        getStatus(frame);
+        getStatus();
 
         frame = data.mid(40, 40);
-        getStatus(frame);
+        getStatus();
 
         frame = data.mid(80, 40);
-        getStatus(frame);
+        getStatus();
 
         frame = data.mid(120);
-        getStatus(frame);
+        getStatus();
 
         emit laserInfoReady(info);
     }

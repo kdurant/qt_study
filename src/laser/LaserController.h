@@ -7,6 +7,28 @@ class LaserController : public QObject
     Q_OBJECT
 
 public:
+    // 不同类型的激光器使用的字段不一样
+    struct LaserInfo
+    {
+        qint8  status;  // on or off
+        qint32 work_time;
+
+        qint32 freq_outside;
+        qint32 freq_inside;
+
+        qint32 expected_current;
+        qint32 real_current;
+
+        double temp;              //
+        qint8  headTemp;          // 激光头温度
+        qint32 ldTemp;            // 0-3000000(正值),3000000-6000000(负值)  温度值*10000,精确到小数点后第四位
+        qint32 laserCrystalTemp;  // 激光晶体温度
+        qint32 multiCrystalTemp;  // 倍频晶体温度
+
+        quint8 statusBit;
+        quint8 errorBit;
+    } info;
+
     bool       isRecvNewData;  // 是否收到数据
     QByteArray recvData;
 
@@ -32,6 +54,11 @@ public:
         return false;
     };
 
+    virtual bool setCurrent(quint16 current)
+    {
+        return false;
+    };
+
     // 外触发时的工作频率
     virtual bool setFreq(qint32 freq)
     {
@@ -47,8 +74,18 @@ public:
         return false;
     };
 
+    virtual bool getStatus(void)
+    {
+        return false;
+    }
+public slots:
+    virtual void setNewData(QByteArray& data)
+    {
+    }
+
 signals:
     void sendDataReady(qint32 command, qint32 data_len, QByteArray& data);  // 需要发送的数据已经准备好
-    void responseDataReady(void);                                           // 接收到响应数据
+    void responseDataReady(void);
+    void laserInfoReady(LaserInfo& data);
 };
 #endif

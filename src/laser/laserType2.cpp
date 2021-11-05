@@ -1,5 +1,10 @@
 #include "laserType2.h"
 
+bool LaserType2::setMode(LaserController::OpenMode mode)
+{
+    return false;
+}
+
 /**
  * @brief LaserType2::open
  * 1. 使用00 00 00 02指令，设置激光器工作频率
@@ -51,7 +56,7 @@ bool LaserType2::setFreq(qint32 freq)
  * 例如：设置5000，返回5000.00
  * @return
  */
-bool LaserType2::setCurrent(qint32 current)
+bool LaserType2::setCurrent(quint16 current)
 {
     QByteArray packet{"ACC 2 "};
     packet.append(QString::number(current));
@@ -71,6 +76,28 @@ bool LaserType2::setCurrent(qint32 current)
             return false;
     }
     return false;
+}
+
+bool LaserType2::getStatus()
+{
+    QString s;
+    s = getCurrent();
+    if(s != "error")
+        info.real_current = -99;
+
+    s = getFreq();
+    if(s != "error")
+        info.freq_outside = -99;
+
+    s = getTemp();
+    if(s != "error")
+        info.temp = -99;
+
+    s = getSwitch();
+    if(s != "error")
+        info.status = -99;
+
+    return true;
 }
 
 QString LaserType2::getCurrent()
@@ -140,7 +167,8 @@ QString LaserType2::getTemp()
  * @brief LaserType2::getStatus
  * @return
  */
-QString LaserType2::getStatus()
+
+QString LaserType2::getSwitch()
 {
     QByteArray packet{"AM"};
     packet.append("\r\n");
