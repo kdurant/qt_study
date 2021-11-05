@@ -32,26 +32,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 include(./src/Protocol/protocol.pri)
 include(./src/BitColorMap/BitColorMap.pri)
 include(./src/motor/MotorController.pri)
+include(./src/laser/LaserController.pri)
 
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
     noteinfo.cpp \
-    src/laser/laserType3.cpp \
-    src/laser/laserType4.cpp \
-    src/laser/laserType5.cpp \
-    src/laser/laserType6.cpp \
     src/saveWave/SaveWave.cpp \
     src/wave/OfflineWaveform.cpp \
     src/wave/OnlineWaveform.cpp \
     src/wave/WaveExtract.cpp \
-    src/laser/laserType2.cpp \
     src/third_lib/QCustomPlot/qcustomplot.cpp \
     save.cpp \
     src/DevInfo/DevInfo.cpp \
     src/UpdateBin/UpdateBin.cpp \
-    src/laser/LaserController.cpp \
-    src/laser/laserType1.cpp \
 
 HEADERS += \
     common.h \
@@ -59,15 +53,10 @@ HEADERS += \
     src/DAControll/DAControl.h \
     src/attitudeSensor/AttitudeSensor.h \
     src/gpsInfo/gpsInfo.h \
-    src/laser/laserType3.h \
-    src/laser/laserType4.h \
-    src/laser/laserType5.h \
-    src/laser/laserType6.h \
     src/saveWave/SaveWave.h \
     src/wave/OfflineWaveform.h \
     src/wave/OnlineWaveform.h \
     src/wave/WaveExtract.h \
-    src/laser/laserType2.h \
         mainwindow.h \
     noteinfo.h \
     bsp_config.h \
@@ -75,12 +64,9 @@ HEADERS += \
     save.h \
     src/DevInfo/DevInfo.h \
     src/UpdateBin/UpdateBin.h \
-    src/laser/LaserController.h \
-    src/laser/laserType1.h \
 
 INCLUDEPATH += ./src/UpdateBin
 INCLUDEPATH += ./src/wave
-INCLUDEPATH += ./src/laser
 INCLUDEPATH += ./src/DevInfo
 INCLUDEPATH += ./src/saveWave
 INCLUDEPATH += ./src/ADControll
