@@ -65,9 +65,7 @@ public:
     void getStatus(QByteArray& data);
 
 private:
-    bool       isRecvNewData;  // 是否收到数据
-    QByteArray recvData;
-    LaserInfo  info{0, 0, 0, 0, 0, 0, 0, 0};
+    LaserInfo info{0, 0, 0, 0, 0, 0, 0, 0};
 
     quint8 checksum(QVector<quint8>& data)
     {

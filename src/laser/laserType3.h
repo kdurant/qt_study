@@ -9,9 +9,6 @@ class LaserType3 : public LaserController
 {
     Q_OBJECT
 private:
-    bool       isRecvNewData;  // 是否收到数据
-    QByteArray recvData;
-
     quint8 checksum(QVector<quint8>& data)
     {
         quint8 ret = 0;

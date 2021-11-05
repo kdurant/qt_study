@@ -7,10 +7,6 @@
 // 陆地雷达激光控制器
 class LaserType2 : public LaserController
 {
-private:
-    bool       isRecvNewData;  // 是否收到数据
-    QByteArray recvData;
-
 public:
     LaserType2()
     {

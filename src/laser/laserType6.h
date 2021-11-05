@@ -10,9 +10,6 @@
 class LaserType6 : public LaserController
 {
     Q_OBJECT
-private:
-    bool       isRecvNewData;  // 是否收到数据
-    QByteArray recvData;
 
 public:
     LaserType6()

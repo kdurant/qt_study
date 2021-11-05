@@ -7,6 +7,10 @@ class LaserController : public QObject
     Q_OBJECT
 
 public:
+    bool       isRecvNewData;  // 是否收到数据
+    QByteArray recvData;
+
+public:
     enum OpenMode
     {
         IN_SIDE  = 0x00,
