@@ -946,55 +946,13 @@ void MainWindow::initSignalSlot()
     {
         connect(laser3Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser3Driver, &LaserType3::setNewData);
-        connect(laser3Driver, &LaserType3::laserInfoReady, this, [this](LaserType3::LaserInfo &info) {
-            QList<QTreeWidgetItem *> itemList;
-
-            itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
-            itemList.first()->setText(1, QString::number(info.freq_outside));
-
-            itemList = ui->treeWidget_laser->findItems("内触发频率(Hz)", Qt::MatchExactly);
-            itemList.first()->setText(1, QString::number(info.freq_inside));
-
-            itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
-            itemList.first()->setText(1, QString::number(info.work_time));
-
-            itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
-            itemList.first()->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
-            itemList.first()->child(0)->setText(1, QString::number((info.statusBit >> 0) & 0x01));
-            itemList.first()->child(1)->setText(1, QString::number((info.statusBit >> 1) & 0x01));
-
-            itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
-            itemList.first()->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
-            for(int i = 0; i < 5; i++)
-                itemList.first()->child(i)->setText(1, QString::number((info.errorBit >> i) & 0x01));
-        });
+        connect(laser3Driver, &LaserType3::laserInfoReady, this, &MainWindow::showLaserInfo);
     }
     else if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
     {
         connect(laser5Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser5Driver, &LaserType5::setNewData);
-        connect(laser5Driver, &LaserType5::laserInfoReady, this, [this](LaserType5::LaserInfo &info) {
-            QList<QTreeWidgetItem *> itemList;
-
-            itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
-            itemList.first()->setText(1, QString::number(info.freq_outside));
-
-            itemList = ui->treeWidget_laser->findItems("内触发频率(Hz)", Qt::MatchExactly);
-            itemList.first()->setText(1, QString::number(info.freq_inside));
-
-            itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
-            itemList.first()->setText(1, QString::number(info.work_time));
-
-            itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
-            itemList.first()->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
-            itemList.first()->child(0)->setText(1, QString::number((info.statusBit >> 0) & 0x01));
-            itemList.first()->child(1)->setText(1, QString::number((info.statusBit >> 1) & 0x01));
-
-            itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
-            itemList.first()->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
-            for(int i = 0; i < 5; i++)
-                itemList.first()->child(i)->setText(1, QString::number((info.errorBit >> i) & 0x01));
-        });
+        connect(laser5Driver, &LaserType5::laserInfoReady, this, &MainWindow::showLaserInfo);
     }
     else if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
@@ -1011,21 +969,7 @@ void MainWindow::initSignalSlot()
     {
         connect(laser6Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser6Driver, &LaserType6::setNewData);
-        connect(laser6Driver, &LaserType6::laserInfoReady, this, [this](LaserType6::LaserInfo &info) {
-            QList<QTreeWidgetItem *> itemList;
-
-            itemList = ui->treeWidget_laser->findItems("开关", Qt::MatchExactly);
-            //            itemList.first()->setText(1, info.status);
-
-            itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
-            //            itemList.first()->setText(1, info.current);
-
-            itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
-            //            itemList.first()->setText(1, info.temp);
-
-            itemList = ui->treeWidget_laser->findItems("错误码", Qt::MatchExactly);
-            //            itemList.first()->setText(1, info.error);
-        });
+        connect(laser6Driver, &LaserType6::laserInfoReady, this, &MainWindow::showLaserInfo);
     }
 
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]() {
@@ -1937,35 +1881,95 @@ void MainWindow::getSysInfo()
 
 void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
 {
-    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+    QList<QTreeWidgetItem *> itemList;
+    switch(radarType)
     {
-        QList<QTreeWidgetItem *> itemList;
+        case BspConfig::RADAR_TPYE_LAND:
+            break;
+        case BspConfig::RADAR_TPYE_DRONE:
+            itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_outside));
 
-        itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);
-        itemList.first()->setText(1, QString::number(info.expected_current * 10));
+            itemList = ui->treeWidget_laser->findItems("内触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_inside));
 
-        itemList = ui->treeWidget_laser->findItems("电流实际值(mA)", Qt::MatchExactly);
-        itemList.first()->setText(1, QString::number(info.real_current * 10));
+            itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.work_time));
 
-        itemList = ui->treeWidget_laser->findItems("激光头温度(°)", Qt::MatchExactly);
-        itemList.first()->setText(1, QString::number(info.headTemp));
+            itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
+            itemList.first()->child(0)->setText(1, QString::number((info.statusBit >> 0) & 0x01));
+            itemList.first()->child(1)->setText(1, QString::number((info.statusBit >> 1) & 0x01));
 
-        itemList = ui->treeWidget_laser->findItems("LD温度(°)", Qt::MatchExactly);
-        itemList.first()->setText(1, QString::number(info.ldTemp * 0.0001, 'f', 4));
+            itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
+            for(int i = 0; i < 5; i++)
+                itemList.first()->child(i)->setText(1, QString::number((info.errorBit >> i) & 0x01));
+            break;
+        case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+            itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_outside));
 
-        itemList = ui->treeWidget_laser->findItems("激光晶体温度(°)", Qt::MatchExactly);
-        itemList.first()->setText(1, QString::number(info.laserCrystalTemp * 0.0001, 'f', 4));
+            itemList = ui->treeWidget_laser->findItems("内触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_inside));
 
-        itemList = ui->treeWidget_laser->findItems("倍频晶体温度(°)", Qt::MatchExactly);
-        itemList.first()->setText(1, QString::number(info.multiCrystalTemp * 0.0001, 'f', 4));
+            itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.work_time));
 
-        itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
-        itemList.first()
-            ->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
+            itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
+            itemList.first()->child(0)->setText(1, QString::number((info.statusBit >> 0) & 0x01));
+            itemList.first()->child(1)->setText(1, QString::number((info.statusBit >> 1) & 0x01));
 
-        itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
-        itemList.first()
-            ->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
+            itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
+            for(int i = 0; i < 5; i++)
+                itemList.first()->child(i)->setText(1, QString::number((info.errorBit >> i) & 0x01));
+            break;
+        case BspConfig::RADAR_TYPE_WATER_GUARD:
+
+            itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.expected_current * 10));
+
+            itemList = ui->treeWidget_laser->findItems("电流实际值(mA)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.real_current * 10));
+
+            itemList = ui->treeWidget_laser->findItems("激光头温度(°)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.headTemp));
+
+            itemList = ui->treeWidget_laser->findItems("LD温度(°)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.ldTemp * 0.0001, 'f', 4));
+
+            itemList = ui->treeWidget_laser->findItems("激光晶体温度(°)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.laserCrystalTemp * 0.0001, 'f', 4));
+
+            itemList = ui->treeWidget_laser->findItems("倍频晶体温度(°)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.multiCrystalTemp * 0.0001, 'f', 4));
+
+            itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
+            itemList.first()
+                ->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
+
+            itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
+            itemList.first()
+                ->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
+            break;
+        case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
+
+            itemList = ui->treeWidget_laser->findItems("开关", Qt::MatchExactly);
+            //            itemList.first()->setText(1, info.status);
+
+            itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
+            //            itemList.first()->setText(1, info.current);
+
+            itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
+            //            itemList.first()->setText(1, info.temp);
+
+            itemList = ui->treeWidget_laser->findItems("错误码", Qt::MatchExactly);
+            //            itemList.first()->setText(1, info.error);
+            break;
+        default:
+            break;
     }
 }
 
