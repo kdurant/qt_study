@@ -27,7 +27,6 @@ MainWindow::MainWindow(QWidget *parent) :
     laser1Driver = new LaserType1();
     laser2Driver = new LaserType2();
     laser3Driver = new LaserType3();
-    laser5Driver = new LaserType5();
     laser6Driver = new LaserType6();
 
     devInfo = new DevInfo();
@@ -131,7 +130,8 @@ void MainWindow::initParameter()
             radarType = BspConfig::RADAR_TPYE_760;
             break;
         case 3:
-            radarType = BspConfig::RADAR_TPYE_DOUBLE_WAVE;
+            radarType   = BspConfig::RADAR_TPYE_DOUBLE_WAVE;
+            laserDriver = new LaserType5();
             break;
         case 4:
             radarType = BspConfig::RADAR_TPYE_DRONE;
@@ -241,6 +241,9 @@ void MainWindow::uiConfig()
     ui->lineEdit_pmtDelayTime->hide();
     ui->lineEdit_pmtGateTime->hide();
     ui->label_laserPower->hide();
+    ui->label_laserBlueCurrent->hide();
+    ui->spinBox_laserBlueCurrent->hide();
+
     ui->comboBox_laserPower->hide();
     ui->label_sampleDelay->hide();
     ui->lineEdit_sampleDelay->hide();
@@ -280,11 +283,24 @@ void MainWindow::uiConfig()
         ui->label_sampleDelay->show();
         ui->lineEdit_sampleDelay->show();
 
+        ui->label_triggerMode->hide();
+        ui->rbtn_triggerInside->hide();
+        ui->rbtn_triggerOutside->hide();
+
         ui->comboBox_laserFreq->addItem("100");
         ui->comboBox_laserFreq->addItem("200");
 
-        ui->lineEdit_laserCurrent->setToolTip("3500 <= current <=4500");
-        ui->lineEdit_laserCurrent->setValidator(new QIntValidator(0, 1000, this));
+        ui->label_laserGreenCurrent->setText("绿光(532)电流:A");
+        ui->lineEdit_laserGreenCurrent->setToolTip("0A <= current <=7.2A");
+        ui->lineEdit_laserGreenCurrent->setText("7.2");
+
+        ui->label_laserBlueCurrent->show();
+        ui->label_laserBlueCurrent->setText("蓝光(486)电流:A");
+
+        ui->spinBox_laserBlueCurrent->show();
+        ui->spinBox_laserBlueCurrent->setToolTip("0A <= current <=110A");
+        ui->spinBox_laserBlueCurrent->setValue(70);
+        ui->spinBox_laserBlueCurrent->setRange(0, 110);
 
         QStringList DA1List{"MPPC_532", "PMT_532", "MPPC_486", "PMT486"};
         QStringList AD1List{"APD TEMP", "MPPC_532", "PMT_532", "MPPC_486", "PMT486"};
@@ -319,8 +335,8 @@ void MainWindow::uiConfig()
     {
         title = "海洋雷达控制软件";
         ui->lineEdit_radarType->setText("海洋雷达");
-        ui->label_laserCurrent->hide();
-        ui->lineEdit_laserCurrent->hide();
+        ui->label_laserGreenCurrent->hide();
+        ui->lineEdit_laserGreenCurrent->hide();
         ui->comboBox_laserFreq->addItem("5000");
         //        ui->label
     }
@@ -351,16 +367,16 @@ void MainWindow::uiConfig()
         ui->comboBox_laserPower->hide();
         ui->comboBox_laserFreq->addItem("4000");
 
-        ui->lineEdit_laserCurrent->setToolTip("3500 <= current <=4500");
-        ui->lineEdit_laserCurrent->setValidator(new QIntValidator(0, 1000, this));
+        ui->lineEdit_laserGreenCurrent->setToolTip("3500 <= current <=4500");
+        ui->lineEdit_laserGreenCurrent->setValidator(new QIntValidator(0, 1000, this));
 
         QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
         QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_ADChSelect->addItems(AD1List);
 
-        ui->label_laserCurrent->hide();
-        ui->lineEdit_laserCurrent->hide();
+        ui->label_laserGreenCurrent->hide();
+        ui->lineEdit_laserGreenCurrent->hide();
         ui->btn_laserSetCurrent->hide();
 
         ui->tabWidget->setTabEnabled(5, true);
@@ -406,8 +422,8 @@ void MainWindow::uiConfig()
         ui->comboBox_ADChSelect->addItems(AD1List);
 
         ui->comboBox_laserFreq->addItem("10");
-        ui->label_laserCurrent->setText("激光电流(A)");
-        ui->lineEdit_laserCurrent->setText("200");
+        ui->label_laserGreenCurrent->setText("激光电流(A)");
+        ui->lineEdit_laserGreenCurrent->setText("200");
         ui->lineEdit_sampleRate->setText("10");
     }
     else
@@ -664,8 +680,6 @@ void MainWindow::initSignalSlot()
                 laser3Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                laser5Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
-                break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 break;
@@ -948,13 +962,7 @@ void MainWindow::initSignalSlot()
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser3Driver, &LaserType3::setNewData);
         connect(laser3Driver, &LaserType3::laserInfoReady, this, &MainWindow::showLaserInfo);
     }
-    else if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
-    {
-        connect(laser5Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
-        connect(dispatch, &ProtocolDispatch::laserDataReady, laser5Driver, &LaserType5::setNewData);
-        connect(laser5Driver, &LaserType5::laserInfoReady, this, &MainWindow::showLaserInfo);
-    }
-    else if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+    else if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE || radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
         connect(laserDriver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laserDriver, &LaserController::setNewData);
@@ -985,10 +993,6 @@ void MainWindow::initSignalSlot()
                 status = laser3Driver->open();
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                laser5Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
-                status = laser5Driver->open();
-                break;
-
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 status = laserDriver->open();
@@ -1020,8 +1024,6 @@ void MainWindow::initSignalSlot()
                 status = laser3Driver->close();
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                status = laser5Driver->close();
-                break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laserDriver->close();
                 break;
@@ -1040,20 +1042,21 @@ void MainWindow::initSignalSlot()
         switch(radarType)
         {
             case BspConfig::RADAR_TPYE_LAND:
-                status = laser2Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt());
+                status = laser2Driver->setCurrent(ui->lineEdit_laserGreenCurrent->text().toInt());
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
                 // 上位机界面单位mA， 设置1000mA(0x3e8), 设置下去的值：100, 单位是0.01A，结果还是1000mA
-                status = laser3Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                status = laser3Driver->setCurrent(ui->lineEdit_laserGreenCurrent->text().toInt() / 10);
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                status = laser5Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                status = laserDriver->setCurrent(ui->lineEdit_laserGreenCurrent->text().toDouble() * 100);
+                status = laserDriver->setPower(ui->spinBox_laserBlueCurrent->value() * 100);
                 break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laserDriver->setPower(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                status = laserDriver->setPower(ui->lineEdit_laserGreenCurrent->text().toInt() / 10);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
-                status = laser6Driver->setPower(ui->lineEdit_laserCurrent->text().toInt());
+                status = laser6Driver->setPower(ui->lineEdit_laserGreenCurrent->text().toInt());
                 break;
             default:
                 break;
@@ -1073,8 +1076,6 @@ void MainWindow::initSignalSlot()
                 status = laser3Driver->setMode(LaserController::IN_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                status = laser5Driver->setMode(LaserController::IN_SIDE);
-                break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laserDriver->setMode(LaserController::IN_SIDE);
                 break;
@@ -1099,8 +1100,6 @@ void MainWindow::initSignalSlot()
                 status = laser3Driver->setMode(LaserController::OUT_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                status = laser5Driver->setMode(LaserController::OUT_SIDE);
-                break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laserDriver->setMode(LaserController::OUT_SIDE);
                 break;
@@ -1133,7 +1132,7 @@ void MainWindow::initSignalSlot()
                     ;
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                while(laser5Driver->getStatus() != true)
+                while(laserDriver->getStatus() != true)
                     ;
                 break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:

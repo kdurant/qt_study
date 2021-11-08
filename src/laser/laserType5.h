@@ -3,6 +3,7 @@
 #include "LaserController.h"
 #include "bsp_config.h"
 #include "protocol.h"
+#include "common.h"
 
 /**
  * @brief  双波长雷达激光控制器
@@ -52,7 +53,11 @@ public:
     bool close(void) override;
     bool setFreq(qint32 freq) override;
     bool setCurrent(quint16 current) override;
+    bool setPower(quint16 power) override;
     bool getStatus(void) override;
+
+    bool checkself(void) override;
+    bool reset(void) override;
 
 public slots:
     void setNewData(QByteArray& data) override

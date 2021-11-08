@@ -78,6 +78,17 @@ public:
     {
         return false;
     }
+
+    virtual bool checkself(void)
+    {
+        return false;
+    }
+
+    virtual bool reset(void)
+    {
+        return false;
+    }
+
 public slots:
     virtual void setNewData(QByteArray& data)
     {
