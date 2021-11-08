@@ -44,6 +44,18 @@ QSpinBox
     min-height: 4ex;
 }
 
+QDoubleSpinBox
+{
+    border:2px solid #C0DCF2;
+    border-radius:3px;
+    padding:2px;
+    background:none;
+    selection-background-color:#00BB9E;
+    selection-color:#FFFFFF;
+    min-height: 4ex;
+}
+
+
 QLabel
 {
     color:#386487;

@@ -291,8 +291,9 @@ void MainWindow::uiConfig()
         ui->comboBox_laserFreq->addItem("200");
 
         ui->label_laserGreenCurrent->setText("绿光(532)电流:A");
-        ui->lineEdit_laserGreenCurrent->setToolTip("0A <= current <=7.2A");
-        ui->lineEdit_laserGreenCurrent->setText("7.2");
+
+        ui->doubleSpinBox_laserGreenCurrent->setToolTip("0A <= current <=7.2A");
+        ui->doubleSpinBox_laserGreenCurrent->setRange(0, 7.2);
 
         ui->label_laserBlueCurrent->show();
         ui->label_laserBlueCurrent->setText("蓝光(486)电流:A");
@@ -336,7 +337,7 @@ void MainWindow::uiConfig()
         title = "海洋雷达控制软件";
         ui->lineEdit_radarType->setText("海洋雷达");
         ui->label_laserGreenCurrent->hide();
-        ui->lineEdit_laserGreenCurrent->hide();
+        ui->doubleSpinBox_laserGreenCurrent->hide();
         ui->comboBox_laserFreq->addItem("5000");
         //        ui->label
     }
@@ -367,8 +368,8 @@ void MainWindow::uiConfig()
         ui->comboBox_laserPower->hide();
         ui->comboBox_laserFreq->addItem("4000");
 
-        ui->lineEdit_laserGreenCurrent->setToolTip("3500 <= current <=4500");
-        ui->lineEdit_laserGreenCurrent->setValidator(new QIntValidator(0, 1000, this));
+        ui->doubleSpinBox_laserGreenCurrent->setToolTip("3500 <= current <=4500");
+        ui->doubleSpinBox_laserGreenCurrent->setRange(0, 1000);
 
         QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
         QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
@@ -376,7 +377,7 @@ void MainWindow::uiConfig()
         ui->comboBox_ADChSelect->addItems(AD1List);
 
         ui->label_laserGreenCurrent->hide();
-        ui->lineEdit_laserGreenCurrent->hide();
+        ui->doubleSpinBox_laserGreenCurrent->hide();
         ui->btn_laserSetCurrent->hide();
 
         ui->tabWidget->setTabEnabled(5, true);
@@ -423,7 +424,7 @@ void MainWindow::uiConfig()
 
         ui->comboBox_laserFreq->addItem("10");
         ui->label_laserGreenCurrent->setText("激光电流(A)");
-        ui->lineEdit_laserGreenCurrent->setText("200");
+        ui->doubleSpinBox_laserGreenCurrent->setValue(200);
         ui->lineEdit_sampleRate->setText("10");
     }
     else
@@ -1037,26 +1038,33 @@ void MainWindow::initSignalSlot()
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
 
+    connect(ui->btn_laserReset, &QPushButton::pressed, this, [this]() {
+        bool status = false;
+        status      = laserDriver->reset();
+        if(!status)
+            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
+    });
+
     connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]() {
         bool status = false;
         switch(radarType)
         {
             case BspConfig::RADAR_TPYE_LAND:
-                status = laser2Driver->setCurrent(ui->lineEdit_laserGreenCurrent->text().toInt());
+                status = laser2Driver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
                 // 上位机界面单位mA， 设置1000mA(0x3e8), 设置下去的值：100, 单位是0.01A，结果还是1000mA
-                status = laser3Driver->setCurrent(ui->lineEdit_laserGreenCurrent->text().toInt() / 10);
+                status = laser3Driver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()) / 10);
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                status = laserDriver->setCurrent(ui->lineEdit_laserGreenCurrent->text().toDouble() * 100);
+                status = laserDriver->setCurrent(ui->doubleSpinBox_laserGreenCurrent->value() * 100);
                 status = laserDriver->setPower(ui->spinBox_laserBlueCurrent->value() * 100);
                 break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laserDriver->setPower(ui->lineEdit_laserGreenCurrent->text().toInt() / 10);
+                status = laserDriver->setPower(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()) / 10);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
-                status = laser6Driver->setPower(ui->lineEdit_laserGreenCurrent->text().toInt());
+                status = laser6Driver->setPower(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
                 break;
             default:
                 break;
