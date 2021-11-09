@@ -303,9 +303,10 @@ void MainWindow::uiConfig()
         ui->spinBox_laserBlueCurrent->setValue(70);
         ui->spinBox_laserBlueCurrent->setRange(0, 110);
 
-        QStringList DA1List{"MPPC_532", "PMT_532", "MPPC_486", "PMT486"};
-        QStringList AD1List{"APD TEMP", "MPPC_532", "PMT_532", "MPPC_486", "PMT486"};
+        QStringList DA1List{"NOT_USED", "PMT_532_1", "PMT_486_1", "PMT_532_2", "PMT_486_2"};
+        QStringList AD1List{"APD_TEMP", "PMT_532_1", "PMT_486_1", "PMT_532_2", "PMT_486_2"};
         ui->comboBox_DAChSelect->addItems(DA1List);
+        ui->comboBox_DAChSelect->setCurrentIndex(1);
         ui->comboBox_ADChSelect->addItems(AD1List);
 
         ui->toolBox_motor->setItemEnabled(1, false);
