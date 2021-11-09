@@ -189,6 +189,8 @@ private:
         QVector<WaveExtract::WaveformInfo>          diff;
     };
 
+    int colorMap_X_max{512};
+
     WaterGuard waterGuard;
     QMutex     mutex;
 

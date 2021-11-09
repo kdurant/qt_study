@@ -1631,7 +1631,10 @@ void MainWindow::plotColormapSettings()
         customPlot->setInteractions(QCP::Interaction::iRangeDrag |
                                     QCP::Interaction::iRangeZoom);
         customPlot->axisRect()->setupFullAxesBox(true);  //四刻度轴
-        customPlot->xAxis->setLabel("电机角度(°)");
+        if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+            customPlot->xAxis->setLabel("采样次数");
+        else
+            customPlot->xAxis->setLabel("电机角度(°)");
         customPlot->yAxis->setLabel("时间(ns)");
         //if(i != 3)
         //customPlot->hide();
@@ -1639,11 +1642,16 @@ void MainWindow::plotColormapSettings()
         QCPColorMap *colorMap = new QCPColorMap(customPlot->xAxis, customPlot->yAxis);
         widget2QCPColorMapList.append(colorMap);
 
-        int nx = 180;  // 角度, x轴
-        int ny = 500;  // 采样数据的距离，y轴
+        int nx = colorMap_X_max;  // 角度, x轴
+        int ny = 1500;            // 采样数据的距离，y轴
 
-        colorMap->data()->setSize(nx, ny);                                // nx*ny(cells)
-        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 500));  // span the coordinate range
+        colorMap->data()->setSize(nx, ny);  // nx*ny(cells)
+
+        if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+            colorMap->data()->setRange(QCPRange(0, colorMap_X_max), QCPRange(0, 1500));  // span the coordinate range
+        else
+            colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 500));  // span the coordinate range
+
         colorMap->setDataScaleType(QCPAxis::ScaleType::stLinear);
 
         // add color scale:
@@ -1653,6 +1661,7 @@ void MainWindow::plotColormapSettings()
         colorMap->setColorScale(colorScale);
         colorScale->setRangeDrag(false);
         colorScale->setRangeZoom(false);
+        colorScale->axis()->setLabel(QString("通道%1采样值").arg(i + 1));  // color scale name
 
         // set the color gradient of the color map to one of the presets:
         QCPColorGradient colorGradient;
@@ -1663,7 +1672,7 @@ void MainWindow::plotColormapSettings()
         QCPMarginGroup *marginGroup = new QCPMarginGroup(customPlot);
         customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 
-        colorMap->setDataRange(QCPRange(150, 1000));
+        colorMap->setDataRange(QCPRange(0, 255));
         // rescale the data dimension such that all data points in the span lie in the visualized by the color gradient
         colorMap->rescaleDataRange();
         // rescale the key and value axes so the whole color map is visible;
