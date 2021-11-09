@@ -1835,9 +1835,20 @@ void MainWindow::on_bt_showWave_clicked()
         if(running)
         {
             ui->spin_framePos->setValue(i);
-            QVector<quint8> sampleData = offlineWaveForm->getFrameData(i);  // 耗时小于1ms
+            sampleData = offlineWaveForm->getFrameData(i);  // 耗时小于1ms
+            waveExtract->getWaveform(radarType, sampleData);
 
-            // showSampleData(sampleData);
+            QByteArray frame_head;
+            for(int i = 0; i < 88; i++)
+                frame_head.append(sampleData[i]);
+            gps->parserGpsData(frame_head);  //  耗时小于1ms
+
+            fpgaRadarType  = frame_head[84];
+            fpgaVersion[0] = 'v';
+            fpgaVersion[1] = frame_head[85];
+            fpgaVersion[2] = '.';
+            fpgaVersion[3] = frame_head[86];
+            fpgaVersion[4] = frame_head[87];
 
             if(interval_time == 0)
             {
