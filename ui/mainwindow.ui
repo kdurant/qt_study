@@ -564,7 +564,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -577,6 +577,27 @@
          <property name="verticalSpacing">
           <number>12</number>
          </property>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_laserPower">
+           <property name="text">
+            <string>激光功率(W)：</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="0">
+          <widget class="QPushButton" name="btn_laserReadInfo">
+           <property name="text">
+            <string>读取激光器状态</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QRadioButton" name="rbtn_triggerInside">
+           <property name="text">
+            <string>内触发</string>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="1">
           <widget class="QComboBox" name="comboBox_laserFreq">
            <property name="toolTip">
@@ -584,24 +605,13 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="label_laserCurrent">
-           <property name="text">
-            <string>激光电流(mA)：</string>
+         <item row="10" column="0">
+          <widget class="QPushButton" name="btn_laserOpen">
+           <property name="toolTip">
+            <string>1. 设置外触发频率；2.打开激光器</string>
            </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QPushButton" name="btn_laserSetCurrent">
            <property name="text">
-            <string>设置电流</string>
-           </property>
-          </widget>
-         </item>
-         <item row="7" column="1">
-          <widget class="QPushButton" name="btn_laserClose">
-           <property name="text">
-            <string>关闭激光器</string>
+            <string>打开激光器</string>
            </property>
           </widget>
          </item>
@@ -612,38 +622,25 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="lineEdit_laserCurrent">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+         <item row="2" column="1">
+          <widget class="QRadioButton" name="rbtn_triggerOutside">
            <property name="text">
-            <string>4000</string>
+            <string>外触发</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_laserPower">
-           <property name="text">
-            <string>激光功率(W)：</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_7">
-           <property name="text">
-            <string>激光重频(Hz)：</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QRadioButton" name="rbtn_triggerInside">
-           <property name="text">
-            <string>内触发</string>
-           </property>
+         <item row="14" column="0" colspan="2">
+          <widget class="QTreeWidget" name="treeWidget_laser">
+           <column>
+            <property name="text">
+             <string>参数</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>值</string>
+            </property>
+           </column>
           </widget>
          </item>
          <item row="3" column="1">
@@ -668,42 +665,63 @@
            </item>
           </widget>
          </item>
-         <item row="7" column="0">
-          <widget class="QPushButton" name="btn_laserOpen">
-           <property name="toolTip">
-            <string>1. 设置外触发频率；2.打开激光器</string>
-           </property>
+         <item row="10" column="1">
+          <widget class="QPushButton" name="btn_laserClose">
            <property name="text">
-            <string>打开激光器</string>
+            <string>关闭激光器</string>
            </property>
           </widget>
          </item>
-         <item row="10" column="0">
-          <widget class="QPushButton" name="btn_laserReadInfo">
+         <item row="8" column="0">
+          <widget class="QPushButton" name="btn_laserSetCurrent">
            <property name="text">
-            <string>读取激光器状态</string>
+            <string>设置电流</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
-          <widget class="QRadioButton" name="rbtn_triggerOutside">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_7">
            <property name="text">
-            <string>外触发</string>
+            <string>激光重频(Hz)：</string>
            </property>
           </widget>
          </item>
-         <item row="11" column="0" colspan="2">
-          <widget class="QTreeWidget" name="treeWidget_laser">
-           <column>
-            <property name="text">
-             <string>参数</string>
-            </property>
-           </column>
-           <column>
-            <property name="text">
-             <string>值</string>
-            </property>
-           </column>
+         <item row="5" column="1">
+          <widget class="QSpinBox" name="spinBox_laserBlueCurrent">
+           <property name="maximum">
+            <number>110</number>
+           </property>
+           <property name="value">
+            <number>70</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_laserGreenCurrent">
+           <property name="text">
+            <string>激光电流(mA)：</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_laserBlueCurrent">
+           <property name="text">
+            <string>蓝光电流</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_laserGreenCurrent">
+           <property name="value">
+            <double>7.200000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="1">
+          <widget class="QPushButton" name="btn_laserReset">
+           <property name="text">
+            <string>复位激光器</string>
+           </property>
           </widget>
          </item>
         </layout>

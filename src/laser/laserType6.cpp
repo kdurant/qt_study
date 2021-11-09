@@ -68,17 +68,22 @@ bool LaserType6::setPower(quint16 power)
     return true;
 }
 
-bool LaserType6::getInfo(void)
+bool LaserType6::getStatus()
 {
-    LaserInfo info{0, 0, 0, 0};
-    info.temp    = getTemp();
-    info.status  = getWorkStatus();
-    info.error   = getError();
-    info.current = getPower();
-
-    emit laserInfoReady(info);
     return true;
 }
+
+//bool LaserType6::getInfo(void)
+//{
+//    LaserInfo info{0, 0, 0, 0};
+//    info.temp    = getTemp();
+//    info.status  = getWorkStatus();
+//    info.error   = getError();
+//    info.current = getPower();
+
+//    emit laserInfoReady(info);
+//    return true;
+//}
 
 /**
 * @brief check if there is an error
@@ -175,4 +180,3 @@ QString LaserType6::getWorkStatus()
     QString v = getValueField(recvData);
     return v;
 }
-

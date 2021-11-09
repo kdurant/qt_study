@@ -3,6 +3,7 @@
 #include "LaserController.h"
 #include "bsp_config.h"
 #include "protocol.h"
+#include "common.h"
 
 /**
  * @brief  双波长雷达激光控制器
@@ -20,9 +21,6 @@ class LaserType5 : public LaserController
 {
     Q_OBJECT
 private:
-    bool       isRecvNewData;  // 是否收到数据
-    QByteArray recvData;
-
     quint8 checksum(QVector<quint8>& data)
     {
         quint8 ret = 0;
@@ -34,35 +32,35 @@ private:
 public:
     LaserType5()
     {
-        isRecvNewData = false;
+        isRecvNewData         = false;
+        info.status           = -1;
+        info.work_time        = -1;
+        info.freq_outside     = -1;
+        info.freq_inside      = -1;
+        info.expected_current = -1;
+        info.real_current     = -1;
+        info.temp             = -1;
+        info.headTemp         = -1;
+        info.ldTemp           = -1;
+        info.laserCrystalTemp = -1;
+        info.multiCrystalTemp = -1;
+        info.statusBit        = 0;
+        info.errorBit         = 0;
     }
 
-    struct LaserInfo
-    {
-        quint32 freq_outside;
-        quint32 freq_inside;
-        quint32 work_time;
-        quint8  status_bit;
-        quint8  error_bit;
-    };
-
     bool setMode(OpenMode mode) override;
-
     bool open(void) override;
-
     bool close(void) override;
-
     bool setFreq(qint32 freq) override;
+    bool setCurrent(quint16 current) override;
+    bool setPower(quint16 power) override;
+    bool getStatus(void) override;
 
-    bool setCurrent(quint16 current);
-
-    bool getStatus(void);
-
-signals:
-    void laserInfoReady(LaserInfo& data);  // 接收到响应数据
+    bool checkself(void) override;
+    bool reset(void) override;
 
 public slots:
-    void setNewData(QByteArray& data)
+    void setNewData(QByteArray& data) override
     {
         isRecvNewData = true;
         recvData      = data;

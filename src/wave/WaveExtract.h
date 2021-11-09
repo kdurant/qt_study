@@ -14,6 +14,9 @@ class WaveExtract : public QObject
 
 public:
     // 存放采样数据中，某个具体通道的具体哪一段数据
+    // QVector<WaveformInfo> 来保存一次采样数据的全部信息
+    // 如果有4个元素，说明没有第二段采样数据
+    // 如果有8个元素，0，2，4，6为采样数据的第一段；1，3，5，7为采样数据的第二段
     struct WaveformInfo
     {
         quint32         motorCnt;  // 电机位置计数

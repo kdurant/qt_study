@@ -24,12 +24,9 @@ MainWindow::MainWindow(QWidget *parent) :
     daDriver = new DAControl();
     adDriver = new ADControl();
 
-    laserDriver  = new LaserController();
     laser1Driver = new LaserType1();
     laser2Driver = new LaserType2();
     laser3Driver = new LaserType3();
-    laser4Driver = new LaserType4();
-    laser5Driver = new LaserType5();
     laser6Driver = new LaserType6();
 
     devInfo = new DevInfo();
@@ -133,13 +130,15 @@ void MainWindow::initParameter()
             radarType = BspConfig::RADAR_TPYE_760;
             break;
         case 3:
-            radarType = BspConfig::RADAR_TPYE_DOUBLE_WAVE;
+            radarType   = BspConfig::RADAR_TPYE_DOUBLE_WAVE;
+            laserDriver = new LaserType5();
             break;
         case 4:
             radarType = BspConfig::RADAR_TPYE_DRONE;
             break;
         case 5:
-            radarType = BspConfig::RADAR_TYPE_WATER_GUARD;
+            radarType   = BspConfig::RADAR_TYPE_WATER_GUARD;
+            laserDriver = new LaserType4();
             break;
         case 6:
             radarType = BspConfig::RADAR_TPYE_SECOND_INSTITUDE;
@@ -242,6 +241,9 @@ void MainWindow::uiConfig()
     ui->lineEdit_pmtDelayTime->hide();
     ui->lineEdit_pmtGateTime->hide();
     ui->label_laserPower->hide();
+    ui->label_laserBlueCurrent->hide();
+    ui->spinBox_laserBlueCurrent->hide();
+
     ui->comboBox_laserPower->hide();
     ui->label_sampleDelay->hide();
     ui->lineEdit_sampleDelay->hide();
@@ -281,15 +283,30 @@ void MainWindow::uiConfig()
         ui->label_sampleDelay->show();
         ui->lineEdit_sampleDelay->show();
 
+        ui->label_triggerMode->hide();
+        ui->rbtn_triggerInside->hide();
+        ui->rbtn_triggerOutside->hide();
+
         ui->comboBox_laserFreq->addItem("100");
         ui->comboBox_laserFreq->addItem("200");
 
-        ui->lineEdit_laserCurrent->setToolTip("3500 <= current <=4500");
-        ui->lineEdit_laserCurrent->setValidator(new QIntValidator(0, 1000, this));
+        ui->label_laserGreenCurrent->setText("绿光(532)电流:A");
 
-        QStringList DA1List{"MPPC_532", "PMT_532", "MPPC_486", "PMT486"};
-        QStringList AD1List{"APD TEMP", "MPPC_532", "PMT_532", "MPPC_486", "PMT486"};
+        ui->doubleSpinBox_laserGreenCurrent->setToolTip("0A <= current <=7.2A");
+        ui->doubleSpinBox_laserGreenCurrent->setRange(0, 7.2);
+
+        ui->label_laserBlueCurrent->show();
+        ui->label_laserBlueCurrent->setText("蓝光(486)电流:A");
+
+        ui->spinBox_laserBlueCurrent->show();
+        ui->spinBox_laserBlueCurrent->setToolTip("0A <= current <=110A");
+        ui->spinBox_laserBlueCurrent->setValue(70);
+        ui->spinBox_laserBlueCurrent->setRange(0, 110);
+
+        QStringList DA1List{"PMT_532_1", "PMT_486_1", "PMT_532_2", "PMT_486_2"};
+        QStringList AD1List{"APD_TEMP", "PMT_532_1", "PMT_486_1", "PMT_532_2", "PMT_486_2"};
         ui->comboBox_DAChSelect->addItems(DA1List);
+        ui->comboBox_DAChSelect->setCurrentIndex(1);
         ui->comboBox_ADChSelect->addItems(AD1List);
 
         ui->toolBox_motor->setItemEnabled(1, false);
@@ -315,13 +332,16 @@ void MainWindow::uiConfig()
             doubleWaveConfig.min_view_angle = 15;
             doubleWaveConfig.max_view_angle = 110;
         });
+
+        doubleWaveConfig.colorMapKey.resize(4);
+        doubleWaveConfig.colorMapValue.resize(4);
     }
     else if(radarType == BspConfig::RADAR_TPYE_OCEAN)
     {
         title = "海洋雷达控制软件";
         ui->lineEdit_radarType->setText("海洋雷达");
-        ui->label_laserCurrent->hide();
-        ui->lineEdit_laserCurrent->hide();
+        ui->label_laserGreenCurrent->hide();
+        ui->doubleSpinBox_laserGreenCurrent->hide();
         ui->comboBox_laserFreq->addItem("5000");
         //        ui->label
     }
@@ -352,16 +372,16 @@ void MainWindow::uiConfig()
         ui->comboBox_laserPower->hide();
         ui->comboBox_laserFreq->addItem("4000");
 
-        ui->lineEdit_laserCurrent->setToolTip("3500 <= current <=4500");
-        ui->lineEdit_laserCurrent->setValidator(new QIntValidator(0, 1000, this));
+        ui->doubleSpinBox_laserGreenCurrent->setToolTip("3500 <= current <=4500");
+        ui->doubleSpinBox_laserGreenCurrent->setRange(0, 1000);
 
         QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
         QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_ADChSelect->addItems(AD1List);
 
-        ui->label_laserCurrent->hide();
-        ui->lineEdit_laserCurrent->hide();
+        ui->label_laserGreenCurrent->hide();
+        ui->doubleSpinBox_laserGreenCurrent->hide();
         ui->btn_laserSetCurrent->hide();
 
         ui->tabWidget->setTabEnabled(5, true);
@@ -407,8 +427,8 @@ void MainWindow::uiConfig()
         ui->comboBox_ADChSelect->addItems(AD1List);
 
         ui->comboBox_laserFreq->addItem("10");
-        ui->label_laserCurrent->setText("激光电流(A)");
-        ui->lineEdit_laserCurrent->setText("200");
+        ui->label_laserGreenCurrent->setText("激光电流(A)");
+        ui->doubleSpinBox_laserGreenCurrent->setValue(200);
         ui->lineEdit_sampleRate->setText("10");
     }
     else
@@ -665,10 +685,8 @@ void MainWindow::initSignalSlot()
                 laser3Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                laser5Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
-                break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                laser4Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 laser6Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
@@ -947,61 +965,13 @@ void MainWindow::initSignalSlot()
     {
         connect(laser3Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser3Driver, &LaserType3::setNewData);
-        connect(laser3Driver, &LaserType3::laserInfoReady, this, [this](LaserType3::LaserInfo &info) {
-            QList<QTreeWidgetItem *> itemList;
-
-            itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
-            itemList.first()->setText(1, QString::number(info.freq_outside));
-
-            itemList = ui->treeWidget_laser->findItems("内触发频率(Hz)", Qt::MatchExactly);
-            itemList.first()->setText(1, QString::number(info.freq_inside));
-
-            itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
-            itemList.first()->setText(1, QString::number(info.work_time));
-
-            itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
-            itemList.first()->setText(1, QString("%1").arg(QString::number(info.status_bit, 2), 8, QLatin1Char('0')));
-            itemList.first()->child(0)->setText(1, QString::number((info.status_bit >> 0) & 0x01));
-            itemList.first()->child(1)->setText(1, QString::number((info.status_bit >> 1) & 0x01));
-
-            itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
-            itemList.first()->setText(1, QString("%1").arg(QString::number(info.error_bit, 2), 8, QLatin1Char('0')));
-            for(int i = 0; i < 5; i++)
-                itemList.first()->child(i)->setText(1, QString::number((info.error_bit >> i) & 0x01));
-        });
+        connect(laser3Driver, &LaserType3::laserInfoReady, this, &MainWindow::showLaserInfo);
     }
-    else if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+    else if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE || radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
-        connect(laser5Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
-        connect(dispatch, &ProtocolDispatch::laserDataReady, laser5Driver, &LaserType5::setNewData);
-        connect(laser5Driver, &LaserType5::laserInfoReady, this, [this](LaserType5::LaserInfo &info) {
-            QList<QTreeWidgetItem *> itemList;
-
-            itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
-            itemList.first()->setText(1, QString::number(info.freq_outside));
-
-            itemList = ui->treeWidget_laser->findItems("内触发频率(Hz)", Qt::MatchExactly);
-            itemList.first()->setText(1, QString::number(info.freq_inside));
-
-            itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
-            itemList.first()->setText(1, QString::number(info.work_time));
-
-            itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
-            itemList.first()->setText(1, QString("%1").arg(QString::number(info.status_bit, 2), 8, QLatin1Char('0')));
-            itemList.first()->child(0)->setText(1, QString::number((info.status_bit >> 0) & 0x01));
-            itemList.first()->child(1)->setText(1, QString::number((info.status_bit >> 1) & 0x01));
-
-            itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
-            itemList.first()->setText(1, QString("%1").arg(QString::number(info.error_bit, 2), 8, QLatin1Char('0')));
-            for(int i = 0; i < 5; i++)
-                itemList.first()->child(i)->setText(1, QString::number((info.error_bit >> i) & 0x01));
-        });
-    }
-    else if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
-    {
-        connect(laser4Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
-        connect(dispatch, &ProtocolDispatch::laserDataReady, laser4Driver, &LaserType4::setNewData);
-        connect(laser4Driver, &LaserType4::laserInfoReady, this, &MainWindow::showLaserInfo);
+        connect(laserDriver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
+        connect(dispatch, &ProtocolDispatch::laserDataReady, laserDriver, &LaserController::setNewData);
+        connect(laserDriver, &LaserController::laserInfoReady, this, &MainWindow::showLaserInfo);
     }
     else if(radarType == BspConfig::RADAR_TPYE_LAND)
     {
@@ -1012,21 +982,7 @@ void MainWindow::initSignalSlot()
     {
         connect(laser6Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser6Driver, &LaserType6::setNewData);
-        connect(laser6Driver, &LaserType6::laserInfoReady, this, [this](LaserType6::LaserInfo &info) {
-            QList<QTreeWidgetItem *> itemList;
-
-            itemList = ui->treeWidget_laser->findItems("开关", Qt::MatchExactly);
-            itemList.first()->setText(1, info.status);
-
-            itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
-            itemList.first()->setText(1, info.current);
-
-            itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
-            itemList.first()->setText(1, info.temp);
-
-            itemList = ui->treeWidget_laser->findItems("错误码", Qt::MatchExactly);
-            itemList.first()->setText(1, info.error);
-        });
+        connect(laser6Driver, &LaserType6::laserInfoReady, this, &MainWindow::showLaserInfo);
     }
 
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]() {
@@ -1042,13 +998,9 @@ void MainWindow::initSignalSlot()
                 status = laser3Driver->open();
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                laser5Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
-                status = laser5Driver->open();
-                break;
-
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                laser4Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
-                status = laser4Driver->open();
+                laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                status = laserDriver->open();
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 ui->btn_laserOpen->setEnabled(false);
@@ -1077,10 +1029,8 @@ void MainWindow::initSignalSlot()
                 status = laser3Driver->close();
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                status = laser5Driver->close();
-                break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laser4Driver->close();
+                status = laserDriver->close();
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 status = laser6Driver->close();
@@ -1092,25 +1042,34 @@ void MainWindow::initSignalSlot()
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
 
+    connect(ui->btn_laserReset, &QPushButton::pressed, this, [this]() {
+        bool status = false;
+        status      = laserDriver->reset();
+        if(!status)
+            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
+    });
+
     connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]() {
         bool status = false;
         switch(radarType)
         {
             case BspConfig::RADAR_TPYE_LAND:
-                status = laser2Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt());
+                status = laser2Driver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
                 // 上位机界面单位mA， 设置1000mA(0x3e8), 设置下去的值：100, 单位是0.01A，结果还是1000mA
-                status = laser3Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                status = laser3Driver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()) / 10);
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                status = laser5Driver->setCurrent(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                status = laserDriver->setCurrent(ui->doubleSpinBox_laserGreenCurrent->value() * 100);
+                status = laserDriver->setPower(ui->spinBox_laserBlueCurrent->value() * 100);
                 break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laser4Driver->setPower(ui->lineEdit_laserCurrent->text().toInt() / 10);
+                status = laserDriver->setPower(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()) / 10);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
-                status = laser6Driver->setPower(ui->lineEdit_laserCurrent->text().toInt());
+                status = laser6Driver->setPower(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
                 break;
             default:
                 break;
@@ -1130,10 +1089,8 @@ void MainWindow::initSignalSlot()
                 status = laser3Driver->setMode(LaserController::IN_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                status = laser5Driver->setMode(LaserController::IN_SIDE);
-                break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laser4Driver->setMode(LaserController::IN_SIDE);
+                status = laserDriver->setMode(LaserController::IN_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 status = laser6Driver->setMode(LaserController::IN_SIDE);
@@ -1156,10 +1113,8 @@ void MainWindow::initSignalSlot()
                 status = laser3Driver->setMode(LaserController::OUT_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                status = laser5Driver->setMode(LaserController::OUT_SIDE);
-                break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laser4Driver->setMode(LaserController::OUT_SIDE);
+                status = laserDriver->setMode(LaserController::OUT_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 status = laser6Driver->setMode(LaserController::OUT_SIDE);
@@ -1177,26 +1132,26 @@ void MainWindow::initSignalSlot()
         {
             case BspConfig::RADAR_TPYE_LAND:
                 itemList = ui->treeWidget_laser->findItems("激光器状态", Qt::MatchExactly);
-                itemList.first()->setText(1, laser2Driver->getStatus());
+                //                itemList.first()->setText(1, laser2Driver->getStatus());
                 itemList = ui->treeWidget_laser->findItems("外触发频率", Qt::MatchExactly);
-                itemList.first()->setText(1, laser2Driver->getFreq());
+                //                itemList.first()->setText(1, laser2Driver->getFreq());
                 itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
-                itemList.first()->setText(1, laser2Driver->getCurrent());
+                //                itemList.first()->setText(1, laser2Driver->getCurrent());
                 itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
-                itemList.first()->setText(1, laser2Driver->getTemp());
+                //                itemList.first()->setText(1, laser2Driver->getTemp());
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
                 while(laser3Driver->getStatus() != true)
                     ;
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-                while(laser5Driver->getStatus() != true)
+                while(laserDriver->getStatus() != true)
                     ;
                 break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
-                laser6Driver->getInfo();
+                //                laser6Driver->getInfo();
                 break;
             default:
                 break;
@@ -1385,9 +1340,13 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_LAND:
                 digitValue = static_cast<quint32>((analogValue - 3.434) / 0.017);
                 break;
+            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+                digitValue = static_cast<qint32>((analogValue + 0.007) / 0.001);
+                if(chNum == 0)
+                    chNum += 4;
+                break;
             case BspConfig::RADAR_TPYE_OCEAN:
             case BspConfig::RADAR_TPYE_DRONE:
-            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 if(chNum == 0)
@@ -1429,9 +1388,10 @@ void MainWindow::initSignalSlot()
     connect(dispatch, &ProtocolDispatch::ADDataReady, adDriver, &ADControl::setNewData);
     connect(adDriver, &ADControl::sendDataReady, dispatch, &ProtocolDispatch::encode);
     connect(ui->btn_ADReadValue, &QPushButton::pressed, this, [this]() {
-        quint32 chNum       = ui->comboBox_ADChSelect->currentIndex();
-        qint32  digitValue  = adDriver->getChannalValue(chNum);
-        double  analogValue = 0;
+        quint32 chNum = ui->comboBox_ADChSelect->currentIndex();
+
+        qint32 digitValue  = adDriver->getChannalValue(chNum);
+        double analogValue = 0;
         if(digitValue < 0)
             ui->lineEdit_ADValue->setText(QString::number(digitValue, 10));
         else
@@ -1680,7 +1640,10 @@ void MainWindow::plotColormapSettings()
         customPlot->setInteractions(QCP::Interaction::iRangeDrag |
                                     QCP::Interaction::iRangeZoom);
         customPlot->axisRect()->setupFullAxesBox(true);  //四刻度轴
-        customPlot->xAxis->setLabel("电机角度(°)");
+        if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+            customPlot->xAxis->setLabel("采样次数");
+        else
+            customPlot->xAxis->setLabel("电机角度(°)");
         customPlot->yAxis->setLabel("时间(ns)");
         //if(i != 3)
         //customPlot->hide();
@@ -1688,11 +1651,16 @@ void MainWindow::plotColormapSettings()
         QCPColorMap *colorMap = new QCPColorMap(customPlot->xAxis, customPlot->yAxis);
         widget2QCPColorMapList.append(colorMap);
 
-        int nx = 180;  // 角度, x轴
-        int ny = 500;  // 采样数据的距离，y轴
+        int nx = colorMap_X_max;  // 角度, x轴
+        int ny = 1500;            // 采样数据的距离，y轴
 
-        colorMap->data()->setSize(nx, ny);                                // nx*ny(cells)
-        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 500));  // span the coordinate range
+        colorMap->data()->setSize(nx, ny);  // nx*ny(cells)
+
+        if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+            colorMap->data()->setRange(QCPRange(0, colorMap_X_max), QCPRange(0, 1500));  // span the coordinate range
+        else
+            colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 500));  // span the coordinate range
+
         colorMap->setDataScaleType(QCPAxis::ScaleType::stLinear);
 
         // add color scale:
@@ -1702,6 +1670,7 @@ void MainWindow::plotColormapSettings()
         colorMap->setColorScale(colorScale);
         colorScale->setRangeDrag(false);
         colorScale->setRangeZoom(false);
+        colorScale->axis()->setLabel(QString("通道%1采样值").arg(i + 1));  // color scale name
 
         // set the color gradient of the color map to one of the presets:
         QCPColorGradient colorGradient;
@@ -1712,7 +1681,7 @@ void MainWindow::plotColormapSettings()
         QCPMarginGroup *marginGroup = new QCPMarginGroup(customPlot);
         customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 
-        colorMap->setDataRange(QCPRange(150, 1000));
+        colorMap->setDataRange(QCPRange(0, 255));
         // rescale the data dimension such that all data points in the span lie in the visualized by the color gradient
         colorMap->rescaleDataRange();
         // rescale the key and value axes so the whole color map is visible;
@@ -1722,6 +1691,7 @@ void MainWindow::plotColormapSettings()
 
 /**
 * @brief 更新伪彩色图
+* QVector.size应该是8，
 *
 * @param allCh
 */
@@ -1731,29 +1701,44 @@ void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
     QCPColorMap *    colorMap;
     QCPColorMapData *colorMapData;
     int              ch = 0;
-    for(int i = 0; i < 4; ++i)
+
+    //    if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+    //    {
+    //        for(int i = 0; i < 4; ++i)
+    //        {
+    //            if(doubleWaveConfig.colorMapKey[i].size() < colorMap_X_max)
+    //            {
+    //                //                doubleWaveConfig.colorMapKey[i].append();
+    //                //                colorMapValue[i].append(veclist[3]);
+    //            }
+    //        }
+    //    }
+    //    else
     {
-        customPlot   = widget2CustomPlotList.at(i);
-        colorMap     = widget2QCPColorMapList.at(i);
-        colorMapData = colorMap->data();
-
-        int y_offset = allCh[0].pos[0];
-        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0 + y_offset, 500 + y_offset));  // span the coordinate range
-        for(int keyIndex = 0; keyIndex < allCh[0].pos.length() && keyIndex < 500; ++keyIndex)
+        for(int i = 0; i < 4; ++i)
         {
-            if(allCh.size() == 8)
-                ch = i * 2;
+            customPlot   = widget2CustomPlotList.at(i);
+            colorMap     = widget2QCPColorMapList.at(i);
+            colorMapData = colorMap->data();
 
-            int    x     = qFloor((allCh[ch].motorCnt * 360) / 163840.0);
-            int    y     = (int)allCh[ch].pos[keyIndex] - y_offset;
-            double value = allCh[ch].value[keyIndex];
-
-            if(x >= 180)
+            int y_offset = allCh[0].pos[0];
+            colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0 + y_offset, 500 + y_offset));  // span the coordinate range
+            for(int keyIndex = 0; keyIndex < allCh[0].pos.length() && keyIndex < 500; ++keyIndex)
             {
-                return;
-            }
+                if(allCh.size() == 8)
+                    ch = i * 2;
 
-            colorMapData->setCell(x, y, value);
+                int    x     = qFloor((allCh[ch].motorCnt * 360) / 163840.0);
+                int    y     = (int)allCh[ch].pos[keyIndex] - y_offset;
+                double value = allCh[ch].value[keyIndex];
+
+                if(x >= 180)
+                {
+                    return;
+                }
+
+                colorMapData->setCell(x, y, value);
+            }
         }
     }
     customPlot->replot();
@@ -1939,32 +1924,95 @@ void MainWindow::getSysInfo()
 void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
 {
     QList<QTreeWidgetItem *> itemList;
+    switch(radarType)
+    {
+        case BspConfig::RADAR_TPYE_LAND:
+            break;
+        case BspConfig::RADAR_TPYE_DRONE:
+            itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_outside));
 
-    itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.expected_current * 10));
+            itemList = ui->treeWidget_laser->findItems("内触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_inside));
 
-    itemList = ui->treeWidget_laser->findItems("电流实际值(mA)", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.real_current * 10));
+            itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.work_time));
 
-    itemList = ui->treeWidget_laser->findItems("激光头温度(°)", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.headTemp));
+            itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
+            itemList.first()->child(0)->setText(1, QString::number((info.statusBit >> 0) & 0x01));
+            itemList.first()->child(1)->setText(1, QString::number((info.statusBit >> 1) & 0x01));
 
-    itemList = ui->treeWidget_laser->findItems("LD温度(°)", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.ldTemp * 0.0001, 'f', 4));
+            itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
+            for(int i = 0; i < 5; i++)
+                itemList.first()->child(i)->setText(1, QString::number((info.errorBit >> i) & 0x01));
+            break;
+        case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+            itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_outside));
 
-    itemList = ui->treeWidget_laser->findItems("激光晶体温度(°)", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.laserCrystalTemp * 0.0001, 'f', 4));
+            itemList = ui->treeWidget_laser->findItems("内触发频率(Hz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_inside));
 
-    itemList = ui->treeWidget_laser->findItems("倍频晶体温度(°)", Qt::MatchExactly);
-    itemList.first()->setText(1, QString::number(info.multiCrystalTemp * 0.0001, 'f', 4));
+            itemList = ui->treeWidget_laser->findItems("工作时间(s)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.work_time));
 
-    itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
-    itemList.first()
-        ->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
+            itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
+            itemList.first()->child(0)->setText(1, QString::number((info.statusBit >> 0) & 0x01));
+            itemList.first()->child(1)->setText(1, QString::number((info.statusBit >> 1) & 0x01));
 
-    itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
-    itemList.first()
-        ->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
+            itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
+            itemList.first()->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
+            for(int i = 0; i < 5; i++)
+                itemList.first()->child(i)->setText(1, QString::number((info.errorBit >> i) & 0x01));
+            break;
+        case BspConfig::RADAR_TYPE_WATER_GUARD:
+
+            itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.expected_current * 10));
+
+            itemList = ui->treeWidget_laser->findItems("电流实际值(mA)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.real_current * 10));
+
+            itemList = ui->treeWidget_laser->findItems("激光头温度(°)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.headTemp));
+
+            itemList = ui->treeWidget_laser->findItems("LD温度(°)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.ldTemp * 0.0001, 'f', 4));
+
+            itemList = ui->treeWidget_laser->findItems("激光晶体温度(°)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.laserCrystalTemp * 0.0001, 'f', 4));
+
+            itemList = ui->treeWidget_laser->findItems("倍频晶体温度(°)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.multiCrystalTemp * 0.0001, 'f', 4));
+
+            itemList = ui->treeWidget_laser->findItems("状态位", Qt::MatchExactly);
+            itemList.first()
+                ->setText(1, QString("%1").arg(QString::number(info.statusBit, 2), 8, QLatin1Char('0')));
+
+            itemList = ui->treeWidget_laser->findItems("错误位", Qt::MatchExactly);
+            itemList.first()
+                ->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
+            break;
+        case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
+
+            itemList = ui->treeWidget_laser->findItems("开关", Qt::MatchExactly);
+            //            itemList.first()->setText(1, info.status);
+
+            itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
+            //            itemList.first()->setText(1, info.current);
+
+            itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
+            //            itemList.first()->setText(1, info.temp);
+
+            itemList = ui->treeWidget_laser->findItems("错误码", Qt::MatchExactly);
+            //            itemList.first()->setText(1, info.error);
+            break;
+        default:
+            break;
+    }
 }
 
 QString MainWindow::read_ip_address()
@@ -2148,6 +2196,10 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
 #endif
             }
         }
+    }
+
+    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+    {
     }
     //        else
     if(ui->checkBox_isRerfreshUI->isChecked())

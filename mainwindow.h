@@ -122,6 +122,9 @@ private:
         double step_ratio;
         double min_view_angle;
         double max_view_angle;
+
+        QVector<QList<QVector<double>>> colorMapKey;
+        QVector<QList<QVector<double>>> colorMapValue;
     } doubleWaveConfig;
 
     Ui::MainWindow *ui;
@@ -162,7 +165,6 @@ private:
     LaserType1 *     laser1Driver;
     LaserType2 *     laser2Driver;
     LaserType3 *     laser3Driver;
-    LaserType4 *     laser4Driver;
     LaserType5 *     laser5Driver;
     LaserType6 *     laser6Driver;
 
@@ -189,6 +191,8 @@ private:
         QVector<QVector<WaveExtract::WaveformInfo>> base;
         QVector<WaveExtract::WaveformInfo>          diff;
     };
+
+    int colorMap_X_max{512};
 
     WaterGuard waterGuard;
     QMutex     mutex;
