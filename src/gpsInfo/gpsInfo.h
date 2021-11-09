@@ -127,6 +127,7 @@ public slots:
                 gps.current_week_ms = Common::ba2int(frame.mid(16, 4), 1) / 1000;
             else
                 gps.current_week_ms = Common::byteArrayToDouble(frame.mid(12, 8), 0);  // 无人机雷达GPS格式
+            gps.sub_time  = Common::ba2int(frame.mid(20, 4), 1);
             gps.latitude  = Common::byteArrayToDouble(frame.mid(48, 8), 0);
             gps.longitude = Common::byteArrayToDouble(frame.mid(56, 8), 0);
             gps.altitude  = Common::byteArrayToDouble(frame.mid(64, 8), 0);

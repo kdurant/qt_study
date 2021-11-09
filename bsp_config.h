@@ -2,7 +2,7 @@
 #define BSP_CONFIG_H
 #include <QtCore>
 #define CONCAT_(x, y) x##y
-#define CONCAT(x, y) CONCAT_(x, y)
+#define CONCAT(x, y)  CONCAT_(x, y)
 
 #define CHECKTIME(x)                     \
     QElapsedTimer CONCAT(sb_, __LINE__); \
@@ -25,14 +25,15 @@ public:
 
     struct Gps_Info
     {
-        qint32 week;
-        double current_week_ms;
-        double latitude;
-        double longitude;
-        double altitude;
-        double roll;     // 翻滚角
-        double pitch;    // 俯仰角
-        double heading;  // 方位角
+        qint32  week;
+        double  current_week_ms;
+        quint32 sub_time;
+        double  latitude;
+        double  longitude;
+        double  altitude;
+        double  roll;     // 翻滚角
+        double  pitch;    // 俯仰角
+        double  heading;  // 方位角
     };
 
     /**
