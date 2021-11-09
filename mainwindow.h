@@ -122,6 +122,9 @@ private:
         double step_ratio;
         double min_view_angle;
         double max_view_angle;
+
+        QVector<QList<QVector<double>>> colorMapKey;
+        QVector<QList<QVector<double>>> colorMapValue;
     } doubleWaveConfig;
 
     Ui::MainWindow *ui;

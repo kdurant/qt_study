@@ -303,7 +303,7 @@ void MainWindow::uiConfig()
         ui->spinBox_laserBlueCurrent->setValue(70);
         ui->spinBox_laserBlueCurrent->setRange(0, 110);
 
-        QStringList DA1List{"NOT_USED", "PMT_532_1", "PMT_486_1", "PMT_532_2", "PMT_486_2"};
+        QStringList DA1List{"PMT_532_1", "PMT_486_1", "PMT_532_2", "PMT_486_2"};
         QStringList AD1List{"APD_TEMP", "PMT_532_1", "PMT_486_1", "PMT_532_2", "PMT_486_2"};
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_DAChSelect->setCurrentIndex(1);
@@ -332,6 +332,9 @@ void MainWindow::uiConfig()
             doubleWaveConfig.min_view_angle = 15;
             doubleWaveConfig.max_view_angle = 110;
         });
+
+        doubleWaveConfig.colorMapKey.resize(4);
+        doubleWaveConfig.colorMapValue.resize(4);
     }
     else if(radarType == BspConfig::RADAR_TPYE_OCEAN)
     {
@@ -1058,6 +1061,7 @@ void MainWindow::initSignalSlot()
                 status = laser3Driver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()) / 10);
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+                laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 status = laserDriver->setCurrent(ui->doubleSpinBox_laserGreenCurrent->value() * 100);
                 status = laserDriver->setPower(ui->spinBox_laserBlueCurrent->value() * 100);
                 break;
@@ -1336,9 +1340,13 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_LAND:
                 digitValue = static_cast<quint32>((analogValue - 3.434) / 0.017);
                 break;
+            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+                digitValue = static_cast<qint32>((analogValue + 0.007) / 0.001);
+                if(chNum == 0)
+                    chNum += 4;
+                break;
             case BspConfig::RADAR_TPYE_OCEAN:
             case BspConfig::RADAR_TPYE_DRONE:
-            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
                 if(chNum == 0)
@@ -1380,9 +1388,10 @@ void MainWindow::initSignalSlot()
     connect(dispatch, &ProtocolDispatch::ADDataReady, adDriver, &ADControl::setNewData);
     connect(adDriver, &ADControl::sendDataReady, dispatch, &ProtocolDispatch::encode);
     connect(ui->btn_ADReadValue, &QPushButton::pressed, this, [this]() {
-        quint32 chNum       = ui->comboBox_ADChSelect->currentIndex();
-        qint32  digitValue  = adDriver->getChannalValue(chNum);
-        double  analogValue = 0;
+        quint32 chNum = ui->comboBox_ADChSelect->currentIndex();
+
+        qint32 digitValue  = adDriver->getChannalValue(chNum);
+        double analogValue = 0;
         if(digitValue < 0)
             ui->lineEdit_ADValue->setText(QString::number(digitValue, 10));
         else
@@ -1682,6 +1691,7 @@ void MainWindow::plotColormapSettings()
 
 /**
 * @brief 更新伪彩色图
+* QVector.size应该是8，
 *
 * @param allCh
 */
@@ -1691,29 +1701,44 @@ void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
     QCPColorMap *    colorMap;
     QCPColorMapData *colorMapData;
     int              ch = 0;
-    for(int i = 0; i < 4; ++i)
+
+    //    if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+    //    {
+    //        for(int i = 0; i < 4; ++i)
+    //        {
+    //            if(doubleWaveConfig.colorMapKey[i].size() < colorMap_X_max)
+    //            {
+    //                //                doubleWaveConfig.colorMapKey[i].append();
+    //                //                colorMapValue[i].append(veclist[3]);
+    //            }
+    //        }
+    //    }
+    //    else
     {
-        customPlot   = widget2CustomPlotList.at(i);
-        colorMap     = widget2QCPColorMapList.at(i);
-        colorMapData = colorMap->data();
-
-        int y_offset = allCh[0].pos[0];
-        colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0 + y_offset, 500 + y_offset));  // span the coordinate range
-        for(int keyIndex = 0; keyIndex < allCh[0].pos.length() && keyIndex < 500; ++keyIndex)
+        for(int i = 0; i < 4; ++i)
         {
-            if(allCh.size() == 8)
-                ch = i * 2;
+            customPlot   = widget2CustomPlotList.at(i);
+            colorMap     = widget2QCPColorMapList.at(i);
+            colorMapData = colorMap->data();
 
-            int    x     = qFloor((allCh[ch].motorCnt * 360) / 163840.0);
-            int    y     = (int)allCh[ch].pos[keyIndex] - y_offset;
-            double value = allCh[ch].value[keyIndex];
-
-            if(x >= 180)
+            int y_offset = allCh[0].pos[0];
+            colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0 + y_offset, 500 + y_offset));  // span the coordinate range
+            for(int keyIndex = 0; keyIndex < allCh[0].pos.length() && keyIndex < 500; ++keyIndex)
             {
-                return;
-            }
+                if(allCh.size() == 8)
+                    ch = i * 2;
 
-            colorMapData->setCell(x, y, value);
+                int    x     = qFloor((allCh[ch].motorCnt * 360) / 163840.0);
+                int    y     = (int)allCh[ch].pos[keyIndex] - y_offset;
+                double value = allCh[ch].value[keyIndex];
+
+                if(x >= 180)
+                {
+                    return;
+                }
+
+                colorMapData->setCell(x, y, value);
+            }
         }
     }
     customPlot->replot();
@@ -2171,6 +2196,10 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
 #endif
             }
         }
+    }
+
+    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+    {
     }
     //        else
     if(ui->checkBox_isRerfreshUI->isChecked())
