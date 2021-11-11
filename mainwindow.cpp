@@ -69,7 +69,6 @@ MainWindow::MainWindow(QWidget *parent) :
     plotLineSettings();
     plotColormapSettings();
     devInfo->getSysPara(sysParaInfo);
-    initSysInfoUi();
     initFileListUi();
     getSysInfo();
 }
@@ -1731,30 +1730,6 @@ void MainWindow::updateColormap(int chart, int angle, const QVector<double> &key
     //    customPlot->replot();
 }
 
-void MainWindow::initSysInfoUi()
-{
-    ui->tableWidget_sysInfo->setColumnCount(2);
-    ui->tableWidget_sysInfo->setRowCount(sysParaInfo.length());
-    ui->tableWidget_sysInfo->setHorizontalHeaderLabels(QStringList() << "参数"
-                                                                     << "值");
-    ui->tableWidget_sysInfo->verticalHeader()->setVisible(false);  //隐藏列表头
-        //    ui->tableWidget_sysInfo->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);              //x先自适应宽度
-    ui->tableWidget_sysInfo->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);  //然后设置要根据内容使用宽度的列
-
-    for(int i = 0; i < sysParaInfo.length(); i++)
-    {
-        ui->tableWidget_sysInfo->setCellWidget(i, 0, new QLabel(sysParaInfo[i].name));
-    }
-
-    for(int i = 0; i < 10; i++)
-    {
-        QTableWidgetItem *item = new QTableWidgetItem();
-        item->setBackground(QBrush(QColor(Qt::lightGray)));
-        item->setFlags(item->flags() & (~Qt::ItemIsEditable));
-        ui->tableWidget_sysInfo->setItem(i, 0, item);
-    }
-}
-
 void MainWindow::initFileListUi()
 {
     //    ui->tableWidget_fileList->resizeColumnsToContents();
@@ -1872,14 +1847,9 @@ void MainWindow::getSysInfo()
         itemList = ui->treeWidget_attitude->findItems("系统参数", Qt::MatchExactly);
         for(int i = 0; i < sysParaInfo.size(); i++)
         {
-            itemList.first()->child(i)->setText(1, QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16)));
-        }
-
-        for(int i = 0; i < sysParaInfo.length(); i++)
-        {
             if(i == 4)  // 波形存储状态
             {
-                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16))));
+                itemList.first()->child(i)->setText(1, QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16)));
                 qint32 value = BspConfig::ba2int(sysParaInfo[i].value);
                 if(value == 1)
                 {
@@ -1896,28 +1866,28 @@ void MainWindow::getSysInfo()
             {
                 if(sysParaInfo[i].value.contains(QByteArray(4, 0x01)))
                 {
-                    ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel("正在采集"));
+                    itemList.first()->child(i)->setText(1, "正在采集");
                     sysStatus.adCaptureStatus = true;
                     sysStatus.label_adCaptureStatus->setText("采集状态：正在采集");
                 }
                 else
                 {
-                    ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel("停止采集"));
+                    itemList.first()->child(i)->setText(1, "停止采集");
                     sysStatus.adCaptureStatus = false;
                     sysStatus.label_adCaptureStatus->setText("采集状态：停止采集");
                 }
             }
             else if(i == 7)  // sata底层读写状态机
             {
-                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16), 2)));
+                itemList.first()->child(i)->setText(1, QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16), 2));
             }
             else if(i == 8)  // 文件读写状态机
             {
                 quint16 value = sysParaInfo[i].value[1] * 256 + sysParaInfo[i].value[0];
-                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(value, 2)));
+                itemList.first()->child(i)->setText(1, QString::number(value, 2));
             }
             else
-                ui->tableWidget_sysInfo->setCellWidget(i, 1, new QLabel(QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16))));
+                itemList.first()->child(i)->setText(1, QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16)));
         }
     }
     else

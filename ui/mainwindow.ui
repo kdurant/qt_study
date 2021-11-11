@@ -1209,7 +1209,7 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>-171</y>
+              <y>0</y>
               <width>297</width>
               <height>752</height>
              </rect>
@@ -1692,7 +1692,7 @@
               <x>0</x>
               <y>0</y>
               <width>194</width>
-              <height>368</height>
+              <height>366</height>
              </rect>
             </property>
             <attribute name="label">
@@ -2168,29 +2168,7 @@
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,1">
-     <item>
-      <widget class="QGroupBox" name="groupBox_13">
-       <property name="title">
-        <string>系统参数</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_11">
-        <item>
-         <widget class="QTableWidget" name="tableWidget_sysInfo">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="sizeAdjustPolicy">
-           <enum>QAbstractScrollArea::AdjustToContents</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
+    <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1">
      <item>
       <widget class="QTreeWidget" name="treeWidget_attitude">
        <column>
@@ -2239,6 +2217,11 @@
         <item>
          <property name="text">
           <string>波形存储状态</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>AD采集状态</string>
          </property>
         </item>
         <item>

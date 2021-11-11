@@ -78,7 +78,6 @@ public:
     void plotColormapSettings(void);
     void updateColormap(int chart, int angle, const QVector<double> &key, const QVector<double> &data);
 
-    void initSysInfoUi(void);
     void initFileListUi(void);
 
 protected:
