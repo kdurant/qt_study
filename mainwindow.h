@@ -76,7 +76,7 @@ public:
 
     void plotLineSettings(void);
     void plotColormapSettings(void);
-    void updateColormap(QVector<WaveExtract::WaveformInfo> &allCh);
+    void updateColormap(int chart, int angle, const QVector<double> &key, const QVector<double> &data);
 
     void initSysInfoUi(void);
     void initFileListUi(void);
@@ -123,8 +123,9 @@ private:
         double min_view_angle;
         double max_view_angle;
 
-        QVector<QList<QVector<double>>> colorMapKey;
-        QVector<QList<QVector<double>>> colorMapValue;
+        int sampleCnt;
+
+        QList<QVector<WaveExtract::WaveformInfo>> data;
     } doubleWaveConfig;
 
     Ui::MainWindow *ui;

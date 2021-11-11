@@ -314,6 +314,7 @@ void MainWindow::uiConfig()
         ui->rbtn_GLH->setVisible(true);
         ui->rbtn_POLARIZATION->setVisible(true);
 
+        doubleWaveConfig.sampleCnt = 0;
         connect(ui->rbtn_GLH, &QRadioButton::clicked, this, [this]() {
             ui->label_motorInfo->setText("mrad(3.57-36)");
 
@@ -332,9 +333,6 @@ void MainWindow::uiConfig()
             doubleWaveConfig.min_view_angle = 15;
             doubleWaveConfig.max_view_angle = 110;
         });
-
-        doubleWaveConfig.colorMapKey.resize(4);
-        doubleWaveConfig.colorMapValue.resize(4);
     }
     else if(radarType == BspConfig::RADAR_TPYE_OCEAN)
     {
@@ -1653,13 +1651,13 @@ void MainWindow::plotColormapSettings()
         QCPColorMap *colorMap = new QCPColorMap(customPlot->xAxis, customPlot->yAxis);
         widget2QCPColorMapList.append(colorMap);
 
-        int nx = colorMap_X_max;  // 角度, x轴
-        int ny = 1500;            // 采样数据的距离，y轴
+        int nx = colorMap_X_max;  // x轴，角度,
+        int ny = 1500;            // y轴，采样数据的时间轴
 
         colorMap->data()->setSize(nx, ny);  // nx*ny(cells)
 
         if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
-            colorMap->data()->setRange(QCPRange(0, colorMap_X_max), QCPRange(0, 1500));  // span the coordinate range
+            colorMap->data()->setRange(QCPRange(0, colorMap_X_max), QCPRange(0, 1500));  // 显示这些点的绘图坐标范围
         else
             colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 500));  // span the coordinate range
 
@@ -1683,67 +1681,46 @@ void MainWindow::plotColormapSettings()
         QCPMarginGroup *marginGroup = new QCPMarginGroup(customPlot);
         customPlot->axisRect()->setMarginGroup(QCP::msBottom | QCP::msTop, marginGroup);
 
-        colorMap->setDataRange(QCPRange(0, 255));
-        // rescale the data dimension such that all data points in the span lie in the visualized by the color gradient
-        colorMap->rescaleDataRange();
+        // colorMap->rescaleDataRange();  // 使数据范围包含最小到最大的整个数据集, 二选一即可
+        colorMap->setDataRange(QCPRange(0, 1024));  // 指定映射到渐变颜色的数据范围
+
         // rescale the key and value axes so the whole color map is visible;
         customPlot->rescaleAxes();
     }
 }
 
 /**
-* @brief 更新伪彩色图
-* QVector.size应该是8，
-*
-* @param allCh
-*/
-void MainWindow::updateColormap(QVector<WaveExtract::WaveformInfo> &allCh)
+ * @brief MainWindow::updateColormap
+ * @param chart, 用于指定在那个QCustomPlot上绘制
+ * @param angle，伪彩色图的x轴，采样数据的电机角度值
+ * @param key，伪彩色图的y轴, 是采样数据的时间序列
+ * @param data，伪彩色图的z轴，颜色显示，是采样数据的值序列，和时间序列一一对应
+ */
+void MainWindow::updateColormap(int chart, int angle, const QVector<double> &key, const QVector<double> &data)
 {
     QCustomPlot *    customPlot;
     QCPColorMap *    colorMap;
     QCPColorMapData *colorMapData;
-    int              ch = 0;
 
-    //    if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
-    //    {
-    //        for(int i = 0; i < 4; ++i)
-    //        {
-    //            if(doubleWaveConfig.colorMapKey[i].size() < colorMap_X_max)
-    //            {
-    //                //                doubleWaveConfig.colorMapKey[i].append();
-    //                //                colorMapValue[i].append(veclist[3]);
-    //            }
-    //        }
-    //    }
-    //    else
+    customPlot   = widget2CustomPlotList.at(chart);
+    colorMap     = widget2QCPColorMapList.at(chart);
+    colorMapData = colorMap->data();
+
+    int y_offset = key[0];
+    customPlot->yAxis->setLabel("时间(ns), 偏移" + QString::number(y_offset));
+
+    int x = angle;
+    // 如果某次采样数据太长，是显示前面采样的数据
+    for(int keyIndex = 0; keyIndex < key.length() && keyIndex < 1500; ++keyIndex)
     {
-        for(int i = 0; i < 4; ++i)
-        {
-            customPlot   = widget2CustomPlotList.at(i);
-            colorMap     = widget2QCPColorMapList.at(i);
-            colorMapData = colorMap->data();
+        // y轴数据的范围只能是[0,1500]，所以要减去偏移值
+        int    y     = key[keyIndex] - y_offset;
+        double value = data[keyIndex];
 
-            int y_offset = allCh[0].pos[0];
-            colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0 + y_offset, 500 + y_offset));  // span the coordinate range
-            for(int keyIndex = 0; keyIndex < allCh[0].pos.length() && keyIndex < 500; ++keyIndex)
-            {
-                if(allCh.size() == 8)
-                    ch = i * 2;
-
-                int    x     = qFloor((allCh[ch].motorCnt * 360) / 163840.0);
-                int    y     = (int)allCh[ch].pos[keyIndex] - y_offset;
-                double value = allCh[ch].value[keyIndex];
-
-                if(x >= 180)
-                {
-                    return;
-                }
-
-                colorMapData->setCell(x, y, value);
-            }
-        }
+        colorMapData->setCell(x, y, value);
     }
-    customPlot->replot();
+    //    colorMap->rescaleDataRange();
+    //    customPlot->replot();
 }
 
 void MainWindow::initSysInfoUi()
@@ -2065,6 +2042,18 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
         return;
     }
 
+    if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+    {
+        if(doubleWaveConfig.data.size() < colorMap_X_max)
+            doubleWaveConfig.data.append(allCh);
+        else
+        {
+            doubleWaveConfig.data.removeFirst();
+            doubleWaveConfig.data.append(allCh);
+        }
+        doubleWaveConfig.sampleCnt++;
+    }
+
     if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
         //        QVector<WaveExtract::WaveformInfo> debugCh;
@@ -2211,10 +2200,6 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
         }
     }
 
-    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
-    {
-    }
-    //        else
     if(ui->checkBox_isRerfreshUI->isChecked())
     {
         if(refreshUIFlag)
@@ -2237,7 +2222,17 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
             ui->sampleDataPlot->replot();
 
             // 刷新伪彩色图
-            // updateColormap(allCh);
+            QCustomPlot *customPlot;
+            for(int m = 0; m < doubleWaveConfig.data.size(); m++)
+            {
+                for(int i = 0; i < 4; i++)
+                    updateColormap(i, m, allCh[i * 2 + 1].pos, allCh[i * 2 + 1].value);
+            }
+            for(int i = 0; i < 4; i++)
+            {
+                customPlot = widget2CustomPlotList.at(i);
+                customPlot->replot();
+            }
         }
     }
 }
