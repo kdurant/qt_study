@@ -5,27 +5,35 @@
 #include "common.h"
 #include "protocol.h"
 
-class MontorController : public QObject
+class MotorController : public QObject
 {
     Q_OBJECT
 public:
-    MontorController() = default;
+    enum MOTOR_STATUS
+    {
+        SUCCESS      = 1,
+        FAILED       = -1,   // 通信失败
+        NO_FEATURE   = -10,  // 没有此功能
+        NO_IMPLEMENT = -20,  // 有，但未实现此功能
+    };
+
+    MotorController() = default;
 
     /**
     * @brief 初始化电机
     *
     * @return 
     */
-    virtual bool init() = 0;
+    virtual MOTOR_STATUS init() = 0;
 
     /**
      * @brief 在电机已经运动的情况下，锈点电机运动速度(r/s)
      * @param speed
      * @return
      */
-    virtual bool run(quint16 speed) = 0;
+    virtual MOTOR_STATUS run(quint16 speed) = 0;
 
-    virtual bool moveToPosition(double postion, int direct) = 0;
+    virtual MOTOR_STATUS moveToPosition(double postion, int direct) = 0;
 
     virtual bool moveToHome(void) = 0;
 

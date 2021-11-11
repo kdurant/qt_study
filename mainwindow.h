@@ -79,6 +79,7 @@ public:
     void updateColormap(int chart, int angle, const QVector<double> &key, const QVector<double> &data);
 
     void initFileListUi(void);
+    void motorResponse(MotorController::MOTOR_STATUS status);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -169,8 +170,8 @@ private:
     LaserType5 *     laser5Driver;
     LaserType6 *     laser6Driver;
 
-    MontorController *motorController;
-    EPOS2 *           epos2Driver;
+    MotorController *motorController;
+    EPOS2 *          epos2Driver;
 
     DevInfo *                  devInfo;
     QVector<DevInfo::ParaInfo> sysParaInfo;

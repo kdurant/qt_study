@@ -3,21 +3,21 @@
 #include <QtCore>
 #include "MotorController.h"
 
-class EPOS2 : public MontorController
+class EPOS2 : public MotorController
 {
 public:
     EPOS2() = default;
 
 public:
-    bool init(void) override;
-    bool run(quint16 speed) override;
+    MOTOR_STATUS init(void) override;
+    MOTOR_STATUS run(quint16 speed) override;
 
     qint32 getActualVelocity(void) override;
     qint32 getActualPosition(void) override;
 
-    bool moveToPosition(double postion, int direct) override;
-    bool moveToHome(void) override;
-    bool moveFixSpeed(quint32 speed) override;
+    MOTOR_STATUS moveToPosition(double postion, int direct) override;
+    bool         moveToHome(void) override;
+    bool         moveFixSpeed(quint32 speed) override;
 
     bool sweep(quint32 start_pos, quint32 end_pos);
 

@@ -4,11 +4,11 @@
  * @brief 设置电机默认工作参数
  * @return
  */
-bool EPOS2::init()
+MotorController::MOTOR_STATUS EPOS2::init()
 {
     // 电机重新上电后，这4步是必须的
     if(!clearFault())
-        return false;
+        return MOTOR_STATUS::FAILED;
     setShutdown();
     setHalt();
     setProfileVelocityMode();
@@ -18,7 +18,7 @@ bool EPOS2::init()
     setQuickstopDeceleration(45);
     setProfileAcceleration(45);
     setProfileDeceleration(45);
-    return true;
+    return MOTOR_STATUS::SUCCESS;
 }
 
 /**
@@ -26,14 +26,14 @@ bool EPOS2::init()
  * @param speed
  * @return
  */
-bool EPOS2::run(quint16 speed)
+MotorController::MOTOR_STATUS EPOS2::run(quint16 speed)
 {
     if(!setTargetVelocity(speed))
-        return false;
+        return MOTOR_STATUS::FAILED;
     if(!setEnableState())
-        return false;
+        return MOTOR_STATUS::FAILED;
 
-    return true;
+    return MOTOR_STATUS::SUCCESS;
 }
 
 /**
@@ -41,9 +41,10 @@ bool EPOS2::run(quint16 speed)
  * @param postion
  * @return 
  */
-bool EPOS2::moveToPosition(double postion, int direct)
+MotorController::MOTOR_STATUS EPOS2::moveToPosition(double postion, int direct)
 {
-    clearFault();
+    if(!clearFault())
+        return MOTOR_STATUS::FAILED;
     setProfilePositionMode();
     setProfileVelocity(500);
     setQuickstopDeceleration(45);
@@ -51,7 +52,8 @@ bool EPOS2::moveToPosition(double postion, int direct)
     setProfileDeceleration(45);
     setTargetPosition(static_cast<quint32>(postion));
     setAbsolutePositionStartImmdeitaly();
-    return true;
+
+    return MOTOR_STATUS::SUCCESS;
 }
 
 /**

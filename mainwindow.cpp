@@ -1167,7 +1167,7 @@ void MainWindow::initSignalSlot()
      * 电机相关逻辑
      */
     connect(motorController, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
-    connect(dispatch, &ProtocolDispatch::motorDataReady, motorController, &MontorController::setNewData);
+    connect(dispatch, &ProtocolDispatch::motorDataReady, motorController, &MotorController::setNewData);
 
     connect(ui->btn_motorReadSpeed, &QPushButton::pressed, this, [this]() {
         qint32 speed = 0;
@@ -1183,16 +1183,12 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_motorStart, &QPushButton::pressed, this, [this]() {
         quint16 speed = ui->lineEdit_motorTargetSpeed->text().toInt(nullptr, 10);
-
-        motorController->run(speed);
+        motorResponse(motorController->run(speed));
     });
 
     connect(ui->btn_motorInit, &QPushButton::pressed, this, [this]() {
         ui->btn_motorInit->setEnabled(false);
-        if(motorController->init())
-            ui->label_motorInfo->setText("电机初始化已完成");
-        else
-            QMessageBox::warning(this, "warning", "电机通信异常");
+        motorResponse(motorController->init());
         ui->btn_motorInit->setEnabled(true);
     });
 
@@ -1734,6 +1730,25 @@ void MainWindow::initFileListUi()
 {
     //    ui->tableWidget_fileList->resizeColumnsToContents();
     ui->tableWidget_fileList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);  //然后设置要根据内容使用宽度的列
+}
+
+void MainWindow::motorResponse(MotorController::MOTOR_STATUS status)
+{
+    switch(status)
+    {
+        case MotorController::MOTOR_STATUS::SUCCESS:
+            ui->label_motorInfo->setText("电机初始化已完成");
+            break;
+        case MotorController::MOTOR_STATUS::FAILED:
+            QMessageBox::warning(this, "warning", "电机通信异常");
+            break;
+        case MotorController::MOTOR_STATUS::NO_FEATURE:
+            QMessageBox::warning(this, "warning", "没有此功能");
+            break;
+        case MotorController::MOTOR_STATUS::NO_IMPLEMENT:
+            QMessageBox::warning(this, "warning", "还没有实现此功能");
+            break;
+    }
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

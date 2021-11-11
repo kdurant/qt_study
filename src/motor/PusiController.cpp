@@ -7,19 +7,14 @@
  */
 #include "PusiController.h"
 
-bool PusiController::init()
+MotorController::MOTOR_STATUS PusiController::init()
 {
-    writeBlockTriggerValue(0xff);
-    writeBlockLen(0x2f);
-    writeBlockRegister(0x01);
-    readControl1(reg1);
-
-    return false;
+    return NO_FEATURE;
 }
 
-bool PusiController::run(quint16 speed)
+MotorController::MOTOR_STATUS PusiController::run(quint16 speed)
 {
-    return false;
+    return NO_FEATURE;
 }
 
 /**
@@ -30,13 +25,15 @@ bool PusiController::run(quint16 speed)
 *
 * @return 
 */
-bool PusiController::moveToPosition(double postion, int direct)
+MotorController::MOTOR_STATUS PusiController::moveToPosition(double postion, int direct)
 {
     if(direct)
         setMoveDirect(PusiController::POSITIVE);
     else
         setMoveDirect(PusiController::NEGTIVE);
-    return turnStepsByNum(postion);
+    turnStepsByNum(postion);
+
+    return MOTOR_STATUS::SUCCESS;
 }
 
 bool PusiController::moveToHome()

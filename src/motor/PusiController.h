@@ -3,7 +3,7 @@
 #include <QtCore>
 #include "MotorController.h"
 
-class PusiController : public MontorController
+class PusiController : public MotorController
 {
 public:
     PusiController() = default;
@@ -86,13 +86,13 @@ public:
     };
 
 public:
-    bool   init(void) override;
-    bool   run(quint16 speed) override;
-    bool   moveToPosition(double postion, int direct) override;
-    bool   moveToHome(void) override;
-    bool   moveFixSpeed(quint32 speed) override;
-    qint32 getActualVelocity(void) override;
-    qint32 getActualPosition(void) override;
+    MOTOR_STATUS init(void) override;
+    MOTOR_STATUS run(quint16 speed) override;
+    MOTOR_STATUS moveToPosition(double postion, int direct) override;
+    bool         moveToHome(void) override;
+    bool         moveFixSpeed(quint32 speed) override;
+    qint32       getActualVelocity(void) override;
+    qint32       getActualPosition(void) override;
 
 public:
     bool   turnStepsByNum(qint32 nSteps);
