@@ -123,7 +123,8 @@ private:
         double min_view_angle;
         double max_view_angle;
 
-        int sampleCnt;
+        int  sampleCnt;
+        bool rescale[4];
 
         QList<QVector<WaveExtract::WaveformInfo>> data;
     } doubleWaveConfig;

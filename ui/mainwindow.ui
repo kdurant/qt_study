@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget_main">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
@@ -264,47 +264,7 @@
            <string>图表设置</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_16">
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="checkBox_colorMap0_enable">
-             <property name="text">
-              <string>ch0</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QCheckBox" name="checkBox_colorMap1_enable">
-             <property name="text">
-              <string>ch1</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QCheckBox" name="checkBox_colorMap2_enable">
-             <property name="text">
-              <string>ch2</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QCheckBox" name="checkBox_colorMap3_enable">
-             <property name="text">
-              <string>ch3</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
+           <item row="2" column="0">
             <widget class="QComboBox" name="comboBox_colorMap">
              <item>
               <property name="text">
@@ -328,66 +288,90 @@
              </item>
             </widget>
            </item>
-           <item row="1" column="3">
+           <item row="0" column="3">
+            <widget class="QCheckBox" name="checkBox_colorMap3_enable">
+             <property name="text">
+              <string>ch3_enable</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QCheckBox" name="checkBox_colorMap1_enable">
+             <property name="text">
+              <string>ch1_enable</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="checkBox_colorMap0_enable">
+             <property name="text">
+              <string>ch0_enable</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QCheckBox" name="checkBox_colorMap2_enable">
+             <property name="text">
+              <string>ch2_enable</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
             <widget class="QPushButton" name="btn_colorMap">
              <property name="text">
               <string>设置</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_20">
+           <item row="1" column="0">
+            <widget class="QCheckBox" name="checkBox_colorMap0_rescale">
              <property name="text">
-              <string>x0：</string>
+              <string>ch0_rescale</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QLabel" name="label_29">
+           <item row="1" column="1">
+            <widget class="QCheckBox" name="checkBox_colorMap1_rescale">
              <property name="text">
-              <string>x1：</string>
+              <string>ch1_rescale</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="2" column="2">
-            <widget class="QLabel" name="label_31">
+           <item row="1" column="2">
+            <widget class="QCheckBox" name="checkBox_colorMap2_rescale">
              <property name="text">
-              <string>y0：</string>
+              <string>ch2_rescale</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
-           <item row="2" column="3">
-            <widget class="QLabel" name="label_33">
+           <item row="1" column="3">
+            <widget class="QCheckBox" name="checkBox_colorMap3_rescale">
              <property name="text">
-              <string>y1：</string>
+              <string>ch3_rescale</string>
              </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLineEdit" name="lineEdit_colorMapXmin">
-             <property name="text">
-              <string>-90</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="lineEdit_colorMapXmax">
-             <property name="text">
-              <string>90</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2">
-            <widget class="QLineEdit" name="lineEdit_colorMapYmin">
-             <property name="text">
-              <string>0</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="3">
-            <widget class="QLineEdit" name="lineEdit_colorMapYmax">
-             <property name="text">
-              <string>1024</string>
+             <property name="checked">
+              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -564,7 +548,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -1225,7 +1209,7 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
+              <y>-171</y>
               <width>297</width>
               <height>752</height>
              </rect>

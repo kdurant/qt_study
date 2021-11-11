@@ -314,7 +314,12 @@ void MainWindow::uiConfig()
         ui->rbtn_GLH->setVisible(true);
         ui->rbtn_POLARIZATION->setVisible(true);
 
-        doubleWaveConfig.sampleCnt = 0;
+        doubleWaveConfig.sampleCnt  = 0;
+        doubleWaveConfig.rescale[0] = false;
+        doubleWaveConfig.rescale[1] = false;
+        doubleWaveConfig.rescale[2] = false;
+        doubleWaveConfig.rescale[3] = false;
+
         connect(ui->rbtn_GLH, &QRadioButton::clicked, this, [this]() {
             ui->label_motorInfo->setText("mrad(3.57-36)");
 
@@ -1511,31 +1516,32 @@ void MainWindow::initSignalSlot()
         customPlot->setVisible(status);
     });
 
+    connect(ui->checkBox_colorMap0_rescale, &QCheckBox::stateChanged, this, [this](int state) {
+        bool status                 = state == Qt::Unchecked ? false : true;
+        doubleWaveConfig.rescale[0] = status;
+        if(!status)
+            widget2QCPColorMapList.at(0)->setDataRange(QCPRange(0, 1024));
+    });
+    connect(ui->checkBox_colorMap1_rescale, &QCheckBox::stateChanged, this, [this](int state) {
+        bool status                 = state == Qt::Unchecked ? false : true;
+        doubleWaveConfig.rescale[1] = status;
+        if(!status)
+            widget2QCPColorMapList.at(1)->setDataRange(QCPRange(0, 1024));
+    });
+    connect(ui->checkBox_colorMap2_rescale, &QCheckBox::stateChanged, this, [this](int state) {
+        bool status                 = state == Qt::Unchecked ? false : true;
+        doubleWaveConfig.rescale[2] = status;
+        if(!status)
+            widget2QCPColorMapList.at(2)->setDataRange(QCPRange(0, 1024));
+    });
+    connect(ui->checkBox_colorMap3_rescale, &QCheckBox::stateChanged, this, [this](int state) {
+        bool status                 = state == Qt::Unchecked ? false : true;
+        doubleWaveConfig.rescale[3] = status;
+        if(!status)
+            widget2QCPColorMapList.at(3)->setDataRange(QCPRange(0, 1024));
+    });
+
     connect(ui->btn_colorMap, &QPushButton::pressed, this, [this]() {
-        int xMin = ui->lineEdit_colorMapXmin->text().toInt();
-        int xMax = ui->lineEdit_colorMapXmax->text().toInt();
-        int yMin = ui->lineEdit_colorMapYmin->text().toInt();
-        int yMax = ui->lineEdit_colorMapYmax->text().toInt();
-        int nx   = xMax - xMin;
-        int ny   = yMax - yMin;
-        int i    = 0;
-        if(ui->comboBox_colorMap->currentText() == "通道0")
-            i = 0;
-        else if(ui->comboBox_colorMap->currentText() == "通道1")
-            i = 1;
-        else if(ui->comboBox_colorMap->currentText() == "通道2")
-            i = 2;
-        else if(ui->comboBox_colorMap->currentText() == "通道3")
-            i = 3;
-
-        QCPColorMap *colorMap = widget2QCPColorMapList.at(i);
-        colorMap->data()->setSize(nx, ny);  // nx*ny(cells)
-        colorMap->data()->setRange(QCPRange(xMin, xMax), QCPRange(yMin, yMax));
-
-        QCustomPlot *customPlot = widget2CustomPlotList.at(i);
-
-        colorMap->rescaleDataRange();
-        customPlot->replot();
     });
 }
 
@@ -2228,8 +2234,11 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
                 for(int i = 0; i < 4; i++)
                     updateColormap(i, m, allCh[i * 2 + 1].pos, allCh[i * 2 + 1].value);
             }
+
             for(int i = 0; i < 4; i++)
             {
+                if(doubleWaveConfig.rescale[i])
+                    widget2QCPColorMapList.at(i)->rescaleDataRange();
                 customPlot = widget2CustomPlotList.at(i);
                 customPlot->replot();
             }
