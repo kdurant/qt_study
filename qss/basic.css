@@ -227,7 +227,11 @@ QTreeWidget
 
 QTreeWidget::item
 {
-    margin:3px;
+    border-right:1px solid rgb(179,216,247);
+    border-bottom:1px solid rgb(179,216,247);
+    padding: 0px;
+
+    margin:2px;
     background: #5b677a7a;
     background-clip: margin;
 }
