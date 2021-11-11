@@ -51,7 +51,7 @@ bool LaserType5::setFreq(qint32 freq)
 //震荡级电流设置指令, green(532)
 bool LaserType5::setCurrent(quint16 current)
 {
-    QVector<quint8> command{0x55, 0xAA, 0x0B, 0x01, 0xee, 0xee, 0x00, 0x00, 0xff, 0x33, 0xcc};
+    QVector<quint8> command{0x55, 0xAA, 0x0A, 0x01, 0xee, 0xee, 0x00, 0x00, 0xff, 0x33, 0xcc};
     command[4] = current & 0xff;
     command[5] = (current >> 8) & 0xff;
     command[8] = checksum(command);
@@ -60,8 +60,8 @@ bool LaserType5::setCurrent(quint16 current)
     {
         frame.append(command[i] & 0xff);
     }
-    emit sendDataReady(MasterSet::LASER_ENABLE, frame.length(), frame);
-    Common::sleepWithoutBlock(50);
+    emit sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
+    Common::sleepWithoutBlock(250);
 
     return true;
 }
@@ -70,7 +70,7 @@ bool LaserType5::setCurrent(quint16 current)
 // 上位机设置为70A时，下传参数值为7000
 bool LaserType5::setPower(quint16 power)
 {
-    QVector<quint8> command{0x55, 0xAA, 0x0A, 0x01, 0xee, 0xee, 0x00, 0x00, 0xff, 0x33, 0xcc};
+    QVector<quint8> command{0x55, 0xAA, 0x0B, 0x01, 0xee, 0xee, 0x00, 0x00, 0xff, 0x33, 0xcc};
     command[4] = power & 0xff;
     command[5] = (power >> 8) & 0xff;
     command[8] = checksum(command);
@@ -79,8 +79,8 @@ bool LaserType5::setPower(quint16 power)
     {
         frame.append(command[i] & 0xff);
     }
-    emit sendDataReady(MasterSet::LASER_ENABLE, frame.length(), frame);
-    Common::sleepWithoutBlock(50);
+    emit sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
+    Common::sleepWithoutBlock(250);
 
     return true;
 }
@@ -129,6 +129,12 @@ bool LaserType5::getStatus()
                 emit laserInfoReady(info);
                 return true;
 
+                break;
+            case 0x0a:
+                info.expected_current = ((static_cast<uint8_t>(recvData[4])) << 0) +
+                                        ((static_cast<uint8_t>(recvData[5])) << 8);
+                info.real_current = ((static_cast<uint8_t>(recvData[6])) << 0) +
+                                    ((static_cast<uint8_t>(recvData[7])) << 8);
                 break;
             default:
                 break;

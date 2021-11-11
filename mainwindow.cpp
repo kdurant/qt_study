@@ -472,6 +472,8 @@ void MainWindow::uiConfig()
             break;
         case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
         case BspConfig::RADAR_TPYE_DRONE:
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流设定值(mA)"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流实际值(mA)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率(Hz)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "内触发频率(Hz)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "工作时间(s)"));
@@ -1945,6 +1947,12 @@ void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
                 itemList.first()->child(i)->setText(1, QString::number((info.errorBit >> i) & 0x01));
             break;
         case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+            itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.expected_current * 10));
+
+            itemList = ui->treeWidget_laser->findItems("电流实际值(mA)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.real_current * 10));
+
             itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
             itemList.first()->setText(1, QString::number(info.freq_outside));
 
