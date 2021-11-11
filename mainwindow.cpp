@@ -1868,6 +1868,13 @@ void MainWindow::getSysInfo()
         }
         ui->label_fpgaVer->setText(devInfo->getFpgaVer());
 
+        QList<QTreeWidgetItem *> itemList;
+        itemList = ui->treeWidget_attitude->findItems("系统参数", Qt::MatchExactly);
+        for(int i = 0; i < sysParaInfo.size(); i++)
+        {
+            itemList.first()->child(i)->setText(1, QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16)));
+        }
+
         for(int i = 0; i < sysParaInfo.length(); i++)
         {
             if(i == 4)  // 波形存储状态

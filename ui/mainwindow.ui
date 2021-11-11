@@ -2205,16 +2205,112 @@
        </column>
        <item>
         <property name="text">
+         <string>系统参数</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <item>
+         <property name="text">
+          <string>激光重频</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>AD采样长度</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>AD预览抽样率</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>相机触发频率(s)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>波形存储状态</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>SSD链接状态</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>sata读写状态机</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>文件读写状态机</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>第一段起始位置</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>第一段采样长度</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>第二段起始位置</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>第二段采样长度</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>和阈值</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>值阈值</string>
+         </property>
+        </item>
+       </item>
+       <item>
+        <property name="text">
          <string>GPS信息</string>
+        </property>
+        <property name="text">
+         <string/>
         </property>
         <item>
          <property name="text">
           <string>周</string>
          </property>
+         <property name="text">
+          <string/>
+         </property>
         </item>
         <item>
          <property name="text">
           <string>秒</string>
+         </property>
+         <property name="text">
+          <string/>
          </property>
         </item>
         <item>
@@ -2229,36 +2325,57 @@
          <property name="text">
           <string>纬度(°)</string>
          </property>
+         <property name="text">
+          <string/>
+         </property>
         </item>
         <item>
          <property name="text">
           <string>经度(°)</string>
+         </property>
+         <property name="text">
+          <string/>
          </property>
         </item>
         <item>
          <property name="text">
           <string>高度(m)</string>
          </property>
+         <property name="text">
+          <string/>
+         </property>
         </item>
         <item>
          <property name="text">
           <string>翻滚角(°)</string>
+         </property>
+         <property name="text">
+          <string/>
          </property>
         </item>
         <item>
          <property name="text">
           <string>俯仰角(°)</string>
          </property>
+         <property name="text">
+          <string/>
+         </property>
         </item>
         <item>
          <property name="text">
           <string>航向角(°)</string>
+         </property>
+         <property name="text">
+          <string/>
          </property>
         </item>
        </item>
        <item>
         <property name="text">
          <string>姿态传感器</string>
+        </property>
+        <property name="text">
+         <string/>
         </property>
         <item>
          <property name="text">
@@ -2279,15 +2396,24 @@
           <property name="text">
            <string>y轴</string>
           </property>
+          <property name="text">
+           <string/>
+          </property>
          </item>
          <item>
           <property name="text">
            <string>z轴</string>
           </property>
+          <property name="text">
+           <string/>
+          </property>
          </item>
          <item>
           <property name="text">
            <string>温度</string>
+          </property>
+          <property name="text">
+           <string/>
           </property>
          </item>
         </item>
@@ -2302,20 +2428,32 @@
           <property name="text">
            <string>x轴</string>
           </property>
+          <property name="text">
+           <string/>
+          </property>
          </item>
          <item>
           <property name="text">
            <string>y轴</string>
+          </property>
+          <property name="text">
+           <string/>
           </property>
          </item>
          <item>
           <property name="text">
            <string>z轴</string>
           </property>
+          <property name="text">
+           <string/>
+          </property>
          </item>
          <item>
           <property name="text">
            <string>温度</string>
+          </property>
+          <property name="text">
+           <string/>
           </property>
          </item>
         </item>
@@ -2323,24 +2461,39 @@
          <property name="text">
           <string>角度</string>
          </property>
+         <property name="text">
+          <string/>
+         </property>
          <item>
           <property name="text">
            <string>x轴</string>
+          </property>
+          <property name="text">
+           <string/>
           </property>
          </item>
          <item>
           <property name="text">
            <string>y轴</string>
           </property>
+          <property name="text">
+           <string/>
+          </property>
          </item>
          <item>
           <property name="text">
            <string>z轴</string>
           </property>
+          <property name="text">
+           <string/>
+          </property>
          </item>
          <item>
           <property name="text">
            <string>温度</string>
+          </property>
+          <property name="text">
+           <string/>
           </property>
          </item>
         </item>
@@ -2348,24 +2501,39 @@
          <property name="text">
           <string>磁场</string>
          </property>
+         <property name="text">
+          <string/>
+         </property>
          <item>
           <property name="text">
            <string>x轴</string>
+          </property>
+          <property name="text">
+           <string/>
           </property>
          </item>
          <item>
           <property name="text">
            <string>y轴</string>
           </property>
+          <property name="text">
+           <string/>
+          </property>
          </item>
          <item>
           <property name="text">
            <string>z轴</string>
           </property>
+          <property name="text">
+           <string/>
+          </property>
          </item>
          <item>
           <property name="text">
            <string>温度</string>
+          </property>
+          <property name="text">
+           <string/>
           </property>
          </item>
         </item>
