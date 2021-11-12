@@ -1597,7 +1597,7 @@ void MainWindow::plotLineSettings()
     for(int i = 0; i < 8; i++)
     {
         ui->sampleDataPlot->addGraph();
-        ui->sampleDataPlot->graph(i)->setScatterStyle(QCPScatterStyle::ssDisc);
+        // ui->sampleDataPlot->graph(i)->setScatterStyle(QCPScatterStyle::ssDisc);
     }
     ui->sampleDataPlot->graph(0)->setPen(QPen(Qt::red));
     ui->sampleDataPlot->graph(0)->setName("通道0第一段");
@@ -2225,13 +2225,24 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
             ui->sampleDataPlot->replot();
 
             // 刷新伪彩色图
-            QCustomPlot *customPlot;
-            for(int m = 0; m < doubleWaveConfig.data.size(); m++)
+            if(allCh.size() == 8)
             {
-                for(int i = 0; i < 4; i++)
-                    updateColormap(i, m, allCh[i * 2 + 1].pos, allCh[i * 2 + 1].value);
+                for(int m = 0; m < doubleWaveConfig.data.size(); m++)
+                {
+                    for(int i = 0; i < 4; i++)
+                        updateColormap(i, m, allCh[i * 2 + 1].pos, allCh[i * 2 + 1].value);
+                }
+            }
+            else
+            {
+                for(int m = 0; m < doubleWaveConfig.data.size(); m++)
+                {
+                    for(int i = 0; i < 4; i++)
+                        updateColormap(i, m, allCh[i].pos, allCh[i].value);
+                }
             }
 
+            QCustomPlot *customPlot;
             for(int i = 0; i < 4; i++)
             {
                 if(doubleWaveConfig.rescale[i])
