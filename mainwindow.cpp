@@ -279,9 +279,6 @@ void MainWindow::uiConfig()
         title = "双波长雷达控制软件";
         ui->lineEdit_radarType->setText("双波长雷达");
 
-        ui->label_sampleDelay->show();
-        ui->lineEdit_sampleDelay->show();
-
         ui->label_triggerMode->hide();
         ui->rbtn_triggerInside->hide();
         ui->rbtn_triggerOutside->hide();
