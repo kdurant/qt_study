@@ -317,7 +317,8 @@ void MainWindow::uiConfig()
         doubleWaveConfig.rescale[3] = false;
 
         connect(ui->rbtn_GLH, &QRadioButton::clicked, this, [this]() {
-            ui->label_motorInfo->setText("mrad(3.57-36)");
+            QMessageBox::information(NULL, "消息", "请注意是否需要进行电机归零操作");
+            ui->lineEdit_motorTargetPosition->setToolTip("mrad(3.57°-36°)");
 
             ui->lineEdit_motorTargetPosition->setText("10");
             doubleWaveConfig.prev_angle     = 3.57;
@@ -327,7 +328,8 @@ void MainWindow::uiConfig()
         });
 
         connect(ui->rbtn_POLARIZATION, &QRadioButton::clicked, this, [this]() {
-            ui->label_motorInfo->setText("mrad(15-110)");
+            QMessageBox::information(NULL, "消息", "请注意是否需要进行电机归零操作");
+            ui->lineEdit_motorTargetPosition->setToolTip("mrad(15°-110°)");
             ui->lineEdit_motorTargetPosition->setText("30");
             doubleWaveConfig.prev_angle     = 15;
             doubleWaveConfig.step_ratio     = 1239.5;
@@ -1213,6 +1215,7 @@ void MainWindow::initSignalSlot()
                 QMessageBox::warning(this, "warning", "视场角范围设置错误，请重新设置");
                 return;
             }
+            ui->btn_motorMovePostion->setEnabled(false);
             if(position > doubleWaveConfig.prev_angle)
             {
                 motorController->moveToPosition((position - doubleWaveConfig.prev_angle) * doubleWaveConfig.step_ratio, 1);
@@ -1222,6 +1225,7 @@ void MainWindow::initSignalSlot()
                 motorController->moveToPosition((doubleWaveConfig.prev_angle - position) * doubleWaveConfig.step_ratio, 0);
             }
             doubleWaveConfig.prev_angle = position;
+            ui->btn_motorMovePostion->setEnabled(true);
         }
         else
         {
