@@ -300,7 +300,7 @@ void MainWindow::uiConfig()
         ui->spinBox_laserBlueCurrent->setRange(0, 110);
 
         QStringList DA1List{"PMT_532_1", "PMT_486_1", "PMT_532_2", "PMT_486_2"};
-        QStringList AD1List{"APD_TEMP", "PMT_532_1", "PMT_486_1", "PMT_532_2", "PMT_486_2"};
+        QStringList AD1List{"APD_TEMP", "APDHV_FB", "PMT_486_1", "PMT_532_2", "PMT_486_2", "PMT_532_1"};
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_DAChSelect->setCurrentIndex(1);
         ui->comboBox_ADChSelect->addItems(AD1List);
@@ -1413,6 +1413,7 @@ void MainWindow::initSignalSlot()
                     analogValue = (digitValue - 0.634) / 818.4;
                     break;
                 case 4:
+                case 5:
                     analogValue = (digitValue + 1.392) / 822.7;
                     break;
             }
