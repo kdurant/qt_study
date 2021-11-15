@@ -50,10 +50,29 @@ public:
     void getWaveFromWaterGuard(const QVector<quint8> &frameData);
     int  getSettingsFromWaterGuard(const QVector<quint8> &frameData, WaveSettings &settings);
 
+    friend QDebug operator<<(QDebug debug, const WaveExtract &wave)
+    {
+        if(wave.ret.size() == 0)
+        {
+            debug << "没有解析到波形数据";
+            return debug;
+        }
+
+        QString info = QString("雷达类型: %1  第一段起始位置: %2  第一段长度: %3  第二段起始位置: %4  第二段长度: %5")
+                           .arg(wave.radarType)
+                           .arg(wave.ret[0].pos[0])
+                           .arg(wave.ret[0].pos.size())
+                           .arg(wave.ret.size() == 4 ? 0 : wave.ret[1].pos[0])
+                           .arg(wave.ret.size() == 4 ? 0 : wave.ret[1].pos.size());
+        debug << info;
+        return debug;
+    }
+
 signals:
     void formatedWaveReady(const QVector<WaveformInfo> &wave, int status);
 
 private:
-    BspConfig::RadarType radarType;
+    BspConfig::RadarType               radarType;
+    QVector<WaveExtract::WaveformInfo> ret;
 };
 #endif

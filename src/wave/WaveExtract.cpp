@@ -50,9 +50,9 @@ void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
 {
     int status = -1;
 
-    QVector<WaveExtract::WaveformInfo> ret;
     if(!isFrameHead(frameData, 0))
         status = -1;
+    ret.clear();
 
     WaveformInfo ch;
     int          start_pos = 0;
@@ -133,13 +133,13 @@ void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
 */
 void WaveExtract::getWaveFromWaterGuard(const QVector<quint8> &frameData)
 {
-    WaveSettings                       settings;
-    QVector<WaveExtract::WaveformInfo> ret;
+    WaveSettings settings;
     if(getSettingsFromWaterGuard(frameData, settings) == -1)
     {
         emit formatedWaveReady(ret, -1);
         return;
     }
+    ret.clear();
     int status     = -1;
     int frame_size = frameData.size();
 
