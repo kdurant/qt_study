@@ -403,6 +403,9 @@ void MainWindow::uiConfig()
         itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
         itemList.first()->setHidden(false);
 
+        ui->doubleSpinBox_laserGreenCurrent->setRange(0, 6000);
+        ui->doubleSpinBox_laserGreenCurrent->setValue(4000);
+
         ui->lineEdit_firstLen->setEnabled(false);
         ui->lineEdit_secondStartPos->setEnabled(false);
         ui->lineEdit_secondLen->setEnabled(false);
