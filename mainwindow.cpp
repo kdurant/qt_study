@@ -2081,12 +2081,19 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
 
         if(allCh.size() == 4)
         {
-            int     offset          = 0;
+            int     valid_angle_cnt = 0;
             quint32 angle_90_offset = 109778;
             quint32 start_range     = angle_90_offset - 40960;
             quint32 stop_range      = angle_90_offset + 40960;
             double  angle;
             angle = (allCh[0].motorCnt - start_range) * 360 / 163840.0;  // 角度偏移修正
+
+            int max_point_pos = Common::maxIndexInVector(allCh[0].value);
+
+            QVector<WaveExtract::WaveformInfo> reduce;
+            reduce.resize(4);
+            for(int i = 0; i < 4; i++)
+                reduce[i].value.resize(400);
 #if 1
             switch(waterGuard.state)
             {
@@ -2114,16 +2121,22 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
                     break;
 
                 case WaveExtract::MOTOR_CNT_STATE::LOAD_DATA:
+                    // 0-180°的每次采样数据都保存起来
                     if(allCh[0].motorCnt < stop_range)
                     {
-                        for(int i = 0; i < 3; i++)
-                        {  // 保存每个通道的基本数据，用于比较
-                            waterGuard.base[i].append(allCh[i]);
+                        for(int i = 0; i < allCh.size(); ++i)
+                        {  // 根据0通道峰值点，截取出作为基底的数据
+                            reduce[i].value = allCh[i].value.mid(max_point_pos);
                         }
 
-                        ui->waterGuardBaseColor0->setData(allCh[0].value, angle);
-                        ui->waterGuardBaseColor1->setData(allCh[1].value, angle);
-                        ui->waterGuardBaseColor2->setData(allCh[2].value, angle);
+                        for(int i = 0; i < 3; i++)
+                        {  // 保存每个通道的基本数据，用于比较
+                            waterGuard.base[i].append(reduce[i + 1]);
+                        }
+
+                        ui->waterGuardBaseColor0->setData(reduce[1].value, angle);
+                        ui->waterGuardBaseColor1->setData(reduce[2].value, angle);
+                        ui->waterGuardBaseColor2->setData(reduce[3].value, angle);
                     }
                     else
                         waterGuard.state = WaveExtract::MOTOR_CNT_STATE::WAIT_END;
@@ -2154,23 +2167,24 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
             }
             if(allCh[0].motorCnt > start_range && allCh[0].motorCnt < stop_range)
             {
-#if 1
                 refreshRadarFlag = true;
+#if 1
                 if(waterGuard.isSavedBase == true)  // 有了基底后，要先减去基底
                 {
                     for(int m = 0; m < 3; m++)  // 通道
                     {
-                        QVector<double>                    data;
-                        QVector<WaveExtract::WaveformInfo> all_angle_data;
-                        all_angle_data = waterGuard.base[m];
+                        const QVector<WaveExtract::WaveformInfo> &all_base_data = waterGuard.base[m];
 
-                        if(offset < all_angle_data.size())  // 保证索引不会出界
+                        if(valid_angle_cnt < all_base_data.size())  // 保证索引不会出界
                         {
-                            WaveExtract::WaveformInfo angle_data = all_angle_data[offset];
-                            QVector<double>           data;
-                            for(int n = 0; n < angle_data.value.size(); n++)
+                            const WaveExtract::WaveformInfo &angle_data = all_base_data[valid_angle_cnt];
+                            QVector<double>                  data{400, 255};
+
+                            const QVector<double> &temp = allCh[m + 1].value.mid(max_point_pos);
+
+                            for(int n = 0, len1 = angle_data.value.size(), len2 = temp.size(); n < len1 && n < len2; n++)
                             {
-                                data.append(allCh[m].value[n] - angle_data.value[n]);
+                                data.append(temp[n] - angle_data.value[n]);
                             }
                             if(m == 0)
                                 ui->waterGuardTimeColor0->setData(data, angle);
@@ -2181,19 +2195,19 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
                         }
                     }
                 }
-                else
-                {
-                    ui->waterGuardTimeColor0->setData(allCh[0].value, angle);
-                    ui->waterGuardTimeColor1->setData(allCh[1].value, angle);
-                    ui->waterGuardTimeColor2->setData(allCh[2].value, angle);
-                }
-                offset++;
 
+                else
 #endif
+                {
+                    ui->waterGuardTimeColor0->setData(allCh[1].value.mid(max_point_pos), angle);
+                    ui->waterGuardTimeColor1->setData(allCh[2].value.mid(max_point_pos), angle);
+                    ui->waterGuardTimeColor2->setData(allCh[3].value.mid(max_point_pos), angle);
+                }
+                valid_angle_cnt++;
             }
             else
             {
-                offset = 0;
+                valid_angle_cnt = 0;
 #if 1
                 if(refreshRadarFlag)
                 {

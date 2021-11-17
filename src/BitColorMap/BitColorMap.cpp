@@ -84,6 +84,14 @@ void BitColorMap::drawHalfCircle(QImage *img)
     }
 }
 
+/**
+* @brief 
+* 数据的长度可能会小于图像的尺寸
+*
+* @param img
+* @param data
+* @param angle
+*/
 void BitColorMap::drawLineWithAngle(QImage *img, const QVector<double> &data, double angle)
 {
     double radius = img->width() / 2 - 1;
@@ -92,8 +100,10 @@ void BitColorMap::drawLineWithAngle(QImage *img, const QVector<double> &data, do
     int    g = 0;
     int    b = 0;
 
-    //    for(int i = 1; i < img->width() / 2 && i < data.size(); i++)
-    for(int i = 1; i < img->width() / 2; i++)
+    int len = data.size();
+
+    for(int i = 1; i < img->width() / 2 && i < len / 2; i++)
+    // for(int i = 1; i < img->width() / 2; i++)
     {
         x = qCos((angle * pi) / 180);
         y = qSin((angle * pi) / 180);

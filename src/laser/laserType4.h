@@ -72,6 +72,10 @@ private:
 public slots:
     void setNewData(QByteArray& data) override
     {
+        // 上传的一包数据长13字节，有点奇怪
+        if(data.size() < 125)
+            return;
+
         recvData = data;
 
         frame = data.mid(0, 40);

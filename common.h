@@ -376,7 +376,7 @@ public:
     * @return 
     */
     template <typename T>
-    int maxIndexInVector(QVector<T> &arr)
+    static int maxIndexInVector(const QVector<T> &arr)
     {
         T   max   = arr[0];
         int index = 0;
