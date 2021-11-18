@@ -393,6 +393,9 @@ void MainWindow::uiConfig()
         ui->lineEdit_radarType->setText("水下预警雷达");
 
         ui->comboBox_laserFreq->addItem("2000");
+        ui->comboBox_laserFreq->addItem("3000");
+        ui->comboBox_laserFreq->addItem("4000");
+        ui->comboBox_laserFreq->addItem("5000");
 
         QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
         QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
@@ -580,39 +583,39 @@ void MainWindow::initSignalSlot()
     connect(preview, &AdSampleControll::sendDataReady, dispatch, &ProtocolDispatch::encode);
 
     connect(ui->btn_setPreviewPara, &QPushButton::pressed, this, [this]() {
-        int     totalSampleLen = ui->lineEdit_sampleLen->text().toInt();
-        int     previewRatio   = ui->lineEdit_sampleRate->text().toInt();
-        int     firstPos       = ui->lineEdit_firstStartPos->text().toInt();
-        int     firstLen       = ui->lineEdit_firstLen->text().toInt();
-        int     secondPos      = ui->lineEdit_secondStartPos->text().toInt();
-        int     secondLen      = ui->lineEdit_secondLen->text().toInt();
-        int     sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
-        int     valueThreshold = ui->lineEdit_subThreshold->text().toInt();
-        int     sampleDelay    = ui->lineEdit_sampleDelay->text().toInt();
-        quint16 pmtDelayTime   = ui->lineEdit_pmtDelayTime->text().toUInt();
-        quint16 pmtGateTime    = ui->lineEdit_pmtGateTime->text().toUInt();
+        previewSettings.sampleLen      = ui->lineEdit_sampleLen->text().toInt();
+        previewSettings.sampleRatio    = ui->lineEdit_sampleRate->text().toInt();
+        previewSettings.firstPos       = ui->lineEdit_firstStartPos->text().toInt();
+        previewSettings.firstLen       = ui->lineEdit_firstLen->text().toInt();
+        previewSettings.secondPos      = ui->lineEdit_secondStartPos->text().toInt();
+        previewSettings.secondLen      = ui->lineEdit_secondLen->text().toInt();
+        previewSettings.sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
+        previewSettings.valueThreshold = ui->lineEdit_subThreshold->text().toInt();
+        int     sampleDelay            = ui->lineEdit_sampleDelay->text().toInt();
+        quint16 pmtDelayTime           = ui->lineEdit_pmtDelayTime->text().toUInt();
+        quint16 pmtGateTime            = ui->lineEdit_pmtGateTime->text().toUInt();
 
-        if(secondPos < firstPos + firstLen)
+        if(previewSettings.secondPos < previewSettings.firstPos + previewSettings.firstLen)
         {
             QMessageBox::critical(NULL, "错误", "第二段起始位置需要小于第一段起始位置+第一段采样长度");
             return;
         }
 
-        preview->setTotalSampleLen(totalSampleLen);
-        preview->setPreviewRatio(previewRatio);
+        preview->setTotalSampleLen(previewSettings.sampleLen);
+        preview->setPreviewRatio(previewSettings.sampleRatio);
 
         if(radarType == BspConfig::RADAR_TPYE_LAND)
         {
-            preview->setAlgoAPos((firstPos >> 3) << 3);
-            preview->setAlgoALen((firstLen >> 3) << 3);
-            preview->setAlgoBPos((secondPos >> 3) << 3);
-            preview->setAlgoBSumThre(sumThreshold);
-            preview->setAlgoBValueThre(valueThreshold);
+            preview->setAlgoAPos((previewSettings.firstPos >> 3) << 3);
+            preview->setAlgoALen((previewSettings.firstLen >> 3) << 3);
+            preview->setAlgoBPos((previewSettings.secondPos >> 3) << 3);
+            preview->setAlgoBSumThre(previewSettings.sumThreshold);
+            preview->setAlgoBValueThre(previewSettings.valueThreshold);
             return;
         }
         if(radarType == BspConfig::RADAR_TPYE_SECOND_INSTITUDE)
         {
-            if(firstLen + secondLen < 400)
+            if(previewSettings.firstLen + previewSettings.secondLen < 400)
             {
                 QMessageBox::warning(NULL, "警告", "第一段采样长度+第二段采样长度需要大于400");
                 return;
@@ -621,26 +624,26 @@ void MainWindow::initSignalSlot()
 
         if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
         {
-            if(firstLen + secondLen >= 3000)
+            if(previewSettings.firstLen + previewSettings.secondLen >= 3000)
                 QMessageBox::warning(NULL, "警告", "两段采样长度之和尽量不要大于3000");
         }
         else
         {
-            if(firstLen + secondLen >= 1000)
+            if(previewSettings.firstLen + previewSettings.secondLen >= 1000)
                 QMessageBox::warning(NULL, "警告", "两段采样长度之和尽量不要大于1000");
         }
 
-        if(secondPos + secondLen >= totalSampleLen)
+        if(previewSettings.secondPos + previewSettings.secondLen >= previewSettings.sampleLen)
         {
             QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
             return;
         }
-        preview->setFirstPos(firstPos);
-        preview->setFirstLen(firstLen);
-        preview->setSecondPos(secondPos);
-        preview->setSecondLen(secondLen);
-        preview->setSumThreshold(sumThreshold);
-        preview->setValueThreshold(valueThreshold);
+        preview->setFirstPos(previewSettings.firstPos);
+        preview->setFirstLen(previewSettings.firstLen);
+        preview->setSecondPos(previewSettings.secondPos);
+        preview->setSecondLen(previewSettings.secondLen);
+        preview->setSumThreshold(previewSettings.sumThreshold);
+        preview->setValueThreshold(previewSettings.valueThreshold);
 
         if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
         {
@@ -658,8 +661,11 @@ void MainWindow::initSignalSlot()
 
         if(ui->btn_sampleEnable->text() == "开始采集")
         {
+#ifdef DEBUG_WATER_GUARD
             testCnt = 0;
+            elapsedTimer.start();
             qDebug() << "start: testCnt = " << testCnt;
+#endif
             status = 0x01010101;
             ui->btn_sampleEnable->setText("停止采集");
         }
@@ -672,7 +678,22 @@ void MainWindow::initSignalSlot()
             }
             status = 0;
             ui->btn_sampleEnable->setText("开始采集");
+
+#ifdef DEBUG_WATER_GUARD
             qDebug() << "stop: testCnt = " << testCnt;
+            int t = elapsedTimer.elapsed();
+            if(previewSettings.laserFreq > 0)
+            {
+                int     totalBytes = (t / 1000.0) * (previewSettings.laserFreq / previewSettings.sampleRatio) * (128 + previewSettings.firstLen * 8);
+                QString info       = QString("应收到数据：%1, 实际收到数据：%2").arg(testCnt).arg(totalBytes);
+                QMessageBox::information(NULL, "information", info);
+            }
+            else
+            {
+                QMessageBox::information(this, "information", "请先设置激光器采样频率");
+            }
+
+#endif
         }
         preview->setPreviewEnable(status);
     });
@@ -682,20 +703,21 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->rbtn_previewInsideTrg, &QRadioButton::clicked, this, [this]() {
+        previewSettings.laserFreq = ui->comboBox_laserFreq->currentText().toInt(nullptr);
         switch(radarType)
         {
             case BspConfig::RADAR_TPYE_LAND:
-                laser2Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                laser2Driver->setFreq(previewSettings.laserFreq);
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
-                laser3Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                laser3Driver->setFreq(previewSettings.laserFreq);
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-                laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                laserDriver->setFreq(previewSettings.laserFreq);
                 break;
             case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
-                laser6Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                laser6Driver->setFreq(previewSettings.laserFreq);
                 break;
             default:
                 break;

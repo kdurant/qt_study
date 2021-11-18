@@ -116,6 +116,19 @@ private:
         QLabel *label_adCaptureStatus;
     } sysStatus;
 
+    struct _preview_settings__
+    {
+        int laserFreq;
+        int sampleLen;
+        int sampleRatio;
+        int firstPos;
+        int firstLen;
+        int secondPos;
+        int secondLen;
+        int sumThreshold;
+        int valueThreshold;
+    } previewSettings{-1, -1, -1, -1, -1, -1, -1, -1, -1};
+
     struct DoubleWaveConfig
     {
         double prev_angle;
@@ -134,6 +147,7 @@ private:
     QSettings *     configIni;
     QThread *       thread;
     qint32          timer1s;
+    QElapsedTimer   elapsedTimer;
     qint32          timerRefreshUI;
     bool            refreshUIFlag{false};
     bool            refreshRadarFlag{false};

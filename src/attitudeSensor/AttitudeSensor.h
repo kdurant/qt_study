@@ -21,6 +21,11 @@ public:
     AttitudeInfo magneticField;
 
 private:
+    /**
+     * @brief 0x51
+     * @param frame
+     * @return
+     */
     AttitudeInfo getAccelerate(QByteArray& frame)
     {
         AttitudeInfo data;
@@ -31,6 +36,12 @@ private:
 
         return data;
     }
+
+    /**
+     * @brief 0x52
+     * @param frame
+     * @return
+     */
     AttitudeInfo getAngularVelocity(QByteArray& frame)
     {
         AttitudeInfo data;
@@ -41,6 +52,11 @@ private:
 
         return data;
     }
+    /**
+     * @brief 0x53
+     * @param frame
+     * @return
+     */
     AttitudeInfo getAngular(QByteArray& frame)
     {
         AttitudeInfo data;
@@ -52,6 +68,11 @@ private:
 
         return data;
     }
+    /**
+     * @brief 0x54
+     * @param frame
+     * @return
+     */
     AttitudeInfo getMagneticField(QByteArray& frame)
     {
         AttitudeInfo data;
@@ -80,10 +101,10 @@ public slots:
         accelerate = getAccelerate(frame);
 
         frame           = data.mid(11, 11);
-        angularVelocity = getAngular(frame);
+        angularVelocity = getAngularVelocity(frame);
 
         frame   = data.mid(22, 11);
-        angular = getAccelerate(frame);
+        angular = getAngular(frame);
 
         frame         = data.mid(33, 11);
         magneticField = getMagneticField(frame);
