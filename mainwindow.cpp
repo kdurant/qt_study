@@ -1855,6 +1855,7 @@ void MainWindow::getSysInfo()
 {
     if(devInfo->getSysPara(sysParaInfo))
     {
+        ui->statusBar->setStyleSheet("color:black");
         ui->statusBar->showMessage(tr("系统通信正常"), 0);
 
         if(devInfo->getRadarType() != radarType)
@@ -1912,7 +1913,8 @@ void MainWindow::getSysInfo()
     }
     else
     {
-        ui->statusBar->showMessage(tr("系统无法通信，检查网络连接"), 0);
+        ui->statusBar->setStyleSheet("color:red");
+        ui->statusBar->showMessage("系统无法通信，检查网络连接", 0);
     }
 }
 
