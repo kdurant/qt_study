@@ -8,4 +8,3 @@ HEADERS += \
 
 SOURCES += \
            $$PWD/ProtocolDispatch.cpp \
-           $$PWD/AdSampleControl.cpp \
