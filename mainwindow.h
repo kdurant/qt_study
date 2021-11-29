@@ -6,6 +6,7 @@
 #include "common.h"
 #include "bsp_config.h"
 #include "noteinfo.h"
+#include "navigation.h"
 
 #include <QCloseEvent>
 #include <QUdpSocket>
@@ -212,6 +213,9 @@ private:
 
     WaterGuard waterGuard;
     QMutex     mutex;
+
+    NoteInfo *  note;
+    Navigation *nav;
 
     qint64           testCnt{0};
     QVector<QString> testString;

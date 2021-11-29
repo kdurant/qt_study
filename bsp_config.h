@@ -34,6 +34,7 @@ public:
         double  roll;     // 翻滚角
         double  pitch;    // 俯仰角
         double  heading;  // 方位角
+        double  height;
     };
 
     /**

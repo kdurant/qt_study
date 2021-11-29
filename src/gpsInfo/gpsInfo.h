@@ -30,7 +30,7 @@ public:
     };
 
 private:
-    BspConfig::Gps_Info gps{0, 0, 0, 0, 0, 0, 0, 0};
+    BspConfig::Gps_Info gps{0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     /**
      * @brief APPLANIX通过串口上传的GPS数据帧

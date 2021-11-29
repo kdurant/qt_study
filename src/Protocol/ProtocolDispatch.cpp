@@ -9,6 +9,9 @@ quint32 ProtocolDispatch::cmdNum = 0;
  */
 void ProtocolDispatch::parserFrame(QByteArray &data)
 {
+    if(data.size() != 284)
+        return;
+
     uint32_t   command  = getCommand(data);
     uint32_t   data_len = getDataLen(data);
     QByteArray transmitFrame;

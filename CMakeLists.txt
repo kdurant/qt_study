@@ -51,6 +51,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/src/gpsInfo
     ${CMAKE_SOURCE_DIR}/src/attitudeSensor
     ${CMAKE_SOURCE_DIR}/src/third_lib/QCustomPlot
+    ${CMAKE_SOURCE_DIR}/src/navigation
     )
 
 # set (Project_UI  ${PROJECT_SOURCE_DIR}/mainwindow.ui)
@@ -58,6 +59,7 @@ set (Project_UI
     ${CMAKE_SOURCE_DIR}/ui/mainwindow.ui
     ${CMAKE_SOURCE_DIR}/ui/noteinfo.ui
     ${CMAKE_SOURCE_DIR}/ui/save.ui
+    ${CMAKE_SOURCE_DIR}/ui/navigation.ui
     )
 qt5_wrap_ui (Project_UI_MOC  ${Project_UI})
 
@@ -90,6 +92,7 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/src/wave/WaveExtract.cpp
     ${CMAKE_SOURCE_DIR}/src/wave/OfflineWaveform.cpp
     ${CMAKE_SOURCE_DIR}/src/wave/OnlineWaveform.cpp
+    ${CMAKE_SOURCE_DIR}/src/navigation/navigation.cpp
     )
 
 add_executable(${PROJECT_NAME}

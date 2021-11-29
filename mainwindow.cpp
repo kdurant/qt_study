@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "ui_navigation.h"
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -38,6 +40,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     gps      = new GpsInfo();
     attitude = new AttitudeSensor;
+
+    note = new NoteInfo;
+    nav  = new Navigation;
 
     sysStatus.ssdLinkStatus   = false;
     sysStatus.udpLinkStatus   = false;
@@ -1577,6 +1582,7 @@ void MainWindow::setToolBar()
     act.append(new QAction("高压设置", this));
     act.append(new QAction("预览设置", this));
     act.append(new QAction("显示侧边栏", this));
+    act.append(new QAction("导航", this));
     ui->mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     for(int i = 0; i < act.size(); i++)
     {
@@ -1598,6 +1604,9 @@ void MainWindow::setToolBar()
     connect(act[4], &QAction::triggered, this, [this]() {
         ui->dockWidget_left->show();
         ui->dockWidget_right->show();
+    });
+    connect(act[5], &QAction::triggered, this, [this]() {
+        nav->show();
     });
 }
 
@@ -1814,7 +1823,6 @@ void MainWindow::timerEvent(QTimerEvent *event)
 
 void MainWindow::on_actionNote_triggered()
 {
-    NoteInfo *note = new NoteInfo;
     note->show();
 }
 

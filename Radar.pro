@@ -28,6 +28,18 @@ include(./src/BitColorMap/BitColorMap.pri)
 include(./src/motor/MotorController.pri)
 include(./src/laser/LaserController.pri)
 
+INCLUDEPATH += ./src/UpdateBin
+INCLUDEPATH += ./src/wave
+INCLUDEPATH += ./src/DevInfo
+INCLUDEPATH += ./src/saveWave
+INCLUDEPATH += ./src/ADControll
+INCLUDEPATH += ./src/DAControll
+INCLUDEPATH += ./src/gpsInfo
+INCLUDEPATH += ./src/attitudeSensor
+INCLUDEPATH += ./src/third_lib/QCustomPlot/
+INCLUDEPATH += ./src/navigation
+
+
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
@@ -40,6 +52,7 @@ SOURCES += \
     save.cpp \
     src/DevInfo/DevInfo.cpp \
     src/UpdateBin/UpdateBin.cpp \
+    src/navigation/navigation.cpp \
 
 HEADERS += \
     common.h \
@@ -58,22 +71,14 @@ HEADERS += \
     save.h \
     src/DevInfo/DevInfo.h \
     src/UpdateBin/UpdateBin.h \
-
-INCLUDEPATH += ./src/UpdateBin
-INCLUDEPATH += ./src/wave
-INCLUDEPATH += ./src/DevInfo
-INCLUDEPATH += ./src/saveWave
-INCLUDEPATH += ./src/ADControll
-INCLUDEPATH += ./src/DAControll
-INCLUDEPATH += ./src/gpsInfo
-INCLUDEPATH += ./src/attitudeSensor
-INCLUDEPATH += ./src/third_lib/QCustomPlot/
+    src/navigation/navigation.h \
 
 
 FORMS += \
         ui/mainwindow.ui \
-    ui/noteinfo.ui \
-    ui/save.ui
+        ui/noteinfo.ui \
+        ui/navigation.ui \
+        ui/save.ui
 
 RESOURCES += \
     res.qrc
