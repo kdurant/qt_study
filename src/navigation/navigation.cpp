@@ -14,9 +14,9 @@ Navigation::Navigation(QWidget *parent) :
 
     //    getTestData();
 
-    qDebug() << "distance = " << distanceBetweenPoints(110.429545, 18.677179, 110.406169, 18.677106);
-    qDebug() << "distance = " << distanceBetweenPoints(110.415955, 18.686890, 110.416025, 18.666448);
-    qDebug() << "distance = " << distanceBetweenPoints(110.415955, 18.686890, 110.406169, 18.677106);
+    // qDebug() << "distance = " << distanceBetweenPoints(110.429545, 18.677179, 110.406169, 18.677106);
+    // qDebug() << "distance = " << distanceBetweenPoints(110.415955, 18.686890, 110.416025, 18.666448);
+    // qDebug() << "distance = " << distanceBetweenPoints(110.415955, 18.686890, 110.406169, 18.677106);
 }
 
 Navigation::~Navigation()
@@ -34,7 +34,7 @@ void Navigation::initUI()
     ui->groupBox_test->hide();
     QPixmap pix("navigation.png");
 
-    qDebug() << ui->label_info->size();
+    // qDebug() << ui->label_info->size();
     QPixmap dest = pix.scaled(ui->label_info->size(), Qt::KeepAspectRatio);
 
     ui->label_info->setPixmap((pix));

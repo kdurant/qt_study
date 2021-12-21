@@ -163,6 +163,8 @@ private:
     int8_t       fpgaRadarType{-1};  //fpga 内部固化的雷达类型
     QByteArray   fpgaVersion{5, char(0)};
 
+    QFile binFile;
+
     ProtocolDispatch *dispatch;
 
     AdSampleControll *preview;

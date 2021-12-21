@@ -737,6 +737,8 @@ void MainWindow::initSignalSlot()
 
     connect(dispatch, &ProtocolDispatch::onlineDataReady, onlineWaveForm, &OnlineWaveform::setNewData);
     connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data) {
+        if(ui->checkBox_saveDataToFile)
+            binFile.write(data);
         testCnt += data.size();
         sampleData.clear();
         for(auto &i : data)  // 数据格式转换
@@ -1340,6 +1342,11 @@ void MainWindow::initSignalSlot()
         if(ui->lineEdit_ssdStoreFileName->text().length() != 0)
             fileName.append(ui->lineEdit_ssdStoreFileName->text());
         ssd->setSaveFileName(fileUnit, fileName);
+        if(ui->checkBox_saveDataToFile)
+        {
+            binFile.setFileName(fileName);
+            binFile.open(QIODevice::WriteOnly);
+        }
 
         quint32 dataUnit = ui->lineEdit_ssdAvailDataUnit->text().toUInt(nullptr, 16);
         ssd->setSaveFileAddr(dataUnit);
@@ -1352,6 +1359,8 @@ void MainWindow::initSignalSlot()
             return;
         ui->btn_ssdEnableStore->setEnabled(true);
         ssd->enableStoreFile(0x00);
+        if(ui->checkBox_saveDataToFile)
+            binFile.close();
     });
 
     /*
