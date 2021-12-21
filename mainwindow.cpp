@@ -737,7 +737,7 @@ void MainWindow::initSignalSlot()
 
     connect(dispatch, &ProtocolDispatch::onlineDataReady, onlineWaveForm, &OnlineWaveform::setNewData);
     connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data) {
-        if(ui->checkBox_saveDataToFile)
+        if(ui->checkBox_saveDataToFile->isChecked())
             binFile.write(data);
         testCnt += data.size();
         sampleData.clear();
@@ -1342,9 +1342,9 @@ void MainWindow::initSignalSlot()
         if(ui->lineEdit_ssdStoreFileName->text().length() != 0)
             fileName.append(ui->lineEdit_ssdStoreFileName->text());
         ssd->setSaveFileName(fileUnit, fileName);
-        if(ui->checkBox_saveDataToFile)
+        if(ui->checkBox_saveDataToFile->isChecked())
         {
-            binFile.setFileName(fileName);
+            binFile.setFileName(fileName + ".bin");
             binFile.open(QIODevice::WriteOnly);
         }
 
@@ -1359,7 +1359,7 @@ void MainWindow::initSignalSlot()
             return;
         ui->btn_ssdEnableStore->setEnabled(true);
         ssd->enableStoreFile(0x00);
-        if(ui->checkBox_saveDataToFile)
+        if(ui->checkBox_saveDataToFile->isChecked())
             binFile.close();
     });
 
