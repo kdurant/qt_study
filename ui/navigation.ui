@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1019</width>
+    <width>1093</width>
     <height>765</height>
    </rect>
   </property>
@@ -349,7 +349,7 @@
          <string notr="true">font: 16pt &quot;Courier New&quot;;</string>
         </property>
         <property name="text">
-         <string>飞行高度：+3.12m      飞行速度：-10.13km/h     航向角：-0.8265°</string>
+         <string>飞行高度：+3.12m   飞行速度：-10.13km/h     航向角：-0.8265°    测区覆盖率：43.18%</string>
         </property>
        </widget>
       </item>
