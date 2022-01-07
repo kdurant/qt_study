@@ -86,7 +86,7 @@ bool LaserType3::setCurrent(quint16 current)
     {
         frame.append(command[i] & 0xff);
     }
-    emit sendDataReady(MasterSet::LASER_ENABLE, frame.length(), frame);
+    emit sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
 
     //    QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
     //    connect(this, &LaserType3::responseDataReady, &waitLoop, &QEventLoop::quit);
@@ -115,7 +115,6 @@ bool LaserType3::getStatus()
     QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
     waitLoop.exec();
 
-    LaserInfo info{0, 0, 0, 0, 0};
     if(recvData.size() == 0x32)
     {
         switch(recvData[2])
@@ -141,6 +140,12 @@ bool LaserType3::getStatus()
                 emit laserInfoReady(info);
                 return true;
 
+                break;
+            case 0x0a:
+                info.expected_current = ((static_cast<uint8_t>(recvData[4])) << 0) +
+                                        ((static_cast<uint8_t>(recvData[5])) << 8);
+                info.real_current = ((static_cast<uint8_t>(recvData[6])) << 0) +
+                                    ((static_cast<uint8_t>(recvData[7])) << 8);
                 break;
             default:
                 break;

@@ -28,7 +28,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     laser1Driver = new LaserType1();
     laser2Driver = new LaserType2();
-    laser3Driver = new LaserType3();
     laser6Driver = new LaserType6();
 
     devInfo = new DevInfo();
@@ -138,7 +137,8 @@ void MainWindow::initParameter()
             laserDriver = new LaserType5();
             break;
         case 4:
-            radarType = BspConfig::RADAR_TPYE_DRONE;
+            radarType   = BspConfig::RADAR_TPYE_DRONE;
+            laserDriver = new LaserType3();
             break;
         case 5:
             radarType   = BspConfig::RADAR_TYPE_WATER_GUARD;
@@ -386,9 +386,11 @@ void MainWindow::uiConfig()
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_ADChSelect->addItems(AD1List);
 
-        ui->label_laserGreenCurrent->hide();
-        ui->doubleSpinBox_laserGreenCurrent->hide();
-        ui->btn_laserSetCurrent->hide();
+        // ui->label_laserGreenCurrent->hide();
+        // ui->doubleSpinBox_laserGreenCurrent->hide();
+        // ui->btn_laserSetCurrent->hide();
+        ui->doubleSpinBox_laserGreenCurrent->setRange(0, 6600);
+        ui->doubleSpinBox_laserGreenCurrent->setValue(4100);
 
         ui->tabWidget->setTabEnabled(5, true);
     }
@@ -715,8 +717,6 @@ void MainWindow::initSignalSlot()
                 laser2Driver->setFreq(previewSettings.laserFreq);
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
-                laser3Driver->setFreq(previewSettings.laserFreq);
-                break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 laserDriver->setFreq(previewSettings.laserFreq);
@@ -997,13 +997,7 @@ void MainWindow::initSignalSlot()
         connect(laser1Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laser1Driver, &LaserType1::setNewData);
     }
-    else if(radarType == BspConfig::RADAR_TPYE_DRONE)
-    {
-        connect(laser3Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
-        connect(dispatch, &ProtocolDispatch::laserDataReady, laser3Driver, &LaserType3::setNewData);
-        connect(laser3Driver, &LaserType3::laserInfoReady, this, &MainWindow::showLaserInfo);
-    }
-    else if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE || radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+    else if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE || radarType == BspConfig::RADAR_TYPE_WATER_GUARD || radarType == BspConfig::RADAR_TPYE_DRONE)
     {
         connect(laserDriver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laserDriver, &LaserController::setNewData);
@@ -1030,9 +1024,6 @@ void MainWindow::initSignalSlot()
                 status = laser2Driver->open();
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
-                laser3Driver->setFreq(4000);
-                status = laser3Driver->open();
-                break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
@@ -1062,8 +1053,6 @@ void MainWindow::initSignalSlot()
                 status = laser2Driver->close();
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
-                status = laser3Driver->close();
-                break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laserDriver->close();
@@ -1094,7 +1083,7 @@ void MainWindow::initSignalSlot()
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
                 // 上位机界面单位mA， 设置1000mA(0x3e8), 设置下去的值：100, 单位是0.01A，结果还是1000mA
-                status = laser3Driver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()) / 10);
+                status = laserDriver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()) / 10);
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
                 laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
@@ -1122,8 +1111,6 @@ void MainWindow::initSignalSlot()
                 status = laser2Driver->setMode(LaserController::IN_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
-                status = laser3Driver->setMode(LaserController::IN_SIDE);
-                break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laserDriver->setMode(LaserController::IN_SIDE);
@@ -1146,8 +1133,6 @@ void MainWindow::initSignalSlot()
                 status = laser2Driver->setMode(LaserController::OUT_SIDE);
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
-                status = laser3Driver->setMode(LaserController::OUT_SIDE);
-                break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laserDriver->setMode(LaserController::OUT_SIDE);
@@ -1177,7 +1162,7 @@ void MainWindow::initSignalSlot()
                 //                itemList.first()->setText(1, laser2Driver->getTemp());
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
-                while(laser3Driver->getStatus() != true)
+                while(laserDriver->getStatus() != true)
                     ;
                 break;
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
@@ -1965,6 +1950,12 @@ void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
         case BspConfig::RADAR_TPYE_LAND:
             break;
         case BspConfig::RADAR_TPYE_DRONE:
+            itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.expected_current * 10));
+
+            itemList = ui->treeWidget_laser->findItems("电流实际值(mA)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.real_current * 10));
+
             itemList = ui->treeWidget_laser->findItems("外触发频率(Hz)", Qt::MatchExactly);
             itemList.first()->setText(1, QString::number(info.freq_outside));
 
