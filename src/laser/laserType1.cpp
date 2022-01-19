@@ -44,6 +44,14 @@ bool LaserType1::close()
     return true;
 }
 
+bool LaserType1::setFreq(qint32 freq)
+{
+    QByteArray frame = BspConfig::int2ba(freq);
+    emit       sendDataReady(MasterSet::LASER_FREQ, 4, frame);
+    QThread::msleep(1);
+    return true;
+}
+
 bool LaserType1::setPower(quint16 power)
 {
     QByteArray array;

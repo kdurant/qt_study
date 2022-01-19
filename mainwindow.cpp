@@ -349,6 +349,7 @@ void MainWindow::uiConfig()
         ui->label_laserGreenCurrent->hide();
         ui->doubleSpinBox_laserGreenCurrent->hide();
         ui->comboBox_laserFreq->addItem("5000");
+        ui->comboBox_laserFreq->addItem("10000");
         //        ui->label
     }
     else if(radarType == BspConfig::RADAR_TPYE_LAND)
@@ -668,11 +669,6 @@ void MainWindow::initSignalSlot()
 
         if(ui->btn_sampleEnable->text() == "开始采集")
         {
-#ifdef DEBUG_WATER_GUARD
-            testCnt = 0;
-            elapsedTimer.start();
-            qDebug() << "start: testCnt = " << testCnt;
-#endif
             status = 0x01010101;
             ui->btn_sampleEnable->setText("停止采集");
         }
@@ -685,22 +681,6 @@ void MainWindow::initSignalSlot()
             }
             status = 0;
             ui->btn_sampleEnable->setText("开始采集");
-
-#ifdef DEBUG_WATER_GUARD
-            qDebug() << "stop: testCnt = " << testCnt;
-            int t = elapsedTimer.elapsed();
-            if(previewSettings.laserFreq > 0)
-            {
-                int     totalBytes = (t / 1000.0) * (previewSettings.laserFreq / previewSettings.sampleRatio) * (128 + previewSettings.firstLen * 8);
-                QString info       = QString("应收到数据：%1, 实际收到数据：%2").arg(testCnt).arg(totalBytes);
-                QMessageBox::information(NULL, "information", info);
-            }
-            else
-            {
-                QMessageBox::information(this, "information", "请先设置激光器采样频率");
-            }
-
-#endif
         }
         preview->setPreviewEnable(status);
     });
@@ -713,6 +693,9 @@ void MainWindow::initSignalSlot()
         previewSettings.laserFreq = ui->comboBox_laserFreq->currentText().toInt(nullptr);
         switch(radarType)
         {
+            case BspConfig::RADAR_TPYE_OCEAN:
+                laser1Driver->setFreq(previewSettings.laserFreq);
+                break;
             case BspConfig::RADAR_TPYE_LAND:
                 laser2Driver->setFreq(previewSettings.laserFreq);
                 break;
@@ -1336,6 +1319,12 @@ void MainWindow::initSignalSlot()
         quint32 dataUnit = ui->lineEdit_ssdAvailDataUnit->text().toUInt(nullptr, 16);
         ssd->setSaveFileAddr(dataUnit);
         ssd->enableStoreFile(0x01);
+
+        // #ifdef DEBUG_WATER_GUARD
+        testCnt = 0;
+        elapsedTimer.start();
+        qDebug() << "start: testCnt = " << testCnt;
+        // #endif
     });
 
     connect(ui->btn_ssdDisableStore, &QPushButton::pressed, this, [this]() {
@@ -1344,6 +1333,32 @@ void MainWindow::initSignalSlot()
             return;
         ui->btn_ssdEnableStore->setEnabled(true);
         ssd->enableStoreFile(0x00);
+        //
+        // #ifdef DEBUG_WATER_GUARD
+        qDebug() << "stop: testCnt = " << testCnt;
+        int t = elapsedTimer.elapsed();
+        if(previewSettings.laserFreq > 0)
+        {
+            double   period_s     = 1.0 / previewSettings.laserFreq;
+            uint64_t sample_count = (t / 1000.0) / period_s;
+
+            int      bytes_of_sample = 128 + 8 * previewSettings.firstLen + 4 * (previewSettings.secondLen * 2 + 4);
+            uint64_t bytes_of_total  = sample_count * bytes_of_sample;
+            // int totalBytes = (t / 1000.0) * (previewSettings.laserFreq / previewSettings.sampleRatio) * (128 + previewSettings.firstLen * 8);
+
+            QString info = QString("存储数据时间(ms): %1\n采样波形次数:%2\n单次采样数据量(byte): %3\n理论全部存储数据量(bytes): %4")
+                               .arg(t)
+                               .arg(sample_count)
+                               .arg(bytes_of_sample)
+                               .arg(bytes_of_total);
+            QMessageBox::information(NULL, "information", info);
+        }
+        else
+        {
+            QMessageBox::information(this, "information", "请先设置激光器采样频率");
+        }
+        // #endif
+
         if(ui->checkBox_saveDataToFile->isChecked())
             binFile.close();
     });

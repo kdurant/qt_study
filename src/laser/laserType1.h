@@ -1,6 +1,7 @@
 #ifndef LASERTYPE1_H
 #define LASERTYPE1_H
 #include "protocol.h"
+#include "bsp_config.h"
 #include "ProtocolDispatch.h"
 #include "LaserController.h"
 
@@ -38,6 +39,7 @@ public:
     bool setMode(OpenMode mode) override;
     bool open(void) override;
     bool close(void) override;
+    bool setFreq(qint32 freq) override;
     bool setPower(quint16 power) override;
 
     bool getStatus(void) override;
