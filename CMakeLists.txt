@@ -1,3 +1,4 @@
+# cmake -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=DEBUG | cmake --build build
 cmake_minimum_required(VERSION 3.5)
 
 project(radar LANGUAGES CXX)
@@ -9,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
-add_definitions( -DSOFT_VERSION="0.03" )
+add_definitions( -DSOFT_VERSION="0.125" )
 
 execute_process(
     COMMAND git log -1 --format=%h
@@ -27,6 +28,8 @@ execute_process(
 )
 add_definitions(-DGIT_DATE=\"${GIT_DATE}\")
 
+add_subdirectory(${CMAKE_SOURCE_DIR}/src/third_lib/QCustomPlot)
+
 # set(CMAKE_AUTOUIC ON) # 如果ui文件和cpp文件不在同一个目录下，不能使用此项
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -36,6 +39,8 @@ find_package(Qt5 COMPONENTS Gui REQUIRED)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Network REQUIRED)
 find_package(Qt5 COMPONENTS PrintSupport REQUIRED)
+
+set(APP_ICON_RESOURCE_WINDOWS ${CMAKE_SOURCE_DIR}/qss/app.rc)
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/src/Protocol
@@ -87,7 +92,6 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/src/Protocol/ProtocolDispatch.cpp
     ${CMAKE_SOURCE_DIR}/src/Protocol/ADSampleControl.h
     ${CMAKE_SOURCE_DIR}/src/saveWave/SaveWave.cpp
-    ${CMAKE_SOURCE_DIR}/src/third_lib/QCustomPlot/qcustomplot.cpp
     ${CMAKE_SOURCE_DIR}/src/UpdateBin/UpdateBin.cpp
     ${CMAKE_SOURCE_DIR}/src/wave/WaveExtract.cpp
     ${CMAKE_SOURCE_DIR}/src/wave/OfflineWaveform.cpp
@@ -99,8 +103,8 @@ add_executable(${PROJECT_NAME}
     ${SOURCES}
     ${Project_UI_MOC}
     ${CMAKE_SOURCE_DIR}/res.qrc
+    ${APP_ICON_RESOURCE_WINDOWS}
 )
-
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     Qt5::Widgets 
@@ -108,6 +112,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Qt5::Core 
     Qt5::Gui
     Qt5::PrintSupport
+    qcustomplot_shared
 )
 
 string(TIMESTAMP COMPILE_TIME %Y%m%d_%H%M%S)
