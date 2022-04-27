@@ -1,9 +1,14 @@
+SET(CMAKE_C_COMPILER    "D:/Qt/Qt5.14.2/Tools/mingw730_64/bin/gcc.exe")
+SET(CMAKE_CXX_COMPILER  "D:/Qt/Qt5.14.2/Tools/mingw730_64/bin/g++.exe")
+
 # cmake -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=DEBUG | cmake --build build
 cmake_minimum_required(VERSION 3.5)
 
 project(radar LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+SET(CMAKE_C_COMPILER    "D:/Qt/Qt5.14.2/Tools/mingw730_64/bin/gcc.exe")
+SET(CMAKE_CXX_COMPILER  "D:/Qt/Qt5.14.2/Tools/mingw730_64/bin/g++.exe")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
