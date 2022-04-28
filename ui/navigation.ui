@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1093</width>
+    <width>1310</width>
     <height>765</height>
    </rect>
   </property>
@@ -311,20 +311,30 @@
          <string>GroupBox</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="0">
+         <item row="1" column="0">
           <widget class="QPushButton" name="btn_loadTracker">
            <property name="text">
             <string>加载航线</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="2" column="0">
           <widget class="QLineEdit" name="lineEdit_navigationFile">
            <property name="text">
             <string>2018_03_07_20_23_50_833.datagps</string>
            </property>
            <property name="readOnly">
             <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QPushButton" name="btn_loadMap">
+           <property name="toolTip">
+            <string>目前只支持瓦片地图，且层级下只能包含16张瓦片</string>
+           </property>
+           <property name="text">
+            <string>加载地图</string>
            </property>
           </widget>
          </item>
@@ -342,7 +352,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,5,1">
+     <layout class="QVBoxLayout" name="verticalLayout" stretch="1,10,1">
       <item>
        <widget class="QLabel" name="label_9">
         <property name="styleSheet">
@@ -354,16 +364,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label_info">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCustomPlot" name="navigationPlot" native="true">
-        <layout class="QHBoxLayout" name="horizontalLayout"/>
-       </widget>
+       <widget class="QWidget" name="widget" native="true"/>
       </item>
       <item>
        <widget class="QGroupBox" name="groupBox_test">
@@ -393,14 +394,6 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QCustomPlot</class>
-   <extends>QWidget</extends>
-   <header location="global">./src/third_lib/QCustomPlot/qcustomplot.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>
