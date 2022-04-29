@@ -10,6 +10,7 @@ Navigation::Navigation(QWidget *parent) :
 
     initUI();
     initSignalSlot();
+    //    MapView *map = ui->mapView;
 
     //    getTestData();
 
@@ -38,8 +39,16 @@ void Navigation::initSignalSlot()
         if(updateFilePath.size() == 0)
             return;
         ui->lineEdit_navigationFile->setText(updateFilePath);
+        parseTrackerFile(updateFilePath, m_gps_routine);
 
-        getTestData();
+        int len = m_gps_routine.length();
+        for(int i = 0; i < len; i += 2)
+        {
+            ui->mapView->loadTracker(m_gps_routine[i], m_gps_routine[i + 1]);
+            ui->mapView->loadSerialNum(m_gps_routine[i], i / 2 + 1);
+        }
+
+        //        getTestData();
     });
 
     connect(ui->btn_loadMap, &QPushButton::pressed, this, [&] {
@@ -49,7 +58,18 @@ void Navigation::initSignalSlot()
         {
             QMessageBox::critical(this, "error", "请选择正确的瓦片地图层级");
         }
-        qDebug() << list;
+
+        int len         = list[0].filePath().split('/').length();
+        m_tile_X_offset = list[0].filePath().split('/')[len - 2].toUInt();
+        m_tile_Y_offset = list[0].fileName().split('.')[0].toUInt();
+
+        ui->mapView->setMapPath(mapPath, m_tile_X_offset, m_tile_Y_offset);
+        ui->mapView->loadMap();
+
+        qDebug() << list[0].filePath();
+        qDebug() << list[0].fileName();
+        qDebug() << m_tile_X_offset << "\n"
+                 << m_tile_Y_offset;
     });
 }
 
@@ -143,4 +163,52 @@ int Navigation::getTestData()
     }
 #endif
     return 0;
+}
+
+void Navigation::parseTrackerFile(QString &path, QVector<QPointF> &track)
+{
+    QFile file(path);
+    file.open(QIODevice::ReadOnly);
+
+    auto gps_dfm2decmal = [](QByteArray &gps_dfm) -> double {
+        QByteArray sep_d;
+        sep_d.append(0xa1);
+        sep_d.append(0xe3);
+        QByteArray sep_m;
+        sep_m.append(0xa1);
+        sep_m.append(0xe4);
+        QByteArray sep_s;
+        sep_s.append(0xa1);
+        sep_s.append(0xe5);
+
+        int idx_d = gps_dfm.indexOf(sep_d);
+        int idx_m = gps_dfm.indexOf(sep_m);
+        int idx_s = gps_dfm.indexOf(sep_s);
+
+        QString s_degree = gps_dfm.mid(0, idx_d);
+        QString s_minute = gps_dfm.mid(idx_d + 2, idx_m - idx_d - 2);
+        QString s_second = gps_dfm.mid(idx_m + 2, idx_s - idx_m - 2);
+
+        double ret = s_degree.toUInt() + s_minute.toUInt() / 60.0 + s_second.toUInt() / 60.0 / 60.0;
+
+        return ret;
+
+        //        double du    = gps_dfm.indexOf('°')
+    };
+    while(!file.atEnd())
+    {
+        QByteArray        line = file.readLine();
+        QList<QByteArray> list = line.split(',');
+
+        double lng;
+        double lat;
+        lng = gps_dfm2decmal(line.split(',')[1]);
+        lat = gps_dfm2decmal(line.split(',')[2]);
+        track.append(QPointF(lng, lat));
+        lng = gps_dfm2decmal(line.split(',')[3]);
+        lat = gps_dfm2decmal(line.split(',')[4]);
+        track.append(QPointF(lng, lat));
+    }
+
+    return;
 }

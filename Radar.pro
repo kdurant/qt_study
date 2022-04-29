@@ -27,6 +27,7 @@ include(./src/Protocol/protocol.pri)
 include(./src/BitColorMap/BitColorMap.pri)
 include(./src/motor/MotorController.pri)
 include(./src/laser/LaserController.pri)
+include(./src/navigation/navigation.pri)
 
 INCLUDEPATH += ./src/UpdateBin
 INCLUDEPATH += ./src/wave
@@ -52,7 +53,6 @@ SOURCES += \
     save.cpp \
     src/DevInfo/DevInfo.cpp \
     src/UpdateBin/UpdateBin.cpp \
-    src/navigation/navigation.cpp \
 
 HEADERS += \
     common.h \
@@ -71,7 +71,6 @@ HEADERS += \
     save.h \
     src/DevInfo/DevInfo.h \
     src/UpdateBin/UpdateBin.h \
-    src/navigation/navigation.h \
 
 
 FORMS += \

@@ -102,6 +102,8 @@ set(SOURCES
     ${CMAKE_SOURCE_DIR}/src/wave/OfflineWaveform.cpp
     ${CMAKE_SOURCE_DIR}/src/wave/OnlineWaveform.cpp
     ${CMAKE_SOURCE_DIR}/src/navigation/navigation.cpp
+    ${CMAKE_SOURCE_DIR}/src/navigation/LineWithArrow.cpp
+    ${CMAKE_SOURCE_DIR}/src/navigation/MapView.cpp
     )
 
 add_executable(${PROJECT_NAME}

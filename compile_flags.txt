@@ -1,0 +1,17 @@
+-fPIC
+-isystem
+/opt/Qt5.13.2/5.13.2/gcc_64/include/
+-isystem
+/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCore
+-isystem
+/opt/Qt5.13.2/5.13.2/gcc_64/include/QtGui
+-isystem
+/opt/Qt5.13.2/5.13.2/gcc_64/include/QtWidgets
+-isystem
+/opt/Qt5.13.2/5.13.2/gcc_64/include/QtCharts
+-isystem
+/opt/Qt5.13.2/5.13.2/gcc_64/include/QtNetwork
+-isystem
+/opt/Qt5.13.2/5.13.2/gcc_64/include/QtSerialPort
+-isystem
+/opt/Qt5.13.2/5.13.2/gcc_64/include/QtTest

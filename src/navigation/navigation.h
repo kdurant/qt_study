@@ -8,6 +8,8 @@
 #include <QtCore>
 #include <QFileDialog>
 #include <QMessageBox>
+#include "MapView.h"
+#include "LineWithArrow.h"
 
 namespace Ui
 {
@@ -28,6 +30,7 @@ public:
     void showGpsInfo(const BspConfig::Gps_Info &gps);
     void showSystemInfo(double speed);
     int  getTestData(void);
+    void parseTrackerFile(QString &path, QVector<QPointF> &track);
 
 private:
     Ui::Navigation *ui;
@@ -35,7 +38,10 @@ private:
     BspConfig::Gps_Info prevGpsInfo;
     double              currentSpeed{0};
 
-    QString mapPath;
+    QString          mapPath;
+    int              m_tile_X_offset{0};
+    int              m_tile_Y_offset{0};
+    QVector<QPointF> m_gps_routine;
 };
 
 #endif  // NOTEINFO_H
