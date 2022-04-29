@@ -62,12 +62,12 @@ public:
      * @param lat
      * @return
      */
-    QPoint gps2pos(double lng, double lat)
+    QPoint gps2pos(double lng, double lat, int zoom_level)
     {
-        int tileX  = lng_lat2tilex(lng, lat, 14);
-        int tileY  = lng_lat2tiley(lng, lat, 14);
-        int pixelX = lng_lat2pixelx(lng, lat, 14);
-        int pixelY = lng_lat2pixely(lng, lat, 14);
+        int tileX  = lng_lat2tilex(lng, lat, zoom_level);
+        int tileY  = lng_lat2tiley(lng, lat, zoom_level);
+        int pixelX = lng_lat2pixelx(lng, lat, zoom_level);
+        int pixelY = lng_lat2pixely(lng, lat, zoom_level);
         int pos_x  = (tileX - m_tile_X_offset) * 256 + pixelX;
         int pos_y  = (tileY - m_tile_Y_offset) * 256 + pixelY;
 

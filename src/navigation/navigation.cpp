@@ -10,13 +10,20 @@ Navigation::Navigation(QWidget *parent) :
 
     initUI();
     initSignalSlot();
-    //    MapView *map = ui->mapView;
 
-    //    getTestData();
 
-    // qDebug() << "distance = " << distanceBetweenPoints(110.429545, 18.677179, 110.406169, 18.677106);
-    // qDebug() << "distance = " << distanceBetweenPoints(110.415955, 18.686890, 110.416025, 18.666448);
-    // qDebug() << "distance = " << distanceBetweenPoints(110.415955, 18.686890, 110.406169, 18.677106);
+    QString t1 = "/home/wj/work/map1/14";
+    ui->mapView->setMapPath(t1, 13186, 7342);
+    ui->mapView->loadMap();
+    QString t2 = "/home/wj/work/map1/tracker.txt";
+    parseTrackerFile(t2, m_gps_routine);
+
+    int len = m_gps_routine.length();
+    for(int i = 0; i < len; i += 2)
+    {
+        ui->mapView->loadTracker(m_gps_routine[i], m_gps_routine[i + 1]);
+        ui->mapView->loadSerialNum(m_gps_routine[i], i / 2 + 1);
+    }
 }
 
 Navigation::~Navigation()

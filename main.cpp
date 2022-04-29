@@ -61,8 +61,11 @@ int main(int argc, char *argv[])
     font.setPixelSize(15);
     a.setFont(font);
 
-    MainWindow w;
-    w.show();
+//    MainWindow w;
+//    w.show();
+
+    Navigation n;
+    n.show();
 
     return a.exec();
 }
