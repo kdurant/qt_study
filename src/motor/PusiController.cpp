@@ -603,6 +603,7 @@ bool PusiController::writeBlockLen(qint32 len)
     QByteArray frame = encode(deviceAddr, INSTRUCTION_SET::WRITE_OR_READ_BLOCK_LENGTH, len);
     emit       sendDataReady(MasterSet::MOTOR_PENETRATE, frame.length(), frame);
     waitResponse(delayMs);
+    return true;
 }
 
 bool PusiController::setStopSpeed(qint32 nStopSpeed)
@@ -664,6 +665,7 @@ bool PusiController::writeBlockRegister(qint32 reg)
     QByteArray frame = encode(deviceAddr, INSTRUCTION_SET::WRITE_OR_READ_BLOCK_REGISTER, reg);
     emit       sendDataReady(MasterSet::MOTOR_PENETRATE, frame.length(), frame);
     waitResponse(delayMs);
+    return true;
 }
 
 qint32 PusiController::readBlockTriggerValue(void)

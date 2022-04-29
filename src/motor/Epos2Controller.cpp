@@ -137,6 +137,7 @@ bool EPOS2::sweep(quint32 start_pos, quint32 end_pos)
             waitLoop.exec();
         }
     }
+    return true;
 }
 
 bool EPOS2::moveToHome()
