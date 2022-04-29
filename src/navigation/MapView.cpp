@@ -10,11 +10,9 @@ MapView::MapView(QWidget *parent)
     setScene(scene);
 }
 
-void MapView::setMapPath(QString &path, int x, int y)
+void MapView::setMapPath(QString &path)
 {
-    m_mapPath       = path;
-    m_tile_X_offset = x;
-    m_tile_Y_offset = y;
+    m_mapPath = path;
 }
 
 void MapView::parseMap()
@@ -58,12 +56,23 @@ void MapView::parseMap()
 
 void MapView::loadMap()
 {
-    for(int x = 0; x < 4; ++x)
+    int zoom_diff = m_tileMapInfo.current_zoom - m_tileMapInfo.min_zoom_level;
+    int exp       = static_cast<int>(pow(2, zoom_diff));
+    int start_x   = exp * m_tileMapInfo.start_x;
+    int start_y   = exp * m_tileMapInfo.start_y;
+    int len_x     = exp * m_tileMapInfo.len_x;
+    int len_y     = exp * m_tileMapInfo.len_y;
+    //    for(int x = 0; x < 4; ++x)
+    for(int x = 0; x < len_x; ++x)
     {
-        for(int y = 0; y < 4; ++y)
+        for(int y = 0; y < len_y; ++y)
         {
-            QString              tile = QString("%1/%2/%3.png").arg(m_mapPath).arg(x + m_tile_X_offset).arg(y + m_tile_Y_offset);
-            QGraphicsPixmapItem *map  = new QGraphicsPixmapItem(QPixmap(tile));
+            QString tile = QString("%1/%2/%3/%4.png")
+                               .arg(m_mapPath)
+                               .arg(m_tileMapInfo.current_zoom)
+                               .arg(x + start_x)
+                               .arg(y + start_y);
+            QGraphicsPixmapItem *map = new QGraphicsPixmapItem(QPixmap(tile));
             map->setPos(QPoint(x * 256, y * 256));
             scene->addItem(map);
         }
@@ -74,7 +83,7 @@ void MapView::loadMap()
 
 void MapView::loadTracker(QPointF start, QPointF end)
 {
-    scene->addLine(QLineF(gps2pos(start.x(), start.y(), 14), gps2pos(end.x(), end.y(), 14)), QPen(Qt::red));
+    scene->addLine(QLineF(gps2pos(start.x(), start.y(), m_tileMapInfo.current_zoom), gps2pos(end.x(), end.y(), m_tileMapInfo.current_zoom)), QPen(Qt::red));
     update();
 }
 
@@ -82,7 +91,7 @@ void MapView::loadSerialNum(QPointF posi, int num)
 {
     QGraphicsTextItem *str = new QGraphicsTextItem(QString::number(num, 10));
     str->setDefaultTextColor(QColor(Qt::yellow));
-    str->setPos(gps2pos(posi.x(), posi.y(), 14) - QPoint(0, 20));
+    str->setPos(gps2pos(posi.x(), posi.y(), m_tileMapInfo.current_zoom) - QPoint(0, 20));
     scene->addItem(str);
     update();
 }

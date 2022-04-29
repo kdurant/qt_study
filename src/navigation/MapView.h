@@ -30,6 +30,8 @@ public:
         int len_y;
 
         int max_zoom_level;
+
+        int current_zoom;
     };
 
 public:
@@ -78,21 +80,41 @@ public:
      */
     QPoint gps2pos(double lng, double lat, int zoom_level)
     {
+        int zoom_diff = m_tileMapInfo.current_zoom - m_tileMapInfo.min_zoom_level;
+        int exp       = static_cast<int>(pow(2, zoom_diff));
+        int start_x   = exp * m_tileMapInfo.start_x;
+        int start_y   = exp * m_tileMapInfo.start_y;
+
         int tileX  = lng_lat2tilex(lng, lat, zoom_level);
         int tileY  = lng_lat2tiley(lng, lat, zoom_level);
         int pixelX = lng_lat2pixelx(lng, lat, zoom_level);
         int pixelY = lng_lat2pixely(lng, lat, zoom_level);
-        int pos_x  = (tileX - m_tile_X_offset) * 256 + pixelX;
-        int pos_y  = (tileY - m_tile_Y_offset) * 256 + pixelY;
+        int pos_x  = (tileX - start_x) * 256 + pixelX;
+        int pos_y  = (tileY - start_y) * 256 + pixelY;
 
         return QPoint(pos_x, pos_y);
     };
 
-    void setMapPath(QString &path, int x, int y);
+    void setMapPath(QString &path);
     void parseMap();
-    void loadMap();
+    void setDefaultZoom(int zoom)
+    {
+        m_tileMapInfo.current_zoom = zoom;
+    }
+    void loadMap();  // load map resource and display it
+
     void loadTracker(QPointF start, QPointF end);
     void loadSerialNum(QPointF posi, int num);
+
+    void deleleAllItems()
+    {
+        QList<QGraphicsItem *> is = scene->items();
+
+        foreach(QGraphicsItem *item, is)
+        {
+            scene->removeItem(item);
+        }
+    }
 
 protected:
     void mousePressEvent(QMouseEvent *event);

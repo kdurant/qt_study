@@ -12,9 +12,11 @@ Navigation::Navigation(QWidget *parent) :
     initSignalSlot();
 
     QString t1 = "/home/wj/work/map1/";
-    ui->mapView->setMapPath(t1, 13186, 7342);
+    ui->mapView->setMapPath(t1);
     ui->mapView->parseMap();
+    ui->mapView->setDefaultZoom(13);
     ui->mapView->loadMap();
+
     QString t2 = "/home/wj/work/map1/tracker.txt";
     parseTrackerFile(t2, m_gps_routine);
 
@@ -46,6 +48,7 @@ void Navigation::initSignalSlot()
         if(updateFilePath.size() == 0)
             return;
         ui->lineEdit_navigationFile->setText(updateFilePath);
+        m_gps_routine.clear();
         parseTrackerFile(updateFilePath, m_gps_routine);
 
         int len = m_gps_routine.length();
@@ -59,18 +62,11 @@ void Navigation::initSignalSlot()
     });
 
     connect(ui->btn_loadMap, &QPushButton::pressed, this, [&] {
-        mapPath            = QFileDialog::getExistingDirectory();
-        QFileInfoList list = Common::getFileList(mapPath);
-        if(list.length() != 16)
-        {
-            QMessageBox::critical(this, "error", "请选择正确的瓦片地图层级");
-        }
-
-        int len         = list[0].filePath().split('/').length();
-        m_tile_X_offset = list[0].filePath().split('/')[len - 2].toUInt();
-        m_tile_Y_offset = list[0].fileName().split('.')[0].toUInt();
-
-        ui->mapView->setMapPath(mapPath, m_tile_X_offset, m_tile_Y_offset);
+        mapPath = QFileDialog::getExistingDirectory();
+        ui->mapView->deleleAllItems();
+        ui->mapView->setMapPath(mapPath);
+        ui->mapView->setDefaultZoom(14);
+        ui->mapView->parseMap();
         ui->mapView->loadMap();
     });
 }
