@@ -1,4 +1,5 @@
 #include "MapView.h"
+#include <set>
 
 MapView::MapView(QWidget *parent)
 {
@@ -14,6 +15,45 @@ void MapView::setMapPath(QString &path, int x, int y)
     m_mapPath       = path;
     m_tile_X_offset = x;
     m_tile_Y_offset = y;
+}
+
+void MapView::parseMap()
+{
+    QFileInfoList list = Common::getFileList(m_mapPath);
+
+    auto get_tile_start_x = [](QFileInfo &info) -> int {
+        int len = info.path().split('/').length();
+        return info.path().split('/')[len - 1].toInt(nullptr, 10);
+    };
+
+    auto get_tile_start_y = [](QFileInfo &info) -> int {
+        return info.baseName().toInt(nullptr, 10);
+    };
+
+    auto get_tile_zoom = [](QFileInfo &info) -> int {
+        int len = info.path().split('/').length();
+        return info.path().split('/')[len - 2].toInt(nullptr, 10);
+    };
+
+    m_tileMapInfo.min_zoom_level = get_tile_zoom(list[0]);
+    m_tileMapInfo.start_x        = get_tile_start_x(list[0]);
+    m_tileMapInfo.start_y        = get_tile_start_y(list[0]);
+
+    std::set<int> set_x, set_y, zoom;
+    foreach(QFileInfo info, list)
+    {
+        int z = get_tile_zoom(info);
+        zoom.insert(z);
+        if(z == m_tileMapInfo.min_zoom_level)
+        {
+            set_x.insert(get_tile_start_x(info));
+            set_y.insert(get_tile_start_y(info));
+        }
+    }
+    m_tileMapInfo.len_x          = *set_x.rbegin() - *set_x.begin() + 1;
+    m_tileMapInfo.len_y          = *set_y.rbegin() - *set_y.begin() + 1;
+    m_tileMapInfo.max_zoom_level = *zoom.rbegin();
+    return;
 }
 
 void MapView::loadMap()

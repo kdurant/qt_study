@@ -11,9 +11,9 @@ Navigation::Navigation(QWidget *parent) :
     initUI();
     initSignalSlot();
 
-
-    QString t1 = "/home/wj/work/map1/14";
+    QString t1 = "/home/wj/work/map1/";
     ui->mapView->setMapPath(t1, 13186, 7342);
+    ui->mapView->parseMap();
     ui->mapView->loadMap();
     QString t2 = "/home/wj/work/map1/tracker.txt";
     parseTrackerFile(t2, m_gps_routine);
@@ -72,11 +72,6 @@ void Navigation::initSignalSlot()
 
         ui->mapView->setMapPath(mapPath, m_tile_X_offset, m_tile_Y_offset);
         ui->mapView->loadMap();
-
-        qDebug() << list[0].filePath();
-        qDebug() << list[0].fileName();
-        qDebug() << m_tile_X_offset << "\n"
-                 << m_tile_Y_offset;
     });
 }
 

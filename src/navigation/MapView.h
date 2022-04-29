@@ -14,10 +14,24 @@
 #include <QtDebug>
 
 #include "LineWithArrow.h"
+#include "common.h"
 #define M_PI 3.14159265358979323846
 
 class MapView : public QGraphicsView
 {
+public:
+    struct TileMapInfo
+    {
+        int min_zoom_level;
+        int start_x;
+        int len_x;
+
+        int start_y;
+        int len_y;
+
+        int max_zoom_level;
+    };
+
 public:
     MapView(QWidget *parent = 0);
 
@@ -75,6 +89,7 @@ public:
     };
 
     void setMapPath(QString &path, int x, int y);
+    void parseMap();
     void loadMap();
     void loadTracker(QPointF start, QPointF end);
     void loadSerialNum(QPointF posi, int num);
@@ -88,6 +103,7 @@ private:
     QString         m_mapPath;
     int             m_tile_X_offset{0};
     int             m_tile_Y_offset{0};
+    TileMapInfo     m_tileMapInfo;
 };
 
 #endif  // MAPVIEW_H

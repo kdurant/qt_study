@@ -16,6 +16,7 @@ GTAGS*
 bin
 __pycache__
 *.exe
+*.out
 
 #######################qt###########################
 !CMakeLists.txt
