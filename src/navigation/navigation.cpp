@@ -38,7 +38,6 @@ void Navigation::initUI()
     ui->treeWidget_navigation->expandAll();
     ui->treeWidget_navigation->resizeColumnToContents(0);
     //    ui->treeWidget_navigation->setColumnWidth(1, 200);
-    ui->groupBox_test->hide();
 }
 
 void Navigation::initSignalSlot()

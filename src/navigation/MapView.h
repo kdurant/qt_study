@@ -93,7 +93,11 @@ public:
         int pos_y  = (tileY - start_y) * 256 + pixelY;
 
         return QPoint(pos_x, pos_y);
-    };
+    }
+    /**
+     * @brief
+     * @param path
+     */
 
     void setMapPath(QString &path);
     void parseMap();
