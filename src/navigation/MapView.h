@@ -100,7 +100,11 @@ public:
      */
 
     void setMapPath(QString &path);
-    void parseMap();
+    void parseMapInfo();
+    TileMapInfo getMapInfo()
+    {
+        return m_tileMapInfo;
+    }
     void setDefaultZoom(int zoom)
     {
         m_tileMapInfo.current_zoom = zoom;

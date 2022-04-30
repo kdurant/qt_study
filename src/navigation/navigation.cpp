@@ -13,7 +13,7 @@ Navigation::Navigation(QWidget *parent) :
 
     QString t1 = "/home/wj/work/map1/";
     ui->mapView->setMapPath(t1);
-    ui->mapView->parseMap();
+    ui->mapView->parseMapInfo();
     ui->mapView->setDefaultZoom(13);
     ui->mapView->loadMap();
 
@@ -65,9 +65,28 @@ void Navigation::initSignalSlot()
         ui->mapView->deleleAllItems();
         ui->mapView->setMapPath(mapPath);
         ui->mapView->setDefaultZoom(14);
-        ui->mapView->parseMap();
+        ui->mapView->parseMapInfo();
+
+        MapView::TileMapInfo info = ui->mapView->getMapInfo();
+        ui->spinBox_mapMinMapLevel->setValue(info.min_zoom_level);
+        ui->spinBox_mapMaxMapLevel->setValue(info.max_zoom_level);
+        ui->horizontalSlider_zoomCtrl->setRange(info.min_zoom_level,info.max_zoom_level);
         ui->mapView->loadMap();
     });
+
+    connect(ui->horizontalSlider_zoomCtrl,
+            static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged),
+            ui->spinBox_mapCurrentZoom,
+            &QSpinBox::setValue);
+
+    connect(ui->horizontalSlider_zoomCtrl, &QSlider::valueChanged, this, [&]{
+        int zoom = ui->horizontalSlider_zoomCtrl->value();
+
+        ui->mapView->deleleAllItems();
+        ui->mapView->setDefaultZoom(zoom);
+        ui->mapView->loadMap();
+    });
+
 }
 
 void Navigation::showGpsInfo(const BspConfig::Gps_Info &gps)

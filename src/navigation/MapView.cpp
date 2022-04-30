@@ -15,7 +15,7 @@ void MapView::setMapPath(QString &path)
     m_mapPath = path;
 }
 
-void MapView::parseMap()
+void MapView::parseMapInfo()
 {
     QFileInfoList list = Common::getFileList(m_mapPath);
 
@@ -101,14 +101,6 @@ void MapView::mousePressEvent(QMouseEvent *event)
     QPointF cursorPoint = event->pos();
 
     QPointF scenePos = mapToScene(QPoint(cursorPoint.x(), cursorPoint.y()));
-
-    qreal viewWidth  = width();
-    qreal viewHeight = height();
-
-    qDebug() << "position of MainWindow : " << cursorPoint << "\n"
-             << scenePos << "\n"
-             << "ui->graphicsView->width() = " << viewWidth << "\n"
-             << "ui->graphicsView->height() = " << viewHeight;
 }
 
 void MapView::wheelEvent(QWheelEvent *event)
