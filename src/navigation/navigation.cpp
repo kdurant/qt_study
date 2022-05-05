@@ -43,12 +43,12 @@ void Navigation::initUI()
 void Navigation::initSignalSlot()
 {
     connect(ui->btn_loadTracker, &QPushButton::pressed, this, [this]() {
-        QString updateFilePath = QFileDialog::getOpenFileName(this, tr(""), "", tr("*"));  //选择路径
-        if(updateFilePath.size() == 0)
+        QString trackerFile = QFileDialog::getOpenFileName(this, tr(""), "", tr("*"));  //选择路径
+        if(trackerFile.size() == 0)
             return;
-        ui->lineEdit_navigationFile->setText(updateFilePath);
+        ui->lineEdit_trackerFile->setText(trackerFile);
         m_gps_routine.clear();
-        parseTrackerFile(updateFilePath, m_gps_routine);
+        parseTrackerFile(trackerFile, m_gps_routine);
 
         int len = m_gps_routine.length();
         for(int i = 0; i < len; i += 2)
@@ -62,6 +62,7 @@ void Navigation::initSignalSlot()
 
     connect(ui->btn_loadMap, &QPushButton::pressed, this, [&] {
         mapPath = QFileDialog::getExistingDirectory();
+        ui->lineEdit_mapFile->setText(mapPath);
         ui->mapView->deleleAllItems();
         ui->mapView->setMapPath(mapPath);
         ui->mapView->setDefaultZoom(14);
@@ -70,7 +71,7 @@ void Navigation::initSignalSlot()
         MapView::TileMapInfo info = ui->mapView->getMapInfo();
         ui->spinBox_mapMinMapLevel->setValue(info.min_zoom_level);
         ui->spinBox_mapMaxMapLevel->setValue(info.max_zoom_level);
-        ui->horizontalSlider_zoomCtrl->setRange(info.min_zoom_level,info.max_zoom_level);
+        ui->horizontalSlider_zoomCtrl->setRange(info.min_zoom_level, info.max_zoom_level);
         ui->mapView->loadMap();
     });
 
@@ -79,14 +80,20 @@ void Navigation::initSignalSlot()
             ui->spinBox_mapCurrentZoom,
             &QSpinBox::setValue);
 
-    connect(ui->horizontalSlider_zoomCtrl, &QSlider::valueChanged, this, [&]{
+    connect(ui->horizontalSlider_zoomCtrl, &QSlider::valueChanged, this, [&] {
         int zoom = ui->horizontalSlider_zoomCtrl->value();
 
         ui->mapView->deleleAllItems();
         ui->mapView->setDefaultZoom(zoom);
         ui->mapView->loadMap();
-    });
 
+        int len = m_gps_routine.length();
+        for(int i = 0; i < len; i += 2)
+        {
+            ui->mapView->loadTracker(m_gps_routine[i], m_gps_routine[i + 1]);
+            ui->mapView->loadSerialNum(m_gps_routine[i], i / 2 + 1);
+        }
+    });
 }
 
 void Navigation::showGpsInfo(const BspConfig::Gps_Info &gps)

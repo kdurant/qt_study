@@ -311,23 +311,6 @@
          <string>GroupBox</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="1" column="0">
-          <widget class="QPushButton" name="btn_loadTracker">
-           <property name="text">
-            <string>加载航线</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLineEdit" name="lineEdit_navigationFile">
-           <property name="text">
-            <string>2018_03_07_20_23_50_833.datagps</string>
-           </property>
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="0">
           <widget class="QPushButton" name="btn_loadMap">
            <property name="toolTip">
@@ -337,6 +320,26 @@
             <string>加载地图</string>
            </property>
           </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QPushButton" name="btn_loadTracker">
+           <property name="text">
+            <string>加载航线</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLineEdit" name="lineEdit_trackerFile">
+           <property name="text">
+            <string>2018_03_07_20_23_50_833.datagps</string>
+           </property>
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLineEdit" name="lineEdit_mapFile"/>
          </item>
         </layout>
        </widget>
