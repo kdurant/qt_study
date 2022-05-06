@@ -235,3 +235,30 @@ void Navigation::parseTrackerFile(QString &path, QVector<QPointF> &track)
 
     return;
 }
+
+bool Navigation::splitTracker(QVector<QPointF> &track, int nums, QVector<QPointF> &point)
+{
+    int len = track.length();
+
+    double lng_start    = 0;
+    double lng_end      = 0;
+    double lat_start    = 0;
+    double lat_end      = 0;
+    double delta_lng    = 0;
+    double delta_lat    = 0;
+    double interval_lng = 0;
+    double interval_lat = 0;
+
+    for(int i = 0; i < len; i += 2)
+    {
+        lng_start = track[i].x();
+        lat_start = track[i].y();
+        lng_end   = track[i + 1].x();
+        lat_end   = track[i + 1].y();
+
+        delta_lng    = lng_end - lng_start;
+        delta_lat    = lat_end - lat_start;
+        interval_lng = delta_lng / nums;
+        interval_lat = delta_lat / nums;
+    }
+}
