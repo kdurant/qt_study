@@ -27,26 +27,37 @@ public:
     void initUI();
     void initSignalSlot(void);
 
+    void setCurrentPos(QPointF &point)
+    {
+        m_currentPos = point;
+    }
+
+    /**
+     * @brief 判断当前的GPS位置是否在规划航迹之内
+     * @param 当前GPS位置的半径
+     * @return
+     */
+    int  isPosInTracker(double r);
     void showGpsInfo(const BspConfig::Gps_Info &gps);
     void showSystemInfo(double speed);
     int  getTestData(void);
     /**
-    * @brief 从航迹规划文件中找到航迹的起点和终点
-    *
-    * @param path
-    * @param track
-    */
+     * @brief 从航迹规划文件中找到航迹的起点和终点
+     *
+     * @param path
+     * @param track
+     */
     void parseTrackerFile(QString &path, QVector<QPointF> &track);
 
     /**
-    * @brief 将规划的轨迹分割成点的集合，计算测区覆盖率使用
-    *
-    * @param track
-    * @param nums 每条航线将会被分割成的点数
-    * @param point
-    *
-    * @return 
-    */
+     * @brief 将规划的轨迹分割成点的集合，计算测区覆盖率使用
+     *
+     * @param track
+     * @param nums 每条航线将会被分割成的点数
+     * @param point
+     *
+     * @return
+     */
     bool splitTracker(QVector<QPointF> &track, int nums, QVector<QPointF> &point);
 
 private:
@@ -55,10 +66,14 @@ private:
     BspConfig::Gps_Info prevGpsInfo;
     double              currentSpeed{0};
 
+    QPointF          m_currentPos;
     QString          mapPath;
     int              m_tile_X_offset{0};
     int              m_tile_Y_offset{0};
     QVector<QPointF> m_gps_routine;
+
+    int              tested_point{0};  //
+    int              totoal_test_point{0};
     QVector<QPointF> m_split_tracker;
 };
 

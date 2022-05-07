@@ -72,6 +72,12 @@ public:
         return atan(t1) * 180 / M_PI;
     }
 
+    double gps_distance(double lng1, double lat1, double lng2, double lat2)
+    {
+        double d = sqrt((lng1 - lng2) * (lng1 - lng2) + (lat1 - lat2) * (lat1 - lat2)) / 180 * M_PI * 6300000;
+        return d;
+    }
+
     /**
      * @brief 瓦片地图的GPS坐标转换为像素坐标
      * @param lng
@@ -99,8 +105,8 @@ public:
      * @param path
      */
 
-    void setMapPath(QString &path);
-    void parseMapInfo();
+    void        setMapPath(QString &path);
+    void        parseMapInfo();
     TileMapInfo getMapInfo()
     {
         return m_tileMapInfo;
