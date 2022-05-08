@@ -18,13 +18,13 @@ MotorController::MOTOR_STATUS PusiController::run(quint16 speed)
 }
 
 /**
-* @brief 步进电机，以当前位置为起点，移动指定step
-*
-* @param postion
-* @param direct, 1, 正向; 0, 反向
-*
-* @return 
-*/
+ * @brief 步进电机，以当前位置为起点，移动指定step
+ *
+ * @param postion
+ * @param direct, 1, 正向; 0, 反向
+ *
+ * @return
+ */
 MotorController::MOTOR_STATUS PusiController::moveToPosition(double postion, int direct)
 {
     if(direct)
@@ -125,12 +125,12 @@ qint32 PusiController::getActualPosition()
 }
 
 /**
-* @brief 控制电机运动指定的步数
-* @param nSteps
-* @return 如果电机实际运动的步数过小，说明碰到了限位开关
-*         如果限位开关标志被置1，正常
-*         如果限位开关标志没有被置1，说明上次刚好停在限位开关位置
-*/
+ * @brief 控制电机运动指定的步数
+ * @param nSteps
+ * @return 如果电机实际运动的步数过小，说明碰到了限位开关
+ *         如果限位开关标志被置1，正常
+ *         如果限位开关标志没有被置1，说明上次刚好停在限位开关位置
+ */
 bool PusiController::turnStepsByNum(qint32 nSteps)
 {
     if(nSteps < 1)

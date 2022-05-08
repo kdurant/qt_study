@@ -3,7 +3,8 @@
 
 #include <QWidget>
 
-namespace Ui {
+namespace Ui
+{
 class save;
 }
 
@@ -19,4 +20,4 @@ private:
     Ui::save *ui;
 };
 
-#endif // SAVE_H
+#endif  // SAVE_H

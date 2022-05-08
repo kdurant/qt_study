@@ -76,7 +76,7 @@ public slots:
     }
 
 public:
-    quint16          calcFieldCRC(quint16* pDataArray, quint16 numberofWords);  //CRC-CCITT
+    quint16          calcFieldCRC(quint16* pDataArray, quint16 numberofWords);  // CRC-CCITT
     QVector<quint16> WordPlusCRC(QVector<quint16> word);
     QByteArray       transmitWord2Byte(QVector<quint16> word);
     QVector<quint16> receiveByte2Word(QByteArray array);

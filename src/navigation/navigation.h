@@ -37,11 +37,11 @@ public:
      * @param 当前GPS位置的半径，模拟GPS高度
      * @return
      */
-    int  isPosInTracker(double r);
+    int    isPosInTracker(double r);
     double checkCoveragePercent();
-    void showGpsInfo(const BspConfig::Gps_Info &gps);
-    void showSystemInfo(double speed);
-    int  getTestData(void);
+    void   showGpsInfo(const BspConfig::Gps_Info &gps);
+    void   showSystemInfo(double speed);
+    int    getTestData(void);
     /**
      * @brief 从航迹规划文件中找到航迹的起点和终点
      *
@@ -79,7 +79,6 @@ private:
     int                 m_tile_X_offset{0};
     int                 m_tile_Y_offset{0};
     QVector<QPointF>    m_gps_routine;
-
 
     QVector<int>     m_coverage;
     QVector<QPointF> m_split_tracker;

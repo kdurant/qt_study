@@ -39,7 +39,7 @@ MotorController::MOTOR_STATUS EPOS2::run(quint16 speed)
 /**
  * @brief 移动电机到指定位置, 定位模式下使用
  * @param postion
- * @return 
+ * @return
  */
 MotorController::MOTOR_STATUS EPOS2::moveToPosition(double postion, int direct)
 {
@@ -199,7 +199,7 @@ quint16 EPOS2::calcFieldCRC(quint16 *pDataArray, quint16 numberofWords)
     quint16 carry;
     quint16 CRC = 0;
 
-    //Calculate pDataArray Word by Word
+    // Calculate pDataArray Word by Word
     while(numberofWords--)
     {
         shifter = 0x8000;
@@ -220,7 +220,7 @@ quint16 EPOS2::calcFieldCRC(quint16 *pDataArray, quint16 numberofWords)
 
 QVector<quint16> EPOS2::WordPlusCRC(QVector<quint16> word)
 {
-    word.append(0x0000);  //zeroWord
+    word.append(0x0000);  // zeroWord
 
     quint16  numberOfWords  = word.length();
     quint16 *ptr            = &word[0];

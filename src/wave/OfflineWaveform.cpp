@@ -8,7 +8,7 @@ void OfflineWaveform::setWaveFile(QString &file)
 /**
  * @brief 获得某次采样的完整数据
  * @param number
- * @return 
+ * @return
  */
 QVector<quint8> OfflineWaveform::getFrameData(qint32 number)
 {
@@ -65,7 +65,7 @@ QVector<double> OfflineWaveform::getGpsSubTime()
 /**
  * @brief 计算文件中有多少次完整的采样数据
  * 找到数据中0x01234567的位置，并记录下来，算作采样数据的开头
- * @return 
+ * @return
  */
 qint32 OfflineWaveform::getADsampleNumber()
 {

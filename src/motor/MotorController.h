@@ -20,10 +20,10 @@ public:
     MotorController() = default;
 
     /**
-    * @brief 初始化电机
-    *
-    * @return 
-    */
+     * @brief 初始化电机
+     *
+     * @return
+     */
     virtual MOTOR_STATUS init() = 0;
 
     /**
@@ -38,26 +38,26 @@ public:
     virtual bool moveToHome(void) = 0;
 
     /**
-    * @brief 初始化电机，并让电机以指定速度运动
-    *
-    * @param speed
-    *
-    * @return 
-    */
+     * @brief 初始化电机，并让电机以指定速度运动
+     *
+     * @param speed
+     *
+     * @return
+     */
     virtual bool moveFixSpeed(quint32 speed) = 0;
 
     /**
-    * @brief 读取电机实际的运动速度
-    *
-    * @return 
-    */
+     * @brief 读取电机实际的运动速度
+     *
+     * @return
+     */
     virtual qint32 getActualVelocity(void) = 0;
 
     /**
-    * @brief 读取电机实际的位置
-    *
-    * @return 
-    */
+     * @brief 读取电机实际的位置
+     *
+     * @return
+     */
     virtual qint32 getActualPosition(void) = 0;
 
 public slots:

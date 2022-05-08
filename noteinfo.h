@@ -3,7 +3,8 @@
 
 #include <QWidget>
 
-namespace Ui {
+namespace Ui
+{
 class NoteInfo;
 }
 
@@ -19,4 +20,4 @@ private:
     Ui::NoteInfo *ui;
 };
 
-#endif // NOTEINFO_H
+#endif  // NOTEINFO_H

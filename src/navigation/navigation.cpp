@@ -251,15 +251,15 @@ void Navigation::parseTrackerFile(QString &path, QVector<QPointF> &track)
         sep_s.append(0xa1);
         sep_s.append(0xe5);
 
-        int     idx_d = gps_dfm.indexOf(sep_d);
-        int     idx_m = gps_dfm.indexOf(sep_m);
-        int     idx_s = gps_dfm.indexOf(sep_s);
+        int idx_d = gps_dfm.indexOf(sep_d);
+        int idx_m = gps_dfm.indexOf(sep_m);
+        int idx_s = gps_dfm.indexOf(sep_s);
 
         QString s_degree = gps_dfm.mid(0, idx_d);
         QString s_minute = gps_dfm.mid(idx_d + 2, idx_m - idx_d - 2);
         QString s_second = gps_dfm.mid(idx_m + 2, idx_s - idx_m - 2);
 
-        double  ret = s_degree.toUInt() + s_minute.toUInt() / 60.0 + s_second.toUInt() / 60.0 / 60.0;
+        double ret = s_degree.toUInt() + s_minute.toUInt() / 60.0 + s_second.toUInt() / 60.0 / 60.0;
 
         return ret;
 
@@ -270,8 +270,8 @@ void Navigation::parseTrackerFile(QString &path, QVector<QPointF> &track)
         QByteArray        line = file.readLine();
         QList<QByteArray> list = line.split(',');
 
-        double            lng;
-        double            lat;
+        double lng;
+        double lat;
         lng = gps_dfm2decmal(line.split(',')[1]);
         lat = gps_dfm2decmal(line.split(',')[2]);
         track.append(QPointF(lng, lat));
@@ -285,7 +285,7 @@ void Navigation::parseTrackerFile(QString &path, QVector<QPointF> &track)
 
 bool Navigation::splitTracker(QVector<QPointF> &track, int nums, QVector<QPointF> &point)
 {
-    int    len = track.length();
+    int len = track.length();
 
     double lng_start    = 0;
     double lng_end      = 0;

@@ -51,12 +51,12 @@ bool LaserType6::setFreq(qint32 freq)
 }
 
 /**
-* @brief 单位：Amps
-*
-* @param power
-*
-* @return 
-*/
+ * @brief 单位：Amps
+ *
+ * @param power
+ *
+ * @return
+ */
 bool LaserType6::setPower(quint16 power)
 {
     QString s = "p3 ";
@@ -73,23 +73,23 @@ bool LaserType6::getStatus()
     return true;
 }
 
-//bool LaserType6::getInfo(void)
+// bool LaserType6::getInfo(void)
 //{
-//    LaserInfo info{0, 0, 0, 0};
-//    info.temp    = getTemp();
-//    info.status  = getWorkStatus();
-//    info.error   = getError();
-//    info.current = getPower();
+//     LaserInfo info{0, 0, 0, 0};
+//     info.temp    = getTemp();
+//     info.status  = getWorkStatus();
+//     info.error   = getError();
+//     info.current = getPower();
 
 //    emit laserInfoReady(info);
 //    return true;
 //}
 
 /**
-* @brief check if there is an error
-*
-* @return 
-*/
+ * @brief check if there is an error
+ *
+ * @return
+ */
 bool LaserType6::checkError(void)
 {
     QString frame = "g10\r\n";

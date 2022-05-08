@@ -19,16 +19,19 @@ void MapView::parseMapInfo()
 {
     QFileInfoList list = Common::getFileList(m_mapPath);
 
-    auto get_tile_start_x = [](QFileInfo &info) -> int {
+    auto get_tile_start_x = [](QFileInfo &info) -> int
+    {
         int len = info.path().split('/').length();
         return info.path().split('/')[len - 1].toInt(nullptr, 10);
     };
 
-    auto get_tile_start_y = [](QFileInfo &info) -> int {
+    auto get_tile_start_y = [](QFileInfo &info) -> int
+    {
         return info.baseName().toInt(nullptr, 10);
     };
 
-    auto get_tile_zoom = [](QFileInfo &info) -> int {
+    auto get_tile_zoom = [](QFileInfo &info) -> int
+    {
         int len = info.path().split('/').length();
         return info.path().split('/')[len - 2].toInt(nullptr, 10);
     };

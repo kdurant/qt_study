@@ -58,7 +58,7 @@ void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
     int          start_pos = 0;
     int          len       = 0;
     int          offset    = 88;
-    ch.motorCnt            = Common::ba2int(frameData.mid(76, 4), 1);  //BspConfig::ba2int(frameData.mid(76, 4));
+    ch.motorCnt            = Common::ba2int(frameData.mid(76, 4), 1);  // BspConfig::ba2int(frameData.mid(76, 4));
 
     quint8 skipPointNum = 0;
     while(offset < frameData.size())
@@ -85,9 +85,9 @@ void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
         }
 
         /*
-                 * 陆地雷达第二段可能有四个小波形组成，每个小波形又由24个采样点构成
-                 * 连续的小波形可能有8个采样点是重复的
-                 */
+         * 陆地雷达第二段可能有四个小波形组成，每个小波形又由24个采样点构成
+         * 连续的小波形可能有8个采样点是重复的
+         */
         while(isFrameHead(frameData, offset) == false)  // 说明后面还是波形数据
         {
             start_pos = (frameData.at(offset) << 24) +
@@ -124,13 +124,13 @@ void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
 }
 
 /**
-* @brief
-*
-* @param frameData
-* @param ret
-*
-* @return -1, 帧头信息错误; -2, 实际数据长度小于理论值; -3, 通道头信息错误
-*/
+ * @brief
+ *
+ * @param frameData
+ * @param ret
+ *
+ * @return -1, 帧头信息错误; -2, 实际数据长度小于理论值; -3, 通道头信息错误
+ */
 void WaveExtract::getWaveFromWaterGuard(const QVector<quint8> &frameData)
 {
     WaveSettings settings;

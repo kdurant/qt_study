@@ -144,9 +144,9 @@ private:
     } doubleWaveConfig;
 
     Ui::MainWindow *ui;
-    QUdpSocket *    udpSocket;
-    QSettings *     configIni;
-    QThread *       thread;
+    QUdpSocket     *udpSocket;
+    QSettings      *configIni;
+    QThread        *thread;
     qint32          timer1s;
     QElapsedTimer   elapsedTimer;
     qint32          timerRefreshUI;
@@ -160,7 +160,7 @@ private:
 
     QHostAddress deviceIP;
     quint16      devicePort;
-    int8_t       fpgaRadarType{-1};  //fpga 内部固化的雷达类型
+    int8_t       fpgaRadarType{-1};  // fpga 内部固化的雷达类型
     QByteArray   fpgaVersion{5, char(0)};
 
     QFile binFile;
@@ -169,10 +169,10 @@ private:
 
     AdSampleControll *preview;
     bool              autoZoomPlot{true};
-    OnlineWaveform *  onlineWaveForm;
-    OfflineWaveform * offlineWaveForm;
+    OnlineWaveform   *onlineWaveForm;
+    OfflineWaveform  *offlineWaveForm;
     bool              running;
-    WaveExtract *     waveExtract;
+    WaveExtract      *waveExtract;
     QVector<quint8>   sampleData;
 
     DAControl *daDriver;
@@ -181,20 +181,20 @@ private:
     UpdateBin *updateFlash;
 
     LaserController *laserDriver;
-    LaserType1 *     laser1Driver;
-    LaserType2 *     laser2Driver;
-    LaserType3 *     laser3Driver;
-    LaserType5 *     laser5Driver;
-    LaserType6 *     laser6Driver;
+    LaserType1      *laser1Driver;
+    LaserType2      *laser2Driver;
+    LaserType3      *laser3Driver;
+    LaserType5      *laser5Driver;
+    LaserType6      *laser6Driver;
 
     MotorController *motorController;
-    EPOS2 *          epos2Driver;
+    EPOS2           *epos2Driver;
 
-    DevInfo *                  devInfo;
+    DevInfo                   *devInfo;
     QVector<DevInfo::ParaInfo> sysParaInfo;
 
-    SaveWave *      ssd;
-    GpsInfo *       gps;
+    SaveWave       *ssd;
+    GpsInfo        *gps;
     AttitudeSensor *attitude;
 
     QList<QCustomPlot *> widget2CustomPlotList;
@@ -216,7 +216,7 @@ private:
     WaterGuard waterGuard;
     QMutex     mutex;
 
-    NoteInfo *  note;
+    NoteInfo   *note;
     Navigation *nav;
 
     qint64           testCnt{0};

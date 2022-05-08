@@ -40,7 +40,7 @@ public:
     /**
      * @brief 整型数据转换为length=4的QByteArray
      * @param data
-     * @return 
+     * @return
      */
     static QByteArray
     int2ba(quint32 data)

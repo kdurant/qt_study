@@ -62,8 +62,8 @@ public:
         READ_CONTROL_STATUS1              = 0x6A,  //读控制器状态1 Bit[3:0]
         CLEAR_EXT_STOP2_FLAG              = 0x6c,  //清除 ext_stop2标志位
         CLEAR_EXT_STOP1_FLAG              = 0x62,  //清除 ext_stop1标志位
-        READ_IO_VALUE                     = 0x78,  //IO端口读取 0-0x3ff
-        WRITE_IO_VALUE                    = 0x79,  //IO端口写值 0-0xff
+        READ_IO_VALUE                     = 0x78,  // IO端口读取 0-0x3ff
+        WRITE_IO_VALUE                    = 0x79,  // IO端口写值 0-0xff
         SET_ACCE_COEFF                    = 0x75,  //设置加速度系数 0-5 可掉电保存
         STOP_CURRENT_TURN                 = 0x49,  //当前步进命令终止 0
         SET_OUT_TRIGGER_MODE              = 0x4A,  //设置外部触发方式0-3 可掉电保存
@@ -218,7 +218,7 @@ public slots:
     }
 
 public:
-    quint16 calcFieldCRC(quint16* pDataArray, quint16 numberofWords);  //CRC-CCITT
+    quint16 calcFieldCRC(quint16* pDataArray, quint16 numberofWords);  // CRC-CCITT
 private:
     Status_Reg1 reg1{0, 0, 0, 0, 0};
     Status_Reg2 reg2{0, 0, 0, 0, 0, 0};

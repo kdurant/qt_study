@@ -4,7 +4,7 @@
  * @brief 读取指定unit地址的数据
  * @param unitAddr
  * @param ret, 返回的数据
- * @return 
+ * @return
  */
 bool SaveWave::readDiskUnit(qint32 unitAddr, QByteArray &ret)
 {
@@ -45,7 +45,7 @@ bool SaveWave::readDiskUnit(qint32 unitAddr, QByteArray &ret)
  * 2. 文件开始、结束地址错误，可能有因为sata状态机错误，导致信息没有被正确写入
  * @param startUnit
  * @param fileInfo
- * @return 
+ * @return
  */
 bool SaveWave::inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo)
 {
@@ -57,7 +57,8 @@ bool SaveWave::inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo)
     fileInfo.startUnit = 0x5000 - 2;
     fileInfo.endUnit   = 0x5000 - 1;
     fileList.clear();
-    auto swapByteOrder = [](QByteArray &ba) {
+    auto swapByteOrder = [](QByteArray &ba)
+    {
         for(int i = 0; i < ba.length(); i += 4)
         {
             char c0 = ba.at(i);

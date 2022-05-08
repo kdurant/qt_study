@@ -35,7 +35,7 @@ public:
 
 private:
     QVector<QByteArray>  allData;
-    QTimer *             timer;
+    QTimer              *timer;
     QList<ValidFileInfo> fileList;
 
 public:

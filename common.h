@@ -277,24 +277,24 @@ public:
     }
 
     /**
-    * @brief 
-    * 0x12345678
-    * 大端模式
-    * 低地址 ----------> 高地址
-    *  0x12     0x34    0x56    0x78
-    * 小端模式
-    * 低地址 ----------> 高地址
-    * 0x78      0x56    0x34    0x12
-    *
-    * @param ba
-    * @param mode, 1, 大端模式; 0, 小端模式
-    *
-    * QByteArray, 0x00, 0x00, 0x00, 0x05
-    * 大端模式：0x05
-    * 小端模式：83886080
-    *
-    * @return 
-    */
+     * @brief
+     * 0x12345678
+     * 大端模式
+     * 低地址 ----------> 高地址
+     *  0x12     0x34    0x56    0x78
+     * 小端模式
+     * 低地址 ----------> 高地址
+     * 0x78      0x56    0x34    0x12
+     *
+     * @param ba
+     * @param mode, 1, 大端模式; 0, 小端模式
+     *
+     * QByteArray, 0x00, 0x00, 0x00, 0x05
+     * 大端模式：0x05
+     * 小端模式：83886080
+     *
+     * @return
+     */
     static quint32 ba2int(QByteArray ba, int mode)
     {
         assert(ba.size() == 4);
@@ -330,24 +330,24 @@ public:
     }
 
     /**
-    * @brief 
-    * 0x12345678
-    * 大端模式, 高位字节存放在内存的低地址端
-    * 低地址 ----------> 高地址
-    *  0x12     0x34    0x56    0x78
-    * 小端模式, 低位字节存放在内存的低地址端
-    * 低地址 ----------> 高地址
-    * 0x78      0x56    0x34    0x12
-    *
-    * @param ba
-    * @param mode, 1, 大端模式; 0, 小端模式
-    *
-    * QByteArray, 0x9a, 0x99, 0x99, 0x99, 0x41, 0x6b, 0x08, 0x41
-    * 大端模式：200040
-    * 小端模式：-1.54235e-180
-    *
-    * @return 
-    */
+     * @brief
+     * 0x12345678
+     * 大端模式, 高位字节存放在内存的低地址端
+     * 低地址 ----------> 高地址
+     *  0x12     0x34    0x56    0x78
+     * 小端模式, 低位字节存放在内存的低地址端
+     * 低地址 ----------> 高地址
+     * 0x78      0x56    0x34    0x12
+     *
+     * @param ba
+     * @param mode, 1, 大端模式; 0, 小端模式
+     *
+     * QByteArray, 0x9a, 0x99, 0x99, 0x99, 0x41, 0x6b, 0x08, 0x41
+     * 大端模式：200040
+     * 小端模式：-1.54235e-180
+     *
+     * @return
+     */
     static double byteArrayToDouble(const QByteArray &bytes, int mode)
     {
         assert(bytes.size() == 8);
@@ -368,13 +368,13 @@ public:
     }
 
     /**
-    * @brief 返回数组中最大元素的索引
-    * 如果数组中有多于一个最大值，返回第一个最大值的索引
-    *
-    * @param arr
-    *
-    * @return 
-    */
+     * @brief 返回数组中最大元素的索引
+     * 如果数组中有多于一个最大值，返回第一个最大值的索引
+     *
+     * @param arr
+     *
+     * @return
+     */
     template <typename T>
     static int maxIndexInVector(const QVector<T> &arr)
     {
