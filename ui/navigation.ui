@@ -355,16 +355,38 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout" stretch="1,10,1">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLabel" name="label_9">
-        <property name="styleSheet">
-         <string notr="true">font: 16pt &quot;Courier New&quot;;</string>
-        </property>
-        <property name="text">
-         <string>飞行高度：+3.12m   飞行速度：-10.13km/h     航向角：-0.8265°    测区覆盖率：43.18%</string>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="label_15">
+          <property name="text">
+           <string>飞行高度</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_14">
+          <property name="text">
+           <string>飞行速度</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_16">
+          <property name="text">
+           <string>航向角</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_navCoverage">
+          <property name="text">
+           <string>测区覆盖率</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="MapView" name="mapView"/>

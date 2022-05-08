@@ -20,7 +20,13 @@ bool          logToFile   = false;
 
 void customMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
-    QHash<QtMsgType, QString> msgLevelHash({{QtDebugMsg, "Debug"}, {QtInfoMsg, "Info"}, {QtWarningMsg, "Warning"}, {QtCriticalMsg, "Critical"}, {QtFatalMsg, "Fatal"}});
+    QHash<QtMsgType, QString> msgLevelHash({
+        {QtDebugMsg,    "Debug"   },
+        {QtInfoMsg,     "Info"    },
+        {QtWarningMsg,  "Warning" },
+        {QtCriticalMsg, "Critical"},
+        {QtFatalMsg,    "Fatal"   }
+    });
     QByteArray                localMsg         = msg.toLocal8Bit();
     QTime                     time             = QTime::currentTime();
     QString                   formattedTime    = time.toString("hh:mm:ss.zzz");
@@ -61,11 +67,11 @@ int main(int argc, char *argv[])
     font.setPixelSize(15);
     a.setFont(font);
 
-//    MainWindow w;
-//    w.show();
+    MainWindow w;
+    w.show();
 
-    Navigation n;
-    n.show();
+    //    Navigation n;
+    //    n.show();
 
     return a.exec();
 }

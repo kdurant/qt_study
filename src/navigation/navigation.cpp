@@ -7,6 +7,7 @@ Navigation::Navigation(QWidget *parent) :
     ui(new Ui::Navigation)
 {
     ui->setupUi(this);
+    timer1s = startTimer(1000);
 
     initUI();
     initSignalSlot();
@@ -42,40 +43,51 @@ void Navigation::initUI()
 
 void Navigation::initSignalSlot()
 {
+    connect(this, &Navigation::receivedGpsInfo, this, [this]
+            {
+        showGpsInfo(m_currentPos);
+        //                if(isPosInTracker(10) > 0)
+        //                    m_covered_point++;
+    });
+
+    /**
+     * 1. 分析航迹. 2. 分割航迹，形成测试点. 3.初始化m_coverage
+     */
     connect(ui->btn_loadTracker, &QPushButton::pressed, this, [this]()
             {
-                QString trackerFile = QFileDialog::getOpenFileName(this, tr(""), "", tr("*"));  //选择路径
-                if(trackerFile.size() == 0)
-                    return;
-                ui->lineEdit_trackerFile->setText(trackerFile);
-                m_gps_routine.clear();
-                parseTrackerFile(trackerFile, m_gps_routine);
+        QString trackerFile = QFileDialog::getOpenFileName(this, tr(""), "", tr("*"));  //选择路径
+        if(trackerFile.size() == 0)
+            return;
+        ui->lineEdit_trackerFile->setText(trackerFile);
+        m_gps_routine.clear();
+        parseTrackerFile(trackerFile, m_gps_routine);
 
-                int len = m_gps_routine.length();
-                for(int i = 0; i < len; i += 2)
-                {
-                    ui->mapView->loadTracker(m_gps_routine[i], m_gps_routine[i + 1]);
-                    ui->mapView->loadSerialNum(m_gps_routine[i], i / 2 + 1);
-                }
-                splitTracker(m_gps_routine, 10, m_split_tracker);
-                //        getTestData();
-            });
+        int len = m_gps_routine.length();
+        for(int i = 0; i < len; i += 2)
+        {
+            ui->mapView->loadTracker(m_gps_routine[i], m_gps_routine[i + 1]);
+            ui->mapView->loadSerialNum(m_gps_routine[i], i / 2 + 1);
+        }
+        splitTracker(m_gps_routine, 10, m_split_tracker);
+        m_coverage.resize(m_split_tracker.length());
+        m_coverage.clear();
+    });
 
     connect(ui->btn_loadMap, &QPushButton::pressed, this, [&]
             {
-                mapPath = QFileDialog::getExistingDirectory();
-                ui->lineEdit_mapFile->setText(mapPath);
-                ui->mapView->deleleAllItems();
-                ui->mapView->setMapPath(mapPath);
-                ui->mapView->setDefaultZoom(14);
-                ui->mapView->parseMapInfo();
+        mapPath = QFileDialog::getExistingDirectory();
+        ui->lineEdit_mapFile->setText(mapPath);
+        ui->mapView->deleleAllItems();
+        ui->mapView->setMapPath(mapPath);
+        ui->mapView->setDefaultZoom(14);
+        ui->mapView->parseMapInfo();
 
-                MapView::TileMapInfo info = ui->mapView->getMapInfo();
-                ui->spinBox_mapMinMapLevel->setValue(info.min_zoom_level);
-                ui->spinBox_mapMaxMapLevel->setValue(info.max_zoom_level);
-                ui->horizontalSlider_zoomCtrl->setRange(info.min_zoom_level, info.max_zoom_level);
-                ui->mapView->loadMap();
-            });
+        MapView::TileMapInfo info = ui->mapView->getMapInfo();
+        ui->spinBox_mapMinMapLevel->setValue(info.min_zoom_level);
+        ui->spinBox_mapMaxMapLevel->setValue(info.max_zoom_level);
+        ui->horizontalSlider_zoomCtrl->setRange(info.min_zoom_level, info.max_zoom_level);
+        ui->mapView->loadMap();
+    });
 
     connect(ui->horizontalSlider_zoomCtrl,
             static_cast<void (QSlider::*)(int)>(&QSlider::valueChanged),
@@ -84,19 +96,19 @@ void Navigation::initSignalSlot()
 
     connect(ui->horizontalSlider_zoomCtrl, &QSlider::valueChanged, this, [&]
             {
-                int zoom = ui->horizontalSlider_zoomCtrl->value();
+        int zoom = ui->horizontalSlider_zoomCtrl->value();
 
-                ui->mapView->deleleAllItems();
-                ui->mapView->setDefaultZoom(zoom);
-                ui->mapView->loadMap();
+        ui->mapView->deleleAllItems();
+        ui->mapView->setDefaultZoom(zoom);
+        ui->mapView->loadMap();
 
-                int len = m_gps_routine.length();
-                for(int i = 0; i < len; i += 2)
-                {
-                    ui->mapView->loadTracker(m_gps_routine[i], m_gps_routine[i + 1]);
-                    ui->mapView->loadSerialNum(m_gps_routine[i], i / 2 + 1);
-                }
-            });
+        int len = m_gps_routine.length();
+        for(int i = 0; i < len; i += 2)
+        {
+            ui->mapView->loadTracker(m_gps_routine[i], m_gps_routine[i + 1]);
+            ui->mapView->loadSerialNum(m_gps_routine[i], i / 2 + 1);
+        }
+    });
 }
 
 int Navigation::isPosInTracker(double r)
@@ -107,12 +119,27 @@ int Navigation::isPosInTracker(double r)
 
     for(int i = 0; i < len; i++)
     {
-        double distance = ui->mapView->gps_distance(m_currentPos.x(), m_currentPos.y(), m_split_tracker[i].x(), m_split_tracker[i].y());
+        double distance = ui->mapView->gps_distance(m_currentPos.longitude, m_currentPos.latitude, m_split_tracker[i].x(), m_split_tracker[i].y());
         if(distance < r)
-            return 1;
+        {
+            m_coverage[i]++;
+        }
     }
 
     return 0;
+}
+
+double Navigation::checkCoveragePercent()
+{
+    int covered{0};
+
+    int len = m_coverage.length();
+    for(int i = 0; i < len; i++)
+    {
+        if(m_coverage[i] > 0)
+            covered++;
+    }
+    return static_cast<double>(covered) / len;
 }
 
 void Navigation::showGpsInfo(const BspConfig::Gps_Info &gps)
@@ -224,15 +251,15 @@ void Navigation::parseTrackerFile(QString &path, QVector<QPointF> &track)
         sep_s.append(0xa1);
         sep_s.append(0xe5);
 
-        int idx_d = gps_dfm.indexOf(sep_d);
-        int idx_m = gps_dfm.indexOf(sep_m);
-        int idx_s = gps_dfm.indexOf(sep_s);
+        int     idx_d = gps_dfm.indexOf(sep_d);
+        int     idx_m = gps_dfm.indexOf(sep_m);
+        int     idx_s = gps_dfm.indexOf(sep_s);
 
         QString s_degree = gps_dfm.mid(0, idx_d);
         QString s_minute = gps_dfm.mid(idx_d + 2, idx_m - idx_d - 2);
         QString s_second = gps_dfm.mid(idx_m + 2, idx_s - idx_m - 2);
 
-        double ret = s_degree.toUInt() + s_minute.toUInt() / 60.0 + s_second.toUInt() / 60.0 / 60.0;
+        double  ret = s_degree.toUInt() + s_minute.toUInt() / 60.0 + s_second.toUInt() / 60.0 / 60.0;
 
         return ret;
 
@@ -243,8 +270,8 @@ void Navigation::parseTrackerFile(QString &path, QVector<QPointF> &track)
         QByteArray        line = file.readLine();
         QList<QByteArray> list = line.split(',');
 
-        double lng;
-        double lat;
+        double            lng;
+        double            lat;
         lng = gps_dfm2decmal(line.split(',')[1]);
         lat = gps_dfm2decmal(line.split(',')[2]);
         track.append(QPointF(lng, lat));
@@ -258,7 +285,7 @@ void Navigation::parseTrackerFile(QString &path, QVector<QPointF> &track)
 
 bool Navigation::splitTracker(QVector<QPointF> &track, int nums, QVector<QPointF> &point)
 {
-    int len = track.length();
+    int    len = track.length();
 
     double lng_start    = 0;
     double lng_end      = 0;
@@ -288,4 +315,12 @@ bool Navigation::splitTracker(QVector<QPointF> &track, int nums, QVector<QPointF
     }
 
     return true;
+}
+
+void Navigation::timerEvent(QTimerEvent *event)
+{
+    if(timer1s == event->timerId())
+    {
+        //        ui->label_navCoverage->setText(QString(m_covered_point / totoal_test_point));
+    }
 }
