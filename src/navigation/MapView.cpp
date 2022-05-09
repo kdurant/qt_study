@@ -84,10 +84,19 @@ void MapView::loadMap()
     update();
 }
 
+void MapView::loadRealTimePoint(QPointF point)
+{
+    QBrush brush;
+    brush.setColor(Qt::green);
+    QPen pen;
+    pen.setColor(Qt::green);
+    pen.setWidth(3);
+    scene->addEllipse(point.x(), point.y(), 3, 3, pen, brush);
+}
+
 void MapView::loadTracker(QPointF start, QPointF end)
 {
     scene->addLine(QLineF(gps2pos(start.x(), start.y(), m_tileMapInfo.current_zoom), gps2pos(end.x(), end.y(), m_tileMapInfo.current_zoom)), QPen(Qt::red));
-    update();
 }
 
 void MapView::loadSerialNum(QPointF posi, int num)

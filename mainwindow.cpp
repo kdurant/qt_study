@@ -1092,6 +1092,13 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]()
             {
+        BspConfig::Gps_Info gps;
+        gps.longitude = 109.73866306;
+        gps.latitude  = 18.3495774;
+
+        nav->setCurrentPos(gps);
+        return;
+
         bool status = false;
         switch(radarType)
         {

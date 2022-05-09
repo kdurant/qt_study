@@ -72,6 +72,14 @@ public:
         return atan(t1) * 180 / M_PI;
     }
 
+    /**
+     * @brief gps_distance
+     * @param lng1
+     * @param lat1
+     * @param lng2
+     * @param lat2
+     * @return distance, unit: m
+     */
     double gps_distance(double lng1, double lat1, double lng2, double lat2)
     {
         double d = sqrt((lng1 - lng2) * (lng1 - lng2) + (lat1 - lat2) * (lat1 - lat2)) / 180 * M_PI * 6300000;
@@ -117,6 +125,7 @@ public:
     }
     void loadMap();  // load map resource and display it
 
+    void loadRealTimePoint(QPointF point);
     void loadTracker(QPointF start, QPointF end);
     void loadSerialNum(QPointF posi, int num);
 
