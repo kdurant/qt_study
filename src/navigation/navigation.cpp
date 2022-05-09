@@ -46,7 +46,7 @@ void Navigation::initSignalSlot()
     connect(this, &Navigation::receivedGpsInfo, this, [this]
             {
         showGpsInfo(m_currentPos);
-        isPosInDesigned(10);
+        isPosInDesigned(300);
         m_realtime_path.append(QPointF(m_currentPos.longitude, m_currentPos.latitude));
         ui->mapView->loadRealTimePoint(QPointF(m_currentPos.longitude, m_currentPos.latitude));
     });

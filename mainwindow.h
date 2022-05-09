@@ -221,6 +221,8 @@ private:
 
     qint64           testCnt{0};
     QVector<QString> testString;
+
+    QQueue<QPointF> gps_test_pos;
 };
 
 #endif  // MAINWINDOW_H

@@ -75,6 +75,20 @@ MainWindow::MainWindow(QWidget *parent) :
     devInfo->getSysPara(sysParaInfo);
     initFileListUi();
     getSysInfo();
+
+    QFile file("/home/wj/work/radar/script/tmp.txt");
+    if(!file.open(QIODevice::ReadOnly))
+        qDebug() << "failed";
+    else
+    {
+        QTextStream in(&file);
+        while(!in.atEnd())
+        {
+            QString     line = in.readLine();
+            QStringList pos  = line.split(',');
+            gps_test_pos.enqueue(QPointF(pos[0].toDouble(), pos[1].toDouble()));
+        }
+    }
 }
 
 MainWindow::~MainWindow()
@@ -1095,6 +1109,16 @@ void MainWindow::initSignalSlot()
         BspConfig::Gps_Info gps;
         gps.longitude = 109.73866306;
         gps.latitude  = 18.3495774;
+
+        qDebug() << "-------------" << gps_test_pos.size();
+        if(!gps_test_pos.isEmpty())
+        {
+            QPointF p     = gps_test_pos.dequeue();
+            gps.longitude = p.x();
+            gps.latitude  = p.y();
+
+            qDebug() << QString("%1, %2").arg(gps.longitude, 0, 'g', 10).arg(gps.latitude, 0, 'g', 10);
+        }
 
         nav->setCurrentPos(gps);
         return;
