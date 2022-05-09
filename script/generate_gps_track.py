@@ -42,14 +42,14 @@ gps_list = gps_info.split()
 for i in range(0, len(gps_list), 4):
     trackers += split_gps_line(gps_list[i], gps_list[i+1], gps_list[i+2], gps_list[i+3], 20)
 
-f = open('gps_data.txt', 'w')
+f = open('tmp.txt', 'w')
 
 i = 0
 for item in trackers:
     f.write(str(item))
     f.write(', ')
     i += 1
-    if(i %4 == 0):
+    if(i %2 == 0):
         f.write('\n')
 
 f.close()
