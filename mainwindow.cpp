@@ -76,19 +76,19 @@ MainWindow::MainWindow(QWidget *parent) :
     initFileListUi();
     getSysInfo();
 
-    QFile file("/home/wj/work/radar/script/tmp.txt");
-    if(!file.open(QIODevice::ReadOnly))
-        qDebug() << "failed";
-    else
-    {
-        QTextStream in(&file);
-        while(!in.atEnd())
-        {
-            QString     line = in.readLine();
-            QStringList pos  = line.split(',');
-            gps_test_pos.enqueue(QPointF(pos[0].toDouble(), pos[1].toDouble()));
-        }
-    }
+    // QFile file("/home/wj/work/radar/script/tmp.txt");
+    // if(!file.open(QIODevice::ReadOnly))
+    // qDebug() << "failed";
+    // else
+    // {
+    // QTextStream in(&file);
+    // while(!in.atEnd())
+    // {
+    // QString     line = in.readLine();
+    // QStringList pos  = line.split(',');
+    // gps_test_pos.enqueue(QPointF(pos[0].toDouble(), pos[1].toDouble()));
+    // }
+    // }
 }
 
 MainWindow::~MainWindow()

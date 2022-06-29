@@ -12,11 +12,12 @@ Navigation::Navigation(QWidget *parent) :
     initUI();
     initSignalSlot();
 
-    QString t1 = "/home/wj/work/map1/";
-    ui->mapView->setMapPath(t1);
-    ui->mapView->parseMapInfo();
-    ui->mapView->setDefaultZoom(13);
-    ui->mapView->loadMap();
+    //    QString t1 = "/home/wj/work/map1/";
+    //    QString t1 = "D:/tile/map2/";
+    //    ui->mapView->setMapPath(t1);
+    //    ui->mapView->parseMapInfo();
+    //    ui->mapView->setDefaultZoom(12);
+    //    ui->mapView->loadMap();
 
     //    QString t2 = "/home/wj/work/tracker.txt";
     //    parseTrackerFile(t2, m_designed_path);

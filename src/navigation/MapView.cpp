@@ -18,6 +18,8 @@ void MapView::setMapPath(QString &path)
 void MapView::parseMapInfo()
 {
     QFileInfoList list = Common::getFileList(m_mapPath);
+    if(list.length() == 0)
+        QMessageBox::critical(this, "error", "地图路径错误");
 
     auto get_tile_start_x = [](QFileInfo &info) -> int
     {

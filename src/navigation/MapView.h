@@ -12,6 +12,7 @@
 #include <QWheelEvent>
 #include <cmath>
 #include <QtDebug>
+#include <QMessageBox>
 
 #include "LineWithArrow.h"
 #include "common.h"
