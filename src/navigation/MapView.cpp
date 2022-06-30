@@ -105,7 +105,7 @@ void MapView::loadTracker(QPointF start, QPointF end)
 void MapView::loadSerialNum(QPointF posi, int num)
 {
     QGraphicsTextItem *str = new QGraphicsTextItem(QString::number(num, 10));
-    str->setDefaultTextColor(QColor(Qt::yellow));
+    str->setDefaultTextColor(QColor(Qt::magenta));
     str->setPos(gps2pos(posi.x(), posi.y(), m_tileMapInfo.current_zoom) - QPoint(0, 20));
     scene->addItem(str);
     update();

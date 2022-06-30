@@ -245,14 +245,12 @@ void Navigation::parseTrackerFile(QString &path, QVector<QPointF> &track)
     auto gps_dfm2decmal = [](QByteArray &gps_dfm) -> double
     {
         QByteArray sep_d;
-        sep_d.append(0xa1);
-        sep_d.append(0xe3);
+        sep_d.append(0xc2);
+        sep_d.append(0xb0);
         QByteArray sep_m;
-        sep_m.append(0xa1);
-        sep_m.append(0xe4);
+        sep_m.append(0x27);
         QByteArray sep_s;
-        sep_s.append(0xa1);
-        sep_s.append(0xe5);
+        sep_s.append(0x22);
 
         int idx_d = gps_dfm.indexOf(sep_d);
         int idx_m = gps_dfm.indexOf(sep_m);
@@ -275,11 +273,11 @@ void Navigation::parseTrackerFile(QString &path, QVector<QPointF> &track)
 
         double lng;
         double lat;
-        lng = gps_dfm2decmal(line.split(',')[1]);
-        lat = gps_dfm2decmal(line.split(',')[2]);
+        lng = line.split(',')[1].toDouble(nullptr);  //  gps_dfm2decmal(line.split(',')[1]);
+        lat = line.split(',')[2].toDouble(nullptr);  // gps_dfm2decmal(line.split(',')[2]);
         track.append(QPointF(lng, lat));
-        lng = gps_dfm2decmal(line.split(',')[3]);
-        lat = gps_dfm2decmal(line.split(',')[4]);
+        lng = line.split(',')[3].toDouble(nullptr);  // gps_dfm2decmal(line.split(',')[3]);
+        lat = line.split(',')[4].toDouble(nullptr);  // gps_dfm2decmal(line.split(',')[4]);
         track.append(QPointF(lng, lat));
     }
 
