@@ -141,16 +141,6 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
-          <widget class="QSpinBox" name="spinBox">
-           <property name="maximum">
-            <number>999</number>
-           </property>
-           <property name="value">
-            <number>360</number>
-           </property>
-          </widget>
-         </item>
          <item row="3" column="2">
           <widget class="QLabel" name="label_8">
            <property name="styleSheet">
@@ -163,6 +153,9 @@
             <set>Qt::AlignCenter</set>
            </property>
           </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_heading"/>
          </item>
         </layout>
        </widget>
@@ -203,7 +196,7 @@
            <string>当前飞行速度</string>
           </property>
           <property name="text">
-           <string>146.77</string>
+           <string/>
           </property>
          </item>
          <item>
@@ -211,7 +204,7 @@
            <string>测区覆盖率</string>
           </property>
           <property name="text">
-           <string>0.4318</string>
+           <string/>
           </property>
          </item>
          <item>
@@ -219,7 +212,7 @@
            <string>当前航线</string>
           </property>
           <property name="text">
-           <string>10</string>
+           <string/>
           </property>
          </item>
         </item>
@@ -235,7 +228,7 @@
            <string>周</string>
           </property>
           <property name="text">
-           <string>2123</string>
+           <string/>
           </property>
          </item>
          <item>
@@ -243,7 +236,7 @@
            <string>秒</string>
           </property>
           <property name="text">
-           <string>465820.00</string>
+           <string/>
           </property>
          </item>
          <item>
@@ -251,7 +244,7 @@
            <string>细分时间(s)</string>
           </property>
           <property name="text">
-           <string>0.159813</string>
+           <string/>
           </property>
          </item>
          <item>
@@ -259,7 +252,7 @@
            <string>纬度(°)</string>
           </property>
           <property name="text">
-           <string>32.416978</string>
+           <string/>
           </property>
          </item>
          <item>
@@ -267,7 +260,7 @@
            <string>经度(°)</string>
           </property>
           <property name="text">
-           <string>119.513329</string>
+           <string/>
           </property>
          </item>
          <item>
@@ -275,7 +268,7 @@
            <string>高度(m)</string>
           </property>
           <property name="text">
-           <string>381.298</string>
+           <string/>
           </property>
          </item>
          <item>
@@ -283,7 +276,7 @@
            <string>翻滚角(°)</string>
           </property>
           <property name="text">
-           <string>0.25937</string>
+           <string/>
           </property>
          </item>
          <item>
@@ -291,7 +284,7 @@
            <string>俯仰角(°)</string>
           </property>
           <property name="text">
-           <string>2.85019</string>
+           <string/>
           </property>
          </item>
          <item>
@@ -299,7 +292,7 @@
            <string>航向角(°)</string>
           </property>
           <property name="text">
-           <string>359.17349</string>
+           <string/>
           </property>
          </item>
         </item>
@@ -314,7 +307,7 @@
          <item row="0" column="0">
           <widget class="QPushButton" name="btn_loadMap">
            <property name="toolTip">
-            <string>目前只支持瓦片地图，且层级下只能包含16张瓦片</string>
+            <string>只支持瓦片地图</string>
            </property>
            <property name="text">
             <string>加载地图</string>
@@ -323,6 +316,9 @@
          </item>
          <item row="2" column="0">
           <widget class="QPushButton" name="btn_loadTracker">
+           <property name="toolTip">
+            <string>航迹文件中gps需使用浮点数格式</string>
+           </property>
            <property name="text">
             <string>加载航线</string>
            </property>
@@ -331,7 +327,7 @@
          <item row="3" column="0">
           <widget class="QLineEdit" name="lineEdit_trackerFile">
            <property name="text">
-            <string>2018_03_07_20_23_50_833.datagps</string>
+            <string/>
            </property>
            <property name="readOnly">
             <bool>true</bool>
@@ -359,21 +355,21 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLabel" name="label_15">
+         <widget class="QLabel" name="label_flightHeight">
           <property name="text">
            <string>飞行高度</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_14">
+         <widget class="QLabel" name="label_flightSpeed">
           <property name="text">
            <string>飞行速度</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label_16">
+         <widget class="QLabel" name="label_heading">
           <property name="text">
            <string>航向角</string>
           </property>

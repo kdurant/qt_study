@@ -40,9 +40,10 @@ public:
      */
     int    isPosInDesigned(double r);
     double checkCoveragePercent();
-    void   showGpsInfo(const BspConfig::Gps_Info &gps);
-    void   showSystemInfo(double speed);
-    int    getTestData(void);
+
+    void showGpsInfo(const BspConfig::Gps_Info &gps);
+    void showSystemInfo(double speed);
+    int  getTestData(void);
     /**
      * @brief 从航迹规划文件中找到航迹的起点和终点
      *
@@ -61,6 +62,8 @@ public:
      * @return
      */
     bool splitTracker(QVector<QPointF> &track, int nums, QVector<QPointF> &point);
+
+    void updateGpsInfo(BspConfig::Gps_Info &data);
 
 protected:
     void timerEvent(QTimerEvent *event);

@@ -318,6 +318,18 @@ bool Navigation::splitTracker(QVector<QPointF> &track, int nums, QVector<QPointF
     return true;
 }
 
+void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
+{
+    ui->doubleSpinBox_flightHeight->setValue(data.height);
+    ui->doubleSpinBox_heading->setValue(data.heading);
+
+    ui->label_flightHeight->setText("飞行高度:" + QString::number(data.altitude, 'g', 6));
+    ui->label_heading->setText("航向角:" + QString::number(data.heading, 'g', 6));
+
+    showGpsInfo(data);
+    //    showSystemInfo(data);
+}
+
 void Navigation::timerEvent(QTimerEvent *event)
 {
     if(timer1s == event->timerId())

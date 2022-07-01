@@ -1562,6 +1562,8 @@ void MainWindow::initSignalSlot()
     connect(dispatch, &ProtocolDispatch::gpsDataReady, gps, &GpsInfo::parserGpsData);
     connect(gps, &GpsInfo::gpsDataReady, this, [this](BspConfig::Gps_Info &data)
             {
+        nav->updateGpsInfo(data);
+
         QList<QTreeWidgetItem *> itemList;
 
         itemList = ui->treeWidget_attitude->findItems("GPS信息", Qt::MatchExactly);
