@@ -222,7 +222,9 @@ private:
     qint64           testCnt{0};
     QVector<QString> testString;
 
+#ifdef TEST_NAV
     QQueue<QPointF> gps_test_pos;
+#endif
 };
 
 #endif  // MAINWINDOW_H

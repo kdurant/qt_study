@@ -76,19 +76,21 @@ MainWindow::MainWindow(QWidget *parent) :
     initFileListUi();
     getSysInfo();
 
-    // QFile file("/home/wj/work/radar/script/tmp.txt");
-    // if(!file.open(QIODevice::ReadOnly))
-    // qDebug() << "failed";
-    // else
-    // {
-    // QTextStream in(&file);
-    // while(!in.atEnd())
-    // {
-    // QString     line = in.readLine();
-    // QStringList pos  = line.split(',');
-    // gps_test_pos.enqueue(QPointF(pos[0].toDouble(), pos[1].toDouble()));
-    // }
-    // }
+#ifdef TEST_NAV
+    QFile file("/home/wj/work/radar/script/tmp.txt");
+    if(!file.open(QIODevice::ReadOnly))
+        qDebug() << "failed";
+    else
+    {
+        QTextStream in(&file);
+        while(!in.atEnd())
+        {
+            QString     line = in.readLine();
+            QStringList pos  = line.split(',');
+            gps_test_pos.enqueue(QPointF(pos[0].toDouble(), pos[1].toDouble()));
+        }
+    }
+#endif
 }
 
 MainWindow::~MainWindow()
@@ -1106,6 +1108,7 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]()
             {
+#ifdef TEST_NAV
         BspConfig::Gps_Info gps;
         gps.longitude = 109.73866306;
         gps.latitude  = 18.3495774;
@@ -1122,6 +1125,7 @@ void MainWindow::initSignalSlot()
 
         nav->setCurrentPos(gps);
         return;
+#endif
 
         bool status = false;
         switch(radarType)
