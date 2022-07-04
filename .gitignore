@@ -19,6 +19,7 @@ __pycache__
 *.exe
 *.out
 
+.idea
 #######################qt###########################
 !CMakeLists.txt
 build
