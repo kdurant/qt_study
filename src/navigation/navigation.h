@@ -27,25 +27,23 @@ public:
     void initUI();
     void initSignalSlot(void);
 
-    void setCurrentPos(BspConfig::Gps_Info &gps)
-    {
-        m_currentPos = gps;
-        emit receivedGpsInfo();
-    }
-
     /**
-     * @brief 判断当前的GPS位置是否在规划航迹之内
+     * @brief 遍历规划航迹之内所有点，判断当前的GPS位置是否在
      * @param 当前GPS位置的半径，模拟GPS高度
      * @return
      */
-    int    isPosInDesigned(double r);
+    int isPosInDesigned(double r);
+
+    /**
+     * @brief 返回当前测区覆盖率
+     * @return
+     */
     double checkCoveragePercent();
 
-    void showGpsInfo(const BspConfig::Gps_Info &gps);
-    void showSystemInfo(double speed);
-    int  getTestData(void);
+    int getTestData(void);
+
     /**
-     * @brief 从航迹规划文件中找到航迹的起点和终点
+     * @brief 从航迹规划文件中找到所有航迹的起点和终点
      *
      * @param path
      * @param track
@@ -64,6 +62,8 @@ public:
     bool splitTracker(QVector<QPointF> &track, int nums, QVector<QPointF> &point);
 
     void updateGpsInfo(BspConfig::Gps_Info &data);
+    void showGpsInfo(const BspConfig::Gps_Info &gps);
+    void showSystemInfo(double speed);
 
 protected:
     void timerEvent(QTimerEvent *event);
@@ -86,7 +86,7 @@ private:
     QVector<QPointF> m_realtime_path;
     QVector<QPointF> m_designed_path;
 
-    QVector<int>     m_coverage;
+    QVector<int>     m_coverage;  // QVector的长度和规划航线划分的点个数一致
     QVector<QPointF> m_split_tracker;
 };
 

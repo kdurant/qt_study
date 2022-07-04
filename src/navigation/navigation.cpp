@@ -46,7 +46,6 @@ void Navigation::initSignalSlot()
 {
     connect(this, &Navigation::receivedGpsInfo, this, [this]
             {
-        showGpsInfo(m_currentPos);
         isPosInDesigned(300);
         m_realtime_path.append(QPointF(m_currentPos.longitude, m_currentPos.latitude));
         ui->mapView->loadRealTimePoint(QPointF(m_currentPos.longitude, m_currentPos.latitude));
@@ -120,6 +119,10 @@ int Navigation::isPosInDesigned(double r)
     if(len == 0)
         return -1;
 
+    /**
+     * 对于某一个飞机位置，遍历所有规划航线轨迹点的时候，可能有不止一个点认为这个位置
+     * 是在自己的范围之内，所以一个航迹点对应的计数值可能会大于1
+     */
     for(int i = 0; i < len; i++)
     {
         double distance = ui->mapView->gps_distance(m_currentPos.longitude, m_currentPos.latitude, m_split_tracker[i].x(), m_split_tracker[i].y());
@@ -320,6 +323,9 @@ bool Navigation::splitTracker(QVector<QPointF> &track, int nums, QVector<QPointF
 
 void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
 {
+    m_currentPos = gps;
+    emit receivedGpsInfo();
+
     ui->doubleSpinBox_flightHeight->setValue(data.height);
     ui->doubleSpinBox_heading->setValue(data.heading);
 

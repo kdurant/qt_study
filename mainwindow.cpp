@@ -1123,7 +1123,7 @@ void MainWindow::initSignalSlot()
             qDebug() << QString("%1, %2").arg(gps.longitude, 0, 'g', 10).arg(gps.latitude, 0, 'g', 10);
         }
 
-        nav->setCurrentPos(gps);
+        nav->updateGpsInfo(gps);
         return;
 #endif
 
