@@ -323,7 +323,7 @@ bool Navigation::splitTracker(QVector<QPointF> &track, int nums, QVector<QPointF
 
 void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
 {
-    m_currentPos = gps;
+    m_currentPos = data;
     emit receivedGpsInfo();
 
     ui->doubleSpinBox_flightHeight->setValue(data.height);

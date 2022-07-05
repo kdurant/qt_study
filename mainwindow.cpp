@@ -119,6 +119,8 @@ void MainWindow::initParameter()
         file.write("mode=debug\r\n");
         file.write("radarType=1\r\n");
         file.write("localPort=6666\r\n");
+        file.write(";  land radar, IP = 192.168.1.101; port = 5555\r\n");
+        file.write("; other radar, IP = 192.168.1.102; port = 4444\r\n");
         file.write("radarIP=192.168.1.101\r\n");
         file.write("radarPort=5555\r\n");
         file.write("\r\n[Preview]\r\n");
