@@ -28,7 +28,7 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
             break;
         case SlaveUp::GPS_PENETRATE:
             transmitFrame = data.mid(24, data_len);
-            emit gpsDataReady(transmitFrame);
+            emit gpsFrameReady(transmitFrame);
             break;
         case SlaveUp::LASER_PENETRATE:
             transmitFrame = data.mid(24, data_len);

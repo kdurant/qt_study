@@ -1561,7 +1561,7 @@ void MainWindow::initSignalSlot()
     /*
      * gps信息处理
      */
-    connect(dispatch, &ProtocolDispatch::gpsDataReady, gps, &GpsInfo::parserGpsData);
+    connect(dispatch, &ProtocolDispatch::gpsFrameReady, gps, &GpsInfo::parserGpsData);
     connect(gps, &GpsInfo::gpsDataReady, this, [this](BspConfig::Gps_Info &data)
             {
         nav->updateGpsInfo(data);
