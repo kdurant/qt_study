@@ -3,8 +3,10 @@
 模拟实际GPS数据，通过UDP发到上位机软件
 """
 
+import time
 import argparse
 import socket
+from udp_protocol import EncodeProtocol, NovatelFrame
 
 parser = argparse.ArgumentParser(description="get gps info and send to PC by UDP protocol")
 parser.add_argument("--file", help="Files to be parsed")
@@ -14,6 +16,17 @@ address = ('127.0.0.1', 6666)
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 #  gps_data = open("args.file")
+
+gps_frame = NovatelFrame()
+udp_frame = EncodeProtocol()
+
+gps_frame.set_latitude(b'\x01' * 8)
+gps_frame.set_longitude(b'\x02' * 8)
+sub_frame = gps_frame.get_frame()
+
+udp_frame.set_data(sub_frame)
+udp_frame.get_frame()
+print(len(udp_frame.get_frame()))
 
 with open(args.file, 'r') as gps_data:
     """
@@ -26,4 +39,12 @@ with open(args.file, 'r') as gps_data:
 
     # 维度      经度
     latitude, longitude = line.split(',')
-    print(line)
+    gps_frame.set_latitude(latitude)
+    gps_frame.set_longitude(longitude)
+    sub_frame = gps_frame.get_frame()
+    udp_frame.set_data(sub_frame)
+    packet = udp_frame.get_frame()
+
+    s.sendto(packet, address)
+    #  time.sleep(0.5)
+    exit(0)
