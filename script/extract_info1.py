@@ -163,8 +163,13 @@ ax[2].grid(True)
 
 plt.show()
 
-f = open("test.txt", 'w')
-for item in gps_latitude:
-    f.write(str(item))
+f = open("gps_info.log", 'w')
+
+length = len(gps_latitude)
+for i in range(0, length):
+    f.write(str(gps_latitude[0]))
+    f.write(',')
+    f.write(str(gps_longitude[0]))
     f.write('\n')
+
 f.close()
