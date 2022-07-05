@@ -26,7 +26,7 @@ sub_frame = gps_frame.get_frame()
 
 udp_frame.set_data(sub_frame)
 udp_frame.get_frame()
-print(len(udp_frame.get_frame()))
+#  print(len(udp_frame.get_frame()))
 
 with open(args.file, 'r') as gps_data:
     """
@@ -39,12 +39,15 @@ with open(args.file, 'r') as gps_data:
 
     # 维度      经度
     latitude, longitude = line.split(',')
-    gps_frame.set_latitude(latitude)
-    gps_frame.set_longitude(longitude)
+    latitude = int(latitude)
+    longitude = int(longitude)
+    gps_frame.set_latitude(latitude.to_bytes(8, byteorder='little'))
+    gps_frame.set_longitude(longitude.to_bytes(8, byteorder='little'))
     sub_frame = gps_frame.get_frame()
     udp_frame.set_data(sub_frame)
     packet = udp_frame.get_frame()
 
+    print(len(packet))
     s.sendto(packet, address)
     #  time.sleep(0.5)
     exit(0)

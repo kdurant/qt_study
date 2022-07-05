@@ -37,8 +37,8 @@ import struct
 class NovatelFrame():
 
     def __init__(self):
-        self.synch_head = b'\xAA\x44\x13\x12' * 3
-        self.week = 2112
+        self.synch_head = b'\x11\x11\x11\x11\x22\x22\x22\x22\x33\x33\x33\x33'
+        self.week = 17476  # 0x44444
         self.second = 1234561.3
         self.latitude = self.double_to_hex(102.3)
         self.longitude = self.double_to_hex(23.4)
@@ -49,8 +49,9 @@ class NovatelFrame():
         self.roll = 44.4
         self.pitch = 55.5
         self.azimuth = 66.6
-        self.status = 1234
-        self.crc = 5678
+        self.status = 21845  # 0x5555
+        self.padding = b'\x99' * 11  # 不清楚为什么上位机里的GPS数据长度是115
+        self.crc = 26214  # 0x6666
 
     def double_to_hex(self, f):
         format_string = hex(struct.unpack('<Q', struct.pack('<d', f))[0])
@@ -65,7 +66,7 @@ class NovatelFrame():
 
     def get_frame(self):
         frame = self.synch_head                      + \
-            self.week.to_bytes(4, byteorder='big')   + \
+            self.week.to_bytes(4, byteorder='little')   + \
             self.double_to_hex(self.second)          + \
             self.latitude                            + \
             self.longitude                           + \
@@ -76,7 +77,8 @@ class NovatelFrame():
             self.double_to_hex(self.roll)            + \
             self.double_to_hex(self.pitch)           + \
             self.double_to_hex(self.azimuth)         + \
-            self.status.to_bytes(4, byteorder='big') + \
-            self.crc.to_bytes(4, byteorder='big')
+            self.status.to_bytes(4, byteorder='little') + \
+            self.padding                             + \
+            self.crc.to_bytes(4, byteorder='little')
 
         return frame
