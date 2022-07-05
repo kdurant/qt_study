@@ -88,6 +88,9 @@ private:
 
     QVector<int>     m_coverage;  // QVector的长度和规划航线划分的点个数一致
     QVector<QPointF> m_split_tracker;
+
+    bool isLoadedMap{false};
+    bool isLoadedTracker{false};
 };
 
 #endif  // NOTEINFO_H

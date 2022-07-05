@@ -73,6 +73,7 @@ void Navigation::initSignalSlot()
         m_coverage = QVector<int>(m_split_tracker.length(), 0);
 
         m_realtime_path.clear();
+        isLoadedTracker = true;
     });
 
     connect(ui->btn_loadMap, &QPushButton::pressed, this, [&]
@@ -89,6 +90,7 @@ void Navigation::initSignalSlot()
         ui->spinBox_mapMaxMapLevel->setValue(info.max_zoom_level);
         ui->horizontalSlider_zoomCtrl->setRange(info.min_zoom_level, info.max_zoom_level);
         ui->mapView->loadMap();
+        isLoadedMap = true;
     });
 
     connect(ui->horizontalSlider_zoomCtrl,
@@ -323,6 +325,9 @@ bool Navigation::splitTracker(QVector<QPointF> &track, int nums, QVector<QPointF
 
 void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
 {
+    if(isLoadedMap == false || isLoadedTracker == false)
+        return;
+
     m_currentPos = data;
     emit receivedGpsInfo();
 

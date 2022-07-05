@@ -149,7 +149,8 @@ private:
     QString         m_mapPath;
     int             m_tile_X_offset{0};
     int             m_tile_Y_offset{0};
-    TileMapInfo     m_tileMapInfo;
+    TileMapInfo     m_tileMapInfo{
+        -1, -1, -1, -1, -1, -1, -1};
 };
 
 #endif  // MAPVIEW_H
