@@ -19,7 +19,7 @@ FIELD_CONFG = {
         'len': 4,
         'offset': 20
     },
-    'heading': {
+    'azimuth': {
         'len': 8,
         'offset': 24
     },
@@ -87,9 +87,12 @@ readed_position = 0
 motor_info = []
 gps_sub_time = []
 gps_second = []
-gps_longitude = []
 gps_latitude = []
+gps_longitude = []
 gps_height = []
+gps_azimuth = []  # 偏航角, "摇头", (heading)
+gps_pitch = []  # 俯仰角, "点头"
+gps_roll = []  # 翻滚角, "翻滚"
 
 interval = 0
 
@@ -137,6 +140,22 @@ with open(args.file, 'rb') as f:
                        FIELD_CONFG['longitude']['len']]
         gps_longitude.append(int.from_bytes(target, byteorder='big'))
 
+        target = chuck[head + FIELD_CONFG['height']['offset']:head + FIELD_CONFG['height']['offset'] +
+                       FIELD_CONFG['height']['len']]
+        gps_height.append(int.from_bytes(target, byteorder='big'))
+
+        target = chuck[head + FIELD_CONFG['azimuth']['offset']:head + FIELD_CONFG['azimuth']['offset'] +
+                       FIELD_CONFG['azimuth']['len']]
+        gps_azimuth.append(int.from_bytes(target, byteorder='big'))
+
+        target = chuck[head + FIELD_CONFG['pitch']['offset']:head + FIELD_CONFG['pitch']['offset'] +
+                       FIELD_CONFG['pitch']['len']]
+        gps_pitch.append(int.from_bytes(target, byteorder='big'))
+
+        target = chuck[head + FIELD_CONFG['roll']['offset']:head + FIELD_CONFG['roll']['offset'] +
+                       FIELD_CONFG['roll']['len']]
+        gps_roll.append(int.from_bytes(target, byteorder='big'))
+
         interval += 1
         if (interval % 1000) == 0:
             print("\rprogress:{:0>10d}/{:0>10d}".format(readed_position, source_file_size), end='')
@@ -167,9 +186,17 @@ f = open("gps_info.log", 'w')
 
 length = len(gps_latitude)
 for i in range(0, length):
-    f.write(str(gps_latitude[0]))
+    f.write(str(gps_latitude[i]))
     f.write(',')
-    f.write(str(gps_longitude[0]))
+    f.write(str(gps_longitude[i]))
+    f.write(',')
+    f.write(str(gps_height[i]))
+    f.write(',')
+    f.write(str(gps_azimuth[i]))
+    f.write(',')
+    f.write(str(gps_pitch[i]))
+    f.write(',')
+    f.write(str(gps_roll[i]))
     f.write('\n')
 
 f.close()

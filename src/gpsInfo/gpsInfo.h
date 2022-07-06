@@ -98,9 +98,11 @@ private:
         gps.latitude        = Common::byteArrayToDouble(frame.mid(offset + 12, 8), 1);
         gps.longitude       = Common::byteArrayToDouble(frame.mid(offset + 20, 8), 1);
         gps.altitude        = Common::byteArrayToDouble(frame.mid(offset + 28, 8), 1);
-        gps.roll            = Common::byteArrayToDouble(frame.mid(offset + 60, 8), 1);
-        gps.pitch           = Common::byteArrayToDouble(frame.mid(offset + 68, 8), 1);
-        gps.heading         = Common::byteArrayToDouble(frame.mid(offset + 76, 8), 1);
+        gps.height          = gps.altitude;
+
+        gps.roll    = Common::byteArrayToDouble(frame.mid(offset + 60, 8), 1);
+        gps.pitch   = Common::byteArrayToDouble(frame.mid(offset + 68, 8), 1);
+        gps.heading = Common::byteArrayToDouble(frame.mid(offset + 76, 8), 1);
     }
 signals:
     void gpsDataReady(BspConfig::Gps_Info &data);  // 接收到响应数据

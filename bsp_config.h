@@ -28,13 +28,15 @@ public:
         qint32  week;
         double  current_week_ms;
         quint32 sub_time;
-        double  latitude;
-        double  longitude;
-        double  altitude;
-        double  roll;     // 翻滚角
-        double  pitch;    // 俯仰角
-        double  heading;  // 方位角
-        double  height;
+
+        double latitude;
+        double longitude;
+        double altitude;  // altitude 和 height一样
+        double height;
+
+        double heading;  // 方位角, azimutu
+        double roll;     // 翻滚角
+        double pitch;    // 俯仰角
     };
 
     /**

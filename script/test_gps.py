@@ -38,11 +38,18 @@ with open(args.file, 'r') as gps_data:
     line = line[:-1]
 
     # 维度      经度
-    latitude, longitude = line.split(',')
+    latitude, longitude, height, azimuth, pitch, roll = line.split(',')
     latitude = int(latitude)
     longitude = int(longitude)
+    height = int(height)
+    azimuth = int(azimuth)
+    pitch = int(pitch)
+    roll = int(roll)
+
     gps_frame.set_latitude(latitude.to_bytes(8, byteorder='little'))
     gps_frame.set_longitude(longitude.to_bytes(8, byteorder='little'))
+    gps_frame.set_height(height.to_bytes(8, byteorder='little'))
+    gps_frame.set_azimuth(azimuth.to_bytes(8, byteorder='little'))
     sub_frame = gps_frame.get_frame()
     udp_frame.set_data(sub_frame)
     packet = udp_frame.get_frame()

@@ -42,13 +42,13 @@ class NovatelFrame():
         self.second = 1234561.3
         self.latitude = self.double_to_hex(102.3)
         self.longitude = self.double_to_hex(23.4)
-        self.height = 5.6
+        self.height = self.double_to_hex(534.21)
         self.north_velocity = 11.1
         self.east_velocity = 22.2
         self.up_velocity = 33.3
-        self.roll = 44.4
-        self.pitch = 55.5
-        self.azimuth = 66.6
+        self.roll = self.double_to_hex(44.4)
+        self.pitch = self.double_to_hex(55.5)
+        self.azimuth = self.double_to_hex(66.6)
         self.status = 21845  # 0x5555
         self.padding = b'\x99' * 11  # 不清楚为什么上位机里的GPS数据长度是115
         self.crc = 26214  # 0x6666
@@ -64,21 +64,33 @@ class NovatelFrame():
     def set_longitude(self, longitude):
         self.longitude = longitude
 
+    def set_height(self, height):
+        self.height = height
+
+    def set_azimuth(self, azimuth):
+        self.azimuth = azimuth
+
+    def set_pitch(self, pitch):
+        self.pitch = pitch
+
+    def set_roll(self, roll):
+        self.roll = roll
+
     def get_frame(self):
-        frame = self.synch_head                      + \
+        frame = self.synch_head                         + \
             self.week.to_bytes(4, byteorder='little')   + \
-            self.double_to_hex(self.second)          + \
-            self.latitude                            + \
-            self.longitude                           + \
-            self.double_to_hex(self.height)          + \
-            self.double_to_hex(self.north_velocity)  + \
-            self.double_to_hex(self.east_velocity)   + \
-            self.double_to_hex(self.up_velocity)     + \
-            self.double_to_hex(self.roll)            + \
-            self.double_to_hex(self.pitch)           + \
-            self.double_to_hex(self.azimuth)         + \
+            self.double_to_hex(self.second)             + \
+            self.latitude                               + \
+            self.longitude                              + \
+            self.height                                 + \
+            self.double_to_hex(self.north_velocity)     + \
+            self.double_to_hex(self.east_velocity)      + \
+            self.double_to_hex(self.up_velocity)        + \
+            self.roll                                   + \
+            self.pitch                                  + \
+            self.azimuth                                + \
             self.status.to_bytes(4, byteorder='little') + \
-            self.padding                             + \
+            self.padding                                + \
             self.crc.to_bytes(4, byteorder='little')
 
         return frame
