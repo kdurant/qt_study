@@ -49,7 +49,7 @@ public:
         return (0.5 - log(tan(lat * M_PI / 180) + 1 / cos(lat * M_PI / 180)) / (2 * M_PI)) * pow(2, zoom);
     }
 
-    // 经纬度坐标(lng, lat)转像素坐标(pixelX, pixelY)
+    // 经纬度坐标(lng, lat)转像素坐标(pixelX, pixelY), 瓦片地图的坐标系
     int lng_lat2pixelx(double lng, double lat, int zoom)
     {
         return (int)(((lng + 180) / 360) * pow(2, zoom) * 256) % 256;
@@ -88,32 +88,26 @@ public:
     }
 
     /**
+     * @brief 检查当前经维度对应的瓦片地图编号，超出已加载瓦片地图范围(正负1）的将不会显示轨迹
+     *          最好调用gps2pos()前检查下
+     * @param lng
+     * @param lat
+     * @param zoom_level
+     * @return
+     */
+    bool checkPosValid(double lng, double lat, int zoom_level);
+    /**
      * @brief 瓦片地图的GPS坐标转换为像素坐标
      * @param lng
      * @param lat
      * @return
      */
-    QPoint gps2pos(double lng, double lat, int zoom_level)
-    {
-        int zoom_diff = m_tileMapInfo.current_zoom - m_tileMapInfo.min_zoom_level;
-        int exp       = static_cast<int>(pow(2, zoom_diff));
-        int start_x   = exp * m_tileMapInfo.start_x;
-        int start_y   = exp * m_tileMapInfo.start_y;
+    QPoint gps2pos(double lng, double lat, int zoom_level);
 
-        int tileX  = lng_lat2tilex(lng, lat, zoom_level);
-        int tileY  = lng_lat2tiley(lng, lat, zoom_level);
-        int pixelX = lng_lat2pixelx(lng, lat, zoom_level);
-        int pixelY = lng_lat2pixely(lng, lat, zoom_level);
-        int pos_x  = (tileX - start_x) * 256 + pixelX;
-        int pos_y  = (tileY - start_y) * 256 + pixelY;
-
-        return QPoint(pos_x, pos_y);
-    }
     /**
      * @brief
      * @param path
      */
-
     void        setMapPath(QString &path);
     void        parseMapInfo();
     TileMapInfo getMapInfo()

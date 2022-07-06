@@ -10,6 +10,43 @@ MapView::MapView(QWidget *parent)
     setScene(scene);
 }
 
+bool MapView::checkPosValid(double lng, double lat, int zoom_level)
+{
+    int zoom_diff = m_tileMapInfo.current_zoom - m_tileMapInfo.min_zoom_level;
+    int exp       = static_cast<int>(pow(2, zoom_diff));
+    int start_x   = exp * m_tileMapInfo.start_x;
+    int start_y   = exp * m_tileMapInfo.start_y;
+    int deviation = 1;
+
+    int tileX = lng_lat2tilex(lng, lat, zoom_level);
+    int tileY = lng_lat2tiley(lng, lat, zoom_level);
+
+    if(tileX < start_x - deviation || tileX > start_x + m_tileMapInfo.len_x * exp + deviation)
+        return false;
+
+    if(tileY < start_y - deviation || tileY > start_y + m_tileMapInfo.len_y * exp + deviation)
+        return false;
+
+    return true;
+}
+
+QPoint MapView::gps2pos(double lng, double lat, int zoom_level)
+{
+    int zoom_diff = m_tileMapInfo.current_zoom - m_tileMapInfo.min_zoom_level;
+    int exp       = static_cast<int>(pow(2, zoom_diff));
+    int start_x   = exp * m_tileMapInfo.start_x;
+    int start_y   = exp * m_tileMapInfo.start_y;
+
+    int tileX  = lng_lat2tilex(lng, lat, zoom_level);
+    int tileY  = lng_lat2tiley(lng, lat, zoom_level);
+    int pixelX = lng_lat2pixelx(lng, lat, zoom_level);
+    int pixelY = lng_lat2pixely(lng, lat, zoom_level);
+    int pos_x  = (tileX - start_x) * 256 + pixelX;
+    int pos_y  = (tileY - start_y) * 256 + pixelY;
+
+    return QPoint(pos_x, pos_y);
+}
+
 void MapView::setMapPath(QString &path)
 {
     m_mapPath = path;
@@ -93,6 +130,10 @@ void MapView::loadRealTimePoint(QPointF point)
     QPen pen;
     pen.setColor(Qt::green);
     pen.setWidth(3);
+
+    if(checkPosValid(point.x(), point.y(), m_tileMapInfo.current_zoom) == false)
+        return;
+
     QPointF pos = gps2pos(point.x(), point.y(), m_tileMapInfo.current_zoom);
     scene->addEllipse(pos.x(), pos.y(), 3, 3, pen, brush);
 }
