@@ -65,6 +65,8 @@ public:
     void showGpsInfo(const BspConfig::Gps_Info &gps);
     void showSystemInfo(double speed);
 
+    double calcSpeed(BspConfig::Gps_Info prev, BspConfig::Gps_Info cur);
+
 protected:
     void timerEvent(QTimerEvent *event);
 
@@ -75,10 +77,9 @@ private:
     Ui::Navigation *ui;
     qint32          timer1s;
 
-    BspConfig::Gps_Info prevGpsInfo;
-    double              currentSpeed{0};
+    double currentSpeed{0};
 
-    BspConfig::Gps_Info m_currentPos;
+    BspConfig::Gps_Info m_currentPos{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     QString             mapPath;
     int                 m_tile_X_offset{0};
     int                 m_tile_Y_offset{0};

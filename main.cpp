@@ -70,8 +70,8 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
-    //    Navigation n;
-    //    n.show();
+    // Navigation n;
+    // n.show();
 
     return a.exec();
 }

@@ -174,6 +174,17 @@ void Navigation::showSystemInfo(double speed)
     itemList.first()->child(0)->setText(1, QString::number(speed));
 }
 
+double Navigation::calcSpeed(BspConfig::Gps_Info prev, BspConfig::Gps_Info cur)
+{
+    auto gps_distance = [](double lng1, double lat1, double lng2, double lat2) -> double
+    {
+        double d = sqrt((lng1 - lng2) * (lng1 - lng2) + (lat1 - lat2) * (lat1 - lat2)) / 180 * M_PI * 6300000;
+        return d;
+    };
+    double distance = gps_distance(cur.longitude, cur.latitude, prev.latitude, prev.longitude);
+    return 3.6 * distance / 1;
+}
+
 int Navigation::getTestData()
 {
 #if 0
@@ -325,19 +336,24 @@ bool Navigation::splitTracker(QVector<QPointF> &track, int nums, QVector<QPointF
 
 void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
 {
+    currentSpeed = calcSpeed(m_currentPos, data);
+    m_currentPos = data;
+
     if(isLoadedMap == false || isLoadedTracker == false)
         return;
 
-    m_currentPos = data;
-    emit receivedGpsInfo();
-
     ui->doubleSpinBox_flightHeight->setValue(data.height);
+    ui->doubleSpinBox_flightSpeed->setValue(currentSpeed);
     ui->doubleSpinBox_heading->setValue(data.heading);
 
     ui->label_flightHeight->setText("飞行高度:" + QString::number(data.altitude, 'g', 6));
+    ui->label_flightSpeed->setText("飞行速度:" + QString::number(currentSpeed, 'g', 6));
     ui->label_heading->setText("航向角:" + QString::number(data.heading, 'g', 6));
 
     showGpsInfo(data);
+
+    emit receivedGpsInfo();
+
     //    showSystemInfo(data);
 }
 

@@ -3,7 +3,7 @@
 
 #include <QtCore>
 
-TEST(test_ba2int, bit_endian)
+TEST(test_ba2int, big_endian)
 {
     QByteArray ba;
     ba.resize(4);
