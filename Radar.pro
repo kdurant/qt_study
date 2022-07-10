@@ -28,6 +28,7 @@ include(./src/BitColorMap/BitColorMap.pri)
 include(./src/motor/MotorController.pri)
 include(./src/laser/LaserController.pri)
 include(./src/navigation/navigation.pri)
+include(./src/third_lib/QCustomPlot/qcustomplot.pri)
 
 INCLUDEPATH += ./src/UpdateBin
 INCLUDEPATH += ./src/wave
@@ -37,8 +38,8 @@ INCLUDEPATH += ./src/ADControll
 INCLUDEPATH += ./src/DAControll
 INCLUDEPATH += ./src/gpsInfo
 INCLUDEPATH += ./src/attitudeSensor
-INCLUDEPATH += ./src/third_lib/QCustomPlot/
 INCLUDEPATH += ./src/navigation
+INCLUDEPATH += ./src/third_lib/QCustomPlot
 
 
 SOURCES += \
@@ -49,7 +50,6 @@ SOURCES += \
     src/wave/OfflineWaveform.cpp \
     src/wave/OnlineWaveform.cpp \
     src/wave/WaveExtract.cpp \
-    src/third_lib/QCustomPlot/qcustomplot.cpp \
     save.cpp \
     src/DevInfo/DevInfo.cpp \
     src/UpdateBin/UpdateBin.cpp \
@@ -67,7 +67,6 @@ HEADERS += \
         mainwindow.h \
     noteinfo.h \
     bsp_config.h \
-    src/third_lib/QCustomPlot/qcustomplot.h \
     save.h \
     src/DevInfo/DevInfo.h \
     src/UpdateBin/UpdateBin.h \
