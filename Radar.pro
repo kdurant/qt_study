@@ -22,62 +22,25 @@ DEFINES += SOFT_VERSION=\"\\\"$$VERSION\\\"\"
 
 #DEFINES += QT_NO_DEBUG_OUTPUT
 
-
+include(./src/common/common.pri)
 include(./src/Protocol/protocol.pri)
 include(./src/BitColorMap/BitColorMap.pri)
 include(./src/motor/MotorController.pri)
 include(./src/laser/LaserController.pri)
 include(./src/navigation/navigation.pri)
 include(./src/UpdateBin/UpdateBin.pri)
+include(./src/wave/wave.pri)
+include(./src/saveWave/SaveWave.pri)
+include(./src/sensors/sensors.pri)
+include(./src/DevInfo/DevInfo.pri)
 include(./src/third_lib/QCustomPlot/qcustomplot.pri)
-
-INCLUDEPATH += ./src/UpdateBin
-INCLUDEPATH += ./src/wave
-INCLUDEPATH += ./src/DevInfo
-INCLUDEPATH += ./src/saveWave
-INCLUDEPATH += ./src/ADControll
-INCLUDEPATH += ./src/DAControll
-INCLUDEPATH += ./src/gpsInfo
-INCLUDEPATH += ./src/attitudeSensor
-INCLUDEPATH += ./src/navigation
-INCLUDEPATH += ./src/third_lib/QCustomPlot
-
-
-SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
-    noteinfo.cpp \
-    src/saveWave/SaveWave.cpp \
-    src/wave/OfflineWaveform.cpp \
-    src/wave/OnlineWaveform.cpp \
-    src/wave/WaveExtract.cpp \
-    save.cpp \
-    src/DevInfo/DevInfo.cpp \
-    src/UpdateBin/UpdateBin.cpp \
-
-HEADERS += \
-    common.h \
-    src/ADControll/ADControl.h \
-    src/DAControll/DAControl.h \
-    src/attitudeSensor/AttitudeSensor.h \
-    src/gpsInfo/gpsInfo.h \
-    src/saveWave/SaveWave.h \
-    src/wave/OfflineWaveform.h \
-    src/wave/OnlineWaveform.h \
-    src/wave/WaveExtract.h \
-        mainwindow.h \
-    noteinfo.h \
-    bsp_config.h \
-    save.h \
-    src/DevInfo/DevInfo.h \
-    src/UpdateBin/UpdateBin.h \
-
+include(./src/NoteInfo/NoteInfo.pri)
+include(./src/mainwindow/mainwindow.pri)
 
 FORMS += \
         ui/mainwindow.ui \
-        ui/noteinfo.ui \
         ui/navigation.ui \
-        ui/save.ui
+        ui/noteinfo.ui
 
 RESOURCES += \
     res.qrc

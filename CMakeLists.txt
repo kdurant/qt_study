@@ -47,6 +47,7 @@ find_package(Qt5 COMPONENTS PrintSupport REQUIRED)
 set(APP_ICON_RESOURCE_WINDOWS ${CMAKE_SOURCE_DIR}/qss/app.rc)
 
 include_directories(
+    ${CMAKE_SOURCE_DIR}/src/common
     ${CMAKE_SOURCE_DIR}/src/Protocol
     ${CMAKE_SOURCE_DIR}/src/BitColorMap
     ${CMAKE_SOURCE_DIR}/src/UpdateBin
@@ -55,32 +56,29 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/src/laser
     ${CMAKE_SOURCE_DIR}/src/DevInfo
     ${CMAKE_SOURCE_DIR}/src/saveWave
-    ${CMAKE_SOURCE_DIR}/src/ADControll
-    ${CMAKE_SOURCE_DIR}/src/DAControll
-    ${CMAKE_SOURCE_DIR}/src/gpsInfo
-    ${CMAKE_SOURCE_DIR}/src/attitudeSensor
+    ${CMAKE_SOURCE_DIR}/src/sensors
     ${CMAKE_SOURCE_DIR}/src/third_lib/QCustomPlot
     ${CMAKE_SOURCE_DIR}/src/navigation
+    ${CMAKE_SOURCE_DIR}/src/NoteInfo
+    ${CMAKE_SOURCE_DIR}/src/mainwindow
     )
 
 # set (Project_UI  ${PROJECT_SOURCE_DIR}/mainwindow.ui)
 set (Project_UI  
     ${CMAKE_SOURCE_DIR}/ui/mainwindow.ui
     ${CMAKE_SOURCE_DIR}/ui/noteinfo.ui
-    ${CMAKE_SOURCE_DIR}/ui/save.ui
     ${CMAKE_SOURCE_DIR}/ui/navigation.ui
     )
 qt5_wrap_ui (Project_UI_MOC  ${Project_UI})
 
 set(SOURCES 
-    ${CMAKE_SOURCE_DIR}/main.cpp
-    ${CMAKE_SOURCE_DIR}/mainwindow.cpp
-    ${CMAKE_SOURCE_DIR}/noteinfo.cpp 
-    ${CMAKE_SOURCE_DIR}/save.cpp
-    ${CMAKE_SOURCE_DIR}/src/ADControll/ADControl.h
-    ${CMAKE_SOURCE_DIR}/src/DAControll/DAControl.h
-    ${CMAKE_SOURCE_DIR}/src/gpsInfo/gpsInfo.h
-    ${CMAKE_SOURCE_DIR}/src/attitudeSensor/AttitudeSensor.h
+    ${CMAKE_SOURCE_DIR}/src/mainwindow/main.cpp
+    ${CMAKE_SOURCE_DIR}/src/mainwindow/mainwindow.cpp
+    ${CMAKE_SOURCE_DIR}/src/NoteInfo/noteinfo.cpp 
+    ${CMAKE_SOURCE_DIR}/src/sensors/ADControl.h
+    ${CMAKE_SOURCE_DIR}/src/sensors/DAControl.h
+    ${CMAKE_SOURCE_DIR}/src/sensors/gpsInfo.h
+    ${CMAKE_SOURCE_DIR}/src/sensors/AttitudeSensor.h
     ${CMAKE_SOURCE_DIR}/src/BitColorMap/BitColorMap.cpp
     ${CMAKE_SOURCE_DIR}/src/DevInfo/DevInfo.cpp
     ${CMAKE_SOURCE_DIR}/src/laser/LaserController.cpp
