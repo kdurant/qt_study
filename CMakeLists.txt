@@ -1,5 +1,5 @@
 # cmake -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=DEBUG | cmake --build build
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 
 project(radar LANGUAGES CXX)
 
@@ -34,7 +34,8 @@ add_definitions(-DGIT_DATE=\"${GIT_DATE}\")
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src/third_lib/QCustomPlot)
 
-# set(CMAKE_AUTOUIC ON) # 如果ui文件和cpp文件不在同一个目录下，不能使用此项
+set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/ui)
+set(CMAKE_AUTOUIC ON) # 如果ui文件和cpp文件不在同一个目录下，不能使用此项
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
