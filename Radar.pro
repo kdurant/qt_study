@@ -28,6 +28,7 @@ include(./src/BitColorMap/BitColorMap.pri)
 include(./src/motor/MotorController.pri)
 include(./src/laser/LaserController.pri)
 include(./src/navigation/navigation.pri)
+include(./src/UpdateBin/UpdateBin.pri)
 include(./src/third_lib/QCustomPlot/qcustomplot.pri)
 
 INCLUDEPATH += ./src/UpdateBin
