@@ -22,6 +22,11 @@ DEFINES += SOFT_VERSION=\"\\\"$$VERSION\\\"\"
 
 #DEFINES += QT_NO_DEBUG_OUTPUT
 
+INCLUDEPATH += \
+        ./src/ \
+        ./src/third_lib
+
+
 include(./src/common/common.pri)
 include(./src/Protocol/protocol.pri)
 include(./src/BitColorMap/BitColorMap.pri)
@@ -36,6 +41,7 @@ include(./src/DevInfo/DevInfo.pri)
 include(./src/third_lib/QCustomPlot/qcustomplot.pri)
 include(./src/NoteInfo/NoteInfo.pri)
 include(./src/mainwindow/mainwindow.pri)
+
 
 FORMS += \
         ui/mainwindow.ui \

@@ -4,7 +4,6 @@ project (unit_tests LANGUAGES CXX)
 set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
-SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
 IF (WIN32)
     include_directories (D:/Lib/googletest/googletest/include/)
@@ -14,7 +13,7 @@ ENDIF()
 find_package(Qt5 COMPONENTS Core REQUIRED)
 
 include_directories(
-    ..
+    ../src/common
     )
 
 add_executable(

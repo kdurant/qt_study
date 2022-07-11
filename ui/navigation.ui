@@ -454,7 +454,7 @@
   <customwidget>
    <class>MapView</class>
    <extends>QGraphicsView</extends>
-   <header location="global">./src/navigation/MapView.h
+   <header>navigation/MapView.h
 </header>
   </customwidget>
  </customwidgets>

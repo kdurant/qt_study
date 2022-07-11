@@ -441,7 +441,7 @@
      <x>0</x>
      <y>0</y>
      <width>1245</width>
-     <height>23</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -865,8 +865,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>227</width>
-              <height>113</height>
+              <width>326</width>
+              <height>144</height>
              </rect>
             </property>
             <attribute name="label">
@@ -941,8 +941,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>171</width>
-              <height>73</height>
+              <width>218</width>
+              <height>86</height>
              </rect>
             </property>
             <attribute name="label">
@@ -996,8 +996,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>171</width>
-              <height>117</height>
+              <width>218</width>
+              <height>146</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1212,9 +1212,9 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>-189</y>
-              <width>297</width>
-              <height>774</height>
+              <y>0</y>
+              <width>340</width>
+              <height>970</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1701,8 +1701,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>285</width>
-              <height>543</height>
+              <width>242</width>
+              <height>467</height>
              </rect>
             </property>
             <attribute name="label">
@@ -2550,13 +2550,13 @@
   <customwidget>
    <class>QCustomPlot</class>
    <extends>QWidget</extends>
-   <header location="global">./src/third_lib/QCustomPlot/qcustomplot.h</header>
+   <header>third_lib/QCustomPlot/qcustomplot.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>BitColorMap</class>
    <extends>QWidget</extends>
-   <header location="global">./src/BitColorMap/BitColorMap.h</header>
+   <header>BitColorMap/BitColorMap.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

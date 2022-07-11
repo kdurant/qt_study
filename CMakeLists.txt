@@ -1,126 +1,18 @@
-# cmake -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=DEBUG | cmake --build build
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required (VERSION 3.10)
+set(projectName radar)
+# 项目名称
+project (${projectName})
 
-project(radar LANGUAGES CXX)
+#include(auto_version.cmake)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin) # 静态库位置
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin) # 动态库位置
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin) # 可执行文件位置
+# set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
+# set(LIBRARY_OUTPUT_PATH    ${CMAKE_SOURCE_DIR}/bin)
 
-IF (UNIX)
-    set(CMAKE_PREFIX_PATH "/opt/Qt5.12.0/5.12.0/gcc_64")
-ENDIF()
-
-SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-
-add_definitions( -DSOFT_VERSION="0.125" )
-
-execute_process(
-    COMMAND git log -1 --format=%h
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE GIT_HASH
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-add_definitions(-DGIT_HASH=\"${GIT_HASH}\")
-
-execute_process(
-    COMMAND git log --pretty=format:%cs -1
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE GIT_DATE
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-add_definitions(-DGIT_DATE=\"${GIT_DATE}\")
-
-add_subdirectory(${CMAKE_SOURCE_DIR}/src/third_lib/QCustomPlot)
-
-set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/ui)
-set(CMAKE_AUTOUIC ON) # 如果ui文件和cpp文件不在同一个目录下，不能使用此项
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-
-find_package(Qt5 COMPONENTS Core REQUIRED)
-find_package(Qt5 COMPONENTS Gui REQUIRED)
-find_package(Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt5 COMPONENTS Network REQUIRED)
-find_package(Qt5 COMPONENTS PrintSupport REQUIRED)
-
-set(APP_ICON_RESOURCE_WINDOWS ${CMAKE_SOURCE_DIR}/qss/app.rc)
-
-include_directories(
-    ${CMAKE_SOURCE_DIR}/src/common
-    ${CMAKE_SOURCE_DIR}/src/Protocol
-    ${CMAKE_SOURCE_DIR}/src/BitColorMap
-    ${CMAKE_SOURCE_DIR}/src/UpdateBin
-    ${CMAKE_SOURCE_DIR}/src/wave
-    ${CMAKE_SOURCE_DIR}/src/motor
-    ${CMAKE_SOURCE_DIR}/src/laser
-    ${CMAKE_SOURCE_DIR}/src/DevInfo
-    ${CMAKE_SOURCE_DIR}/src/saveWave
-    ${CMAKE_SOURCE_DIR}/src/sensors
-    ${CMAKE_SOURCE_DIR}/src/third_lib/QCustomPlot
-    ${CMAKE_SOURCE_DIR}/src/navigation
-    ${CMAKE_SOURCE_DIR}/src/NoteInfo
-    ${CMAKE_SOURCE_DIR}/src/mainwindow
-    )
-
-# set (Project_UI  ${PROJECT_SOURCE_DIR}/mainwindow.ui)
-set (Project_UI  
-    ${CMAKE_SOURCE_DIR}/ui/mainwindow.ui
-    ${CMAKE_SOURCE_DIR}/ui/noteinfo.ui
-    ${CMAKE_SOURCE_DIR}/ui/navigation.ui
-    )
-qt5_wrap_ui (Project_UI_MOC  ${Project_UI})
-
-set(SOURCES 
-    ${CMAKE_SOURCE_DIR}/src/mainwindow/main.cpp
-    ${CMAKE_SOURCE_DIR}/src/mainwindow/mainwindow.cpp
-    ${CMAKE_SOURCE_DIR}/src/NoteInfo/noteinfo.cpp 
-    ${CMAKE_SOURCE_DIR}/src/sensors/ADControl.h
-    ${CMAKE_SOURCE_DIR}/src/sensors/DAControl.h
-    ${CMAKE_SOURCE_DIR}/src/sensors/gpsInfo.h
-    ${CMAKE_SOURCE_DIR}/src/sensors/AttitudeSensor.h
-    ${CMAKE_SOURCE_DIR}/src/BitColorMap/BitColorMap.cpp
-    ${CMAKE_SOURCE_DIR}/src/DevInfo/DevInfo.cpp
-    ${CMAKE_SOURCE_DIR}/src/laser/LaserController.cpp
-    ${CMAKE_SOURCE_DIR}/src/laser/laserType1.cpp
-    ${CMAKE_SOURCE_DIR}/src/laser/laserType2.cpp
-    ${CMAKE_SOURCE_DIR}/src/laser/laserType3.cpp
-    ${CMAKE_SOURCE_DIR}/src/laser/laserType4.cpp
-    ${CMAKE_SOURCE_DIR}/src/laser/laserType5.cpp
-    ${CMAKE_SOURCE_DIR}/src/laser/laserType6.cpp
-    ${CMAKE_SOURCE_DIR}/src/motor/MotorController.cpp
-    ${CMAKE_SOURCE_DIR}/src/motor/Epos2Controller.cpp
-    ${CMAKE_SOURCE_DIR}/src/motor/PusiController.cpp
-    ${CMAKE_SOURCE_DIR}/src/Protocol/ProtocolDispatch.cpp
-    ${CMAKE_SOURCE_DIR}/src/Protocol/AdSampleControl.h
-    ${CMAKE_SOURCE_DIR}/src/saveWave/SaveWave.cpp
-    ${CMAKE_SOURCE_DIR}/src/UpdateBin/UpdateBin.cpp
-    ${CMAKE_SOURCE_DIR}/src/wave/WaveExtract.cpp
-    ${CMAKE_SOURCE_DIR}/src/wave/OfflineWaveform.cpp
-    ${CMAKE_SOURCE_DIR}/src/wave/OnlineWaveform.cpp
-    ${CMAKE_SOURCE_DIR}/src/navigation/navigation.cpp
-    ${CMAKE_SOURCE_DIR}/src/navigation/LineWithArrow.cpp
-    ${CMAKE_SOURCE_DIR}/src/navigation/MapView.cpp
-    )
-
-add_executable(${PROJECT_NAME}
-    ${SOURCES}
-    ${Project_UI_MOC}
-    ${CMAKE_SOURCE_DIR}/res.qrc
-    ${APP_ICON_RESOURCE_WINDOWS}
-)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE 
-    Qt5::Widgets 
-    Qt5::Network 
-    Qt5::Core 
-    Qt5::Gui
-    Qt5::PrintSupport
-    qcustomplot_shared
-)
-
-string(TIMESTAMP COMPILE_TIME %Y%m%d_%H%M%S)
-set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "_${COMPILE_TIME}_d")
-set_target_properties(${PROJECT_NAME} PROPERTIES RELEASE_POSTFIX "_${COMPILE_TIME}_r")
-
+add_subdirectory(src)
+add_subdirectory(tests)
