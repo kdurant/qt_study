@@ -14,5 +14,5 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin) # 可执行文件位
 # set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 # set(LIBRARY_OUTPUT_PATH    ${CMAKE_SOURCE_DIR}/bin)
 
-add_subdirectory(src)
+# add_subdirectory(src)
 add_subdirectory(tests)

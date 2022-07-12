@@ -102,6 +102,7 @@ set(SOURCES
     navigation/navigation.cpp
     navigation/LineWithArrow.cpp
     navigation/MapView.cpp
+    navigation/AirArea.cpp
     )
 
 add_executable(${PROJECT_NAME}
