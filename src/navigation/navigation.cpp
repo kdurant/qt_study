@@ -11,23 +11,6 @@ Navigation::Navigation(QWidget *parent) :
 
     initUI();
     initSignalSlot();
-
-    //    QString t1 = "/home/wj/work/map1/";
-    //    QString t1 = "D:/tile/map2/";
-    //    ui->mapView->setMapPath(t1);
-    //    ui->mapView->parseMapInfo();
-    //    ui->mapView->setDefaultZoom(12);
-    //    ui->mapView->loadMap();
-
-    //    QString t2 = "/home/wj/work/tracker.txt";
-    //    parseTrackerFile(t2, m_designed_path);
-
-    //    int len = m_designed_path.length();
-    //    for(int i = 0; i < len; i += 2)
-    //    {
-    //        ui->mapView->loadTracker(m_designed_path[i], m_designed_path[i + 1]);
-    //        ui->mapView->loadSerialNum(m_designed_path[i], i / 2 + 1);
-    //    }
 }
 
 Navigation::~Navigation()
@@ -44,15 +27,8 @@ void Navigation::initUI()
 
 void Navigation::initSignalSlot()
 {
-    connect(this, &Navigation::receivedGpsInfo, this, [this]
-            {
-        isPosInDesigned(300);
-        m_realtime_path.append(QPointF(m_currentPos.longitude, m_currentPos.latitude));
-        ui->mapView->loadRealTimePoint(QPointF(m_currentPos.longitude, m_currentPos.latitude));
-    });
-
     /**
-     * 1. 分析航迹. 2. 分割航迹，形成测试点. 3.初始化m_coverage
+     * 1. 分析航迹. 2. 分割航迹，形成测试点. 3.初始化m_coveragePoints
      */
     connect(ui->btn_loadTracker, &QPushButton::pressed, this, [this]()
             {
@@ -60,19 +36,19 @@ void Navigation::initSignalSlot()
         if(trackerFile.size() == 0)
             return;
         ui->lineEdit_trackerFile->setText(trackerFile);
-        m_designed_path.clear();
-        parseTrackerFile(trackerFile, m_designed_path);
+        m_designedAirArea.setFile(trackerFile);
+        m_designedAirArea.parseFile();
 
-        int len = m_designed_path.length();
-        for(int i = 0; i < len; i += 2)
+        int len = m_designedAirArea.getLinesNum();
+        for(int i = 0; i < len; i += 1)
         {
-            ui->mapView->loadTracker(m_designed_path[i], m_designed_path[i + 1]);
-            ui->mapView->loadSerialNum(m_designed_path[i], i / 2 + 1);
-        }
-        splitTracker(m_designed_path, 10, m_split_tracker);
-        m_coverage = QVector<int>(m_split_tracker.length(), 0);
+            AirArea::AirLine line = m_designedAirArea.getLineInfo(i);
 
-        m_realtime_path.clear();
+            ui->mapView->loadTracker(line.start, line.end);
+            ui->mapView->loadSerialNum(line.start, i + 1);
+        }
+        m_designedAirArea.splitArea(10);
+
         isLoadedTracker = true;
     });
 
@@ -106,48 +82,15 @@ void Navigation::initSignalSlot()
         ui->mapView->setDefaultZoom(zoom);
         ui->mapView->loadMap();
 
-        int len = m_designed_path.length();
-        for(int i = 0; i < len; i += 2)
+        int len = m_designedAirArea.getLinesNum();
+        for(int i = 0; i < len; i += 1)
         {
-            ui->mapView->loadTracker(m_designed_path[i], m_designed_path[i + 1]);
-            ui->mapView->loadSerialNum(m_designed_path[i], i / 2 + 1);
+            AirArea::AirLine line = m_designedAirArea.getLineInfo(i);
+
+            ui->mapView->loadTracker(line.start, line.end);
+            ui->mapView->loadSerialNum(line.start, i + 1);
         }
     });
-}
-
-int Navigation::isPosInDesigned(double r)
-{
-    int len = m_split_tracker.length();
-    if(len == 0)
-        return -1;
-
-    /**
-     * 对于某一个飞机位置，遍历所有规划航线轨迹点的时候，可能有不止一个点认为这个位置
-     * 是在自己的范围之内，所以一个航迹点对应的计数值可能会大于1
-     */
-    for(int i = 0; i < len; i++)
-    {
-        double distance = ui->mapView->gps_distance(m_currentPos.longitude, m_currentPos.latitude, m_split_tracker[i].x(), m_split_tracker[i].y());
-        if(distance < r)
-        {
-            m_coverage[i]++;
-        }
-    }
-
-    return 0;
-}
-
-double Navigation::checkCoveragePercent()
-{
-    int covered{0};
-
-    int len = m_coverage.length();
-    for(int i = 0; i < len; i++)
-    {
-        if(m_coverage[i] > 0)
-            covered++;
-    }
-    return static_cast<double>(covered) / len;
 }
 
 void Navigation::showGpsInfo(const BspConfig::Gps_Info &gps)
@@ -174,173 +117,10 @@ void Navigation::showSystemInfo(double speed)
     itemList.first()->child(0)->setText(1, QString::number(speed));
 }
 
-double Navigation::calcSpeed(BspConfig::Gps_Info prev, BspConfig::Gps_Info cur)
-{
-    auto gps_distance = [](double lng1, double lat1, double lng2, double lat2) -> double
-    {
-        double d = sqrt((lng1 - lng2) * (lng1 - lng2) + (lat1 - lat2) * (lat1 - lat2)) / 180 * M_PI * 6300000;
-        return d;
-    };
-    double distance = gps_distance(cur.longitude, cur.latitude, prev.latitude, prev.longitude);
-    return 3.6 * distance / 1;
-}
-
-int Navigation::getTestData()
-{
-#if 0
-    QString filepath = "2017_09_21_09_49_55_772.datagps";
-
-    QFile file(filepath);
-    file.open(QIODevice::ReadOnly);
-    QByteArray line;
-    QByteArray temp{4, char(0)};
-
-    int                 offset = 3;
-    BspConfig::Gps_Info gps{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-    while(!file.atEnd())
-    {
-        line = file.read(61);
-
-        temp[0]             = line[offset + 2];
-        temp[1]             = line[offset + 3];
-        temp[2]             = line[offset + 4];
-        temp[3]             = line[offset + 5];
-        gps.current_week_ms = Common::ba2int(temp, 0) / 1000.0;
-
-        temp[0]       = line[offset + 22];
-        temp[1]       = line[offset + 23];
-        temp[2]       = line[offset + 24];
-        temp[3]       = line[offset + 25];
-        gps.longitude = Common::ba2int(temp, 0) / 10000000.0;
-
-        temp[0]      = line[offset + 18];
-        temp[1]      = line[offset + 19];
-        temp[2]      = line[offset + 20];
-        temp[3]      = line[offset + 21];
-        gps.latitude = Common::ba2int(temp, 0) / 10000000.0;
-
-        temp[0]    = line[offset + 26];
-        temp[1]    = line[offset + 27];
-        temp[2]    = line[offset + 28];
-        temp[3]    = line[offset + 29];
-        gps.height = Common::ba2int(temp, 0) / 1000.0;
-
-        Common::sleepWithoutBlock(20);
-        setPostion(gps);
-        qDebug() << "gps.longitude = " << gps.longitude
-                 << "gps.latitude = " << gps.latitude;
-    }
-#else
-    // 0.00007300000000043383x + (-0.023375999999998953)y = -0.42853637951893253
-    // y = (0.00007300000000043383x + 0.42853637951893253) / (-0.023375999999998953)
-
-    BspConfig::Gps_Info gps{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    gps.height = 400;
-    double x   = 110.429545;
-    while(x > 110.406169)
-    {
-        gps.longitude = x;
-        gps.latitude  = (0.00007300000000043383 * x + 0.42853637951893253) / (0.023375999999998953);
-        x -= 0.0001;
-
-        Common::sleepWithoutBlock(50);
-
-        qDebug() << "gps.longitude = " << gps.longitude
-                 << "gps.latitude = " << gps.latitude;
-    }
-#endif
-    return 0;
-}
-
-void Navigation::parseTrackerFile(QString &path, QVector<QPointF> &track)
-{
-    QFile file(path);
-    file.open(QIODevice::ReadOnly);
-
-    auto gps_dfm2decmal = [](QByteArray &gps_dfm) -> double
-    {
-        QByteArray sep_d;
-        sep_d.append(0xc2);
-        sep_d.append(0xb0);
-        QByteArray sep_m;
-        sep_m.append(0x27);
-        QByteArray sep_s;
-        sep_s.append(0x22);
-
-        int idx_d = gps_dfm.indexOf(sep_d);
-        int idx_m = gps_dfm.indexOf(sep_m);
-        int idx_s = gps_dfm.indexOf(sep_s);
-
-        QString s_degree = gps_dfm.mid(0, idx_d);
-        QString s_minute = gps_dfm.mid(idx_d + 2, idx_m - idx_d - 2);
-        QString s_second = gps_dfm.mid(idx_m + 2, idx_s - idx_m - 2);
-
-        double ret = s_degree.toUInt() + s_minute.toUInt() / 60.0 + s_second.toUInt() / 60.0 / 60.0;
-
-        return ret;
-
-        //        double du    = gps_dfm.indexOf('°')
-    };
-    while(!file.atEnd())
-    {
-        QByteArray        line = file.readLine();
-        QList<QByteArray> list = line.split(',');
-
-        double lng;
-        double lat;
-        lng = line.split(',')[1].toDouble(nullptr);  //  gps_dfm2decmal(line.split(',')[1]);
-        lat = line.split(',')[2].toDouble(nullptr);  // gps_dfm2decmal(line.split(',')[2]);
-        track.append(QPointF(lng, lat));
-        lng = line.split(',')[3].toDouble(nullptr);  // gps_dfm2decmal(line.split(',')[3]);
-        lat = line.split(',')[4].toDouble(nullptr);  // gps_dfm2decmal(line.split(',')[4]);
-        track.append(QPointF(lng, lat));
-    }
-
-    return;
-}
-
-bool Navigation::splitTracker(QVector<QPointF> &track, int nums, QVector<QPointF> &point)
-{
-    int len = track.length();
-
-    double lng_start    = 0;
-    double lng_end      = 0;
-    double lat_start    = 0;
-    double lat_end      = 0;
-    double delta_lng    = 0;
-    double delta_lat    = 0;
-    double interval_lng = 0;
-    double interval_lat = 0;
-
-    for(int i = 0; i < len; i += 2)
-    {
-        lng_start = track[i].x();
-        lat_start = track[i].y();
-        lng_end   = track[i + 1].x();
-        lat_end   = track[i + 1].y();
-
-        delta_lng    = lng_end - lng_start;
-        delta_lat    = lat_end - lat_start;
-        interval_lng = delta_lng / nums;
-        interval_lat = delta_lat / nums;
-
-        for(int step = 0; step < nums; step++)
-        {
-            point.append(track[i] + QPointF(interval_lng, interval_lat) * step);
-        }
-    }
-
-    return true;
-}
-
 void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
 {
-    currentSpeed = calcSpeed(m_currentPos, data);
-    m_currentPos = data;
-
-    if(isLoadedMap == false || isLoadedTracker == false)
-        return;
+    m_designedAirArea.setCurrentPos(data);
+    double currentSpeed = m_designedAirArea.getCurrentSpeed(data);
 
     ui->doubleSpinBox_flightHeight->setValue(data.height);
     ui->doubleSpinBox_flightSpeed->setValue(currentSpeed);
@@ -350,18 +130,37 @@ void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
     ui->label_flightSpeed->setText("飞行速度:" + QString::number(currentSpeed, 'g', 6));
     ui->label_heading->setText("航向角:" + QString::number(data.heading, 'g', 6));
 
+    ui->label_navCoverage->setText("测区覆盖率:" + QString::number(m_designedAirArea.getCoveragePercent(), 'g', 6));
+
     showGpsInfo(data);
 
-    emit receivedGpsInfo();
+    if(isLoadedMap == false || isLoadedTracker == false)
+        return;
 
-    //    showSystemInfo(data);
+    if(m_designedAirArea.getHeightDeviation() < -10000)
+        ui->label_flightHeightDeviation->setText("nan");
+    else
+        ui->label_flightHeightDeviation->setText(QString::number(m_designedAirArea.getHeightDeviation(), 'g', 6));
+
+    if(m_designedAirArea.getSpeedDeviation() < -10000)
+        ui->label_flightSpeedDeviation->setText("nan");
+    else
+        ui->label_flightSpeedDeviation->setText(QString::number(m_designedAirArea.getSpeedDeviation(), 'g', 6));
+
+    if(m_designedAirArea.getAzimutuDeriation() < -10000)
+        ui->label_headingDeviation->setText("nan");
+    else
+        ui->label_headingDeviation->setText(QString::number(m_designedAirArea.getAzimutuDeriation(), 'g', 6));
+
+    m_realtime_path.append(QPointF(data.longitude, data.latitude));
+    ui->mapView->loadRealTimePoint(QPointF(data.longitude, data.latitude));
 }
 
 void Navigation::timerEvent(QTimerEvent *event)
 {
     if(timer1s == event->timerId())
     {
-        double percent = checkCoveragePercent();
+        double percent = m_designedAirArea.getCoveragePercent();
         ui->label_navCoverage->setText(QString::number(percent, 'g', 6));
     }
 }
