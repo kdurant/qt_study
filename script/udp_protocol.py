@@ -33,13 +33,15 @@ class EncodeProtocol():
 
 import struct
 
+from numpy import double
+
 
 class NovatelFrame():
 
     def __init__(self):
         self.synch_head = b'\x11\x11\x11\x11\x22\x22\x22\x22\x33\x33\x33\x33'
         self.week = 17476  # 0x44444
-        self.second = 1234561.3
+        self.second = self.double_to_hex(0.1234)  # unit: s
         self.latitude = self.double_to_hex(102.3)
         self.longitude = self.double_to_hex(23.4)
         self.height = self.double_to_hex(534.21)
@@ -57,6 +59,10 @@ class NovatelFrame():
         format_string = hex(struct.unpack('<Q', struct.pack('<d', f))[0])
         format_bytes = bytearray.fromhex(format_string.lstrip('0x').rstrip('L'))
         return format_bytes
+
+    def set_second(self, second):
+        second = (second * 100) / 1e9
+        self.second = self.double_to_hex(second)
 
     def set_latitude(self, latitude):
         self.latitude = latitude
@@ -79,7 +85,7 @@ class NovatelFrame():
     def get_frame(self):
         frame = self.synch_head                         + \
             self.week.to_bytes(4, byteorder='little')   + \
-            self.double_to_hex(self.second)             + \
+            self.second                                 + \
             self.latitude                               + \
             self.longitude                              + \
             self.height                                 + \

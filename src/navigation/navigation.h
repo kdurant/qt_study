@@ -45,6 +45,8 @@ private:
     QVector<QPointF> m_realtime_path;
     AirArea          m_designedAirArea;
 
+    int m_gpsInterval{0};
+
     bool isLoadedMap{false};
     bool isLoadedTracker{false};
 };

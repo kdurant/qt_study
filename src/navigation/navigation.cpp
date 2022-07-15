@@ -120,7 +120,7 @@ void Navigation::showSystemInfo(double speed)
 void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
 {
     m_designedAirArea.setCurrentPos(data);
-    double currentSpeed = m_designedAirArea.getCurrentSpeed(data);
+    double currentSpeed = m_designedAirArea.getCurrentSpeed();
 
     ui->doubleSpinBox_flightHeight->setValue(data.height);
     ui->doubleSpinBox_flightSpeed->setValue(currentSpeed);
@@ -133,9 +133,6 @@ void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
     ui->label_navCoverage->setText("测区覆盖率:" + QString::number(m_designedAirArea.getCoveragePercent(), 'g', 6));
 
     showGpsInfo(data);
-
-    if(isLoadedMap == false || isLoadedTracker == false)
-        return;
 
     if(m_designedAirArea.getHeightDeviation() < -10000)
         ui->label_flightHeightDeviation->setText("nan");
@@ -152,6 +149,9 @@ void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
     else
         ui->label_headingDeviation->setText(QString::number(m_designedAirArea.getAzimutuDeriation(), 'g', 6));
 
+    if(isLoadedMap == false || isLoadedTracker == false)
+        return;
+
     m_realtime_path.append(QPointF(data.longitude, data.latitude));
     ui->mapView->loadRealTimePoint(QPointF(data.longitude, data.latitude));
 }
@@ -160,7 +160,7 @@ void Navigation::timerEvent(QTimerEvent *event)
 {
     if(timer1s == event->timerId())
     {
-        double percent = m_designedAirArea.getCoveragePercent();
-        ui->label_navCoverage->setText(QString::number(percent, 'g', 6));
+        // double percent = m_designedAirArea.getCoveragePercent();
+        // ui->label_navCoverage->setText(QString::number(percent, 'g', 6));
     }
 }

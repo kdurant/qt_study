@@ -72,7 +72,7 @@ public:
         m_currentPos = pos;
 
         // 计算速度
-        getCurrentSpeed(pos);
+        _getCurrentSpeed(pos);
         m_prevPos = pos;
         // 覆盖率相关计算
         isPosInDesigned(10);
@@ -91,7 +91,12 @@ public:
         return m_posOnWhichLine;
     }
 
-    double getCurrentSpeed(BspConfig::Gps_Info cur);
+    double _getCurrentSpeed(BspConfig::Gps_Info cur);
+
+    double getCurrentSpeed(void)
+    {
+        return m_currentSpeed;
+    }
 
     /**
      * @brief 将规划的轨迹分割成点的集合，计算测区覆盖率使用
@@ -155,7 +160,7 @@ private:
     QVector<AirLine> m_line;
 
     double           m_currentSpeed{0};
-    int              m_posOnWhichLine{0};
+    int              m_posOnWhichLine{-1};
     double           m_coveragePercent{0};
     QVector<int>     m_coveragePoints;  // QVector的长度和规划航线划分的点个数一致
     QVector<QPointF> m_splited_area;    // 区域内航迹分割的点， 用于覆盖率计算

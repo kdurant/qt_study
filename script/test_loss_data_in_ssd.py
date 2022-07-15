@@ -1,6 +1,6 @@
 #-*- coding: UTF-8 -*-
 """
-从存储的硬盘数据文件中提取出相关字段信息
+从存储的硬盘数据文件中提取出GPS时间，电机计数值，检测保存数据是否有丢失
 """
 FIELD_CONFG = {
     'head': {
@@ -69,6 +69,8 @@ import struct
 
 import logging
 
+from numpy.lib.function_base import append
+
 LOG_FORMAT = "%(asctime)s - %(levelname)s - %(message)s"
 DATE_FORMAT = "%m/%d/%Y %H:%M:%S %p"
 logging.basicConfig(filename='my.log', level=logging.CRITICAL, format=LOG_FORMAT, datefmt=DATE_FORMAT)
@@ -105,6 +107,13 @@ def read_in_chunks(f, chunk_size=2048):
         yield data
 
 
+def get_field_bytes(chunk, head, key):
+    offset = FIELD_CONFG[key]['offset']
+    len = FIELD_CONFG[key]['len']
+    target = chuck[head + offset:head + offset + len]
+    return target
+
+
 with open(args.file, 'rb') as f:
     chunk_size = 1024 * 2
     for chuck in read_in_chunks(f, chunk_size):
@@ -117,50 +126,23 @@ with open(args.file, 'rb') as f:
             continue
 
         # 提取GPS秒
-        target = chuck[head + FIELD_CONFG['gps_second']['offset']:head + FIELD_CONFG['gps_second']['offset'] +
-                       FIELD_CONFG['gps_second']['len']]
+        target = get_field_bytes(chuck, head, 'gps_second')
         tmp = struct.unpack('>d', target)[0]
         gps_second.append(tmp)
 
         # 提取GPS细分时间
-        target = chuck[head + FIELD_CONFG['gps_sub_time']['offset']:head + FIELD_CONFG['gps_sub_time']['offset'] +
-                       FIELD_CONFG['gps_sub_time']['len']]
+        target = get_field_bytes(chuck, head, 'gps_sub_time')
         gps_sub_time.append(int.from_bytes(target, byteorder='big'))
 
         # 提取电机计数值
-        target = chuck[head + FIELD_CONFG['motor_cnt']['offset']:head + FIELD_CONFG['motor_cnt']['offset'] +
-                       FIELD_CONFG['motor_cnt']['len']]
+        target = get_field_bytes(chuck, head, 'motor_cnt')
         motor_info.append(int.from_bytes(target, byteorder='big'))
-
-        target = chuck[head + FIELD_CONFG['latitude']['offset']:head + FIELD_CONFG['latitude']['offset'] +
-                       FIELD_CONFG['latitude']['len']]
-        gps_latitude.append(int.from_bytes(target, byteorder='big'))
-
-        target = chuck[head + FIELD_CONFG['longitude']['offset']:head + FIELD_CONFG['longitude']['offset'] +
-                       FIELD_CONFG['longitude']['len']]
-        gps_longitude.append(int.from_bytes(target, byteorder='big'))
-
-        target = chuck[head + FIELD_CONFG['height']['offset']:head + FIELD_CONFG['height']['offset'] +
-                       FIELD_CONFG['height']['len']]
-        gps_height.append(int.from_bytes(target, byteorder='big'))
-
-        target = chuck[head + FIELD_CONFG['azimuth']['offset']:head + FIELD_CONFG['azimuth']['offset'] +
-                       FIELD_CONFG['azimuth']['len']]
-        gps_azimuth.append(int.from_bytes(target, byteorder='big'))
-
-        target = chuck[head + FIELD_CONFG['pitch']['offset']:head + FIELD_CONFG['pitch']['offset'] +
-                       FIELD_CONFG['pitch']['len']]
-        gps_pitch.append(int.from_bytes(target, byteorder='big'))
-
-        target = chuck[head + FIELD_CONFG['roll']['offset']:head + FIELD_CONFG['roll']['offset'] +
-                       FIELD_CONFG['roll']['len']]
-        gps_roll.append(int.from_bytes(target, byteorder='big'))
 
         interval += 1
         if (interval % 1000) == 0:
-            print("\rprogress:{:0>10d}/{:0>10d}".format(readed_position, source_file_size), end='')
+            print("\rprogress:{:0>12d}/{:0>12d}".format(readed_position, source_file_size), end='')
 
-print("\rprogress:{:0>10d}/{:0>10d}".format(readed_position, source_file_size), end='')
+print("\rprogress:{:0>12d}/{:0>12d}".format(readed_position, source_file_size), end='')
 
 fig, ax = plt.subplots(3, 1, sharex=True)
 
@@ -181,22 +163,3 @@ ax[2].set_ylabel("motor cnt", fontsize=15)
 ax[2].grid(True)
 
 plt.show()
-
-f = open("gps_info.log", 'w')
-
-length = len(gps_latitude)
-for i in range(0, length):
-    f.write(str(gps_latitude[i]))
-    f.write(',')
-    f.write(str(gps_longitude[i]))
-    f.write(',')
-    f.write(str(gps_height[i]))
-    f.write(',')
-    f.write(str(gps_azimuth[i]))
-    f.write(',')
-    f.write(str(gps_pitch[i]))
-    f.write(',')
-    f.write(str(gps_roll[i]))
-    f.write('\n')
-
-f.close()

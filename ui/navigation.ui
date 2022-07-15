@@ -56,7 +56,7 @@
             <double>9999.989999999999782</double>
            </property>
            <property name="value">
-            <double>472.000000000000000</double>
+            <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -87,7 +87,7 @@
             <string notr="true">color: rgb(255, 0, 0);</string>
            </property>
            <property name="text">
-            <string>+3.12</string>
+            <string>0</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -101,7 +101,7 @@
 </string>
            </property>
            <property name="text">
-            <string>-10.13</string>
+            <string>0</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -130,7 +130,7 @@
             <double>9999.989999999999782</double>
            </property>
            <property name="value">
-            <double>157.000000000000000</double>
+            <double>0.000000000000000</double>
            </property>
           </widget>
          </item>
@@ -147,7 +147,7 @@
             <string notr="true">color: rgb(0, 0, 255);</string>
            </property>
            <property name="text">
-            <string>-0.8265</string>
+            <string>0</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -155,7 +155,11 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QDoubleSpinBox" name="doubleSpinBox_heading"/>
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_heading">
+           <property name="maximum">
+            <double>360.000000000000000</double>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -301,7 +305,7 @@
       <item>
        <widget class="QGroupBox" name="groupBox_2">
         <property name="title">
-         <string>GroupBox</string>
+         <string>地图设置</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_2">
          <item row="0" column="0">

@@ -18,6 +18,8 @@ bin
 __pycache__
 *.exe
 *.out
+.cache
+Testing
 
 .idea
 #######################qt###########################

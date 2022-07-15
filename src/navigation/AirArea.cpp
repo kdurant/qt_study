@@ -78,10 +78,10 @@ int AirArea::_getPosOnWhichLine()
     return -1;
 }
 
-double AirArea::getCurrentSpeed(BspConfig::Gps_Info cur)
+double AirArea::_getCurrentSpeed(BspConfig::Gps_Info cur)
 {
-    double distance = gps_distance(cur.longitude, cur.latitude, m_prevPos.latitude, m_prevPos.longitude);
-    m_currentSpeed  = 3.6 * distance / 1;
+    double distance = gps_distance(cur.longitude, cur.latitude, m_prevPos.longitude, m_prevPos.latitude);
+    m_currentSpeed  = 3.6 * distance / 0.2;
     return m_currentSpeed;
 }
 

@@ -1,11 +1,12 @@
 """
 从硬盘数据中提取的gps文件中读取gps数据，
-模拟实际GPS数据，通过UDP发到上位机软件
+模拟Novatel型号GPS 实际的数据帧，通过UDP发到上位机软件
 """
 
 import time
 import argparse
 import socket
+import struct
 from udp_protocol import EncodeProtocol, NovatelFrame
 
 parser = argparse.ArgumentParser(description="get gps info and send to PC by UDP protocol")
@@ -35,26 +36,35 @@ with open(args.file, 'r') as gps_data:
 
     """
     line = gps_data.readline()
-    line = line[:-1]
+    while line:
+        line = line[:-1]
 
-    # 维度      经度
-    latitude, longitude, height, azimuth, pitch, roll = line.split(',')
-    latitude = int(latitude)
-    longitude = int(longitude)
-    height = int(height)
-    azimuth = int(azimuth)
-    pitch = int(pitch)
-    roll = int(roll)
+        # 维度      经度
+        gps_sub_time, latitude, longitude, height, azimuth, pitch, roll = line.split(',')
 
-    gps_frame.set_latitude(latitude.to_bytes(8, byteorder='little'))
-    gps_frame.set_longitude(longitude.to_bytes(8, byteorder='little'))
-    gps_frame.set_height(height.to_bytes(8, byteorder='little'))
-    gps_frame.set_azimuth(azimuth.to_bytes(8, byteorder='little'))
-    sub_frame = gps_frame.get_frame()
-    udp_frame.set_data(sub_frame)
-    packet = udp_frame.get_frame()
+        gps_sub_time = int(gps_sub_time)
+        latitude = int(latitude)
+        longitude = int(longitude)
+        height = int(height)
+        azimuth = int(azimuth)
+        pitch = int(pitch)
+        roll = int(roll)
 
-    print(len(packet))
-    s.sendto(packet, address)
-    #  time.sleep(0.5)
-    exit(0)
+        print("longitude : {}, latitude : {}".format(
+            struct.unpack('d', longitude.to_bytes(8, byteorder='little'))[0],
+            struct.unpack('d', latitude.to_bytes(8, byteorder='little'))[0]))
+
+        gps_frame.set_second(gps_sub_time)
+        gps_frame.set_latitude(latitude.to_bytes(8, byteorder='little'))
+        gps_frame.set_longitude(longitude.to_bytes(8, byteorder='little'))
+        gps_frame.set_height(height.to_bytes(8, byteorder='little'))
+        gps_frame.set_azimuth(azimuth.to_bytes(8, byteorder='little'))
+        sub_frame = gps_frame.get_frame()
+        udp_frame.set_data(sub_frame)
+        packet = udp_frame.get_frame()
+
+        s.sendto(packet, address)
+        time.sleep(0.2)
+
+        #  exit(0)latitudi
+        line = gps_data.readline()
