@@ -1,6 +1,7 @@
 """
 从硬盘数据中提取的gps文件中读取gps数据，
 模拟Novatel型号GPS 实际的数据帧，通过UDP发到上位机软件
+usage: python test_gps.py --file gps_info.log -i 2000
 """
 
 import time
@@ -11,6 +12,7 @@ from udp_protocol import EncodeProtocol, NovatelFrame
 
 parser = argparse.ArgumentParser(description="get gps info and send to PC by UDP protocol")
 parser.add_argument("--file", help="Files to be parsed")
+parser.add_argument("-i", "--interval", type=int, default=100, help="interval time of udp packet")
 args = parser.parse_args()
 
 address = ('127.0.0.1', 6666)
@@ -29,6 +31,7 @@ udp_frame.set_data(sub_frame)
 udp_frame.get_frame()
 #  print(len(udp_frame.get_frame()))
 
+num = 0
 with open(args.file, 'r') as gps_data:
     """
     string格式, 后面有'\n'
@@ -50,9 +53,11 @@ with open(args.file, 'r') as gps_data:
         pitch = int(pitch)
         roll = int(roll)
 
-        print("longitude : {}, latitude : {}".format(
+        print("num: {:6d}/17806, longitude : {}, latitude : {}".format(
+            num,
             struct.unpack('d', longitude.to_bytes(8, byteorder='little'))[0],
             struct.unpack('d', latitude.to_bytes(8, byteorder='little'))[0]))
+        num = num + 1
 
         gps_frame.set_second(gps_sub_time)
         gps_frame.set_latitude(latitude.to_bytes(8, byteorder='little'))
@@ -64,7 +69,7 @@ with open(args.file, 'r') as gps_data:
         packet = udp_frame.get_frame()
 
         s.sendto(packet, address)
-        time.sleep(0.2)
+        time.sleep(args.interval / 1000)
 
         #  exit(0)latitudi
         line = gps_data.readline()

@@ -16,15 +16,14 @@ bool MapView::checkPosValid(double lng, double lat, int zoom_level)
     int exp       = static_cast<int>(pow(2, zoom_diff));
     int start_x   = exp * m_tileMapInfo.start_x;
     int start_y   = exp * m_tileMapInfo.start_y;
-    int deviation = 1;
 
     int tileX = lng_lat2tilex(lng, lat, zoom_level);
     int tileY = lng_lat2tiley(lng, lat, zoom_level);
 
-    if(tileX < start_x - deviation || tileX > start_x + m_tileMapInfo.len_x * exp + deviation)
+    if(tileX < start_x - m_deviation || tileX > start_x + m_tileMapInfo.len_x * exp + m_deviation)
         return false;
 
-    if(tileY < start_y - deviation || tileY > start_y + m_tileMapInfo.len_y * exp + deviation)
+    if(tileY < start_y - m_deviation || tileY > start_y + m_tileMapInfo.len_y * exp + m_deviation)
         return false;
 
     return true;

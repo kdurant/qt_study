@@ -141,6 +141,7 @@ protected:
 private:
     QGraphicsScene *scene;
     QString         m_mapPath;
+    int             m_deviation{10};  // 实际GPS会在瓦片地图的GPS范围之外
     int             m_tile_X_offset{0};
     int             m_tile_Y_offset{0};
     TileMapInfo     m_tileMapInfo{

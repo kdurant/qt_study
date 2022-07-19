@@ -67,6 +67,7 @@ import argparse
 from sys import byteorder
 import os
 import struct
+import time
 
 import logging
 
@@ -131,6 +132,8 @@ def get_field_bytes(chunk, head, key):
 
 gps_log = open("gps_info.log", 'w')
 
+print("\nstart time: {}\n".format(time.strftime("%H:%M:%S", time.localtime())))
+
 with open(args.file, 'rb') as f:
     chunk_size = 1024 * 2
     for chuck in read_in_chunks(f, chunk_size):
@@ -172,3 +175,5 @@ with open(args.file, 'rb') as f:
 
 print("\rprogress:{:0>12d}/{:0>12d}".format(readed_position, source_file_size), end='')
 print("\n")
+
+print("stop time: {}\n".format(time.strftime("%H:%M:%S", time.localtime())))
