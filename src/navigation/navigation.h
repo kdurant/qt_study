@@ -42,7 +42,7 @@ private:
     int     m_tile_X_offset{0};
     int     m_tile_Y_offset{0};
 
-    QVector<QPointF> m_realtime_path;
+    QVector<QPointF> m_realtime_path;  // 保存GPS实时轨迹数据，地图缩放时，需要重新绘制已有轨迹
     AirArea          m_designedAirArea;
 
     int m_gpsInterval{0};

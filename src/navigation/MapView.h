@@ -120,6 +120,11 @@ public:
     }
     void loadMap();  // load map resource and display it
 
+    /**
+     * @brief 将实时GPS位置显示在地图上
+     *
+     * @param point
+     */
     void loadRealTimePoint(QPointF point);
     void loadTracker(QPointF start, QPointF end);
     void loadSerialNum(QPointF posi, int num);

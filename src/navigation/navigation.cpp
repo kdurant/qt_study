@@ -90,6 +90,11 @@ void Navigation::initSignalSlot()
             ui->mapView->loadTracker(line.start, line.end);
             ui->mapView->loadSerialNum(line.start, i + 1);
         }
+
+        for(auto &pos : m_realtime_path)
+        {
+            ui->mapView->loadRealTimePoint(pos);
+        }
     });
 }
 
