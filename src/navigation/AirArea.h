@@ -24,7 +24,15 @@ public:
     };
 
 public:
-    AirArea() = default;
+    AirArea() :
+        m_currentSpeed(0),
+        m_posOnWhichLine(-1),
+        m_coveragePercent(0)
+    {
+        m_coveragePoints.clear();
+        m_splited_area.clear();
+        m_line.clear();
+    };
 
     /**
      * @brief gps_distance
@@ -62,7 +70,7 @@ public:
     void setFile(QString& file);
     /**
      * @brief 分析航迹文件，得到具体航线信息
-     *      先清除以前保存的航迹信息
+     *      先清除以前保存的航迹信息m_line
      * @return
      */
     int parseFile(void);
@@ -75,10 +83,10 @@ public:
         _getCurrentSpeed(pos);
         m_prevPos = pos;
         // 覆盖率相关计算
-        isPosInDesigned(10);
-        getCoveragePercent();
+        isPosInDesigned(COVERAGE_THRESHOLD);
+        _getCoveragePercent();
         // 当前所在航线计算
-        getPosOnWhichLine();
+        _getPosOnWhichLine();
     }
 
     /**
@@ -120,6 +128,11 @@ public:
         return m_coveragePercent;
     }
 
+    /**
+     * @brief 当前加载的航迹文件有几条航线
+     *
+     * @return
+     */
     int getLinesNum(void)
     {
         return this->m_line.size();
@@ -152,7 +165,8 @@ public:
     }
 
 private:
-    double              THRESHOLD{10.0};
+    double              AIRLINE_THRESHOLD{20.0};
+    double              COVERAGE_THRESHOLD{20.0};
     QString             m_file;
     BspConfig::Gps_Info m_prevPos{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     BspConfig::Gps_Info m_currentPos{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};

@@ -68,14 +68,13 @@ int AirArea::_getPosOnWhichLine()
     for(int i = 0; i < len; i++)
     {
         double distance = gps_distance(m_currentPos.longitude, m_currentPos.latitude, m_line[i].start.x(), m_line[i].start.y());
-        if(distance <= THRESHOLD)
+        if(distance <= AIRLINE_THRESHOLD)
         {
             m_posOnWhichLine = i + 1;
             return i + 1;
         }
     }
-    m_posOnWhichLine = -1;
-    return -1;
+    return m_posOnWhichLine;
 }
 
 double AirArea::_getCurrentSpeed(BspConfig::Gps_Info cur)

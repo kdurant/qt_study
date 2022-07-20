@@ -40,7 +40,7 @@ with open(args.file, 'r') as gps_data:
     """
     line = gps_data.readline()
     while line:
-        if (num > 2600 and num < 2800) or (num > 6050 and num < 6250):
+        if (num > 2610 and num < 2800) or (num > 6070 and num < 6240):
             line = line[:-1]
 
             # 维度      经度
