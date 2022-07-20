@@ -165,6 +165,63 @@
        </widget>
       </item>
       <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>控制参数配置</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>航线起点半径</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string>覆盖率计算半径(m)：</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="toolTip">
+            <string>单条航线分割点数，用于测区覆盖率计算</string>
+           </property>
+           <property name="text">
+            <string>航线分割点数：</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QSpinBox" name="spinBox">
+           <property name="maximum">
+            <number>999</number>
+           </property>
+           <property name="value">
+            <number>10</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox">
+           <property name="value">
+            <double>20.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+           <property name="value">
+            <double>20.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
        <widget class="QTreeWidget" name="treeWidget_navigation">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -397,29 +454,8 @@
          <string>mapControl</string>
         </property>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="2" column="4">
-          <widget class="QLabel" name="label_12">
-           <property name="text">
-            <string>currentZoom</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="2">
-          <widget class="QLabel" name="label_11">
-           <property name="text">
-            <string>maxMapLevel</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="3">
-          <widget class="QSpinBox" name="spinBox_mapMaxMapLevel">
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QSpinBox" name="spinBox_mapMinMapLevel">
+         <item row="2" column="5">
+          <widget class="QSpinBox" name="spinBox_mapCurrentZoom">
            <property name="readOnly">
             <bool>true</bool>
            </property>
@@ -432,15 +468,42 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="5">
-          <widget class="QSpinBox" name="spinBox_mapCurrentZoom">
+         <item row="2" column="3">
+          <widget class="QSpinBox" name="spinBox_mapMaxMapLevel">
            <property name="readOnly">
             <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="3" column="0" colspan="6">
+         <item row="2" column="2">
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>maxMapLevel</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="4">
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>currentZoom</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="spinBox_mapMinMapLevel">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="6">
           <widget class="QSlider" name="horizontalSlider_zoomCtrl">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
