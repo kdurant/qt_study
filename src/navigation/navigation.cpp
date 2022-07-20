@@ -114,12 +114,14 @@ void Navigation::showGpsInfo(const BspConfig::Gps_Info &gps)
     itemList.first()->child(8)->setText(1, QString::number(gps.heading, 'g', 6));
 }
 
-void Navigation::showSystemInfo(double speed)
+void Navigation::showSystemInfo(void)
 {
     QList<QTreeWidgetItem *> itemList;
 
     itemList = ui->treeWidget_navigation->findItems("系统参数", Qt::MatchExactly);
-    itemList.first()->child(0)->setText(1, QString::number(speed));
+    itemList.first()->child(0)->setText(1, QString::number(m_designedAirArea.getCurrentSpeed(), 'g', 6));
+    itemList.first()->child(1)->setText(1, QString::number(m_designedAirArea.getCoveragePercent(), 'g', 6));
+    itemList.first()->child(2)->setText(1, QString::number(m_designedAirArea.getPosOnWhichLine()));
 }
 
 void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
@@ -138,6 +140,7 @@ void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
     ui->label_navCoverage->setText("测区覆盖率:" + QString::number(m_designedAirArea.getCoveragePercent(), 'g', 6));
 
     showGpsInfo(data);
+    showSystemInfo();
 
     if(m_designedAirArea.getHeightDeviation() < -10000)
         ui->label_flightHeightDeviation->setText("nan");

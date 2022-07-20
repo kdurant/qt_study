@@ -40,36 +40,37 @@ with open(args.file, 'r') as gps_data:
     """
     line = gps_data.readline()
     while line:
-        line = line[:-1]
+        if (num > 2600 and num < 2800) or (num > 6050 and num < 6250):
+            line = line[:-1]
 
-        # 维度      经度
-        gps_sub_time, latitude, longitude, height, azimuth, pitch, roll = line.split(',')
+            # 维度      经度
+            gps_sub_time, latitude, longitude, height, azimuth, pitch, roll = line.split(',')
 
-        gps_sub_time = int(gps_sub_time)
-        latitude = int(latitude)
-        longitude = int(longitude)
-        height = int(height)
-        azimuth = int(azimuth)
-        pitch = int(pitch)
-        roll = int(roll)
+            gps_sub_time = int(gps_sub_time)
+            latitude = int(latitude)
+            longitude = int(longitude)
+            height = int(height)
+            azimuth = int(azimuth)
+            pitch = int(pitch)
+            roll = int(roll)
 
-        print("num: {:6d}/17806, longitude : {}, latitude : {}".format(
-            num,
-            struct.unpack('d', longitude.to_bytes(8, byteorder='little'))[0],
-            struct.unpack('d', latitude.to_bytes(8, byteorder='little'))[0]))
+            print("num: {:6d}/17806, longitude : {}, latitude : {}".format(
+                num,
+                struct.unpack('d', longitude.to_bytes(8, byteorder='little'))[0],
+                struct.unpack('d', latitude.to_bytes(8, byteorder='little'))[0]))
+
+            gps_frame.set_second(gps_sub_time)
+            gps_frame.set_latitude(latitude.to_bytes(8, byteorder='little'))
+            gps_frame.set_longitude(longitude.to_bytes(8, byteorder='little'))
+            gps_frame.set_height(height.to_bytes(8, byteorder='little'))
+            gps_frame.set_azimuth(azimuth.to_bytes(8, byteorder='little'))
+            sub_frame = gps_frame.get_frame()
+            udp_frame.set_data(sub_frame)
+            packet = udp_frame.get_frame()
+
+            s.sendto(packet, address)
+            time.sleep(args.interval / 1000)
+
+            #  exit(0)latitudi
         num = num + 1
-
-        gps_frame.set_second(gps_sub_time)
-        gps_frame.set_latitude(latitude.to_bytes(8, byteorder='little'))
-        gps_frame.set_longitude(longitude.to_bytes(8, byteorder='little'))
-        gps_frame.set_height(height.to_bytes(8, byteorder='little'))
-        gps_frame.set_azimuth(azimuth.to_bytes(8, byteorder='little'))
-        sub_frame = gps_frame.get_frame()
-        udp_frame.set_data(sub_frame)
-        packet = udp_frame.get_frame()
-
-        s.sendto(packet, address)
-        time.sleep(args.interval / 1000)
-
-        #  exit(0)latitudi
         line = gps_data.readline()
