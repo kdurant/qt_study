@@ -1,4 +1,9 @@
 #include "AirArea.h"
+#include <qpoint.h>
+#include <qvector.h>
+#include <algorithm>
+#include <iterator>
+#include <tuple>
 
 void AirArea::setFile(QString &file)
 {
@@ -10,7 +15,7 @@ int AirArea::parseFile()
     QFile file(this->m_file);
     file.open(QIODevice::ReadOnly);
 
-    m_line.clear();
+    m_surverArea.airLine.clear();
 
     auto gps_dfm2decmal = [](QByteArray &gps_dfm) -> double
     {
@@ -36,6 +41,10 @@ int AirArea::parseFile()
 
         //        double du    = gps_dfm.indexOf('°')
     };
+
+    QVector<double> lng_set;
+    QVector<double> lat_set;
+
     while(!file.atEnd())
     {
         QByteArray        line = file.readLine();
@@ -49,9 +58,14 @@ int AirArea::parseFile()
         double lng_end = line.split(',')[3].toDouble(nullptr);  // gps_dfm2decmal(line.split(',')[3]);
         double lat_end = line.split(',')[4].toDouble(nullptr);  // gps_dfm2decmal(line.split(',')[4]);
 
+        lng_set.append(lng_start);
+        lng_set.append(lng_end);
+        lat_set.append(lat_start);
+        lat_set.append(lat_end);
+
         height = line.split(',')[5].toDouble(nullptr);
 
-        this->m_line.append(AirLine{
+        m_surverArea.airLine.append(AirLine{
             lng_start,
             lat_start,
             lng_end,
@@ -59,15 +73,22 @@ int AirArea::parseFile()
             height, 200});
     }
 
+    auto max_lng = std::max_element(std::begin(lng_set), std::end(lng_set));
+    auto min_lng = std::min_element(std::begin(lng_set), std::end(lng_set));
+    auto max_lat = std::max_element(std::begin(lat_set), std::end(lat_set));
+    auto min_lat = std::min_element(std::begin(lat_set), std::end(lat_set));
+    m_surverArea.rect.setTopLeft(QPointF(*min_lng, *min_lat));
+    m_surverArea.rect.setBottomRight(QPointF(*max_lng, *max_lat));
+
     return 0;
 }
 
 int AirArea::_getPosOnWhichLine()
 {
-    int len = m_line.size();
+    int len = m_surverArea.airLine.size();
     for(int i = 0; i < len; i++)
     {
-        double distance = gps_distance(m_currentPos.longitude, m_currentPos.latitude, m_line[i].start.x(), m_line[i].start.y());
+        double distance = gps_distance(m_currentPos.longitude, m_currentPos.latitude, m_surverArea.airLine[i].start.x(), m_surverArea.airLine[i].start.y());
         if(distance <= AIRLINE_THRESHOLD)
         {
             m_posOnWhichLine = i + 1;
@@ -86,7 +107,7 @@ double AirArea::_getCurrentSpeed(BspConfig::Gps_Info cur)
 
 int AirArea::splitArea(int nums)
 {
-    int len = this->m_line.size();
+    int len = this->m_surverArea.airLine.size();
 
     double lng_start    = 0;
     double lng_end      = 0;
@@ -99,10 +120,10 @@ int AirArea::splitArea(int nums)
 
     for(int i = 0; i < len; i++)
     {
-        lng_start = this->m_line[i].start.x();
-        lat_start = this->m_line[i].start.y();
-        lng_end   = this->m_line[i].start.x();
-        lat_end   = this->m_line[i].start.y();
+        lng_start = this->m_surverArea.airLine[i].start.x();
+        lat_start = this->m_surverArea.airLine[i].start.y();
+        lng_end   = this->m_surverArea.airLine[i].start.x();
+        lat_end   = this->m_surverArea.airLine[i].start.y();
 
         delta_lng    = lng_end - lng_start;
         delta_lat    = lat_end - lat_start;
@@ -111,7 +132,7 @@ int AirArea::splitArea(int nums)
 
         for(int step = 0; step < nums; step++)
         {
-            m_splited_area.append(QPointF(this->m_line[i].start.x(), this->m_line[i].start.y()) + QPointF(interval_lng, interval_lat) * step);
+            m_splited_area.append(QPointF(m_surverArea.airLine[i].start.x(), m_surverArea.airLine[i].start.y()) + QPointF(interval_lng, interval_lat) * step);
         }
     }
 
@@ -153,4 +174,119 @@ double AirArea::_getCoveragePercent()
     }
     m_coveragePercent = static_cast<double>(covered) / len;
     return m_coveragePercent;
+}
+
+void AirArea::initSurveyPoints(int interval)
+{
+    m_surverArea.totalValidEle = 0;
+    double step                = interval * METER2LNG_LAT;
+    int    x_step              = m_surverArea.rect.size().width() / step;
+    int    y_step              = m_surverArea.rect.size().height() / step;
+
+    QVector<SurveyPoint> line;
+    for(int i = 0; i < y_step; i++)
+    {
+        for(int j = 0; j < x_step; j++)
+        {
+            SurveyPoint p;
+            p.pos      = m_surverArea.rect.topLeft() + QPointF(i * step, j * step);
+            p.valid    = 0;
+            p.surveyed = false;
+            line.append(p);
+        }
+        m_surverArea.points.append(line);
+    }
+}
+
+void AirArea::setSurverPoints()
+{
+    int len = getAirLineNum();
+    for(int i = 0; i < len; i++)
+    {
+        // 1. 对规划航线进行插值
+        QVector<LinePara> virtualLine = interpolateAirLine(m_surverArea.airLine[i]);
+
+        int row = m_surverArea.points.size();
+        int col = m_surverArea.points[0].size();
+
+        //        for(int m = 0; m <
+    }
+    return;
+}
+
+double AirArea::point2line_distance(QPointF point, LinePara &line)
+{
+    double numerator   = abs(line.slope * point.x() - point.y() + line.intercept);  // 分子
+    double denominator = sqrt(line.slope * line.slope + (-1 * -1));                 // 分母
+    double ret         = numerator / denominator;
+    return ret;
+}
+
+AirArea::LinePara AirArea::getLinePara(QPointF &p1, QPointF &p2)
+{
+    LinePara line;
+    if(p2.x() - p1.x() == 0)
+    {
+        line.slope     = 10000;
+        line.intercept = p1.y() - line.slope * p1.x();
+    }
+    else
+    {
+        line.slope     = (p2.y() - p1.y()) / (p2.x() - p1.x());
+        line.intercept = p1.y() - line.slope * p1.x();
+    }
+    line.start = p1;
+    line.end   = p2;
+    return line;
+}
+
+AirArea::LinePara AirArea::shiftLine(LinePara &line, double verticalDistance)
+{
+    verticalDistance = verticalDistance * METER2LNG_LAT;  // 距离要转换成经维度单位
+
+    // s1 = kx + b + m/(cos(atan(k))
+    LinePara ret;
+    ret.slope     = line.slope;
+    ret.intercept = line.intercept + verticalDistance / (cos(atan(line.slope)));
+
+    // P2.x = P1.x + m*sin(atan(k)); P2.y = P1.y - m*cos(atan(k))
+    double x, y;
+    x         = line.start.x() + verticalDistance * sin(atan(line.slope));
+    y         = line.start.y() - verticalDistance * cos(atan(line.slope));
+    ret.start = QPointF(x, y);
+
+    x       = line.end.x() + verticalDistance * sin(atan(line.slope));
+    y       = line.end.y() - verticalDistance * cos(atan(line.slope));
+    ret.end = QPointF(x, y);
+
+    return ret;
+}
+
+QVector<AirArea::LinePara> AirArea::interpolateAirLine(AirLine &airLine)
+{
+    QVector<AirArea::LinePara> ret;
+
+    double   width = getScanWidth(airLine.height, m_scanAngle);  // 1. 获得雷达扫描宽度，可知需要新增多少条虚拟航线
+    int      num   = width / m_matrixSize;
+    LinePara line  = getLinePara(airLine.start, airLine.end);  // 2. 获得规划航线的参数
+
+    ret.append(line);
+    for(int i = 1; i < num / 2; i++)
+    {
+        LinePara temp = shiftLine(line, m_matrixSize * i);
+        ret.append(temp);
+    }
+    for(int i = 1; i < num / 2; i++)
+    {
+        LinePara temp = shiftLine(line, -m_matrixSize * i);
+        ret.append(temp);
+    }
+    return ret;
+}
+
+double AirArea::getScanWidth(double height, double angle)
+{
+    angle        = angle * M_PI / 180.0;
+    double width = tan(angle) * height * 2;
+    return width;
 }

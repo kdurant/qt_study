@@ -1,5 +1,23 @@
+/* =============================================================================
+# FileName    :	AirArea.h
+# Author      :	author
+# Email       :	email@email.com
+# Description :	纬度(latitude)，南北方向变化,坐标轴上的y
+                经度(longitude)，东西方向变化, 坐标轴上的x
+                google Map里先显示纬度，再显示经度
+
+                1经度或者1纬度的变化，大概是111km
+
+经度（东西方向）1M实际度：360°/31544206M=1.141255544679108e-5=0.00001141
+纬度（南北方向）1M实际度：360°/40030173M=8.993216192195822e-6=0.00000899
+
+# Version     :	1.0
+# LastChange  :	2022-07-21 13:32:08
+# ChangeLog   :
+============================================================================= */
 #ifndef AIRAREA_H
 #define AIRAREA_H
+#include <sys/types.h>
 #include <QtCore>
 #include "bsp_config.h"
 
@@ -23,6 +41,29 @@ public:
         }
     };
 
+    struct SurveyPoint
+    {
+        QPointF pos;
+        int     valid;  // 大于1, 有效的测区标记
+        bool    surveyed;
+    };
+
+    struct SurveyArea
+    {
+        int                           totalValidEle;
+        QRectF                        rect;
+        QVector<AirLine>              airLine;  // 规划的航线
+        QVector<QVector<SurveyPoint>> points;   // 测区计算需要的点
+    };
+
+    struct LinePara
+    {
+        double  slope;
+        double  intercept;
+        QPointF start;
+        QPointF end;
+    };
+
 public:
     AirArea() :
         m_currentSpeed(0),
@@ -31,7 +72,7 @@ public:
     {
         m_coveragePoints.clear();
         m_splited_area.clear();
-        m_line.clear();
+        m_surverArea.airLine.clear();
     };
 
     /**
@@ -133,13 +174,13 @@ public:
      *
      * @return
      */
-    int getLinesNum(void)
+    int getAirLineNum(void)
     {
-        return this->m_line.size();
+        return m_surverArea.airLine.size();
     }
-    AirLine getLineInfo(int num)
+    AirLine getAirLine(int num)
     {
-        return this->m_line[num];
+        return m_surverArea.airLine[num];
     }
 
     double getHeightDeviation()
@@ -147,7 +188,7 @@ public:
         if(m_posOnWhichLine < 0)
             return -10001;
 
-        double expect_height = m_line[m_posOnWhichLine].height;
+        double expect_height = m_surverArea.airLine[m_posOnWhichLine].height;
         return m_currentPos.height - expect_height;
     }
 
@@ -156,7 +197,7 @@ public:
         if(m_posOnWhichLine < 0)
             return -10001;
 
-        double expect = m_line[m_posOnWhichLine].speed;
+        double expect = m_surverArea.airLine[m_posOnWhichLine].speed;
         return m_currentSpeed - expect;
     }
     double getAzimutuDeriation()
@@ -164,14 +205,68 @@ public:
         return -10001;
     }
 
+    /**
+     * @brief, 将测区的矩形区域划分为矩阵, 并初始化
+     * @param interval unit:m
+     */
+    void initSurveyPoints(int interval);
+    /**
+     * @brief 根据航迹，初始化矩阵的内容
+     * 要对已有航线进行拟合扩展，使用拟合后的航线集对矩阵元素进行标记
+     * 设：航线轨迹方程 s = kx+b, 起点为P1，终点为P2
+     * 在垂直航迹的方向上平移 m
+     * 新的轨迹方程 s1 = kx + b + m/(cos(atan(k))
+     * 新轨迹方程的起点：P2.x = P1.x + m*sin(atan(k)); P2.y = P1.y - m*cos(atan(k))
+     */
+    void setSurverPoints(void);
+
+    double point2line_distance(QPointF point, LinePara& line);
+
+    /**
+     * @brief 获得航线在坐标系中的数学表达式
+     * @return
+     */
+    LinePara getLinePara(QPointF& p1, QPointF& p2);
+
+    /**
+     * @brief 将给定的直线方程进行平移，得到新的直线
+     * @param verticalDistance， 直线垂直方向平移的距离
+     * @return
+     */
+    LinePara shiftLine(LinePara& line, double verticalDistance);
+
+    /**
+     * @brief 根据航高计算出的扫描宽度，以及矩阵元素大小，对预设航线进行插值，然后和矩阵比对，标记有效测区
+     * 例如扫描宽度为100米，矩阵元素大小为1米，则在预设航线两边各插值50条航线
+     * 应该保存航线的数学表达式
+     *
+     * 1. 计算原航线的数学表达式
+     * 2. 计算插值航线的数学表达式，以及新航线的两个端点
+     * @param airLine, 规划的航线
+     * @return
+     */
+    QVector<LinePara> interpolateAirLine(AirLine& airLine);
+
+    /**
+     * @brief 计算雷达当前扫描区域的宽度
+     * @param height
+     * @param angle
+     * @return
+     */
+    double getScanWidth(double height, double angle);
+
 private:
     double              AIRLINE_THRESHOLD{20.0};
     double              COVERAGE_THRESHOLD{20.0};
+    double              METER2LNG_LAT{0.0000102};
     QString             m_file;
     BspConfig::Gps_Info m_prevPos{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     BspConfig::Gps_Info m_currentPos{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    QVector<AirLine> m_line;
+    SurveyArea m_surverArea;
+
+    double m_scanAngle{30};   // 飞机雷达的扫描角度；海洋雷达30度，陆地雷达60度
+    double m_matrixSize{10};  // 矩阵元素的大小，单位：米
 
     double           m_currentSpeed{0};
     int              m_posOnWhichLine{-1};

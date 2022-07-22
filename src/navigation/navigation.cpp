@@ -38,11 +38,13 @@ void Navigation::initSignalSlot()
         ui->lineEdit_trackerFile->setText(trackerFile);
         m_designedAirArea.setFile(trackerFile);
         m_designedAirArea.parseFile();
+        m_designedAirArea.initSurveyPoints(100);
+        m_designedAirArea.setSurverPoints();
 
-        int len = m_designedAirArea.getLinesNum();
+        int len = m_designedAirArea.getAirLineNum();
         for(int i = 0; i < len; i += 1)
         {
-            AirArea::AirLine line = m_designedAirArea.getLineInfo(i);
+            AirArea::AirLine line = m_designedAirArea.getAirLine(i);
 
             ui->mapView->loadTracker(line.start, line.end);
             ui->mapView->loadSerialNum(line.start, i + 1);
@@ -82,10 +84,10 @@ void Navigation::initSignalSlot()
         ui->mapView->setDefaultZoom(zoom);
         ui->mapView->loadMap();
 
-        int len = m_designedAirArea.getLinesNum();
+        int len = m_designedAirArea.getAirLineNum();
         for(int i = 0; i < len; i += 1)
         {
-            AirArea::AirLine line = m_designedAirArea.getLineInfo(i);
+            AirArea::AirLine line = m_designedAirArea.getAirLine(i);
 
             ui->mapView->loadTracker(line.start, line.end);
             ui->mapView->loadSerialNum(line.start, i + 1);
