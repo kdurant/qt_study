@@ -1,6 +1,4 @@
 #include "AirArea.h"
-#include <qpoint.h>
-#include <qvector.h>
 #include <algorithm>
 #include <iterator>
 #include <tuple>
@@ -214,11 +212,21 @@ void AirArea::setSurverPoints()
     return;
 }
 
-double AirArea::point2line_distance(QPointF point, LinePara &line)
+double AirArea::point2line_distance(QPointF point, QLineF &line)
 {
-    double numerator   = abs(line.slope * point.x() - point.y() + line.intercept);  // 分子
-    double denominator = sqrt(line.slope * line.slope + (-1 * -1));                 // 分母
-    double ret         = numerator / denominator;
+    double ret;
+    double k, b;
+    if(line.x1() == line.x2())
+        k = 999999;
+    else
+        k = (line.y2() - line.y1()) / (line.x2() - line.x1());
+
+    b = line.y1() - k * line.x1();
+
+    double numerator   = abs(k * point.x() - point.y() + b);  // 分子
+    double denominator = sqrt(k * k + (-1 * -1));             // 分母
+    ret                = numerator / denominator;
+
     return ret;
 }
 

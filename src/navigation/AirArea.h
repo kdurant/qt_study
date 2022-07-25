@@ -17,7 +17,6 @@
 ============================================================================= */
 #ifndef AIRAREA_H
 #define AIRAREA_H
-#include <sys/types.h>
 #include <QtCore>
 #include "bsp_config.h"
 
@@ -218,7 +217,13 @@ public:
      */
     void setSurverPoints(void);
 
-    double point2line_distance(QPointF point, LinePara& line);
+    /**
+     * @brief 点到直线的垂直距离
+     * @param point
+     * @param line
+     * @return
+     */
+    double point2line_distance(QPointF point, QLineF& line);
 
     /**
      * @brief 获得航线在坐标系中的数学表达式
