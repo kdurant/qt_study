@@ -46,8 +46,8 @@ void Navigation::initSignalSlot()
         {
             AirArea::AirLine line = m_designedAirArea.getAirLine(i);
 
-            ui->mapView->loadTracker(line.start, line.end);
-            ui->mapView->loadSerialNum(line.start, i + 1);
+            ui->mapView->loadTracker(line.line.p1(), line.line.p2());
+            ui->mapView->loadSerialNum(line.line.p1(), i + 1);
         }
         m_designedAirArea.splitArea(10);
 
@@ -87,10 +87,10 @@ void Navigation::initSignalSlot()
         int len = m_designedAirArea.getAirLineNum();
         for(int i = 0; i < len; i += 1)
         {
-            AirArea::AirLine line = m_designedAirArea.getAirLine(i);
+            AirArea::AirLine temp = m_designedAirArea.getAirLine(i);
 
-            ui->mapView->loadTracker(line.start, line.end);
-            ui->mapView->loadSerialNum(line.start, i + 1);
+            ui->mapView->loadTracker(temp.line.p1(), temp.line.p2());
+            ui->mapView->loadSerialNum(temp.line.p1(), i + 1);
         }
 
         for(auto &pos : m_realtime_path)

@@ -27,15 +27,14 @@ class AirArea : public QObject
 public:
     struct AirLine  // 单条航线
     {
-        QPointF start;
-        QPointF end;
-        double  height;  // unit: m
-        double  speed;   // unit: km/h
+        QLineF line;
+        double height;  // unit: m
+        double speed;   // unit: km/h
 
         AirLine(double lng_start, double lat_start, double lng_end, double lat_end, double height, double speed)
         {
-            start        = QPointF(lng_start, lat_start);
-            end          = QPointF(lng_end, lat_end);
+            line.setP1(QPointF(lng_start, lat_start));
+            line.setP2(QPointF(lng_end, lat_end));
             this->height = height;
             this->speed  = speed;
         }
@@ -58,10 +57,9 @@ public:
 
     struct LinePara
     {
-        double  slope;
-        double  intercept;
-        QPointF start;
-        QPointF end;
+        double slope;
+        double intercept;
+        QLineF line;
     };
 
 public:
@@ -226,7 +224,7 @@ public:
      * @brief 获得航线在坐标系中的数学表达式
      * @return
      */
-    LinePara getLinePara(QPointF& p1, QPointF& p2);
+    LinePara getLinePara(QLineF& line);
 
     /**
      * @brief 将给定的直线方程进行平移，得到新的直线

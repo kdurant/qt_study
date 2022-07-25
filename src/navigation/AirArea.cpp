@@ -88,7 +88,7 @@ int AirArea::_getPosOnWhichLine()
     int len = m_surverArea.airLine.size();
     for(int i = 0; i < len; i++)
     {
-        double distance = gps_distance(m_currentPos.longitude, m_currentPos.latitude, m_surverArea.airLine[i].start.x(), m_surverArea.airLine[i].start.y());
+        double distance = gps_distance(m_currentPos.longitude, m_currentPos.latitude, m_surverArea.airLine[i].line.p1().x(), m_surverArea.airLine[i].line.p1().y());
         if(distance <= AIRLINE_THRESHOLD)
         {
             m_posOnWhichLine = i + 1;
@@ -120,10 +120,10 @@ int AirArea::splitArea(int nums)
 
     for(int i = 0; i < len; i++)
     {
-        lng_start = this->m_surverArea.airLine[i].start.x();
-        lat_start = this->m_surverArea.airLine[i].start.y();
-        lng_end   = this->m_surverArea.airLine[i].start.x();
-        lat_end   = this->m_surverArea.airLine[i].start.y();
+        lng_start = this->m_surverArea.airLine[i].line.p1().x();
+        lat_start = this->m_surverArea.airLine[i].line.p1().y();
+        lng_end   = this->m_surverArea.airLine[i].line.p2().x();
+        lat_end   = this->m_surverArea.airLine[i].line.p2().y();
 
         delta_lng    = lng_end - lng_start;
         delta_lat    = lat_end - lat_start;
@@ -132,7 +132,7 @@ int AirArea::splitArea(int nums)
 
         for(int step = 0; step < nums; step++)
         {
-            m_splited_area.append(QPointF(m_surverArea.airLine[i].start.x(), m_surverArea.airLine[i].start.y()) + QPointF(interval_lng, interval_lat) * step);
+            m_splited_area.append(QPointF(m_surverArea.airLine[i].line.p1().x(), m_surverArea.airLine[i].line.p1().y()) + QPointF(interval_lng, interval_lat) * step);
         }
     }
 
@@ -222,42 +222,41 @@ double AirArea::point2line_distance(QPointF point, LinePara &line)
     return ret;
 }
 
-AirArea::LinePara AirArea::getLinePara(QPointF &p1, QPointF &p2)
+AirArea::LinePara AirArea::getLinePara(QLineF &line)
 {
-    LinePara line;
-    if(p2.x() - p1.x() == 0)
+    LinePara ret;
+    if(line.p2().x() - line.p1().x() == 0)
     {
-        line.slope     = 10000;
-        line.intercept = p1.y() - line.slope * p1.x();
+        ret.slope     = 10000;
+        ret.intercept = line.p1().y() - ret.slope * line.p1().x();
     }
     else
     {
-        line.slope     = (p2.y() - p1.y()) / (p2.x() - p1.x());
-        line.intercept = p1.y() - line.slope * p1.x();
+        ret.slope     = (line.p2().y() - line.p1().y()) / (line.p2().x() - line.p1().x());
+        ret.intercept = line.p1().y() - ret.slope * line.p1().x();
     }
-    line.start = p1;
-    line.end   = p2;
-    return line;
+    ret.line = line;
+    return ret;
 }
 
-AirArea::LinePara AirArea::shiftLine(LinePara &line, double verticalDistance)
+AirArea::LinePara AirArea::shiftLine(LinePara &source_line, double verticalDistance)
 {
     verticalDistance = verticalDistance * METER2LNG_LAT;  // 距离要转换成经维度单位
 
     // s1 = kx + b + m/(cos(atan(k))
     LinePara ret;
-    ret.slope     = line.slope;
-    ret.intercept = line.intercept + verticalDistance / (cos(atan(line.slope)));
+    ret.slope     = source_line.slope;
+    ret.intercept = source_line.intercept + verticalDistance / (cos(atan(source_line.slope)));
 
     // P2.x = P1.x + m*sin(atan(k)); P2.y = P1.y - m*cos(atan(k))
     double x, y;
-    x         = line.start.x() + verticalDistance * sin(atan(line.slope));
-    y         = line.start.y() - verticalDistance * cos(atan(line.slope));
-    ret.start = QPointF(x, y);
+    x = source_line.line.p1().x() + verticalDistance * sin(atan(source_line.slope));
+    y = source_line.line.p1().y() - verticalDistance * cos(atan(source_line.slope));
+    ret.line.setP1(QPointF(x, y));
 
-    x       = line.end.x() + verticalDistance * sin(atan(line.slope));
-    y       = line.end.y() - verticalDistance * cos(atan(line.slope));
-    ret.end = QPointF(x, y);
+    x = source_line.line.p2().x() + verticalDistance * sin(atan(source_line.slope));
+    y = source_line.line.p2().y() - verticalDistance * cos(atan(source_line.slope));
+    ret.line.setP2(QPointF(x, y));
 
     return ret;
 }
@@ -268,7 +267,7 @@ QVector<AirArea::LinePara> AirArea::interpolateAirLine(AirLine &airLine)
 
     double   width = getScanWidth(airLine.height, m_scanAngle);  // 1. 获得雷达扫描宽度，可知需要新增多少条虚拟航线
     int      num   = width / m_matrixSize;
-    LinePara line  = getLinePara(airLine.start, airLine.end);  // 2. 获得规划航线的参数
+    LinePara line  = getLinePara(airLine.line);  // 2. 获得规划航线的参数
 
     ret.append(line);
     for(int i = 1; i < num / 2; i++)
