@@ -6,6 +6,16 @@
                 经度(longitude)，东西方向变化, 坐标轴上的x
                 google Map里先显示纬度，再显示经度
 
+
+            latitude(纬度), 北纬
+            |
+            |
+            |
+            |
+            |
+          -----------------------  longitude(经度), 东经
+            |
+
                 1经度或者1纬度的变化，大概是111km
 
 经度（东西方向）1M实际度：360°/31544206M=1.141255544679108e-5=0.00001141
@@ -29,14 +39,6 @@ public:
         QLineF line;
         double height;  // unit: m
         double speed;   // unit: km/h
-
-        AirLine(double lng_start, double lat_start, double lng_end, double lat_end, double height, double speed)
-        {
-            line.setP1(QPointF(lng_start, lat_start));
-            line.setP2(QPointF(lng_end, lat_end));
-            this->height = height;
-            this->speed  = speed;
-        }
     };
 
     struct SurveyPoint
@@ -204,7 +206,8 @@ public:
 
     /**
      * @brief, 将测区的矩形区域划分为矩阵, 并初始化
-     * @param interval unit:m
+     * 矩阵初始化后的点，还是经维度坐标
+     * @param interval unit:m, 内部会将m转换为经纬度值,  应该和COVERAGE_THRESHOLD保持一致
      */
     void initSurveyPoints(int interval);
     /**
@@ -216,6 +219,7 @@ public:
      * 新轨迹方程的起点：P2.x = P1.x + m*sin(atan(k)); P2.y = P1.y - m*cos(atan(k))
      */
     void setSurverPoints(void);
+    void printSurverPoints(void);
 
     /**
      * @brief 点到直线的垂直距离
@@ -224,6 +228,13 @@ public:
      * @return
      */
     double point2line_distance(QPointF point, QLineF& line);
+    /**
+     * @brief 点到线段的距离,
+     * @param point， 经维度
+     * @param target
+     * @return 返回值需要乘以111km,把单位换算成m
+     */
+    double point2seg_distance(QPointF point, QLineF& target);
 
     /**
      * @brief 获得航线在坐标系中的数学表达式

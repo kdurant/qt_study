@@ -52,7 +52,7 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
 
 int main(int argc, char *argv[])
 {
-    qInstallMessageHandler(customMessageOutput);
+    //    qInstallMessageHandler(customMessageOutput);
     QApplication a(argc, argv);
 
     //    QFile qss("../Radar/qss/basic.qss");

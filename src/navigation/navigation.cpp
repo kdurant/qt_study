@@ -38,8 +38,9 @@ void Navigation::initSignalSlot()
         ui->lineEdit_trackerFile->setText(trackerFile);
         m_designedAirArea.setFile(trackerFile);
         m_designedAirArea.parseFile();
-        m_designedAirArea.initSurveyPoints(100);
+        m_designedAirArea.initSurveyPoints(20);  // COVERAGE_THRESHOLD
         m_designedAirArea.setSurverPoints();
+        m_designedAirArea.printSurverPoints();
 
         int len = m_designedAirArea.getAirLineNum();
         for(int i = 0; i < len; i += 1)

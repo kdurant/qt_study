@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <iterator>
 #include <tuple>
+#include <iostream>
 
 void AirArea::setFile(QString &file)
 {
@@ -63,12 +64,11 @@ int AirArea::parseFile()
 
         height = line.split(',')[5].toDouble(nullptr);
 
-        m_surverArea.airLine.append(AirLine{
-            lng_start,
-            lat_start,
-            lng_end,
-            lat_end,
-            height, 200});
+        AirLine temp;
+        temp.line   = QLineF(QPointF(lng_start, lat_start), QPointF(lng_end, lat_end));
+        temp.height = height;
+        temp.speed  = 200;
+        m_surverArea.airLine.append(temp);
     }
 
     auto max_lng = std::max_element(std::begin(lng_set), std::end(lng_set));
@@ -177,39 +177,94 @@ double AirArea::_getCoveragePercent()
 void AirArea::initSurveyPoints(int interval)
 {
     m_surverArea.totalValidEle = 0;
-    double step                = interval * METER2LNG_LAT;
-    int    x_step              = m_surverArea.rect.size().width() / step;
-    int    y_step              = m_surverArea.rect.size().height() / step;
+    m_surverArea.points.clear();
+    m_surverArea.airLine.clear();
 
-    QVector<SurveyPoint> line;
+    double step   = interval * METER2LNG_LAT;
+    int    x_step = m_surverArea.rect.size().width() / step;
+    int    y_step = m_surverArea.rect.size().height() / step;
+
     for(int i = 0; i < y_step; i++)
     {
+        QVector<SurveyPoint> line;
         for(int j = 0; j < x_step; j++)
         {
             SurveyPoint p;
-            p.pos      = m_surverArea.rect.topLeft() + QPointF(i * step, j * step);
+            p.pos      = m_surverArea.rect.topLeft() + QPointF(j * step, i * step);
             p.valid    = 0;
             p.surveyed = false;
             line.append(p);
         }
+
         m_surverArea.points.append(line);
     }
 }
 
 void AirArea::setSurverPoints()
 {
+#if 0
+    int row = m_surverArea.points.size();
+    int col = m_surverArea.points[0].size();
+
+    for(int m = 0; m < row; m++)
+    {
+        for(int n = 0; n < col; n++)
+        {
+            double distance = point2seg_distance(m_surverArea.points[m][n].pos, m_surverArea.airLine[0].line);
+            qDebug() << m_surverArea.points[m][n].pos;
+            if(distance < COVERAGE_THRESHOLD)
+                m_surverArea.points[m][n].valid++;
+        }
+    }
+#else
     int len = getAirLineNum();
+
     for(int i = 0; i < len; i++)
     {
         // 1. 对规划航线进行插值
         QVector<LinePara> virtualLine = interpolateAirLine(m_surverArea.airLine[i]);
 
-        int row = m_surverArea.points.size();
-        int col = m_surverArea.points[0].size();
+        for(auto &line : virtualLine)
+        {
+            int __row = m_surverArea.points.size();
+            int __col = m_surverArea.points[0].size();
 
-        //        for(int m = 0; m <
+            for(int row = 0; row < __row; row++)
+            {
+                for(int col = 0; col < __col; col++)
+                {
+                    double distance = point2seg_distance(m_surverArea.points[row][col].pos, line.line);
+                    if(distance < COVERAGE_THRESHOLD)
+                        m_surverArea.points[row][col].valid++;
+                }
+            }
+        }
     }
+#endif
     return;
+}
+
+void AirArea::printSurverPoints()
+{
+    int row = m_surverArea.points.size();
+    int col = m_surverArea.points[0].size();
+
+    qDebug() << "printSurverPoints";
+    for(int m = 0; m < row; m++)
+    {
+        for(int n = 0; n < col; n++)
+        {
+            if(m_surverArea.points[m][n].valid > 0)
+            {
+                std::cout << '*';
+            }
+            else
+                std::cout << '-';
+        }
+        std::cout << '\n';
+    }
+    std::cout << '\n';
+    std::fflush(stdout);
 }
 
 double AirArea::point2line_distance(QPointF point, QLineF &line)
@@ -228,6 +283,44 @@ double AirArea::point2line_distance(QPointF point, QLineF &line)
     ret                = numerator / denominator;
 
     return ret;
+}
+
+double AirArea::point2seg_distance(QPointF point, QLineF &target)
+{
+    double distance;
+    auto   __line_magnitude = [](QPointF p1, QPointF p2) -> double
+    {
+        double x1 = (p2.x() - p1.x()) * (p2.x() - p1.x());
+        double y1 = (p2.y() - p1.y()) * (p2.y() - p1.y());
+        double d1 = sqrt(x1 + y1);
+        return d1;
+    };
+    double line_maginutude = __line_magnitude(target.p1(), target.p2());
+
+    double u1 = (point.x() - target.x1()) * (target.x2() - target.x1()) +
+                (point.y() - target.y1()) * (target.y2() - target.y1());
+    double u = u1 / (line_maginutude * line_maginutude);
+
+    double ix, iy;
+    if(u < 0.00001 || u > 1)
+    {
+        // 点到直线的投影不在线段内, 计算点到两个端点距离的最小值即为"点到线段最小距离"
+
+        ix = __line_magnitude(point, target.p1());
+        iy = __line_magnitude(point, target.p2());
+
+        if(ix > iy)
+            distance = iy;
+        else
+            distance = ix;
+    }
+    else
+    {  // 投影点在线段内部, 计算方式同点到直线距离, u 为投影点距离x1在x1x2上的比例, 以此计算出投影点的坐标
+        ix       = target.x1() + u * (target.x2() - target.x1());
+        iy       = target.y1() + u * (target.y2() - target.y1());
+        distance = __line_magnitude(point, QPointF(ix, iy));
+    }
+    return distance * 111000;
 }
 
 AirArea::LinePara AirArea::getLinePara(QLineF &line)
