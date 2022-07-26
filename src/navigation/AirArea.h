@@ -71,7 +71,7 @@ public:
     {
         m_coveragePoints.clear();
         m_splited_area.clear();
-        m_surverArea.airLine.clear();
+        //        m_surverArea.airLine.clear();
     };
 
     /**

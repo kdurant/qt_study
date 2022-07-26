@@ -178,7 +178,7 @@ void AirArea::initSurveyPoints(int interval)
 {
     m_surverArea.totalValidEle = 0;
     m_surverArea.points.clear();
-    m_surverArea.airLine.clear();
+    //    m_surverArea.airLine.clear();
 
     double step   = interval * METER2LNG_LAT;
     int    x_step = m_surverArea.rect.size().width() / step;
@@ -211,9 +211,10 @@ void AirArea::setSurverPoints()
         for(int n = 0; n < col; n++)
         {
             double distance = point2seg_distance(m_surverArea.points[m][n].pos, m_surverArea.airLine[0].line);
-            qDebug() << m_surverArea.points[m][n].pos;
             if(distance < COVERAGE_THRESHOLD)
+            {
                 m_surverArea.points[m][n].valid++;
+            }
         }
     }
 #else
@@ -224,6 +225,7 @@ void AirArea::setSurverPoints()
         // 1. 对规划航线进行插值
         QVector<LinePara> virtualLine = interpolateAirLine(m_surverArea.airLine[i]);
 
+        // 2. 使用插值过的航线标记有效测区
         for(auto &line : virtualLine)
         {
             int __row = m_surverArea.points.size();
