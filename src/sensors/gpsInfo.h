@@ -133,9 +133,9 @@ public slots:
             gps.latitude  = Common::byteArrayToDouble(frame.mid(48, 8), 0);
             gps.longitude = Common::byteArrayToDouble(frame.mid(56, 8), 0);
             gps.altitude  = Common::byteArrayToDouble(frame.mid(64, 8), 0);
-            gps.roll      = Common::byteArrayToDouble(frame.mid(40, 8), 0);
-            gps.pitch     = Common::byteArrayToDouble(frame.mid(32, 8), 0);
             gps.heading   = Common::byteArrayToDouble(frame.mid(24, 8), 0);
+            gps.pitch     = Common::byteArrayToDouble(frame.mid(32, 8), 0);
+            gps.roll      = Common::byteArrayToDouble(frame.mid(40, 8), 0);
         }
         emit gpsDataReady(gps);
     }

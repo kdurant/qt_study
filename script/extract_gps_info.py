@@ -3,6 +3,9 @@
 从存储的硬盘数据文件中提取出相关字段信息, 并直接写入到文件中
 硬盘存储数据是根据外触发信号触发存储的，GPS信息相关字段内容很多都是一致的
 所以相同GPS信息的数据帧只写入一次
+
+sudo mount /dev/sda3 ~/F
+python extract_gps_info.py --file ~/F/radar_data/2022_07_08_10_22_07_land_Addr_0036.bin
 """
 FIELD_CONFG = {
     'head': {

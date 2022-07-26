@@ -40,7 +40,8 @@ with open(args.file, 'r') as gps_data:
     """
     line = gps_data.readline()
     while line:
-        if (num > 2610 and num < 2800) or (num > 6070 and num < 6240):
+        #  if (num > 2610 and num < 2800) or (num > 6070 and num < 6240):
+        if num >= 0:
             line = line[:-1]
 
             # 维度      经度
@@ -54,16 +55,16 @@ with open(args.file, 'r') as gps_data:
             pitch = int(pitch)
             roll = int(roll)
 
-            print("num: {:6d}/17806, longitude : {}, latitude : {}".format(
-                num,
-                struct.unpack('d', longitude.to_bytes(8, byteorder='little'))[0],
-                struct.unpack('d', latitude.to_bytes(8, byteorder='little'))[0]))
+            print("num: {:6d}/17806".format(num))
 
             gps_frame.set_second(gps_sub_time)
             gps_frame.set_latitude(latitude.to_bytes(8, byteorder='little'))
             gps_frame.set_longitude(longitude.to_bytes(8, byteorder='little'))
             gps_frame.set_height(height.to_bytes(8, byteorder='little'))
             gps_frame.set_azimuth(azimuth.to_bytes(8, byteorder='little'))
+            gps_frame.set_pitch(pitch.to_bytes(8, byteorder='little'))
+            gps_frame.set_roll(roll.to_bytes(8, byteorder='little'))
+
             sub_frame = gps_frame.get_frame()
             udp_frame.set_data(sub_frame)
             packet = udp_frame.get_frame()
