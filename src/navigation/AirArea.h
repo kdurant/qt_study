@@ -44,16 +44,19 @@ public:
     struct SurveyPoint
     {
         QPointF pos;
-        int     valid;  // 大于1, 有效的测区标记
-        bool    surveyed;
+        int     marker;    // 大于1, 有效的测区标记
+        int     surveyed;  //
     };
 
     struct SurveyArea
     {
+        QRectF           rect;
+        QVector<AirLine> airLine;  // 规划的航线
+
+        QVector<QVector<SurveyPoint>> points;  // 测区矩形范围内全部的点
         int                           totalValidEle;
-        QRectF                        rect;
-        QVector<AirLine>              airLine;  // 规划的航线
-        QVector<QVector<SurveyPoint>> points;   // 测区计算需要的点
+        int                           hasSurveyedEle;
+        double                        surveyedPercent;
     };
 
     struct LinePara
@@ -121,12 +124,13 @@ public:
 
         // 计算速度
         _getCurrentSpeed(pos);
-        m_prevPos = pos;
         // 覆盖率相关计算
         isPosInDesigned(COVERAGE_THRESHOLD);
         _getCoveragePercent();
+
         // 当前所在航线计算
         _getPosOnWhichLine();
+        m_prevPos = pos;
     }
 
     /**
@@ -162,11 +166,42 @@ public:
      */
     int isPosInDesigned(double r);
 
+    // 老版本
     double _getCoveragePercent();
+
+    /**
+     * @brief 计算测区覆盖率
+     * 1. 根据当前GPS信息和上一个GPS信息，以及速度，测区矩阵大小等，对GPS轨迹点进行插值
+     * 2. 根据插值过的轨迹点，计算出雷达扫描线段表达式f
+     * 3. 使用f和测区矩阵进行比对
+     * @return
+     */
+    double __getCoveragePercent();
     double getCoveragePercent()
     {
         return m_coveragePercent;
     }
+
+    /**
+     * @brief 根据当前GPS位置，高度，航向角，翻滚角，俯仰角，计算出雷达扫描宽度在坐标系中的表达式f
+     * @param pos
+     * @return
+     */
+    AirLine getRadarScanExpression(BspConfig::Gps_Info& pos);
+
+    /**
+     * @brief 根据雷达扫描宽度表达式f， 计算当前扫描那些测区元素
+     * @param line
+     */
+    void calcRealSurvey(AirLine& line);
+
+    /**
+     * @brief 根据前面的GPS信息和当前的GPS信息，对GPS信息进行插值，用于计算雷达扫描表达式
+     * @param prev
+     * @param cur
+     * @return
+     */
+    QVector<BspConfig::Gps_Info> interpolateScanLine(BspConfig::Gps_Info& prev, BspConfig::Gps_Info& cur);
 
     /**
      * @brief 当前加载的航迹文件有几条航线
@@ -243,7 +278,8 @@ public:
     LinePara getLinePara(QLineF& line);
 
     /**
-     * @brief 将给定的直线方程进行平移，得到新的直线
+     * @brief 将给定的线段方程进行平移，得到新的线段
+     *
      * @param verticalDistance， 直线垂直方向平移的距离
      * @return
      */

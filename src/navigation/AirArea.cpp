@@ -81,6 +81,22 @@ int AirArea::parseFile()
     return 0;
 }
 
+void AirArea::setCurrentPos(BspConfig::Gps_Info pos)
+{
+    m_currentPos = pos;
+
+    // 计算速度
+    _getCurrentSpeed(pos);
+    // 覆盖率相关计算
+    isPosInDesigned(COVERAGE_THRESHOLD);
+    _getCoveragePercent();
+    _getCoveragePercent();
+
+    // 当前所在航线计算
+    _getPosOnWhichLine();
+    m_prevPos = pos;
+}
+
 int AirArea::_getPosOnWhichLine()
 {
     int len = m_surverArea.airLine.size();
@@ -174,6 +190,92 @@ double AirArea::_getCoveragePercent()
     return m_coveragePercent;
 }
 
+double AirArea::__getCoveragePercent()
+{
+    QVector<BspConfig::Gps_Info> points = interpolateScanLine(m_prevPos, m_currentPos);
+
+    for(auto &p : points)
+    {
+        AirLine temp = getRadarScanExpression(p);
+        calcRealSurvey(temp);
+    }
+    m_surverArea.surveyedPercent = m_surverArea.hasSurveyedEle / m_surverArea.totalValidEle;
+    return m_surverArea.surveyedPercent;
+}
+
+AirArea::AirLine AirArea::getRadarScanExpression(BspConfig::Gps_Info &pos)
+{
+    AirLine airway;
+
+    return airway;
+}
+
+void AirArea::calcRealSurvey(AirLine &line)
+{
+    int _row = m_surverArea.points.size();
+    int _col = m_surverArea.points[0].size();
+
+    for(int row = 0; row < _row; row++)
+    {
+        for(int col = 0; col < _col; col++)
+        {
+            if(m_surverArea.points[row][col].marker > 0)
+            {
+                double distance = point2seg_distance(m_surverArea.points[row][col].pos, line.line);
+                if(distance <= COVERAGE_THRESHOLD)
+                {
+                    m_surverArea.points[row][col].surveyed++;
+                }
+            }
+        }
+    }
+
+    for(int row = 0; row < _row; row++)
+    {
+        for(int col = 0; col < _col; col++)
+        {
+            if(m_surverArea.points[row][col].surveyed > 0)
+            {
+                m_surverArea.hasSurveyedEle++;
+            }
+        }
+    }
+}
+
+QVector<BspConfig::Gps_Info> AirArea::interpolateScanLine(BspConfig::Gps_Info &prev, BspConfig::Gps_Info &cur)
+{
+    QVector<BspConfig::Gps_Info> track;
+
+    if(prev.week == 0)
+        track.append(cur);
+    else
+    {
+        // speed *1000/3600 * 0.2
+        double distance = m_currentSpeed / 19;
+        int    num      = distance / COVERAGE_THRESHOLD;
+
+        double longitude_step = (cur.longitude - prev.longitude) / num;
+        double latitude_step  = (cur.latitude - prev.latitude) / num;
+        double height_step    = (cur.height - prev.height) / num;
+        double azimuth_step   = (cur.heading - prev.heading) / num;
+        double pitch_step     = (cur.pitch - prev.pitch) / num;
+        double roll_step      = (cur.roll - prev.roll) / num;
+
+        BspConfig::Gps_Info temp;
+        for(int i = 0; i < num; i++)
+        {
+            temp.longitude = prev.longitude + longitude_step * (i + 1);
+            temp.latitude  = prev.latitude + latitude_step * (i + 1);
+            temp.height    = prev.height + height_step * (i + 1);
+            temp.heading   = prev.heading + azimuth_step * (i + 1);
+            temp.pitch     = prev.pitch + pitch_step * (i + 1);
+            temp.roll      = prev.roll + roll_step * (i + 1);
+            track.append(temp);
+        }
+    }
+    return track;
+}
+
 void AirArea::initSurveyPoints(int interval)
 {
     m_surverArea.totalValidEle = 0;
@@ -191,7 +293,7 @@ void AirArea::initSurveyPoints(int interval)
         {
             SurveyPoint p;
             p.pos      = m_surverArea.rect.topLeft() + QPointF(j * step, i * step);
-            p.valid    = 0;
+            p.marker   = 0;
             p.surveyed = false;
             line.append(p);
         }
@@ -237,9 +339,21 @@ void AirArea::setSurverPoints()
                 {
                     double distance = point2seg_distance(m_surverArea.points[row][col].pos, line.line);
                     if(distance < COVERAGE_THRESHOLD)
-                        m_surverArea.points[row][col].valid++;
+                        m_surverArea.points[row][col].marker++;
                 }
             }
+        }
+    }
+    // 3. 计算有多少有效的测区
+    int __row = m_surverArea.points.size();
+    int __col = m_surverArea.points[0].size();
+
+    for(int row = 0; row < __row; row++)
+    {
+        for(int col = 0; col < __col; col++)
+        {
+            if(m_surverArea.points[row][col].marker > 0)
+                m_surverArea.totalValidEle++;
         }
     }
 #endif
@@ -256,7 +370,7 @@ void AirArea::printSurverPoints()
     {
         for(int n = 0; n < col; n++)
         {
-            if(m_surverArea.points[m][n].valid > 0)
+            if(m_surverArea.points[m][n].marker > 0)
             {
                 std::cout << '*';
             }
@@ -267,6 +381,10 @@ void AirArea::printSurverPoints()
     }
     std::cout << '\n';
     std::fflush(stdout);
+
+    qDebug() << "Surver Matrix: row = " << row
+             << "col = " << col
+             << "\nm_surverArea.totalValidEle = " << m_surverArea.totalValidEle;
 }
 
 double AirArea::point2line_distance(QPointF point, QLineF &line)
