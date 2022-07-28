@@ -1,4 +1,5 @@
 #include "AirArea.h"
+#include <qthread.h>
 #include <algorithm>
 #include <iterator>
 #include <tuple>
@@ -90,7 +91,7 @@ void AirArea::setCurrentPos(BspConfig::Gps_Info pos)
     // 覆盖率相关计算
     isPosInDesigned(COVERAGE_THRESHOLD);
     _getCoveragePercent();
-    _getCoveragePercent();
+    __getCoveragePercent();
 
     // 当前所在航线计算
     _getPosOnWhichLine();
@@ -280,7 +281,6 @@ void AirArea::initSurveyPoints(int interval)
 {
     m_surverArea.totalValidEle = 0;
     m_surverArea.points.clear();
-    //    m_surverArea.airLine.clear();
 
     double step   = interval * METER2LNG_LAT;
     int    x_step = m_surverArea.rect.size().width() / step;
@@ -346,16 +346,16 @@ void AirArea::setSurverPoints()
     }
     // 3. 计算有多少有效的测区
     int __row = m_surverArea.points.size();
-    int __col = m_surverArea.points[0].size();
+    // int __col = m_surverArea.points[0].size();
 
-    for(int row = 0; row < __row; row++)
-    {
-        for(int col = 0; col < __col; col++)
-        {
-            if(m_surverArea.points[row][col].marker > 0)
-                m_surverArea.totalValidEle++;
-        }
-    }
+    // for(int row = 0; row < __row; row++)
+    // {
+    // for(int col = 0; col < __col; col++)
+    // {
+    // if(m_surverArea.points[row][col].marker > 0)
+    // m_surverArea.totalValidEle++;
+    // }
+    // }
 #endif
     return;
 }

@@ -1,0 +1,18 @@
+cmake_minimum_required(VERSION 3.10)
+set(projectName benchmark)
+project(${projectName})
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+include_directories(${CMAKE_SOURCE_DIR}/src/common
+                    ${CMAKE_SOURCE_DIR}/src/navigation)
+
+find_package(benchmark REQUIRED)
+
+find_package(
+  Qt5
+  COMPONENTS Core
+  REQUIRED)
+
+add_executable(${projectName} benchmark.cpp
+                              ${CMAKE_SOURCE_DIR}/src/navigation/AirArea.cpp)
+target_link_libraries(${projectName} Qt5::Core benchmark::benchmark)

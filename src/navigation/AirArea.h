@@ -77,6 +77,11 @@ public:
         //        m_surverArea.airLine.clear();
     };
 
+    AirArea(BspConfig::Gps_Info prevPos, BspConfig::Gps_Info currentPos):
+        m_prevPos(prevPos),
+        m_currentPos(currentPos)
+    {}
+
     /**
      * @brief gps_distance
      * @param lng1
@@ -118,19 +123,10 @@ public:
      */
     int parseFile(void);
 
-    void setCurrentPos(BspConfig::Gps_Info pos)
+    void setCurrentPos(BspConfig::Gps_Info pos);
+    void setCoverageThreshold(double threshold)
     {
-        m_currentPos = pos;
-
-        // 计算速度
-        _getCurrentSpeed(pos);
-        // 覆盖率相关计算
-        isPosInDesigned(COVERAGE_THRESHOLD);
-        _getCoveragePercent();
-
-        // 当前所在航线计算
-        _getPosOnWhichLine();
-        m_prevPos = pos;
+        COVERAGE_THRESHOLD = threshold;
     }
 
     /**
