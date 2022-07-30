@@ -193,7 +193,7 @@ double AirArea::_getCoveragePercent()
 
 double AirArea::__getCoveragePercent()
 {
-    QVector<BspConfig::Gps_Info> points = interpolateScanLine(m_prevPos, m_currentPos);
+    QVector<BspConfig::Gps_Info> points = interpolateScanPoint(m_prevPos, m_currentPos);
 
     for(auto &p : points)
     {
@@ -243,7 +243,7 @@ void AirArea::calcRealSurvey(AirLine &line)
     }
 }
 
-QVector<BspConfig::Gps_Info> AirArea::interpolateScanLine(BspConfig::Gps_Info &prev, BspConfig::Gps_Info &cur)
+QVector<BspConfig::Gps_Info> AirArea::interpolateScanPoint(BspConfig::Gps_Info &prev, BspConfig::Gps_Info &cur)
 {
     QVector<BspConfig::Gps_Info> track;
 

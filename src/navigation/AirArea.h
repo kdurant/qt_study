@@ -197,7 +197,7 @@ public:
      * @param cur
      * @return
      */
-    QVector<BspConfig::Gps_Info> interpolateScanLine(BspConfig::Gps_Info& prev, BspConfig::Gps_Info& cur);
+    QVector<BspConfig::Gps_Info> interpolateScanPoint(BspConfig::Gps_Info& prev, BspConfig::Gps_Info& cur);
 
     /**
      * @brief 当前加载的航迹文件有几条航线
