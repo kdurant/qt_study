@@ -346,16 +346,16 @@ void AirArea::setSurverPoints()
     }
     // 3. 计算有多少有效的测区
     int __row = m_surverArea.points.size();
-    // int __col = m_surverArea.points[0].size();
+    int __col = m_surverArea.points[0].size();
 
-    // for(int row = 0; row < __row; row++)
-    // {
-    // for(int col = 0; col < __col; col++)
-    // {
-    // if(m_surverArea.points[row][col].marker > 0)
-    // m_surverArea.totalValidEle++;
-    // }
-    // }
+    for(int row = 0; row < __row; row++)
+    {
+        for(int col = 0; col < __col; col++)
+        {
+            if(m_surverArea.points[row][col].marker > 0)
+                m_surverArea.totalValidEle++;
+        }
+    }
 #endif
     return;
 }

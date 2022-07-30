@@ -134,6 +134,7 @@ void MapView::loadRealTimePoint(QPointF point)
         return;
 
     QPointF pos = gps2pos(point.x(), point.y(), m_tileMapInfo.current_zoom);
+    centerOn(pos);
     scene->addEllipse(pos.x(), pos.y(), 3, 3, pen, brush);
 }
 
