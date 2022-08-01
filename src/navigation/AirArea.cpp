@@ -206,9 +206,10 @@ double AirArea::__getCoveragePercent()
 
 AirArea::AirLine AirArea::getRadarScanExpression(BspConfig::Gps_Info &pos)
 {
-    AirLine airway;
+    // AirLine airway;
 
-    return airway;
+    // return airway;
+    return m_surverArea.airLine[0];
 }
 
 void AirArea::calcRealSurvey(AirLine &line)
@@ -252,6 +253,9 @@ QVector<BspConfig::Gps_Info> AirArea::interpolateScanPoint(BspConfig::Gps_Info &
     else
     {
         // speed *1000/3600 * 0.2
+        // 飞机速度200km/h时， 200ms飞行的距离为：11.11m
+        // 飞机速度300km/h时， 200ms飞行的距离为：16.67m
+
         double distance = m_currentSpeed / 19;
         int    num      = distance / COVERAGE_THRESHOLD;
 

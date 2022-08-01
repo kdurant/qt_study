@@ -33,7 +33,8 @@ static void SetSurveyPoints(benchmark::State& state)
 BENCHMARK(InitSurveyPoints)
     ->Unit(benchmark::kMillisecond)
     ->Setup(CoverageDoSetup)
-    ->Arg(1)
+    // ->Arg(1)
+    ->Arg(5)
     ->Arg(10)
     ->Arg(20);
 
@@ -41,6 +42,7 @@ BENCHMARK(SetSurveyPoints)
     ->Unit(benchmark::kMillisecond)
     ->Setup(CoverageDoSetup)
     ->Arg(1)
+    ->Arg(5)
     ->Arg(10)
     ->Arg(20);
 
@@ -52,22 +54,28 @@ static void PercentDoSetup(const benchmark::State& state)
 {
     m_surveyArea.setFile(path);
     m_surveyArea.parseFile();
-}
 
-static void GetCoveragePercent(benchmark::State& state)
-{
     double threshold = state.range(0);
     m_surveyArea.setCoverageThreshold(threshold);
     m_surveyArea.initSurveyPoints(threshold);
     m_surveyArea.setSurverPoints();
+    m_surveyArea._getCurrentSpeed(currentPos);
+}
+
+static void GetCoveragePercent(benchmark::State& state)
+{
     for(auto _ : state)
     {
         m_surveyArea.__getCoveragePercent();
     }
 }
 
-// BENCHMARK(GetCoveragePercent)
-// ->Unit(benchmark::kMillisecond)
-// ->Setup(PercentDoSetup);
+BENCHMARK(GetCoveragePercent)
+    ->Unit(benchmark::kMillisecond)
+    ->Setup(PercentDoSetup)
+    ->Arg(1)
+    ->Arg(5)
+    ->Arg(10);
+// ->Arg(20);
 
 BENCHMARK_MAIN();
