@@ -11,26 +11,26 @@ static void CoverageDoSetup(const benchmark::State& state)
     m_designedAirArea.parseFile();
 }
 
-static void InitSurveyPoints(benchmark::State& state)
+static void InitSurveyArea(benchmark::State& state)
 {
     double threshold = state.range(0);
     for(auto _ : state)
     {
         m_designedAirArea.setCoverageThreshold(threshold);
-        m_designedAirArea.initSurveyPoints(threshold);
+        m_designedAirArea.initSurveyArea(threshold);
     }
 }
-static void SetSurveyPoints(benchmark::State& state)
+static void SetSurveyArea(benchmark::State& state)
 {
     double threshold = state.range(0);
     for(auto _ : state)
     {
         m_designedAirArea.setCoverageThreshold(threshold);
-        m_designedAirArea.initSurveyPoints(threshold);
-        m_designedAirArea.setSurverPoints();
+        m_designedAirArea.initSurveyArea(threshold);
+        m_designedAirArea.setSurverArea();
     }
 }
-BENCHMARK(InitSurveyPoints)
+BENCHMARK(InitSurveyArea)
     ->Unit(benchmark::kMillisecond)
     ->Setup(CoverageDoSetup)
     // ->Arg(1)
@@ -38,7 +38,7 @@ BENCHMARK(InitSurveyPoints)
     ->Arg(10)
     ->Arg(20);
 
-BENCHMARK(SetSurveyPoints)
+BENCHMARK(SetSurveyArea)
     ->Unit(benchmark::kMillisecond)
     ->Setup(CoverageDoSetup)
     ->Arg(1)
@@ -57,8 +57,8 @@ static void PercentDoSetup(const benchmark::State& state)
 
     double threshold = state.range(0);
     m_surveyArea.setCoverageThreshold(threshold);
-    m_surveyArea.initSurveyPoints(threshold);
-    m_surveyArea.setSurverPoints();
+    m_surveyArea.initSurveyArea(threshold);
+    m_surveyArea.setSurverArea();
     m_surveyArea._getCurrentSpeed(currentPos);
 }
 

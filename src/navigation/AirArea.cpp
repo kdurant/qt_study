@@ -257,7 +257,12 @@ QVector<BspConfig::Gps_Info> AirArea::interpolateScanPoint(BspConfig::Gps_Info &
         // 飞机速度300km/h时， 200ms飞行的距离为：16.67m
 
         double distance = m_currentSpeed / 19;
-        int    num      = distance / COVERAGE_THRESHOLD;
+        if(distance < COVERAGE_THRESHOLD)
+        {
+            track.append(cur);
+            return track;
+        }
+        int num = distance / COVERAGE_THRESHOLD;
 
         double longitude_step = (cur.longitude - prev.longitude) / num;
         double latitude_step  = (cur.latitude - prev.latitude) / num;
@@ -281,7 +286,7 @@ QVector<BspConfig::Gps_Info> AirArea::interpolateScanPoint(BspConfig::Gps_Info &
     return track;
 }
 
-void AirArea::initSurveyPoints(int interval)
+void AirArea::initSurveyArea(int interval)
 {
     m_surverArea.totalValidEle = 0;
     m_surverArea.points.clear();
@@ -306,7 +311,7 @@ void AirArea::initSurveyPoints(int interval)
     }
 }
 
-void AirArea::setSurverPoints()
+void AirArea::setSurverArea()
 {
 #if 0
     int row = m_surverArea.points.size();
@@ -364,7 +369,7 @@ void AirArea::setSurverPoints()
     return;
 }
 
-void AirArea::printSurverPoints()
+void AirArea::printSurverArea()
 {
     int row = m_surverArea.points.size();
     int col = m_surverArea.points[0].size();

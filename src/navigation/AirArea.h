@@ -240,7 +240,7 @@ public:
      * 矩阵初始化后的点，还是经维度坐标
      * @param interval unit:m, 内部会将m转换为经纬度值,  应该和COVERAGE_THRESHOLD保持一致
      */
-    void initSurveyPoints(int interval);
+    void initSurveyArea(int interval);
     /**
      * @brief 根据航迹，初始化矩阵的内容
      * 要对已有航线进行拟合扩展，使用拟合后的航线集对矩阵元素进行标记
@@ -249,8 +249,8 @@ public:
      * 新的轨迹方程 s1 = kx + b + m/(cos(atan(k))
      * 新轨迹方程的起点：P2.x = P1.x + m*sin(atan(k)); P2.y = P1.y - m*cos(atan(k))
      */
-    void setSurverPoints(void);
-    void printSurverPoints(void);
+    void setSurverArea(void);
+    void printSurverArea(void);
 
     /**
      * @brief 点到直线的垂直距离
@@ -321,3 +321,4 @@ private:
     QVector<QPointF> m_splited_area;    // 区域内航迹分割的点， 用于覆盖率计算
 };
 #endif
+
