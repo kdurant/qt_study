@@ -161,7 +161,7 @@ void MapView::mousePressEvent(QMouseEvent *event)
 
 void MapView::wheelEvent(QWheelEvent *event)
 {
-    double scaleFactor = pow(2., -event->angleDelta().y() / 240.0);
+    double scaleFactor = pow(2., event->angleDelta().y() / 240.0);
 
     qreal factor = transform().scale(scaleFactor, scaleFactor).mapRect(QRectF(0, 0, 1, 1)).width();
     if(factor < 0.07 || factor > 100)

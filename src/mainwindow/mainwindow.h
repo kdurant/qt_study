@@ -217,7 +217,8 @@ private:
     QMutex     mutex;
 
     NoteInfo   *note;
-    Navigation *nav;
+    Navigation *engineerView;
+    Navigation *pilotView;
 
     qint64           testCnt{0};
     QVector<QString> testString;

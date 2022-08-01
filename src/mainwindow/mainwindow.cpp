@@ -40,8 +40,11 @@ MainWindow::MainWindow(QWidget *parent) :
     gps      = new GpsInfo();
     attitude = new AttitudeSensor;
 
-    note = new NoteInfo;
-    nav  = new Navigation;
+    note         = new NoteInfo;
+    engineerView = new Navigation;
+    pilotView    = new Navigation;
+    engineerView->setWindowTitle("Engineer View");
+    pilotView->setWindowTitle("Pilot View");
 
     sysStatus.ssdLinkStatus   = false;
     sysStatus.udpLinkStatus   = false;
@@ -1564,7 +1567,8 @@ void MainWindow::initSignalSlot()
     connect(dispatch, &ProtocolDispatch::gpsFrameReady, gps, &GpsInfo::parserGpsData);
     connect(gps, &GpsInfo::gpsDataReady, this, [this](BspConfig::Gps_Info &data)
             {
-        nav->updateGpsInfo(data);
+        engineerView->updateGpsInfo(data);
+        pilotView->updateGpsInfo(data);
 
         QList<QTreeWidgetItem *> itemList;
 
@@ -1723,7 +1727,8 @@ void MainWindow::setToolBar()
     });
     connect(act[5], &QAction::triggered, this, [this]()
             {
-        nav->show();
+        engineerView->show();
+        pilotView->show();
     });
 }
 
