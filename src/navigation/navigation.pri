@@ -1,6 +1,7 @@
 INCLUDEPATH += $$PWD
 
 HEADERS += \
+           $$PWD/CoordCompute.h \
            $$PWD/AirArea.h \
            $$PWD/navigation.h \
            $$PWD/LineWithArrow.h \
@@ -8,6 +9,7 @@ HEADERS += \
 
 
 SOURCES += \
+           $$PWD/CoordCompute.cpp \
            $$PWD/AirArea.cpp \
            $$PWD/navigation.cpp \
            $$PWD/LineWithArrow.cpp \

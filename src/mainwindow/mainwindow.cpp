@@ -1568,7 +1568,7 @@ void MainWindow::initSignalSlot()
     connect(gps, &GpsInfo::gpsDataReady, this, [this](BspConfig::Gps_Info &data)
             {
         engineerView->updateGpsInfo(data);
-        pilotView->updateGpsInfo(data);
+        // pilotView->updateGpsInfo(data);
 
         QList<QTreeWidgetItem *> itemList;
 
@@ -1728,7 +1728,7 @@ void MainWindow::setToolBar()
     connect(act[5], &QAction::triggered, this, [this]()
             {
         engineerView->show();
-        pilotView->show();
+        // pilotView->show();
     });
 }
 

@@ -1,4 +1,6 @@
 #include "AirArea.h"
+#include "CoordCompute.h"
+
 #include <qthread.h>
 #include <algorithm>
 #include <iterator>
@@ -206,10 +208,16 @@ double AirArea::__getCoveragePercent()
 
 AirArea::AirLine AirArea::getRadarScanExpression(BspConfig::Gps_Info &pos)
 {
-    // AirLine airway;
+    AirLine      scanLine;
+    CoordCompute coord;
 
-    // return airway;
-    return m_surverArea.airLine[0];
+    auto [longitude1, latitude1, longitude2, latitude2] =
+        coord.getLaserLineEndPoints(15, pos.longitude, pos.latitude, pos.height, pos.roll, pos.pitch, pos.heading);
+    scanLine.line.setP1(QPointF(longitude1, latitude1));
+    scanLine.line.setP2(QPointF(longitude2, latitude2));
+    scanLine.height = pos.height;
+
+    return scanLine;
 }
 
 void AirArea::calcRealSurvey(AirLine &line)
