@@ -159,7 +159,7 @@ with open(args.file, 'rb') as f:
         target = get_field_bytes(chuck, head, 'latitude')
         gps_latitude_new = int.from_bytes(target, byteorder='big')
         if gps_latitude_new != gps_latitude_old:
-
+            gps_log.write(str(int.from_bytes(get_field_bytes(chuck, head, 'gps_second'), byteorder='big')) + ',')
             gps_log.write(str(int.from_bytes(get_field_bytes(chuck, head, 'gps_sub_time'), byteorder='big')) + ',')
 
             gps_log.write(str(gps_latitude_new) + ',')

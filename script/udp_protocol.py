@@ -60,7 +60,10 @@ class NovatelFrame():
         format_bytes = bytearray.fromhex(format_string.lstrip('0x').rstrip('L'))
         return format_bytes
 
-    def set_second(self, second):
+    def set_gps_second(self, second):
+        self.second = second
+
+    def set_gps_sub_time(self, second):
         second = (second * 100) / 1e9
         self.second = self.double_to_hex(second)
 

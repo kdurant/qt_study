@@ -55,19 +55,36 @@ for i in range(y_step):
         points_x.append(x)
         points_y.append(y)
         if i % 4 == 0 and j % 4 == 0:
-            plt.text(x, y, str(j) + ',' + str(i), fontsize=8)
+            #  plt.text(x, y, str(j) + ',' + str(i), fontsize=8)
+            pass
             #  if i == 18 and j == 4:
             #  print(x, y)
 
-plt.scatter(x, y, c='r', marker='o')
-plt.scatter(points_x, points_y, c='b')
+#  plt.scatter(x, y, c='r', marker='o')
+#  plt.scatter(points_x, points_y, c='b')
 plt.plot(line1_x, line1_y, c='r')
-#  plt.plot(line2_x, line2_y, c='r')
-#  plt.plot(line3_x, line3_y, c='r')
-#  plt.plot(line4_x, line4_y, c='r')
-#  plt.plot(line5_x, line5_y, c='r')
-#  plt.plot(line6_x, line6_y, c='r')
-#  plt.plot(line7_x, line7_y, c='r')
-#  plt.plot(line8_x, line8_y, c='r')
+plt.plot(line2_x, line2_y, c='r')
+plt.plot(line3_x, line3_y, c='r')
+plt.plot(line4_x, line4_y, c='r')
+plt.plot(line5_x, line5_y, c='r')
+plt.plot(line6_x, line6_y, c='r')
+plt.plot(line7_x, line7_y, c='r')
+plt.plot(line8_x, line8_y, c='r')
+
+origin_x = 109.44099563543718
+origin_y = 19.556514394679166
+
+endpoints_x = [109.44149163058223, 109.44087210163222]
+endpoints_y = [19.55586709270411, 19.557417422760206]
+
+#  endpoints_x = [109.44149178040347, 109.44087227736468]
+#  endpoints_y = [19.555867146190508, 19.557417485519544]
+
+plt.scatter(origin_x, origin_y, c='g', marker='o')
+plt.plot(endpoints_x, endpoints_y, c='y', marker='o')
+
+plt.xlim((109.44, 109.45))
+plt.ylim((19.552, 19.562))
+
 plt.grid(True)
 plt.show()

@@ -77,10 +77,11 @@ public:
         //        m_surverArea.airLine.clear();
     };
 
-    AirArea(BspConfig::Gps_Info prevPos, BspConfig::Gps_Info currentPos):
+    AirArea(BspConfig::Gps_Info prevPos, BspConfig::Gps_Info currentPos) :
         m_prevPos(prevPos),
         m_currentPos(currentPos)
-    {}
+    {
+    }
 
     /**
      * @brief gps_distance
@@ -175,7 +176,7 @@ public:
     double __getCoveragePercent();
     double getCoveragePercent()
     {
-        return m_coveragePercent;
+        return m_surverArea.surveyedPercent;
     }
 
     /**
@@ -321,4 +322,3 @@ private:
     QVector<QPointF> m_splited_area;    // 区域内航迹分割的点， 用于覆盖率计算
 };
 #endif
-

@@ -92,7 +92,7 @@ void AirArea::setCurrentPos(BspConfig::Gps_Info pos)
     _getCurrentSpeed(pos);
     // 覆盖率相关计算
     isPosInDesigned(COVERAGE_THRESHOLD);
-    _getCoveragePercent();
+    //    _getCoveragePercent();
     __getCoveragePercent();
 
     // 当前所在航线计算
@@ -202,7 +202,7 @@ double AirArea::__getCoveragePercent()
         AirLine temp = getRadarScanExpression(p);
         calcRealSurvey(temp);
     }
-    m_surverArea.surveyedPercent = m_surverArea.hasSurveyedEle / m_surverArea.totalValidEle;
+    m_surverArea.surveyedPercent = (double)m_surverArea.hasSurveyedEle / m_surverArea.totalValidEle;
     return m_surverArea.surveyedPercent;
 }
 
@@ -223,6 +223,8 @@ AirArea::AirLine AirArea::getRadarScanExpression(BspConfig::Gps_Info &pos)
 void AirArea::calcRealSurvey(AirLine &line)
 {
     int _row = m_surverArea.points.size();
+    if(_row == 0)
+        return;
     int _col = m_surverArea.points[0].size();
 
     for(int row = 0; row < _row; row++)
@@ -240,6 +242,7 @@ void AirArea::calcRealSurvey(AirLine &line)
         }
     }
 
+    m_surverArea.hasSurveyedEle = 0;
     for(int row = 0; row < _row; row++)
     {
         for(int col = 0; col < _col; col++)
@@ -296,7 +299,8 @@ QVector<BspConfig::Gps_Info> AirArea::interpolateScanPoint(BspConfig::Gps_Info &
 
 void AirArea::initSurveyArea(int interval)
 {
-    m_surverArea.totalValidEle = 0;
+    m_surverArea.totalValidEle  = 0;
+    m_surverArea.hasSurveyedEle = 0;
     m_surverArea.points.clear();
 
     double step   = interval * METER2LNG_LAT;

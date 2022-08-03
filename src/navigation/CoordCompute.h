@@ -9,26 +9,37 @@ public:
                           double longitude, double latitude, double height,
                           double roll, double pitch, double heading)
     {
+        double BLH[3]   = {latitude, longitude, height};
+        double Txyz1[3] = {0};
+
         GetLaserLineCoord(laserCoord, height, scan_angle);
 
         ComputeLaserToIMUCoord(&laserCoord[0], 0, 0, 0, 0, 0, 0);
-        ComputeIMUToLocalCoord(&laserCoord[0], roll, pitch, heading);
-        BLH2XYZ(&laserCoord[0], xyz);
+        // roll 和 pitch 交换是由于飞机安装的原因
+        ComputeIMUToLocalCoord(&laserCoord[0], pitch, -roll, heading + 90);
+        BLH2XYZ(BLH, xyz);
         ComputeLocalToWGS84Coord(&laserCoord[0], latitude, longitude, height, xyz[0], xyz[1], xyz[2]);
-        XYZBLH(xyz, &laserCoord[0]);
+        XYZBLH(&laserCoord[0], Txyz1);
+        endpoints[0] = Txyz1[0] * 180 / 3.141592653;
+        endpoints[1] = Txyz1[1] * 180 / 3.141592653;
+        endpoints[2] = Txyz1[2];
 
         ComputeLaserToIMUCoord(&laserCoord[3], 0, 0, 0, 0, 0, 0);
-        ComputeIMUToLocalCoord(&laserCoord[3], roll, pitch, heading);
-        BLH2XYZ(&laserCoord[3], xyz);
+        ComputeIMUToLocalCoord(&laserCoord[3], pitch, -roll, heading + 90);
+        BLH2XYZ(BLH, xyz);
         ComputeLocalToWGS84Coord(&laserCoord[3], latitude, longitude, height, xyz[0], xyz[1], xyz[2]);
-        XYZBLH(xyz, &laserCoord[3]);
+        XYZBLH(&laserCoord[3], Txyz1);
+        endpoints[3] = Txyz1[0] * 180 / 3.141592653;
+        endpoints[4] = Txyz1[1] * 180 / 3.141592653;
+        endpoints[5] = Txyz1[2];
 
-        return {laserCoord[0], laserCoord[1], laserCoord[4], laserCoord[5]};
+        return {endpoints[1], endpoints[0], endpoints[4], endpoints[3]};
     }
 
 private:
     double laserCoord[6] = {0};
     double xyz[3]        = {0};
+    double endpoints[6];
 
     double angleToARC(double angle)
     {

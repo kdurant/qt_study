@@ -40,13 +40,15 @@ with open(args.file, 'r') as gps_data:
     """
     line = gps_data.readline()
     while line:
-        if (num > 2610 and num < 2800) or (num > 6070 and num < 6240):
+        #  if (num > 2620 and num < 2800) or (num > 6070 and num < 6240):
+        if num >= 2640 and num < 2641:
             #  if num >= 0:
             line = line[:-1]
 
             # 维度      经度
-            gps_sub_time, latitude, longitude, height, azimuth, pitch, roll = line.split(',')
+            gps_second, gps_sub_time, latitude, longitude, height, azimuth, pitch, roll = line.split(',')
 
+            gps_second = int(gps_second)
             gps_sub_time = int(gps_sub_time)
             latitude = int(latitude)
             longitude = int(longitude)
@@ -57,7 +59,8 @@ with open(args.file, 'r') as gps_data:
 
             print("num: {:6d}/17806".format(num))
 
-            gps_frame.set_second(gps_sub_time)
+            gps_frame.set_gps_second(gps_second.to_bytes(8, byteorder='little'))
+            # gps_frame.set_gps_sub_time(gps_sub_time)
             gps_frame.set_latitude(latitude.to_bytes(8, byteorder='little'))
             gps_frame.set_longitude(longitude.to_bytes(8, byteorder='little'))
             gps_frame.set_height(height.to_bytes(8, byteorder='little'))

@@ -3,11 +3,11 @@
 
 void CoordCompute::GetLaserLineCoord(double* points, double height, double angle)
 {
-    points[0] = atan(angle) * height;
+    points[0] = atan(angle * 3.141592653 / 180) * height;
     points[1] = 0;
     points[2] = -height;
 
-    points[3] = -atan(angle) * height;
+    points[3] = -atan(angle * 3.141592653 / 180) * height;
     points[4] = 0;
     points[5] = -height;
 }
