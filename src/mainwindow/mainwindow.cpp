@@ -374,6 +374,12 @@ void MainWindow::uiConfig()
         ui->comboBox_laserFreq->addItem("5000");
         ui->comboBox_laserFreq->addItem("10000");
 
+        QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
+        QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
+        ui->comboBox_DAChSelect->addItems(DA1List);
+        ui->comboBox_DAChSelect->setCurrentIndex(0);
+        ui->comboBox_ADChSelect->addItems(AD1List);
+
         ui->groupBox_tempVolt->show();
         ui->tabWidget->setTabEnabled(5, true);
         //        ui->label
