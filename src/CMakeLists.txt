@@ -15,7 +15,7 @@ endif()
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 
-add_definitions(-DSOFT_VERSION="0.125")
+add_definitions(-DSOFT_VERSION="0.126")
 
 execute_process(
   COMMAND git log -1 --format=%h

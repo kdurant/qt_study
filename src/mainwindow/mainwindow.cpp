@@ -374,6 +374,10 @@ void MainWindow::uiConfig()
         ui->comboBox_laserFreq->addItem("5000");
         ui->comboBox_laserFreq->addItem("10000");
 
+        ui->label_laserPower->show();
+        ui->comboBox_laserPower->show();
+        ui->btn_laserSetCurrent->setText("设置功率");
+
         QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
         QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
         ui->comboBox_DAChSelect->addItems(DA1List);
@@ -1067,6 +1071,10 @@ void MainWindow::initSignalSlot()
                 laser2Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 status = laser2Driver->open();
                 break;
+            case BspConfig::RADAR_TPYE_OCEAN:
+                laser1Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
+                status = laser1Driver->open();
+                break;
             case BspConfig::RADAR_TPYE_DRONE:
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
@@ -1097,6 +1105,9 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TPYE_LAND:
                 status = laser2Driver->close();
                 break;
+            case BspConfig::RADAR_TPYE_OCEAN:
+                status = laser1Driver->close();
+                break;
             case BspConfig::RADAR_TPYE_DRONE:
             case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
@@ -1115,37 +1126,37 @@ void MainWindow::initSignalSlot()
     connect(ui->btn_laserReset, &QPushButton::pressed, this, [this]()
             {
         bool status = false;
-        status      = laserDriver->reset();
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TPYE_LAND:
+                break;
+            case BspConfig::RADAR_TPYE_OCEAN:
+                QMessageBox::information(this, "警告", "未实现此功能");
+                break;
+            case BspConfig::RADAR_TPYE_DRONE:
+            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
+                break;
+            case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
+                break;
+            default:
+                status = laserDriver->reset();
+                break;
+        }
         if(!status)
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
 
     connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]()
             {
-#ifdef TEST_NAV
-        BspConfig::Gps_Info gps;
-        gps.longitude = 109.73866306;
-        gps.latitude  = 18.3495774;
-
-        qDebug() << "-------------" << gps_test_pos.size();
-        if(!gps_test_pos.isEmpty())
-        {
-            QPointF p     = gps_test_pos.dequeue();
-            gps.longitude = p.x();
-            gps.latitude  = p.y();
-
-            qDebug() << QString("%1, %2").arg(gps.longitude, 0, 'g', 10).arg(gps.latitude, 0, 'g', 10);
-        }
-
-        nav->updateGpsInfo(gps);
-        return;
-#endif
-
         bool status = false;
         switch(radarType)
         {
             case BspConfig::RADAR_TPYE_LAND:
                 status = laser2Driver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
+                break;
+            case BspConfig::RADAR_TPYE_OCEAN:
+                // status = laser1Driver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
                 break;
             case BspConfig::RADAR_TPYE_DRONE:
                 // 上位机界面单位mA， 设置1000mA(0x3e8), 设置下去的值：100, 单位是0.01A，结果还是1000mA
@@ -1230,6 +1241,11 @@ void MainWindow::initSignalSlot()
                 itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
                 //                itemList.first()->setText(1, laser2Driver->getTemp());
                 break;
+            case BspConfig::RADAR_TPYE_OCEAN:
+                while(laser1Driver->getStatus() != true)
+                    ;
+                break;
+
             case BspConfig::RADAR_TPYE_DRONE:
                 while(laserDriver->getStatus() != true)
                     ;
