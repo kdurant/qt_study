@@ -82,6 +82,7 @@ void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
         if(offset == frameData.size())  // 数据分析结束
         {
             status = 0;
+            break;
         }
 
         /*
