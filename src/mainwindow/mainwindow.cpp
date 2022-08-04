@@ -227,6 +227,7 @@ void MainWindow::saveParameter()
 
 void MainWindow::uiConfig()
 {
+    ui->groupBox_tempVolt->hide();
     ui->treeWidget_attitude->expandAll();
     ui->treeWidget_attitude->resizeColumnToContents(0);
     QList<QTreeWidgetItem *> itemList;
@@ -253,7 +254,6 @@ void MainWindow::uiConfig()
     ui->lineEdit_compressLen->setValidator(decValidator);
     ui->lineEdit_compressRatio->setValidator(decValidator);
     ui->lineEdit_ssdSearchStartUnit->setValidator(hexValidator);
-    ui->lineEdit_cameraDlyTime->setValidator(decValidator);
     ui->lineEdit_pmtDelayTime->setValidator(decValidator);
     ui->lineEdit_pmtGateTime->setValidator(decValidator);
 
@@ -373,6 +373,9 @@ void MainWindow::uiConfig()
         ui->doubleSpinBox_laserGreenCurrent->hide();
         ui->comboBox_laserFreq->addItem("5000");
         ui->comboBox_laserFreq->addItem("10000");
+
+        ui->groupBox_tempVolt->show();
+        ui->tabWidget->setTabEnabled(5, true);
         //        ui->label
     }
     else if(radarType == BspConfig::RADAR_TPYE_LAND)
@@ -1561,6 +1564,14 @@ void MainWindow::initSignalSlot()
         QMessageBox::warning(this, "warning", "还未实现此功能");
     });
 
+    connect(ui->btn_setTempVolt, &QPushButton::pressed, this, [this]()
+            {
+        QByteArray frame = BspConfig::int2ba(ui->spinBox_temp_volt_x1->value());
+        dispatch->encode(MasterSet::TEMP_VOLT_X1, 4, frame);
+        frame = BspConfig::int2ba(ui->spinBox_temp_volt_x2->value());
+        dispatch->encode(MasterSet::TEMP_VOLT_X2, 4, frame);
+    });
+
     /*
      * gps信息处理
      */
@@ -1586,7 +1597,7 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_cameraEnable, &QPushButton::pressed, this, [this]()
             {
-        uint32_t   second = ui->lineEdit_cameraDlyTime->text().toUInt(nullptr, 10);
+        uint32_t   second = ui->spinBox_cameraPeriod->value();
         QByteArray frame  = BspConfig::int2ba(second);
         dispatch->encode(MasterSet::CAMERA_FREQ_SET, 4, frame);
         frame = BspConfig::int2ba(0x01);

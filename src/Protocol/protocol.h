@@ -83,6 +83,9 @@ public:
         CAMERA_FREQ_SET = 0x0000000D,  // 无人机雷达中当作延迟时间来用
         CAMERA_ENABLE   = 0x0000000E,
         TRG_MODE        = 0x00700001,
+
+        TEMP_VOLT_X1 = 0x00400001,
+        TEMP_VOLT_X2 = 0x00400002,
     };
 
     enum _trg_mode
