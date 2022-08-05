@@ -73,22 +73,6 @@ MainWindow::MainWindow(QWidget *parent) :
     devInfo->getSysPara(sysParaInfo);
     initFileListUi();
     getSysInfo();
-
-#ifdef TEST_NAV
-    QFile file("/home/wj/work/radar/script/tmp.txt");
-    if(!file.open(QIODevice::ReadOnly))
-        qDebug() << "failed";
-    else
-    {
-        QTextStream in(&file);
-        while(!in.atEnd())
-        {
-            QString     line = in.readLine();
-            QStringList pos  = line.split(',');
-            gps_test_pos.enqueue(QPointF(pos[0].toDouble(), pos[1].toDouble()));
-        }
-    }
-#endif
 }
 
 MainWindow::~MainWindow()
