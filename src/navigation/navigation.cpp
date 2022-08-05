@@ -61,6 +61,8 @@ void Navigation::initSignalSlot()
     connect(ui->btn_loadMap, &QPushButton::pressed, this, [&]
             {
         mapPath = QFileDialog::getExistingDirectory();
+        if(mapPath.length() == 0)
+            return;
         ui->lineEdit_mapFile->setText(mapPath);
         ui->mapView->deleleAllItems();
         ui->mapView->setMapPath(mapPath);
