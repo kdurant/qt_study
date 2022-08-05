@@ -26,7 +26,6 @@ MainWindow::MainWindow(QWidget *parent) :
     daDriver = new DAControl();
     adDriver = new ADControl();
 
-    laser2Driver = new LaserType2();
     laser6Driver = new LaserType6();
 
     devInfo = new DevInfo();
@@ -148,7 +147,8 @@ void MainWindow::initParameter()
             laserDriver = new LaserType1();
             break;
         case 1:
-            radarType = BspConfig::RADAR_TYPE_LAND;
+            radarType   = BspConfig::RADAR_TYPE_LAND;
+            laserDriver = new LaserType2();
             break;
         case 2:
             radarType = BspConfig::RADAR_TYPE_760;
@@ -738,8 +738,6 @@ void MainWindow::initSignalSlot()
         switch(radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
-                laser2Driver->setFreq(previewSettings.laserFreq);
-                break;
             case BspConfig::RADAR_TYPE_OCEAN:
             case BspConfig::RADAR_TYPE_DRONE:
             case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
@@ -1039,17 +1037,13 @@ void MainWindow::initSignalSlot()
 
     if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE ||
        radarType == BspConfig::RADAR_TYPE_WATER_GUARD ||
+       radarType == BspConfig::RADAR_TYPE_LAND ||
        radarType == BspConfig::RADAR_TYPE_OCEAN ||
        radarType == BspConfig::RADAR_TYPE_DRONE)
     {
         connect(laserDriver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laserDriver, &LaserController::setNewData);
         connect(laserDriver, &LaserController::laserInfoReady, this, &MainWindow::showLaserInfo);
-    }
-    else if(radarType == BspConfig::RADAR_TYPE_LAND)
-    {
-        connect(laser2Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
-        connect(dispatch, &ProtocolDispatch::laserDataReady, laser2Driver, &LaserType2::setNewData);
     }
     else if(radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE)
     {
@@ -1064,9 +1058,6 @@ void MainWindow::initSignalSlot()
         switch(radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
-                laser2Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
-                status = laser2Driver->open();
-                break;
             case BspConfig::RADAR_TYPE_OCEAN:
             case BspConfig::RADAR_TYPE_DRONE:
             case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
@@ -1096,8 +1087,6 @@ void MainWindow::initSignalSlot()
         switch(radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
-                status = laser2Driver->close();
-                break;
             case BspConfig::RADAR_TYPE_OCEAN:
             case BspConfig::RADAR_TYPE_DRONE:
             case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
@@ -1146,7 +1135,7 @@ void MainWindow::initSignalSlot()
         switch(radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
-                status = laser2Driver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
+                status = laserDriver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
                 break;
             case BspConfig::RADAR_TYPE_OCEAN:
                 status = laserDriver->setPower(0);
@@ -1179,8 +1168,6 @@ void MainWindow::initSignalSlot()
         switch(radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
-                status = laser2Driver->setMode(LaserController::IN_SIDE);
-                break;
             case BspConfig::RADAR_TYPE_OCEAN:
             case BspConfig::RADAR_TYPE_DRONE:
             case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
@@ -1203,8 +1190,6 @@ void MainWindow::initSignalSlot()
         switch(radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
-                status = laser2Driver->setMode(LaserController::OUT_SIDE);
-                break;
             case BspConfig::RADAR_TYPE_OCEAN:
             case BspConfig::RADAR_TYPE_DRONE:
             case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
