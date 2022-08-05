@@ -25,10 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     daDriver = new DAControl();
     adDriver = new ADControl();
-
-    laser6Driver = new LaserType6();
-
-    devInfo = new DevInfo();
+    devInfo  = new DevInfo();
 
     timer1s        = startTimer(1000);
     timerRefreshUI = startTimer(500);
@@ -166,7 +163,8 @@ void MainWindow::initParameter()
             laserDriver = new LaserType4();
             break;
         case 6:
-            radarType = BspConfig::RADAR_TYPE_SECOND_INSTITUDE;
+            radarType   = BspConfig::RADAR_TYPE_SECOND_INSTITUDE;
+            laserDriver = new LaserType6();
             break;
         default:
             radarType = BspConfig::RADAR_TYPE_OCEAN;
@@ -735,21 +733,7 @@ void MainWindow::initSignalSlot()
     connect(ui->rbtn_previewInsideTrg, &QRadioButton::clicked, this, [this]()
             {
         previewSettings.laserFreq = ui->comboBox_laserFreq->currentText().toInt(nullptr);
-        switch(radarType)
-        {
-            case BspConfig::RADAR_TYPE_LAND:
-            case BspConfig::RADAR_TYPE_OCEAN:
-            case BspConfig::RADAR_TYPE_DRONE:
-            case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
-            case BspConfig::RADAR_TYPE_WATER_GUARD:
-                laserDriver->setFreq(previewSettings.laserFreq);
-                break;
-            case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
-                laser6Driver->setFreq(previewSettings.laserFreq);
-                break;
-            default:
-                break;
-        }
+        laserDriver->setFreq(previewSettings.laserFreq);
         preview->setTrgMode(MasterSet::INSIDE_TRG);
     });
 
@@ -1039,17 +1023,12 @@ void MainWindow::initSignalSlot()
        radarType == BspConfig::RADAR_TYPE_WATER_GUARD ||
        radarType == BspConfig::RADAR_TYPE_LAND ||
        radarType == BspConfig::RADAR_TYPE_OCEAN ||
+       radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE ||
        radarType == BspConfig::RADAR_TYPE_DRONE)
     {
         connect(laserDriver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laserDriver, &LaserController::setNewData);
         connect(laserDriver, &LaserController::laserInfoReady, this, &MainWindow::showLaserInfo);
-    }
-    else if(radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE)
-    {
-        connect(laser6Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
-        connect(dispatch, &ProtocolDispatch::laserDataReady, laser6Driver, &LaserType6::setNewData);
-        connect(laser6Driver, &LaserType6::laserInfoReady, this, &MainWindow::showLaserInfo);
     }
 
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]()
@@ -1067,11 +1046,7 @@ void MainWindow::initSignalSlot()
                 break;
             case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
                 ui->btn_laserOpen->setEnabled(false);
-                laser6Driver->setFreq(10);
-                laser6Driver->getError();
-                laser6Driver->clearError();
-                laser6Driver->setJitterFree();
-                status = laser6Driver->open();
+                status = laserDriver->open();
                 ui->btn_laserOpen->setEnabled(true);
                 break;
             default:
@@ -1084,21 +1059,7 @@ void MainWindow::initSignalSlot()
     connect(ui->btn_laserClose, &QPushButton::pressed, this, [this]()
             {
         bool status = false;
-        switch(radarType)
-        {
-            case BspConfig::RADAR_TYPE_LAND:
-            case BspConfig::RADAR_TYPE_OCEAN:
-            case BspConfig::RADAR_TYPE_DRONE:
-            case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
-            case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laserDriver->close();
-                break;
-            case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
-                status = laser6Driver->close();
-                break;
-            default:
-                break;
-        }
+        status      = laserDriver->close();
         if(!status)
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
@@ -1153,7 +1114,7 @@ void MainWindow::initSignalSlot()
                 status = laserDriver->setPower(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()) / 10);
                 break;
             case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
-                status = laser6Driver->setPower(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
+                status = laserDriver->setPower(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
                 break;
             default:
                 break;
@@ -1165,21 +1126,7 @@ void MainWindow::initSignalSlot()
     connect(ui->rbtn_triggerInside, &QRadioButton::clicked, this, [this]()
             {
         bool status = false;
-        switch(radarType)
-        {
-            case BspConfig::RADAR_TYPE_LAND:
-            case BspConfig::RADAR_TYPE_OCEAN:
-            case BspConfig::RADAR_TYPE_DRONE:
-            case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
-            case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laserDriver->setMode(LaserController::IN_SIDE);
-                break;
-            case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
-                status = laser6Driver->setMode(LaserController::IN_SIDE);
-                break;
-            default:
-                break;
-        }
+        status      = laserDriver->setMode(LaserController::IN_SIDE);
         if(status == false)
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
@@ -1187,21 +1134,7 @@ void MainWindow::initSignalSlot()
     connect(ui->rbtn_triggerOutside, &QRadioButton::clicked, this, [this]()
             {
         bool status = false;
-        switch(radarType)
-        {
-            case BspConfig::RADAR_TYPE_LAND:
-            case BspConfig::RADAR_TYPE_OCEAN:
-            case BspConfig::RADAR_TYPE_DRONE:
-            case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
-            case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laserDriver->setMode(LaserController::OUT_SIDE);
-                break;
-            case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
-                status = laser6Driver->setMode(LaserController::OUT_SIDE);
-                break;
-            default:
-                break;
-        }
+        status      = laserDriver->setMode(LaserController::OUT_SIDE);
         if(status == false)
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });

@@ -15,6 +15,11 @@ bool LaserType6::setMode(LaserController::OpenMode mode)
 
 bool LaserType6::open()
 {
+    setFreq(10);
+    getError();
+    clearError();
+    setJitterFree();
+
     QString    s     = "p1 1\r\n";
     QByteArray frame = s.toUtf8();
     emit       sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
