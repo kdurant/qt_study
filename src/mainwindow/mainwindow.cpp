@@ -386,6 +386,9 @@ void MainWindow::uiConfig()
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_ADChSelect->addItems(AD1List);
 
+        ui->doubleSpinBox_laserGreenCurrent->setValue(1000);
+        ui->doubleSpinBox_laserGreenCurrent->setRange(0, 5000);
+
         ui->label_secondLen->hide();
         ui->lineEdit_secondLen->hide();
     }
@@ -492,8 +495,8 @@ void MainWindow::uiConfig()
     {
         case BspConfig::RADAR_TYPE_LAND:
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "激光器状态"));
-            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率"));
-            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率(kHz)"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流(mA)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "温度"));
             ui->treeWidget_laser->addTopLevelItems(topItems);
 
@@ -1053,9 +1056,10 @@ void MainWindow::initSignalSlot()
             {
         int status;
         if(laserDriver == nullptr)
+        {
             QMessageBox::information(this, "消息", "激光器不支持此功能");
-        else
-            status = laserDriver->reset();
+            return;
+        }
 
         switch(status)
         {
@@ -1139,15 +1143,6 @@ void MainWindow::initSignalSlot()
         switch(radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
-                itemList = ui->treeWidget_laser->findItems("激光器状态", Qt::MatchExactly);
-                //                itemList.first()->setText(1, laser2Driver->getStatus());
-                itemList = ui->treeWidget_laser->findItems("外触发频率", Qt::MatchExactly);
-                //                itemList.first()->setText(1, laser2Driver->getFreq());
-                itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
-                //                itemList.first()->setText(1, laser2Driver->getCurrent());
-                itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
-                //                itemList.first()->setText(1, laser2Driver->getTemp());
-                break;
             case BspConfig::RADAR_TYPE_OCEAN:
             case BspConfig::RADAR_TYPE_DRONE:
             case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
@@ -1405,7 +1400,11 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TYPE_WATER_GUARD:
             case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
                 if(chNum == 0)
-                    digitValue = static_cast<qint32>((analogValue - 8.208) / 0.113);
+                {
+                    digitValue       = static_cast<qint32>((analogValue - 8.208) / 0.113);
+                    QByteArray frame = BspConfig::int2ba(digitValue);
+                    dispatch->encode(MasterSet::TEMP_VOLT_X1, 4, frame);
+                }
                 else if(chNum == 1)
                     digitValue = static_cast<qint32>((analogValue + 0.007) / 0.001);
                 else if(chNum == 2)
@@ -1488,9 +1487,7 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_setTempVolt, &QPushButton::pressed, this, [this]()
             {
-        QByteArray frame = BspConfig::int2ba(ui->spinBox_temp_volt_x1->value());
-        dispatch->encode(MasterSet::TEMP_VOLT_X1, 4, frame);
-        frame = BspConfig::int2ba(ui->spinBox_temp_volt_x2->value());
+        QByteArray frame = BspConfig::int2ba(ui->spinBox_temp_volt_x2->value());
         dispatch->encode(MasterSet::TEMP_VOLT_X2, 4, frame);
     });
 
@@ -2010,6 +2007,20 @@ void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
     switch(radarType)
     {
         case BspConfig::RADAR_TYPE_LAND:
+
+            itemList = ui->treeWidget_laser->findItems("激光器状态", Qt::MatchExactly);
+            if(info.status == 0)
+                itemList.first()->setText(1, "close");
+            else
+                itemList.first()->setText(1, "open");
+
+            itemList = ui->treeWidget_laser->findItems("外触发频率(kHz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_outside));
+            itemList = ui->treeWidget_laser->findItems("电流(mA)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.real_current));
+            itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.temp, 'f', 4));
+            break;
             break;
         case BspConfig::RADAR_TYPE_DRONE:
             itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);
@@ -2326,15 +2337,26 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
             refreshUIFlag = false;
 
             // 刷新实时数据曲线
-            for(int n = 0; n < allCh.size(); n++)
+            if(radarType == BspConfig::RADAR_TYPE_LAND)
             {
-                if(allCh.size() != 8)  // 只有第一段波形
-                {
-                    ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
-                    ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
-                }
-                else
+                for(int n = 0; n < 6; n++)
+                    ui->sampleDataPlot->graph(0)->data().data()->clear();
+
+                for(int n = 0; n < allCh.size(); n++)
                     ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
+            }
+            else
+            {
+                for(int n = 0; n < allCh.size(); n++)
+                {
+                    if(allCh.size() != 8)  // 只有第一段波形
+                    {
+                        ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
+                        ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
+                    }
+                    else
+                        ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
+                }
             }
             if(autoZoomPlot)
                 ui->sampleDataPlot->rescaleAxes();
