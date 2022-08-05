@@ -40,8 +40,8 @@ with open(args.file, 'r') as gps_data:
     """
     line = gps_data.readline()
     while line:
-        #  if (num > 2620 and num < 2800) or (num > 6070 and num < 6240):
-        if num >= 2640 and num < 2641:
+        if (num > 2620 and num < 2800) or (num > 6070 and num < 6240):
+        #  if num >= 2640 and num < 2641:
             #  if num >= 0:
             line = line[:-1]
 

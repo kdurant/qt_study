@@ -461,10 +461,10 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_10">
-           <property name="text">
-            <string>minMapLevel</string>
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="spinBox_mapMinMapLevel">
+           <property name="readOnly">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -482,20 +482,6 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="4">
-          <widget class="QLabel" name="label_12">
-           <property name="text">
-            <string>currentZoom</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QSpinBox" name="spinBox_mapMinMapLevel">
-           <property name="readOnly">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="6">
           <widget class="QSlider" name="horizontalSlider_zoomCtrl">
            <property name="sizePolicy">
@@ -506,6 +492,27 @@
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>minMapLevel</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="4">
+          <widget class="QLabel" name="label_12">
+           <property name="text">
+            <string>currentZoom</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="checkBox_scanLine">
+           <property name="text">
+            <string>scanLine</string>
            </property>
           </widget>
          </item>

@@ -111,6 +111,8 @@ public:
         return d;
     }
 
+    void setCurrentPos(BspConfig::Gps_Info pos);
+
     /**
      * @brief 设置规划航迹文件
      *
@@ -122,9 +124,12 @@ public:
      *      先清除以前保存的航迹信息m_line
      * @return
      */
-    int parseFile(void);
+    int    parseFile(void);
+    QRectF getSurveyRect(void)
+    {
+        return m_surverArea.rect;
+    }
 
-    void setCurrentPos(BspConfig::Gps_Info pos);
     void setCoverageThreshold(double threshold)
     {
         COVERAGE_THRESHOLD = threshold;
@@ -179,12 +184,17 @@ public:
         return m_surverArea.surveyedPercent;
     }
 
+    QLineF getRadarScanExpression()
+    {
+        return m_currentScanLine;
+    }
+
     /**
      * @brief 根据当前GPS位置，高度，航向角，翻滚角，俯仰角，计算出雷达扫描宽度在坐标系中的表达式f
      * @param pos
      * @return
      */
-    AirLine getRadarScanExpression(BspConfig::Gps_Info& pos);
+    AirLine _getRadarScanExpression(BspConfig::Gps_Info& pos);
 
     /**
      * @brief 根据雷达扫描宽度表达式f， 计算当前扫描那些测区元素
@@ -316,6 +326,7 @@ private:
     double m_matrixSize{10};  // 矩阵元素的大小，单位：米
 
     double           m_currentSpeed{0};
+    QLineF           m_currentScanLine;
     int              m_posOnWhichLine{-1};
     double           m_coveragePercent{0};
     QVector<int>     m_coveragePoints;  // QVector的长度和规划航线划分的点个数一致

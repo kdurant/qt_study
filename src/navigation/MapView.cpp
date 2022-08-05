@@ -138,9 +138,9 @@ void MapView::loadRealTimePoint(QPointF point)
     scene->addEllipse(pos.x(), pos.y(), 3, 3, pen, brush);
 }
 
-void MapView::loadTracker(QPointF start, QPointF end)
+void MapView::loadTracker(QPointF start, QPointF end, const QPen &pen)
 {
-    scene->addLine(QLineF(gps2pos(start.x(), start.y(), m_tileMapInfo.current_zoom), gps2pos(end.x(), end.y(), m_tileMapInfo.current_zoom)), QPen(Qt::red));
+    scene->addLine(QLineF(gps2pos(start.x(), start.y(), m_tileMapInfo.current_zoom), gps2pos(end.x(), end.y(), m_tileMapInfo.current_zoom)), pen);
 }
 
 void MapView::loadSerialNum(QPointF posi, int num)
@@ -150,6 +150,14 @@ void MapView::loadSerialNum(QPointF posi, int num)
     str->setPos(gps2pos(posi.x(), posi.y(), m_tileMapInfo.current_zoom) - QPoint(0, 20));
     scene->addItem(str);
     update();
+}
+
+void MapView::loadSurveyBorder(const QRectF &rect)
+{
+    QRectF r;
+    r.setTopLeft(gps2pos(rect.topLeft().x(), rect.topLeft().y(), m_tileMapInfo.current_zoom));
+    r.setBottomRight(gps2pos(rect.bottomRight().x(), rect.bottomRight().y(), m_tileMapInfo.current_zoom));
+    scene->addRect(r);
 }
 
 void MapView::mousePressEvent(QMouseEvent *event)

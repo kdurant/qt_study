@@ -7,6 +7,22 @@
 #include <tuple>
 #include <iostream>
 
+void AirArea::setCurrentPos(BspConfig::Gps_Info pos)
+{
+    m_currentPos = pos;
+
+    // 计算速度
+    _getCurrentSpeed(pos);
+    // 覆盖率相关计算
+    isPosInDesigned(COVERAGE_THRESHOLD);
+    //    _getCoveragePercent();
+    __getCoveragePercent();
+
+    // 当前所在航线计算
+    _getPosOnWhichLine();
+    m_prevPos = pos;
+}
+
 void AirArea::setFile(QString &file)
 {
     this->m_file = file;
@@ -82,22 +98,6 @@ int AirArea::parseFile()
     m_surverArea.rect.setBottomRight(QPointF(*max_lng, *max_lat));
 
     return 0;
-}
-
-void AirArea::setCurrentPos(BspConfig::Gps_Info pos)
-{
-    m_currentPos = pos;
-
-    // 计算速度
-    _getCurrentSpeed(pos);
-    // 覆盖率相关计算
-    isPosInDesigned(COVERAGE_THRESHOLD);
-    //    _getCoveragePercent();
-    __getCoveragePercent();
-
-    // 当前所在航线计算
-    _getPosOnWhichLine();
-    m_prevPos = pos;
 }
 
 int AirArea::_getPosOnWhichLine()
@@ -195,18 +195,22 @@ double AirArea::_getCoveragePercent()
 
 double AirArea::__getCoveragePercent()
 {
+    AirLine temp;
+    temp              = _getRadarScanExpression(m_currentPos);
+    m_currentScanLine = temp.line;
+
     QVector<BspConfig::Gps_Info> points = interpolateScanPoint(m_prevPos, m_currentPos);
 
     for(auto &p : points)
     {
-        AirLine temp = getRadarScanExpression(p);
+        temp = _getRadarScanExpression(p);
         calcRealSurvey(temp);
     }
     m_surverArea.surveyedPercent = (double)m_surverArea.hasSurveyedEle / m_surverArea.totalValidEle;
     return m_surverArea.surveyedPercent;
 }
 
-AirArea::AirLine AirArea::getRadarScanExpression(BspConfig::Gps_Info &pos)
+AirArea::AirLine AirArea::_getRadarScanExpression(BspConfig::Gps_Info &pos)
 {
     AirLine      scanLine;
     CoordCompute coord;

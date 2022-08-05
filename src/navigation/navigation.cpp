@@ -43,12 +43,14 @@ void Navigation::initSignalSlot()
         m_designedAirArea.setSurverArea();
         //        m_designedAirArea.printSurverPoints();
 
+        ui->mapView->loadSurveyBorder(m_designedAirArea.getSurveyRect());
+
         int len = m_designedAirArea.getAirLineNum();
         for(int i = 0; i < len; i += 1)
         {
             AirArea::AirLine line = m_designedAirArea.getAirLine(i);
 
-            ui->mapView->loadTracker(line.line.p1(), line.line.p2());
+            ui->mapView->loadTracker(line.line.p1(), line.line.p2(), QPen(Qt::red));
             ui->mapView->loadSerialNum(line.line.p1(), i + 1);
         }
         m_designedAirArea.splitArea(10);
@@ -91,7 +93,7 @@ void Navigation::initSignalSlot()
         {
             AirArea::AirLine temp = m_designedAirArea.getAirLine(i);
 
-            ui->mapView->loadTracker(temp.line.p1(), temp.line.p2());
+            ui->mapView->loadTracker(temp.line.p1(), temp.line.p2(), QPen(Qt::red));
             ui->mapView->loadSerialNum(temp.line.p1(), i + 1);
         }
 
@@ -166,6 +168,12 @@ void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
 
     m_realtime_path.append(QPointF(data.longitude, data.latitude));
     ui->mapView->loadRealTimePoint(QPointF(data.longitude, data.latitude));
+
+    if(ui->checkBox_scanLine->isChecked())
+    {
+        QLineF l = m_designedAirArea.getRadarScanExpression();
+        ui->mapView->loadTracker(l.p1(), l.p2(), QPen(Qt::yellow));
+    }
 }
 
 void Navigation::timerEvent(QTimerEvent *event)
