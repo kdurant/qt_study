@@ -1125,26 +1125,28 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_laserReset, &QPushButton::pressed, this, [this]()
             {
-        bool status = false;
-        switch(radarType)
+        int status;
+        if(laserDriver == nullptr)
+            QMessageBox::information(this, "消息", "激光器不支持此功能");
+        else
+            status = laserDriver->reset();
+
+        switch(status)
         {
-            case BspConfig::RADAR_TPYE_LAND:
+            case -3:
+                QMessageBox::warning(this, "警告", "激光器不支持此功能");
+            case -2:
+                QMessageBox::warning(this, "警告", "未实现此功能");
                 break;
-            case BspConfig::RADAR_TPYE_OCEAN:
-                QMessageBox::information(this, "警告", "未实现此功能");
+            case -1:
+                QMessageBox::warning(this, "警告", "激光器通信异常");
                 break;
-            case BspConfig::RADAR_TPYE_DRONE:
-            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-            case BspConfig::RADAR_TYPE_WATER_GUARD:
-                break;
-            case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
+            case 0:
                 break;
             default:
-                status = laserDriver->reset();
+                QMessageBox::warning(this, "警告", "指令响应异常");
                 break;
         }
-        if(!status)
-            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
 
     connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]()

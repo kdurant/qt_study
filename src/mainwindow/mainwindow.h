@@ -180,11 +180,9 @@ private:
 
     UpdateBin *updateFlash;
 
-    LaserController *laserDriver;
+    LaserController *laserDriver{nullptr};
     LaserType1      *laser1Driver;
     LaserType2      *laser2Driver;
-    LaserType3      *laser3Driver;
-    LaserType5      *laser5Driver;
     LaserType6      *laser6Driver;
 
     MotorController *motorController;
