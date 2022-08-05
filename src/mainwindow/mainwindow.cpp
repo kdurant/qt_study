@@ -711,6 +711,7 @@ void MainWindow::initSignalSlot()
 
     connect(ui->rbtn_previewOutsideTrg, &QRadioButton::clicked, this, [this]()
             {
+        previewSettings.laserFreq = ui->comboBox_laserFreq->currentText().toInt(nullptr);
         preview->setTrgMode(MasterSet::OUTSIDE_TRG);
     });
 
@@ -1076,15 +1077,24 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]()
             {
-        bool status = false;
+        bool    status = false;
+        QString power;
         switch(radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
                 status = laserDriver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
                 break;
             case BspConfig::RADAR_TYPE_OCEAN:
-                status = laserDriver->setPower(0);
+                power = ui->comboBox_laserPower->currentText();
+                if(power == "1.8")
+                    status = laserDriver->setPower(0);
+                else if(power == "4.5")
+                    status = laserDriver->setPower(1);
+                else if(power == "7.6")
+                    status = laserDriver->setPower(2);
+
                 break;
+
             case BspConfig::RADAR_TYPE_DRONE:
                 // 上位机界面单位mA， 设置1000mA(0x3e8), 设置下去的值：100, 单位是0.01A，结果还是1000mA
                 status = laserDriver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()) / 10);
@@ -1691,13 +1701,13 @@ void MainWindow::plotLineSettings()
     ui->sampleDataPlot->graph(2)->setName("通道1第一段");
     ui->sampleDataPlot->graph(3)->setPen(QPen(Qt::blue));
     ui->sampleDataPlot->graph(3)->setName("通道1第二段");
-    ui->sampleDataPlot->graph(4)->setPen(QPen(Qt::black));
+    ui->sampleDataPlot->graph(4)->setPen(QPen(Qt::green));
     ui->sampleDataPlot->graph(4)->setName("通道2第一段");
-    ui->sampleDataPlot->graph(5)->setPen(QPen(Qt::black));
+    ui->sampleDataPlot->graph(5)->setPen(QPen(Qt::green));
     ui->sampleDataPlot->graph(5)->setName("通道2第二段");
-    ui->sampleDataPlot->graph(6)->setPen(QPen(Qt::darkCyan));
+    ui->sampleDataPlot->graph(6)->setPen(QPen(Qt::black));
     ui->sampleDataPlot->graph(6)->setName("通道3第一段");
-    ui->sampleDataPlot->graph(7)->setPen(QPen(Qt::darkCyan));
+    ui->sampleDataPlot->graph(7)->setPen(QPen(Qt::black));
     ui->sampleDataPlot->graph(7)->setName("通道3第二段");
 }
 
@@ -1940,7 +1950,8 @@ void MainWindow::getSysInfo()
         ui->label_fpgaVer->setText(devInfo->getFpgaVer());
 
         QList<QTreeWidgetItem *> itemList;
-        itemList = ui->treeWidget_attitude->findItems("系统参数", Qt::MatchExactly);
+        itemList                  = ui->treeWidget_attitude->findItems("系统参数", Qt::MatchExactly);
+        previewSettings.laserFreq = sysParaInfo[0].value.toHex().toUInt(nullptr, 16);
         for(int i = 0; i < sysParaInfo.size(); i++)
         {
             if(i == 4)  // 波形存储状态
