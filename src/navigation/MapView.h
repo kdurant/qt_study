@@ -126,8 +126,14 @@ public:
      * @param point
      */
     void loadRealTimePoint(QPointF point);
-    void loadTracker(QPointF start, QPointF end);
+    void loadTracker(QPointF start, QPointF end, const QPen &pen);
     void loadSerialNum(QPointF posi, int num);
+
+    /**
+     * @brief 显示测区的矩形边界
+     * @param rect
+     */
+    void loadSurveyBorder(const QRectF &rect);
 
     void deleleAllItems()
     {

@@ -47,7 +47,6 @@ with open(args.file, 'r') as gps_data:
         (num > 10930 and num < 11100) or \
         (num > 12980 and num < 13170) or \
         (num > 14400):
-            #  if num >= 2640 and num < 2641:
             #  if num >= 0:
             #  line = line[:-1]
 

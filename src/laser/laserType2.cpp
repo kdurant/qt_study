@@ -83,20 +83,23 @@ bool LaserType2::getStatus()
     QString s;
     s = getCurrent();
     if(s != "error")
-        info.real_current = -99;
+        info.real_current = static_cast<int>(s.split(' ')[0].toFloat(nullptr));
 
     s = getFreq();
     if(s != "error")
-        info.freq_outside = -99;
+        info.freq_outside = static_cast<int>(s.split(' ')[0].toInt(nullptr));
 
     s = getTemp();
     if(s != "error")
-        info.temp = -99;
+        info.temp = info.temp = s.split(' ')[0].toFloat(nullptr);
 
     s = getSwitch();
-    if(s != "error")
-        info.status = -99;
+    if(s == "close")
+        info.status = 0;
+    else
+        info.status = 1;
 
+    emit laserInfoReady(info);
     return true;
 }
 

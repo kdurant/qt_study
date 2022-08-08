@@ -57,7 +57,7 @@ public:
     bool getStatus(void) override;
 
     bool checkself(void) override;
-    bool reset(void) override;
+    int  reset(void) override;
 
 public slots:
     void setNewData(QByteArray& data) override

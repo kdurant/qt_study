@@ -149,7 +149,7 @@ bool LaserType5::checkself()
     return true;
 }
 
-bool LaserType5::reset()
+int LaserType5::reset()
 {
     QVector<quint8> command{0x55, 0xAA, 0x00, 0x0E, 0x00, 0x00, 0x00, 0x00, 0x0D, 0x33, 0xcc};
     QByteArray      frame;
@@ -158,5 +158,5 @@ bool LaserType5::reset()
         frame.append(command[i] & 0xff);
     }
     emit sendDataReady(MasterSet::LASER_PENETRATE, frame.length(), frame);
-    return true;
+    return 0;
 }

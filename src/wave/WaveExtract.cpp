@@ -31,16 +31,16 @@ void WaveExtract::getWaveform(BspConfig::RadarType   type,
     radarType = type;
     switch(type)
     {
-        case BspConfig::RADAR_TPYE_LAND:
+        case BspConfig::RADAR_TYPE_LAND:
             getWaveFromLand(frameData);
             break;
-        case BspConfig::RADAR_TPYE_760:
+        case BspConfig::RADAR_TYPE_760:
             break;
-        case BspConfig::RADAR_TPYE_DRONE:
-        case BspConfig::RADAR_TPYE_OCEAN:
+        case BspConfig::RADAR_TYPE_DRONE:
+        case BspConfig::RADAR_TYPE_OCEAN:
         case BspConfig::RADAR_TYPE_WATER_GUARD:
-        case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-        case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
+        case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
+        case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
             getWaveFromWaterGuard(frameData);
             break;
     }

@@ -25,12 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     daDriver = new DAControl();
     adDriver = new ADControl();
-
-    laser1Driver = new LaserType1();
-    laser2Driver = new LaserType2();
-    laser6Driver = new LaserType6();
-
-    devInfo = new DevInfo();
+    devInfo  = new DevInfo();
 
     timer1s        = startTimer(1000);
     timerRefreshUI = startTimer(500);
@@ -78,22 +73,6 @@ MainWindow::MainWindow(QWidget *parent) :
     devInfo->getSysPara(sysParaInfo);
     initFileListUi();
     getSysInfo();
-
-#ifdef TEST_NAV
-    QFile file("/home/wj/work/radar/script/tmp.txt");
-    if(!file.open(QIODevice::ReadOnly))
-        qDebug() << "failed";
-    else
-    {
-        QTextStream in(&file);
-        while(!in.atEnd())
-        {
-            QString     line = in.readLine();
-            QStringList pos  = line.split(',');
-            gps_test_pos.enqueue(QPointF(pos[0].toDouble(), pos[1].toDouble()));
-        }
-    }
-#endif
 }
 
 MainWindow::~MainWindow()
@@ -145,20 +124,22 @@ void MainWindow::initParameter()
     switch(configIni->value("System/radarType").toInt())
     {
         case 0:
-            radarType = BspConfig::RADAR_TPYE_OCEAN;
+            radarType   = BspConfig::RADAR_TYPE_OCEAN;
+            laserDriver = new LaserType1();
             break;
         case 1:
-            radarType = BspConfig::RADAR_TPYE_LAND;
+            radarType   = BspConfig::RADAR_TYPE_LAND;
+            laserDriver = new LaserType2();
             break;
         case 2:
-            radarType = BspConfig::RADAR_TPYE_760;
+            radarType = BspConfig::RADAR_TYPE_760;
             break;
         case 3:
-            radarType   = BspConfig::RADAR_TPYE_DOUBLE_WAVE;
+            radarType   = BspConfig::RADAR_TYPE_DOUBLE_WAVE;
             laserDriver = new LaserType5();
             break;
         case 4:
-            radarType   = BspConfig::RADAR_TPYE_DRONE;
+            radarType   = BspConfig::RADAR_TYPE_DRONE;
             laserDriver = new LaserType3();
             break;
         case 5:
@@ -166,10 +147,11 @@ void MainWindow::initParameter()
             laserDriver = new LaserType4();
             break;
         case 6:
-            radarType = BspConfig::RADAR_TPYE_SECOND_INSTITUDE;
+            radarType   = BspConfig::RADAR_TYPE_SECOND_INSTITUDE;
+            laserDriver = new LaserType6();
             break;
         default:
-            radarType = BspConfig::RADAR_TPYE_OCEAN;
+            radarType = BspConfig::RADAR_TYPE_OCEAN;
             QMessageBox::critical(this, "error", "请设置正确的雷达类型");
             break;
     }
@@ -214,7 +196,7 @@ void MainWindow::initParameter()
     ui->lineEdit_compressLen->setText(configIni->value("Preview/compressLen").toString());
     ui->lineEdit_compressRatio->setText(configIni->value("Preview/compressRatio").toString());
 
-    if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+    if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         motorController = new PusiController();
     else
         motorController = new EPOS2();
@@ -242,7 +224,6 @@ void MainWindow::uiConfig()
     QRegExpValidator *hexValidator = new QRegExpValidator(hexReg, this);
 
     ui->lineEdit_motorTargetSpeed->setValidator(decValidator);
-    ui->lineEdit_DAValue->setValidator(floatValidator);
     ui->lineEdit_sampleLen->setValidator(decValidator);
     ui->lineEdit_sampleRate->setValidator(decValidator);
     ui->lineEdit_firstStartPos->setValidator(decValidator);
@@ -287,7 +268,7 @@ void MainWindow::uiConfig()
     ui->rbtn_POLARIZATION->setVisible(false);
 
     QString title;
-    if(radarType == BspConfig::RADAR_TPYE_760)
+    if(radarType == BspConfig::RADAR_TYPE_760)
     {
         title = "760雷达控制软件";
         ui->lineEdit_radarType->setText("760雷达");
@@ -300,7 +281,7 @@ void MainWindow::uiConfig()
         ui->lineEdit_subThreshold->hide();
         ui->lineEdit_sumThreshold->hide();
     }
-    else if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+    else if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
     {
         title = "双波长雷达控制软件";
         ui->lineEdit_radarType->setText("双波长雷达");
@@ -365,7 +346,7 @@ void MainWindow::uiConfig()
             doubleWaveConfig.max_view_angle = 110;
         });
     }
-    else if(radarType == BspConfig::RADAR_TPYE_OCEAN)
+    else if(radarType == BspConfig::RADAR_TYPE_OCEAN)
     {
         title = "海洋雷达控制软件";
         ui->lineEdit_radarType->setText("海洋雷达");
@@ -374,17 +355,22 @@ void MainWindow::uiConfig()
         ui->comboBox_laserFreq->addItem("5000");
         ui->comboBox_laserFreq->addItem("10000");
 
+        ui->label_laserPower->show();
+        ui->comboBox_laserPower->show();
+        ui->btn_laserSetCurrent->setText("设置功率");
+
         QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
         QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_DAChSelect->setCurrentIndex(0);
         ui->comboBox_ADChSelect->addItems(AD1List);
+        ui->doubleSpinBox_DAValue->setRange(0, 250);
 
         ui->groupBox_tempVolt->show();
         ui->tabWidget->setTabEnabled(5, true);
         //        ui->label
     }
-    else if(radarType == BspConfig::RADAR_TPYE_LAND)
+    else if(radarType == BspConfig::RADAR_TYPE_LAND)
     {
         title = "陆地雷达控制软件";
         ui->lineEdit_radarType->setText("陆地雷达");
@@ -400,10 +386,13 @@ void MainWindow::uiConfig()
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_ADChSelect->addItems(AD1List);
 
+        ui->doubleSpinBox_laserGreenCurrent->setValue(1000);
+        ui->doubleSpinBox_laserGreenCurrent->setRange(0, 5000);
+
         ui->label_secondLen->hide();
         ui->lineEdit_secondLen->hide();
     }
-    else if(radarType == BspConfig::RADAR_TPYE_DRONE)
+    else if(radarType == BspConfig::RADAR_TYPE_DRONE)
     {
         title = "无人机雷达控制软件";
         ui->lineEdit_radarType->setText("无人机雷达");
@@ -464,7 +453,7 @@ void MainWindow::uiConfig()
         ui->tabWidget_main->setTabEnabled(1, true);
         ui->tabWidget_main->setCurrentIndex(1);
     }
-    else if(radarType == BspConfig::RADAR_TPYE_SECOND_INSTITUDE)
+    else if(radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE)
     {
         title = "海二所雷达控制软件";
         ui->lineEdit_radarType->setText("海二所雷达");
@@ -504,18 +493,29 @@ void MainWindow::uiConfig()
     QList<QTreeWidgetItem *> subItems;
     switch(radarType)
     {
-        case BspConfig::RADAR_TPYE_LAND:
+        case BspConfig::RADAR_TYPE_LAND:
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "激光器状态"));
-            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率"));
-            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率(kHz)"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流(mA)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "温度"));
             ui->treeWidget_laser->addTopLevelItems(topItems);
 
             ui->treeWidget_laser->resizeColumnToContents(0);
             ui->treeWidget_laser->expandAll();
             break;
-        case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-        case BspConfig::RADAR_TPYE_DRONE:
+        case BspConfig::RADAR_TYPE_OCEAN:
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "点1温度"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "点2温度"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "点3温度"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "点4温度"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "点5温度"));
+            ui->treeWidget_laser->addTopLevelItems(topItems);
+
+            ui->treeWidget_laser->resizeColumnToContents(0);
+            ui->treeWidget_laser->expandAll();
+            break;
+        case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
+        case BspConfig::RADAR_TYPE_DRONE:
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流设定值(mA)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流实际值(mA)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率(Hz)"));
@@ -551,7 +551,7 @@ void MainWindow::uiConfig()
 
             ui->treeWidget_laser->resizeColumnToContents(0);
             break;
-        case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
+        case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "开关"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "温度"));
@@ -649,7 +649,7 @@ void MainWindow::initSignalSlot()
         preview->setTotalSampleLen(previewSettings.sampleLen);
         preview->setPreviewRatio(previewSettings.sampleRatio);
 
-        if(radarType == BspConfig::RADAR_TPYE_LAND)
+        if(radarType == BspConfig::RADAR_TYPE_LAND)
         {
             preview->setAlgoAPos((previewSettings.firstPos >> 3) << 3);
             preview->setAlgoALen((previewSettings.firstLen >> 3) << 3);
@@ -658,7 +658,7 @@ void MainWindow::initSignalSlot()
             preview->setAlgoBValueThre(previewSettings.valueThreshold);
             return;
         }
-        if(radarType == BspConfig::RADAR_TPYE_SECOND_INSTITUDE)
+        if(radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE)
         {
             if(previewSettings.firstLen + previewSettings.secondLen < 400)
             {
@@ -667,7 +667,7 @@ void MainWindow::initSignalSlot()
             }
         }
 
-        if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+        if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         {
             if(previewSettings.firstLen + previewSettings.secondLen >= 3000)
                 QMessageBox::warning(NULL, "警告", "两段采样长度之和尽量不要大于3000");
@@ -694,7 +694,7 @@ void MainWindow::initSignalSlot()
         {
             preview->setPmtDelayAndGateTime(pmtDelayTime, pmtGateTime);
         }
-        if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+        if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         {
             preview->setSampleDelay((sampleDelay >> 3) << 3);
         }
@@ -725,31 +725,14 @@ void MainWindow::initSignalSlot()
 
     connect(ui->rbtn_previewOutsideTrg, &QRadioButton::clicked, this, [this]()
             {
+        previewSettings.laserFreq = ui->comboBox_laserFreq->currentText().toInt(nullptr);
         preview->setTrgMode(MasterSet::OUTSIDE_TRG);
     });
 
     connect(ui->rbtn_previewInsideTrg, &QRadioButton::clicked, this, [this]()
             {
         previewSettings.laserFreq = ui->comboBox_laserFreq->currentText().toInt(nullptr);
-        switch(radarType)
-        {
-            case BspConfig::RADAR_TPYE_OCEAN:
-                laser1Driver->setFreq(previewSettings.laserFreq);
-                break;
-            case BspConfig::RADAR_TPYE_LAND:
-                laser2Driver->setFreq(previewSettings.laserFreq);
-                break;
-            case BspConfig::RADAR_TPYE_DRONE:
-            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-            case BspConfig::RADAR_TYPE_WATER_GUARD:
-                laserDriver->setFreq(previewSettings.laserFreq);
-                break;
-            case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
-                laser6Driver->setFreq(previewSettings.laserFreq);
-                break;
-            default:
-                break;
-        }
+        laserDriver->setFreq(previewSettings.laserFreq);
         preview->setTrgMode(MasterSet::INSIDE_TRG);
     });
 
@@ -1035,27 +1018,16 @@ void MainWindow::initSignalSlot()
      * 激光器相关处理
      */
 
-    if(radarType == BspConfig::RADAR_TPYE_OCEAN)
-    {
-        connect(laser1Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
-        connect(dispatch, &ProtocolDispatch::laserDataReady, laser1Driver, &LaserType1::setNewData);
-    }
-    else if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE || radarType == BspConfig::RADAR_TYPE_WATER_GUARD || radarType == BspConfig::RADAR_TPYE_DRONE)
+    if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE ||
+       radarType == BspConfig::RADAR_TYPE_WATER_GUARD ||
+       radarType == BspConfig::RADAR_TYPE_LAND ||
+       radarType == BspConfig::RADAR_TYPE_OCEAN ||
+       radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE ||
+       radarType == BspConfig::RADAR_TYPE_DRONE)
     {
         connect(laserDriver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laserDriver, &LaserController::setNewData);
         connect(laserDriver, &LaserController::laserInfoReady, this, &MainWindow::showLaserInfo);
-    }
-    else if(radarType == BspConfig::RADAR_TPYE_LAND)
-    {
-        connect(laser2Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
-        connect(dispatch, &ProtocolDispatch::laserDataReady, laser2Driver, &LaserType2::setNewData);
-    }
-    else if(radarType == BspConfig::RADAR_TPYE_SECOND_INSTITUDE)
-    {
-        connect(laser6Driver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
-        connect(dispatch, &ProtocolDispatch::laserDataReady, laser6Driver, &LaserType6::setNewData);
-        connect(laser6Driver, &LaserType6::laserInfoReady, this, &MainWindow::showLaserInfo);
     }
 
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]()
@@ -1063,23 +1035,17 @@ void MainWindow::initSignalSlot()
         bool status = false;
         switch(radarType)
         {
-            case BspConfig::RADAR_TPYE_LAND:
-                laser2Driver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
-                status = laser2Driver->open();
-                break;
-            case BspConfig::RADAR_TPYE_DRONE:
-            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+            case BspConfig::RADAR_TYPE_LAND:
+            case BspConfig::RADAR_TYPE_OCEAN:
+            case BspConfig::RADAR_TYPE_DRONE:
+            case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 status = laserDriver->open();
                 break;
-            case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
+            case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
                 ui->btn_laserOpen->setEnabled(false);
-                laser6Driver->setFreq(10);
-                laser6Driver->getError();
-                laser6Driver->clearError();
-                laser6Driver->setJitterFree();
-                status = laser6Driver->open();
+                status = laserDriver->open();
                 ui->btn_laserOpen->setEnabled(true);
                 break;
             default:
@@ -1092,66 +1058,63 @@ void MainWindow::initSignalSlot()
     connect(ui->btn_laserClose, &QPushButton::pressed, this, [this]()
             {
         bool status = false;
-        switch(radarType)
-        {
-            case BspConfig::RADAR_TPYE_LAND:
-                status = laser2Driver->close();
-                break;
-            case BspConfig::RADAR_TPYE_DRONE:
-            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-            case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laserDriver->close();
-                break;
-            case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
-                status = laser6Driver->close();
-                break;
-            default:
-                break;
-        }
+        status      = laserDriver->close();
         if(!status)
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
 
     connect(ui->btn_laserReset, &QPushButton::pressed, this, [this]()
             {
-        bool status = false;
-        status      = laserDriver->reset();
-        if(!status)
-            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
+        int status;
+        if(laserDriver == nullptr)
+        {
+            QMessageBox::information(this, "消息", "激光器不支持此功能");
+            return;
+        }
+
+        switch(status)
+        {
+            case -3:
+                QMessageBox::warning(this, "警告", "激光器不支持此功能");
+            case -2:
+                QMessageBox::warning(this, "警告", "未实现此功能");
+                break;
+            case -1:
+                QMessageBox::warning(this, "警告", "激光器通信异常");
+                break;
+            case 0:
+                break;
+            default:
+                QMessageBox::warning(this, "警告", "指令响应异常");
+                break;
+        }
     });
 
     connect(ui->btn_laserSetCurrent, &QPushButton::pressed, this, [this]()
             {
-#ifdef TEST_NAV
-        BspConfig::Gps_Info gps;
-        gps.longitude = 109.73866306;
-        gps.latitude  = 18.3495774;
-
-        qDebug() << "-------------" << gps_test_pos.size();
-        if(!gps_test_pos.isEmpty())
-        {
-            QPointF p     = gps_test_pos.dequeue();
-            gps.longitude = p.x();
-            gps.latitude  = p.y();
-
-            qDebug() << QString("%1, %2").arg(gps.longitude, 0, 'g', 10).arg(gps.latitude, 0, 'g', 10);
-        }
-
-        nav->updateGpsInfo(gps);
-        return;
-#endif
-
-        bool status = false;
+        bool    status = false;
+        QString power;
         switch(radarType)
         {
-            case BspConfig::RADAR_TPYE_LAND:
-                status = laser2Driver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
+            case BspConfig::RADAR_TYPE_LAND:
+                status = laserDriver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
                 break;
-            case BspConfig::RADAR_TPYE_DRONE:
+            case BspConfig::RADAR_TYPE_OCEAN:
+                power = ui->comboBox_laserPower->currentText();
+                if(power == "1.8")
+                    status = laserDriver->setPower(0);
+                else if(power == "4.5")
+                    status = laserDriver->setPower(1);
+                else if(power == "7.6")
+                    status = laserDriver->setPower(2);
+
+                break;
+
+            case BspConfig::RADAR_TYPE_DRONE:
                 // 上位机界面单位mA， 设置1000mA(0x3e8), 设置下去的值：100, 单位是0.01A，结果还是1000mA
                 status = laserDriver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()) / 10);
                 break;
-            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+            case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
                 laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 status = laserDriver->setCurrent(ui->doubleSpinBox_laserGreenCurrent->value() * 100);
                 status = laserDriver->setPower(ui->spinBox_laserBlueCurrent->value() * 100);
@@ -1159,8 +1122,8 @@ void MainWindow::initSignalSlot()
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 status = laserDriver->setPower(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()) / 10);
                 break;
-            case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
-                status = laser6Driver->setPower(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
+            case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
+                status = laserDriver->setPower(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
                 break;
             default:
                 break;
@@ -1172,22 +1135,7 @@ void MainWindow::initSignalSlot()
     connect(ui->rbtn_triggerInside, &QRadioButton::clicked, this, [this]()
             {
         bool status = false;
-        switch(radarType)
-        {
-            case BspConfig::RADAR_TPYE_LAND:
-                status = laser2Driver->setMode(LaserController::IN_SIDE);
-                break;
-            case BspConfig::RADAR_TPYE_DRONE:
-            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-            case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laserDriver->setMode(LaserController::IN_SIDE);
-                break;
-            case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
-                status = laser6Driver->setMode(LaserController::IN_SIDE);
-                break;
-            default:
-                break;
-        }
+        status      = laserDriver->setMode(LaserController::IN_SIDE);
         if(status == false)
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
@@ -1195,22 +1143,7 @@ void MainWindow::initSignalSlot()
     connect(ui->rbtn_triggerOutside, &QRadioButton::clicked, this, [this]()
             {
         bool status = false;
-        switch(radarType)
-        {
-            case BspConfig::RADAR_TPYE_LAND:
-                status = laser2Driver->setMode(LaserController::OUT_SIDE);
-                break;
-            case BspConfig::RADAR_TPYE_DRONE:
-            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
-            case BspConfig::RADAR_TYPE_WATER_GUARD:
-                status = laserDriver->setMode(LaserController::OUT_SIDE);
-                break;
-            case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
-                status = laser6Driver->setMode(LaserController::OUT_SIDE);
-                break;
-            default:
-                break;
-        }
+        status      = laserDriver->setMode(LaserController::OUT_SIDE);
         if(status == false)
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
@@ -1220,27 +1153,16 @@ void MainWindow::initSignalSlot()
         QList<QTreeWidgetItem *> itemList;
         switch(radarType)
         {
-            case BspConfig::RADAR_TPYE_LAND:
-                itemList = ui->treeWidget_laser->findItems("激光器状态", Qt::MatchExactly);
-                //                itemList.first()->setText(1, laser2Driver->getStatus());
-                itemList = ui->treeWidget_laser->findItems("外触发频率", Qt::MatchExactly);
-                //                itemList.first()->setText(1, laser2Driver->getFreq());
-                itemList = ui->treeWidget_laser->findItems("电流", Qt::MatchExactly);
-                //                itemList.first()->setText(1, laser2Driver->getCurrent());
-                itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
-                //                itemList.first()->setText(1, laser2Driver->getTemp());
-                break;
-            case BspConfig::RADAR_TPYE_DRONE:
-                while(laserDriver->getStatus() != true)
-                    ;
-                break;
-            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+            case BspConfig::RADAR_TYPE_LAND:
+            case BspConfig::RADAR_TYPE_OCEAN:
+            case BspConfig::RADAR_TYPE_DRONE:
+            case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
                 while(laserDriver->getStatus() != true)
                     ;
                 break;
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 break;
-            case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
+            case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
                 //                laser6Driver->getInfo();
                 break;
             default:
@@ -1293,7 +1215,7 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_motorMovePostion, &QPushButton::pressed, this, [this]()
             {
-        if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+        if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         {
             if(ui->rbtn_GLH->isChecked() == false && ui->rbtn_POLARIZATION->isChecked() == false)
             {
@@ -1466,30 +1388,29 @@ void MainWindow::initSignalSlot()
     connect(daDriver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
     connect(ui->btn_DASetValue, &QPushButton::pressed, this, [this]()
             {
-        if(ui->lineEdit_DAValue->text().isEmpty())
-        {
-            QMessageBox::warning(this, "warning", "请输入有效数据");
-            return;
-        }
         quint32 chNum       = ui->comboBox_DAChSelect->currentIndex();
-        double  analogValue = ui->lineEdit_DAValue->text().toDouble(nullptr);
+        double  analogValue = ui->doubleSpinBox_DAValue->value();
         qint32  digitValue  = 0;
         switch(radarType)
         {
-            case BspConfig::RADAR_TPYE_LAND:
+            case BspConfig::RADAR_TYPE_LAND:
                 digitValue = static_cast<quint32>((analogValue - 3.434) / 0.017);
                 break;
-            case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+            case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
                 digitValue = static_cast<qint32>((analogValue + 0.007) / 0.001);
                 if(chNum == 0)
                     chNum += 4;
                 break;
-            case BspConfig::RADAR_TPYE_OCEAN:
-            case BspConfig::RADAR_TPYE_DRONE:
+            case BspConfig::RADAR_TYPE_OCEAN:
+            case BspConfig::RADAR_TYPE_DRONE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
-            case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
+            case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
                 if(chNum == 0)
-                    digitValue = static_cast<qint32>((analogValue - 8.208) / 0.113);
+                {
+                    digitValue       = static_cast<qint32>((analogValue - 8.208) / 0.113);
+                    QByteArray frame = BspConfig::int2ba(digitValue);
+                    dispatch->encode(MasterSet::TEMP_VOLT_X1, 4, frame);
+                }
                 else if(chNum == 1)
                     digitValue = static_cast<qint32>((analogValue + 0.007) / 0.001);
                 else if(chNum == 2)
@@ -1506,7 +1427,7 @@ void MainWindow::initSignalSlot()
         ui->plainTextEdit_DASetLog->appendPlainText(QDateTime::currentDateTime().toString("hh:mm:ss") +
                                                     "-> " +
                                                     ui->comboBox_DAChSelect->currentText() +
-                                                    ": " + ui->lineEdit_DAValue->text() +
+                                                    ": " + QString::number(analogValue, 'g', 5) +
                                                     "V");
     });
 
@@ -1572,9 +1493,7 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_setTempVolt, &QPushButton::pressed, this, [this]()
             {
-        QByteArray frame = BspConfig::int2ba(ui->spinBox_temp_volt_x1->value());
-        dispatch->encode(MasterSet::TEMP_VOLT_X1, 4, frame);
-        frame = BspConfig::int2ba(ui->spinBox_temp_volt_x2->value());
+        QByteArray frame = BspConfig::int2ba(ui->spinBox_temp_volt_x2->value());
         dispatch->encode(MasterSet::TEMP_VOLT_X2, 4, frame);
     });
 
@@ -1785,13 +1704,13 @@ void MainWindow::plotLineSettings()
     ui->sampleDataPlot->graph(2)->setName("通道1第一段");
     ui->sampleDataPlot->graph(3)->setPen(QPen(Qt::blue));
     ui->sampleDataPlot->graph(3)->setName("通道1第二段");
-    ui->sampleDataPlot->graph(4)->setPen(QPen(Qt::black));
+    ui->sampleDataPlot->graph(4)->setPen(QPen(Qt::green));
     ui->sampleDataPlot->graph(4)->setName("通道2第一段");
-    ui->sampleDataPlot->graph(5)->setPen(QPen(Qt::black));
+    ui->sampleDataPlot->graph(5)->setPen(QPen(Qt::green));
     ui->sampleDataPlot->graph(5)->setName("通道2第二段");
-    ui->sampleDataPlot->graph(6)->setPen(QPen(Qt::darkCyan));
+    ui->sampleDataPlot->graph(6)->setPen(QPen(Qt::black));
     ui->sampleDataPlot->graph(6)->setName("通道3第一段");
-    ui->sampleDataPlot->graph(7)->setPen(QPen(Qt::darkCyan));
+    ui->sampleDataPlot->graph(7)->setPen(QPen(Qt::black));
     ui->sampleDataPlot->graph(7)->setName("通道3第二段");
 }
 
@@ -1818,7 +1737,7 @@ void MainWindow::plotColormapSettings()
         customPlot->setInteractions(QCP::Interaction::iRangeDrag |
                                     QCP::Interaction::iRangeZoom);
         customPlot->axisRect()->setupFullAxesBox(true);  //四刻度轴
-        if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+        if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
             customPlot->xAxis->setLabel("采样次数");
         else
             customPlot->xAxis->setLabel("电机角度(°)");
@@ -1834,7 +1753,7 @@ void MainWindow::plotColormapSettings()
 
         colorMap->data()->setSize(nx, ny);  // nx*ny(cells)
 
-        if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+        if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
             colorMap->data()->setRange(QCPRange(0, colorMap_X_max), QCPRange(0, 1500));  // 显示这些点的绘图坐标范围
         else
             colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 500));  // span the coordinate range
@@ -2034,7 +1953,8 @@ void MainWindow::getSysInfo()
         ui->label_fpgaVer->setText(devInfo->getFpgaVer());
 
         QList<QTreeWidgetItem *> itemList;
-        itemList = ui->treeWidget_attitude->findItems("系统参数", Qt::MatchExactly);
+        itemList                  = ui->treeWidget_attitude->findItems("系统参数", Qt::MatchExactly);
+        previewSettings.laserFreq = sysParaInfo[0].value.toHex().toUInt(nullptr, 16);
         for(int i = 0; i < sysParaInfo.size(); i++)
         {
             if(i == 4)  // 波形存储状态
@@ -2092,9 +2012,35 @@ void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
     QList<QTreeWidgetItem *> itemList;
     switch(radarType)
     {
-        case BspConfig::RADAR_TPYE_LAND:
+        case BspConfig::RADAR_TYPE_LAND:
+
+            itemList = ui->treeWidget_laser->findItems("激光器状态", Qt::MatchExactly);
+            if(info.status == 0)
+                itemList.first()->setText(1, "close");
+            else
+                itemList.first()->setText(1, "open");
+
+            itemList = ui->treeWidget_laser->findItems("外触发频率(kHz)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.freq_outside));
+            itemList = ui->treeWidget_laser->findItems("电流(mA)", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.real_current));
+            itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(info.temp, 'f', 4));
             break;
-        case BspConfig::RADAR_TPYE_DRONE:
+            break;
+        case BspConfig::RADAR_TYPE_OCEAN:
+            itemList = ui->treeWidget_laser->findItems("点1温度", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(static_cast<int>(info.temp)));
+            itemList = ui->treeWidget_laser->findItems("点2温度", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(static_cast<int>(info.headTemp)));
+            itemList = ui->treeWidget_laser->findItems("点3温度", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(static_cast<int>(info.ldTemp)));
+            itemList = ui->treeWidget_laser->findItems("点4温度", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(static_cast<int>(info.laserCrystalTemp)));
+            itemList = ui->treeWidget_laser->findItems("点5温度", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(static_cast<int>(info.multiCrystalTemp)));
+            break;
+        case BspConfig::RADAR_TYPE_DRONE:
             itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);
             itemList.first()->setText(1, QString::number(info.expected_current * 10));
 
@@ -2120,7 +2066,7 @@ void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
             for(int i = 0; i < 5; i++)
                 itemList.first()->child(i)->setText(1, QString::number((info.errorBit >> i) & 0x01));
             break;
-        case BspConfig::RADAR_TPYE_DOUBLE_WAVE:
+        case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
             itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);
             itemList.first()->setText(1, QString::number(info.expected_current * 10));
 
@@ -2174,7 +2120,7 @@ void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
             itemList.first()
                 ->setText(1, QString("%1").arg(QString::number(info.errorBit, 2), 8, QLatin1Char('0')));
             break;
-        case BspConfig::RADAR_TPYE_SECOND_INSTITUDE:
+        case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
 
             itemList = ui->treeWidget_laser->findItems("开关", Qt::MatchExactly);
             //            itemList.first()->setText(1, info.status);
@@ -2230,7 +2176,7 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
         return;
     }
 
-    if(radarType == BspConfig::RADAR_TPYE_DOUBLE_WAVE)
+    if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
     {
         if(doubleWaveConfig.data.size() < colorMap_X_max)
             doubleWaveConfig.data.append(allCh);
@@ -2409,15 +2355,26 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
             refreshUIFlag = false;
 
             // 刷新实时数据曲线
-            for(int n = 0; n < allCh.size(); n++)
+            if(radarType == BspConfig::RADAR_TYPE_LAND)
             {
-                if(allCh.size() != 8)  // 只有第一段波形
-                {
-                    ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
-                    ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
-                }
-                else
+                for(int n = 0; n < 6; n++)
+                    ui->sampleDataPlot->graph(0)->data().data()->clear();
+
+                for(int n = 0; n < allCh.size(); n++)
                     ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
+            }
+            else
+            {
+                for(int n = 0; n < allCh.size(); n++)
+                {
+                    if(allCh.size() != 8)  // 只有第一段波形
+                    {
+                        ui->sampleDataPlot->graph(n * 2)->setData(allCh[n].pos, allCh[n].value);
+                        ui->sampleDataPlot->graph(n * 2 + 1)->data().data()->clear();
+                    }
+                    else
+                        ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
+                }
             }
             if(autoZoomPlot)
                 ui->sampleDataPlot->rescaleAxes();

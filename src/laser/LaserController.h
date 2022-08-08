@@ -84,9 +84,18 @@ public:
         return false;
     }
 
-    virtual bool reset(void)
+    /**
+     * @brief
+     *
+     * @return
+     * -3: 激光器不支持此功能
+     * -2: 未实现此功能
+     * -1: 激光器通信异常
+     * 0: 激光器正常复位
+     */
+    virtual int reset(void)
     {
-        return false;
+        return -3;
     }
 
 public slots:

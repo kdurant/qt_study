@@ -22,7 +22,7 @@ bool LaserType1::setMode(LaserController::OpenMode mode)
 
 bool LaserType1::open()
 {
-    QVector<quint8> command{0x55, 0xAA, 0x01, 0x01, 0x00, 0x02, 0x33, 0xcc};
+    QVector<quint8> command{0x55, 0xAA, 0x01, 0x02, 0x00, 0x01, 0x33, 0xcc};
     QByteArray      frame;
     for(int i = 0; i < command.length(); i++)
     {
@@ -114,5 +114,12 @@ bool LaserType1::getStatus(void)
     QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
     waitLoop.exec();
 
+    info.temp             = recvData[2];
+    info.headTemp         = recvData[3];
+    info.ldTemp           = recvData[4];
+    info.laserCrystalTemp = recvData[5];
+    info.multiCrystalTemp = recvData[6];
+
+    emit laserInfoReady(info);
     return true;
 }
