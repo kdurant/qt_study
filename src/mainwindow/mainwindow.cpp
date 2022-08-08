@@ -224,7 +224,6 @@ void MainWindow::uiConfig()
     QRegExpValidator *hexValidator = new QRegExpValidator(hexReg, this);
 
     ui->lineEdit_motorTargetSpeed->setValidator(decValidator);
-    ui->lineEdit_DAValue->setValidator(floatValidator);
     ui->lineEdit_sampleLen->setValidator(decValidator);
     ui->lineEdit_sampleRate->setValidator(decValidator);
     ui->lineEdit_firstStartPos->setValidator(decValidator);
@@ -365,6 +364,7 @@ void MainWindow::uiConfig()
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_DAChSelect->setCurrentIndex(0);
         ui->comboBox_ADChSelect->addItems(AD1List);
+        ui->doubleSpinBox_DAValue->setRange(0, 250);
 
         ui->groupBox_tempVolt->show();
         ui->tabWidget->setTabEnabled(5, true);
@@ -1377,13 +1377,8 @@ void MainWindow::initSignalSlot()
     connect(daDriver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
     connect(ui->btn_DASetValue, &QPushButton::pressed, this, [this]()
             {
-        if(ui->lineEdit_DAValue->text().isEmpty())
-        {
-            QMessageBox::warning(this, "warning", "请输入有效数据");
-            return;
-        }
         quint32 chNum       = ui->comboBox_DAChSelect->currentIndex();
-        double  analogValue = ui->lineEdit_DAValue->text().toDouble(nullptr);
+        double  analogValue = ui->doubleSpinBox_DAValue->value();
         qint32  digitValue  = 0;
         switch(radarType)
         {
@@ -1421,7 +1416,7 @@ void MainWindow::initSignalSlot()
         ui->plainTextEdit_DASetLog->appendPlainText(QDateTime::currentDateTime().toString("hh:mm:ss") +
                                                     "-> " +
                                                     ui->comboBox_DAChSelect->currentText() +
-                                                    ": " + ui->lineEdit_DAValue->text() +
+                                                    ": " + QString::number(analogValue, 'g', 5) +
                                                     "V");
     });
 
