@@ -62,10 +62,10 @@ void Navigation::initSignalSlot()
         ui->lineEdit_mapFile->setText(mapPath);
         ui->mapView->deleleAllItems();
         ui->mapView->setMapPath(mapPath);
-        ui->mapView->setDefaultZoom(14);
         ui->mapView->parseMapInfo();
 
         MapView::TileMapInfo info = ui->mapView->getMapInfo();
+        ui->mapView->setDefaultZoom(info.min_zoom_level);
         ui->spinBox_mapMinMapLevel->setValue(info.min_zoom_level);
         ui->spinBox_mapMaxMapLevel->setValue(info.max_zoom_level);
         ui->horizontalSlider_zoomCtrl->setRange(info.min_zoom_level, info.max_zoom_level);

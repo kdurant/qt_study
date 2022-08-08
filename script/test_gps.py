@@ -1,7 +1,7 @@
 """
 从硬盘数据中提取的gps文件中读取gps数据，
 模拟Novatel型号GPS 实际的数据帧，通过UDP发到上位机软件
-usage: python test_gps.py --file gps_info.log -i 2000
+python test_gps.py --file gps_info.log -i 2000
 """
 
 import time
@@ -40,10 +40,16 @@ with open(args.file, 'r') as gps_data:
     """
     line = gps_data.readline()
     while line:
-        #  if (num > 2620 and num < 2800) or (num > 6070 and num < 6240):
-        if num >= 2640 and num < 2641:
+        if (num > 2620 and num < 2800) or \
+        (num > 5030 and num < 5230) or \
+        (num > 6080 and num < 6240) or \
+        (num > 7280 and num < 7430) or \
+        (num > 10930 and num < 11100) or \
+        (num > 12980 and num < 13170) or \
+        (num > 14400):
+            #  if num >= 2640 and num < 2641:
             #  if num >= 0:
-            line = line[:-1]
+            #  line = line[:-1]
 
             # 维度      经度
             gps_second, gps_sub_time, latitude, longitude, height, azimuth, pitch, roll = line.split(',')
