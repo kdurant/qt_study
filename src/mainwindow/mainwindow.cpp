@@ -503,6 +503,17 @@ void MainWindow::uiConfig()
             ui->treeWidget_laser->resizeColumnToContents(0);
             ui->treeWidget_laser->expandAll();
             break;
+        case BspConfig::RADAR_TYPE_OCEAN:
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "点1温度"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "点2温度"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "点3温度"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "点4温度"));
+            topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "点5温度"));
+            ui->treeWidget_laser->addTopLevelItems(topItems);
+
+            ui->treeWidget_laser->resizeColumnToContents(0);
+            ui->treeWidget_laser->expandAll();
+            break;
         case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
         case BspConfig::RADAR_TYPE_DRONE:
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流设定值(mA)"));
@@ -2016,6 +2027,18 @@ void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
             itemList = ui->treeWidget_laser->findItems("温度", Qt::MatchExactly);
             itemList.first()->setText(1, QString::number(info.temp, 'f', 4));
             break;
+            break;
+        case BspConfig::RADAR_TYPE_OCEAN:
+            itemList = ui->treeWidget_laser->findItems("点1温度", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(static_cast<int>(info.temp)));
+            itemList = ui->treeWidget_laser->findItems("点2温度", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(static_cast<int>(info.headTemp)));
+            itemList = ui->treeWidget_laser->findItems("点3温度", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(static_cast<int>(info.ldTemp)));
+            itemList = ui->treeWidget_laser->findItems("点4温度", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(static_cast<int>(info.laserCrystalTemp)));
+            itemList = ui->treeWidget_laser->findItems("点5温度", Qt::MatchExactly);
+            itemList.first()->setText(1, QString::number(static_cast<int>(info.multiCrystalTemp)));
             break;
         case BspConfig::RADAR_TYPE_DRONE:
             itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);

@@ -114,5 +114,12 @@ bool LaserType1::getStatus(void)
     QTimer::singleShot(1000, &waitLoop, &QEventLoop::quit);
     waitLoop.exec();
 
+    info.temp             = recvData[2];
+    info.headTemp         = recvData[3];
+    info.ldTemp           = recvData[4];
+    info.laserCrystalTemp = recvData[5];
+    info.multiCrystalTemp = recvData[6];
+
+    emit laserInfoReady(info);
     return true;
 }
