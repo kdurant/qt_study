@@ -134,6 +134,10 @@ public:
     {
         COVERAGE_THRESHOLD = threshold;
     }
+    void setScanAngle(double angle)
+    {
+        m_scanAngle = angle / 2;
+    }
 
     /**
      * @brief 当前位置在那条规划的航迹上
@@ -322,7 +326,7 @@ private:
 
     SurveyArea m_surverArea;
 
-    double m_scanAngle{30};   // 飞机雷达的扫描角度；海洋雷达30度，陆地雷达60度
+    double m_scanAngle{15};   // 飞机雷达的扫描角度；海洋雷达30度，陆地雷达60度
     double m_matrixSize{10};  // 矩阵元素的大小，单位：米
 
     double           m_currentSpeed{0};

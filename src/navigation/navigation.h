@@ -30,6 +30,7 @@ public:
     void updateGpsInfo(BspConfig::Gps_Info &data);
     void showGpsInfo(const BspConfig::Gps_Info &gps);
     void showSystemInfo(void);
+    void setScanAngle(double angle);
 
 protected:
     void timerEvent(QTimerEvent *event);

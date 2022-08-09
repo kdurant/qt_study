@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "bsp_config.h"
 #include "ui_mainwindow.h"
 
 #include "ui_navigation.h"
@@ -1671,6 +1672,16 @@ void MainWindow::setToolBar()
             {
         engineerView->show();
         // pilotView->show();
+        if(radarType == BspConfig::RADAR_TYPE_LAND)
+        {
+            engineerView->setScanAngle(60);
+            // pilotView->setScanAngle(60);
+        }
+        else
+        {
+            engineerView->setScanAngle(30);
+            // pilotView->setScanAngle(30);
+        }
     });
 }
 

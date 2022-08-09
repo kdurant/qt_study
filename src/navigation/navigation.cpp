@@ -132,6 +132,11 @@ void Navigation::showSystemInfo(void)
     itemList.first()->child(2)->setText(1, QString::number(m_designedAirArea.getPosOnWhichLine()));
 }
 
+void Navigation::setScanAngle(double angle)
+{
+    m_designedAirArea.setScanAngle(angle);
+}
+
 void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
 {
     m_designedAirArea.setCurrentPos(data);
