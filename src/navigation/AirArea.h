@@ -229,7 +229,7 @@ public:
         if(m_posOnWhichLine < 0)
             return -10001;
 
-        double expect_height = m_surverArea.airLine[m_posOnWhichLine].height;
+        double expect_height = m_surverArea.airLine[m_posOnWhichLine - 1].height;
         return m_currentPos.height - expect_height;
     }
 
@@ -238,7 +238,7 @@ public:
         if(m_posOnWhichLine < 0)
             return -10001;
 
-        double expect = m_surverArea.airLine[m_posOnWhichLine].speed;
+        double expect = m_surverArea.airLine[m_posOnWhichLine - 1].speed;
         return m_currentSpeed - expect;
     }
     double getAzimutuDeriation()
