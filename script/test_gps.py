@@ -71,6 +71,10 @@ with open(args.file, 'r') as gps_data:
                 print("num: {:6d}/17806".format(num))
                 s.sendto(packet, address)
                 exit(0)
+            elif args.pos == -1:
+                print("num: {:6d}/17806".format(num))
+                s.sendto(packet, address)
+                time.sleep(args.interval / 1000)
         else:
             if (num > 2620 and num < 2800):
                 #  if (num > 2620 and num < 2800) or \
