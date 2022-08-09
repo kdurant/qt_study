@@ -156,7 +156,10 @@ void MainWindow::initParameter()
     QHostInfo info          = QHostInfo::fromName(localHostName);
 
     if(configIni->value("System/mode").toString() == "debug")
+    {
         localIP.append("127.0.0.1");
+        QMessageBox::information(this, "通知", "当前为调试模式, IP addr:127.0.0.1");
+    }
     else
     {
         localIP = read_ip_address();
