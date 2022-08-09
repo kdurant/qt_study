@@ -479,20 +479,6 @@
         <string>设备信息</string>
        </property>
        <layout class="QGridLayout" name="gridLayout_17">
-        <item row="3" column="0">
-         <widget class="QPushButton" name="btn_ReadSysInfo">
-          <property name="text">
-           <string>读取系统参数</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="text">
-           <string>设备类型：</string>
-          </property>
-         </widget>
-        </item>
         <item row="3" column="1">
          <widget class="QCheckBox" name="checkBox_autoReadSysInfo">
           <property name="text">
@@ -522,15 +508,43 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
+        <item row="5" column="0">
          <widget class="QLabel" name="label_35">
           <property name="text">
            <string>底层软件版本：</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
+        <item row="5" column="1">
          <widget class="QLabel" name="label_fpgaVer">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QPushButton" name="btn_ReadSysInfo">
+          <property name="text">
+           <string>读取系统参数</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>设备类型：</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_20">
+          <property name="text">
+           <string>上位机软件IP</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLabel" name="label_softwareVer">
           <property name="text">
            <string/>
           </property>
@@ -548,7 +562,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -866,7 +880,7 @@
               <x>0</x>
               <y>0</y>
               <width>297</width>
-              <height>268</height>
+              <height>250</height>
              </rect>
             </property>
             <attribute name="label">

@@ -100,11 +100,6 @@ void MainWindow::initParameter()
         file.write("; release or debug\r\n");
         file.write("mode=debug\r\n");
         file.write("radarType=1\r\n");
-        file.write("localPort=6666\r\n");
-        file.write(";  land radar, IP = 192.168.1.101; port = 5555\r\n");
-        file.write("; other radar, IP = 192.168.1.102; port = 4444\r\n");
-        file.write("radarIP=192.168.1.101\r\n");
-        file.write("radarPort=5555\r\n");
         file.write("\r\n[Preview]\r\n");
         file.write("compressLen=0\r\n");
         file.write("compressRatio=0\r\n");
@@ -129,6 +124,8 @@ void MainWindow::initParameter()
             break;
         case 1:
             radarType   = BspConfig::RADAR_TYPE_LAND;
+            deviceIP    = QHostAddress("192.168.1.101");
+            devicePort  = 5555;
             laserDriver = new LaserType2();
             break;
         case 2:
@@ -152,7 +149,6 @@ void MainWindow::initParameter()
             break;
         default:
             radarType = BspConfig::RADAR_TYPE_OCEAN;
-            QMessageBox::critical(this, "error", "请设置正确的雷达类型");
             break;
     }
 
@@ -160,30 +156,23 @@ void MainWindow::initParameter()
     QHostInfo info          = QHostInfo::fromName(localHostName);
 
     if(configIni->value("System/mode").toString() == "debug")
-        localIP = "127.0.0.1";
+        localIP.append("127.0.0.1");
     else
     {
         localIP = read_ip_address();
-        if(!localIP.contains("192.168.1"))
+        if(localIP.length() == 0)
         {
-            QMessageBox::warning(this, "警告", "请修改主机IP地址(192.168.1.xxx)");
+            QMessageBox::warning(this, "警告", "没有合适的IP地址，请修改主机IP地址(192.168.1.xxx)");
             ui->statusBar->showMessage(tr("请修改主机IP地址(192.168.1.xxx"), 3);
+        }
+        else if(localIP.length() >= 2)
+        {
+            QMessageBox::information(this, "通知", "检测本机有多个网卡在192.168.1.xxx网段，如果是连接多个雷达设备，请将连接陆地雷达的网卡IP设置为192.168.1.155，且先打开陆地雷达控制软件");
         }
     }
 
-    localPort = configIni->value("System/localPort").toUInt();
-
     if(configIni->value("System/mode").toString() == "debug")
         deviceIP = QHostAddress("127.0.0.1");
-    else
-        deviceIP = QHostAddress(configIni->value("System/radarIP").toString());
-    devicePort = configIni->value("System/radarPort").toInt();
-
-    if(devicePort == 0)
-    {
-        QMessageBox::critical(this, "error", "请在配置文件中指定设备IP地址和端口号");
-        return;
-    }
 
     ui->lineEdit_sampleLen->setText(configIni->value("Preview/sampleLen").toString());
     ui->lineEdit_sampleRate->setText(configIni->value("Preview/sampleRate").toString());
@@ -568,11 +557,25 @@ void MainWindow::uiConfig()
 
 void MainWindow::udpBind()
 {
-    udpSocket = new QUdpSocket(this);
-    if(!udpSocket->bind(QHostAddress(localIP), localPort))
+    udpSocket  = new QUdpSocket(this);
+    int status = 0;
+
+    for(auto ip : localIP)
+    {
+        if(!udpSocket->bind(QHostAddress(ip), localPort))
+        {
+            status = -1;
+        }
+        else
+        {
+            ui->statusBar->showMessage(tr("连接设备成功"), 0);
+            ui->label_softwareVer->setText(ip);
+            status = 0;
+            break;
+        }
+    }
+    if(status == -1)
         QMessageBox::warning(NULL, "警告", "雷达连接失败");
-    else
-        ui->statusBar->showMessage(tr("连接设备成功"), 0);
     udpSocket->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, 1024 * 1024 * 1);
 }
 
@@ -2139,21 +2142,20 @@ void MainWindow::showLaserInfo(LaserType4::LaserInfo &info)
     }
 }
 
-QString MainWindow::read_ip_address()
+QStringList MainWindow::read_ip_address()
 {
+    QStringList         ips;
     QList<QHostAddress> list = QNetworkInterface::allAddresses();
     foreach(QHostAddress address, list)
     {
         if(address.protocol() == QAbstractSocket::IPv4Protocol)
         {
-            if(address.toString().contains("127.0."))
-            {
-                continue;
-            }
-            return address.toString();
+            QString ip = address.toString();
+            if(ip.contains("192.168.1."))
+                ips.append(ip);
         }
     }
-    return 0;
+    return ips;
 }
 
 void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh, int status)

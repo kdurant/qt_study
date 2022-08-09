@@ -101,8 +101,8 @@ private slots:
     void getSysInfo();
     void showLaserInfo(LaserType4::LaserInfo &info);
 
-    QString read_ip_address(void);
-    void    showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh, int status);
+    QStringList read_ip_address(void);
+    void        showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh, int status);
 
 private:
     struct __sys_status__
@@ -155,11 +155,12 @@ private:
 
     BspConfig::RadarType radarType;
 
-    QString localIP;
+    QStringList localIP;
+    // QString     localIP;
     quint16 localPort{6666};
 
-    QHostAddress deviceIP;
-    quint16      devicePort;
+    QHostAddress deviceIP{QHostAddress("192.168.1.102")};
+    quint16      devicePort{4444};
     int8_t       fpgaRadarType{-1};  // fpga 内部固化的雷达类型
     QByteArray   fpgaVersion{5, char(0)};
 
