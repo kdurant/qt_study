@@ -139,6 +139,9 @@ void Navigation::setScanAngle(double angle)
 
 void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
 {
+    if(isLoadedMap == false || isLoadedTracker == false)
+        return;
+
     m_designedAirArea.setCurrentPos(data);
     double currentSpeed = m_designedAirArea.getCurrentSpeed();
 
@@ -169,9 +172,6 @@ void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
         ui->label_headingDeviation->setText("nan");
     else
         ui->label_headingDeviation->setText(QString::number(m_designedAirArea.getAzimutuDeriation(), 'g', 6));
-
-    if(isLoadedMap == false || isLoadedTracker == false)
-        return;
 
     m_realtime_path.append(QPointF(data.longitude, data.latitude));
     ui->mapView->loadRealTimePoint(QPointF(data.longitude, data.latitude));

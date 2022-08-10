@@ -166,7 +166,7 @@ void MainWindow::initParameter()
         localIP = read_ip_address();
         if(localIP.length() == 0)
         {
-            QMessageBox::warning(this, "警告", "没有合适的IP地址，请修改主机IP地址(192.168.1.xxx)");
+            QMessageBox::warning(this, "警告", "没有合适的IP地址或网络连接异常");
             ui->statusBar->showMessage(tr("请修改主机IP地址(192.168.1.xxx"), 3);
         }
         else if(localIP.length() >= 2)
