@@ -99,7 +99,6 @@ class NovatelFrame():
             self.pitch                                  + \
             self.azimuth                                + \
             self.status.to_bytes(4, byteorder='little') + \
-            self.padding                                + \
             self.crc.to_bytes(4, byteorder='little')
 
         return frame

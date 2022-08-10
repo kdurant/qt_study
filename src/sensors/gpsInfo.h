@@ -24,7 +24,7 @@ public:
     enum GPS_FRAME_LEN
     {
         APPLANIX_LEN     = 115,  // 第一个字节0x02
-        NOVATEL_LEN      = 115,  // 前3个字节数据0xAA,0x44,0x13
+        NOVATEL_LEN      = 104,  // 前3个字节数据0xAA,0x44,0x13
         DISK_DATA_LEN    = 88,   // 硬盘数据里包括帧头的GPS数据
         PREVIEW_DATA_LEN = 64,   // 预览数据里的GPS数据
     };
@@ -112,10 +112,11 @@ public slots:
     {
         if(frame.size() == APPLANIX_LEN)
         {
-            if(frame.front() == char(0x02))
-                paserGpsData_APPLANIX(frame);
-            else
-                paserGpsData_NOVATEL(frame);
+            paserGpsData_APPLANIX(frame);
+        }
+        else if(frame.size() == NOVATEL_LEN)
+        {
+            paserGpsData_NOVATEL(frame);
         }
         else if(frame.size() == DISK_DATA_LEN)
         {

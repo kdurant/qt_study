@@ -1967,7 +1967,7 @@ void MainWindow::getSysInfo()
         {
             ui->statusBar->showMessage("底层配置的雷达类型(" + QString::number(devInfo->getRadarType()) + ")与上位机配置的雷达类型不一致", 0);
         }
-        ui->label_fpgaVer->setText(devInfo->getFpgaVer());
+        fpgaVersion = devInfo->getFpgaVer().toUtf8();
 
         QList<QTreeWidgetItem *> itemList;
         itemList                  = ui->treeWidget_attitude->findItems("系统参数", Qt::MatchExactly);
