@@ -13,6 +13,7 @@ find_package(
   COMPONENTS Core
   REQUIRED)
 
-add_executable(${projectName} benchmark.cpp
-                              ${CMAKE_SOURCE_DIR}/src/navigation/AirArea.cpp)
+add_executable(
+  ${projectName} benchmark.cpp ${CMAKE_SOURCE_DIR}/src/navigation/AirArea.cpp
+                 ${CMAKE_SOURCE_DIR}/src/navigation/CoordCompute.cpp)
 target_link_libraries(${projectName} Qt5::Core benchmark::benchmark)

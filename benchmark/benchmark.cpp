@@ -1,5 +1,6 @@
 #include <benchmark/benchmark.h>
 #include <qelapsedtimer.h>
+#include <qpoint.h>
 #include "AirArea.h"
 
 QString path{"../../check_airway.txt"};
@@ -30,21 +31,20 @@ static void SetSurveyArea(benchmark::State& state)
         m_designedAirArea.setSurverArea();
     }
 }
-BENCHMARK(InitSurveyArea)
-    ->Unit(benchmark::kMillisecond)
-    ->Setup(CoverageDoSetup)
-    // ->Arg(1)
-    ->Arg(5)
-    ->Arg(10)
-    ->Arg(20);
+// BENCHMARK(InitSurveyArea)
+// ->Unit(benchmark::kMillisecond)
+// ->Setup(CoverageDoSetup)
+// ->Arg(5)
+// ->Arg(10)
+// ->Arg(20);
 
-BENCHMARK(SetSurveyArea)
-    ->Unit(benchmark::kMillisecond)
-    ->Setup(CoverageDoSetup)
-    ->Arg(1)
-    ->Arg(5)
-    ->Arg(10)
-    ->Arg(20);
+// BENCHMARK(SetSurveyArea)
+// ->Unit(benchmark::kMillisecond)
+// ->Setup(CoverageDoSetup)
+// ->Arg(1)
+// ->Arg(5)
+// ->Arg(10)
+// ->Arg(20);
 
 BspConfig::Gps_Info prevPos{17476, 0, 0, 19.556985561977637, 109.44228145496466, 359.49531255476177, 359.49531255476177, 339.5817447173903, -2.8658673724470445, 0.8977233399813679};
 BspConfig::Gps_Info currentPos{17476, 0, 0, 19.557024501297718, 109.44238916966063, 359.54851242434233, 359.54851242434233, 339.7008848804187, -2.8586711836017757, 1.1314910681129875};
@@ -70,12 +70,27 @@ static void GetCoveragePercent(benchmark::State& state)
     }
 }
 
-BENCHMARK(GetCoveragePercent)
-    ->Unit(benchmark::kMillisecond)
-    ->Setup(PercentDoSetup)
-    ->Arg(1)
-    ->Arg(5)
-    ->Arg(10);
-// ->Arg(20);
+// BENCHMARK(GetCoveragePercent)
+// ->Unit(benchmark::kMillisecond)
+// ->Setup(PercentDoSetup)
+// ->Arg(1)
+// ->Arg(5)
+// ->Arg(10);
+
+////////////////////////////////////////////////////////////////////////////
+static void point2seg_distance(benchmark::State& state)
+{
+    QPointF p1{109.4562258, 19.56154218};
+    QLineF  target{
+        QPointF{109.4573788, 19.56213428},
+        QPointF{109.4397899, 19.55589398},
+    };
+    for(auto _ : state)
+    {
+        m_surveyArea.point2seg_distance(p1, target);
+    }
+}
+BENCHMARK(point2seg_distance)
+    ->Unit(benchmark::kMicrosecond);
 
 BENCHMARK_MAIN();

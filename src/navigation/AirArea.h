@@ -275,7 +275,7 @@ public:
      */
     double point2line_distance(QPointF point, QLineF& line);
     /**
-     * @brief 点到线段的距离,
+     * @brief 点到线段的距离, benchmark: 0.1us
      * @param point， 经维度
      * @param target
      * @return 返回值需要乘以111km,把单位换算成m

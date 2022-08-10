@@ -512,7 +512,7 @@ QVector<AirArea::LinePara> AirArea::interpolateAirLine(AirLine &airLine)
     QVector<AirArea::LinePara> ret;
 
     double   width = getScanWidth(airLine.height, m_scanAngle);  // 1. 获得雷达扫描宽度，可知需要新增多少条虚拟航线
-    int      num   = width / m_matrixSize;
+    int      num   = width / m_matrixSize - 2;
     LinePara line  = getLinePara(airLine.line);  // 2. 获得规划航线的参数
 
     ret.append(line);
