@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1245</width>
-    <height>842</height>
+    <height>867</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -441,7 +441,7 @@
      <x>0</x>
      <y>0</y>
      <width>1245</width>
-     <height>23</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -562,7 +562,7 @@
         </size>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
@@ -733,66 +733,6 @@
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_9">
          <item>
-          <widget class="QGroupBox" name="groupBox_7">
-           <property name="title">
-            <string>参数配置</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_13">
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="lineEdit_motorDeceleration">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="lineEdit_111">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_24">
-              <property name="text">
-               <string>加速度</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEdit_motorAcceleration">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_26">
-              <property name="text">
-               <string>速度</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_25">
-              <property name="text">
-               <string>减速度</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
           <widget class="QGroupBox" name="groupBox_4">
            <property name="title">
             <string>电机信息</string>
@@ -879,8 +819,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>297</width>
-              <height>250</height>
+              <width>340</width>
+              <height>247</height>
              </rect>
             </property>
             <attribute name="label">
@@ -955,8 +895,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>171</width>
-              <height>73</height>
+              <width>218</width>
+              <height>86</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1010,8 +950,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>171</width>
-              <height>117</height>
+              <width>218</width>
+              <height>146</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1266,9 +1206,9 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
-              <width>297</width>
-              <height>774</height>
+              <y>-195</y>
+              <width>340</width>
+              <height>970</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1755,8 +1695,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>194</width>
-              <height>366</height>
+              <width>242</width>
+              <height>467</height>
              </rect>
             </property>
             <attribute name="label">

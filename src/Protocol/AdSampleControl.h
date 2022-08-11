@@ -99,7 +99,7 @@ public:
     {
         data             = (data >> 3) << 3;
         QByteArray frame = BspConfig::int2ba(data);
-        emit       sendDataReady(MasterSet::COMPRESS_RATIO, 4, frame);
+        emit       sendDataReady(MasterSet::SAMPLE_DELAY_TIME, 4, frame);
         sleepWithoutBlock(interval);
     }
 
