@@ -1332,7 +1332,33 @@ void MainWindow::initSignalSlot()
         ui->btn_ssdEnableStore->setEnabled(false);
 
         quint32 fileUnit = ui->lineEdit_ssdAvailFileUnit->text().toUInt(nullptr, 16);
-        QString fileName = QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
+
+        QString fileName;
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TYPE_LAND:
+                fileName = "land_";
+                break;
+            case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
+                fileName = "doubleWave_";
+                break;
+            case BspConfig::RADAR_TYPE_OCEAN:
+                fileName = "ocean_";
+                break;
+            case BspConfig::RADAR_TYPE_DRONE:
+                fileName = "drone_";
+                break;
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
+                fileName = "waterGuard_";
+                break;
+            case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
+                fileName = "secondInstitute_";
+                break;
+            default:
+                break;
+        }
+
+        fileName.append(QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss"));
         if(ui->lineEdit_ssdStoreFileName->text().length() != 0)
             fileName.append(ui->lineEdit_ssdStoreFileName->text());
         ssd->setSaveFileName(fileUnit, fileName);
