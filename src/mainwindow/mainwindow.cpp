@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include <algorithm>
 #include "bsp_config.h"
 #include "ui_mainwindow.h"
 
@@ -2169,6 +2170,7 @@ QStringList MainWindow::read_ip_address()
                 ips.append(ip);
         }
     }
+    std::sort(ips.begin(), ips.end());
     return ips;
 }
 

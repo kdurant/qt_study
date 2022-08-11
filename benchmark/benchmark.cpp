@@ -31,20 +31,6 @@ static void SetSurveyArea(benchmark::State& state)
         m_designedAirArea.setSurverArea();
     }
 }
-// BENCHMARK(InitSurveyArea)
-// ->Unit(benchmark::kMillisecond)
-// ->Setup(CoverageDoSetup)
-// ->Arg(5)
-// ->Arg(10)
-// ->Arg(20);
-
-// BENCHMARK(SetSurveyArea)
-// ->Unit(benchmark::kMillisecond)
-// ->Setup(CoverageDoSetup)
-// ->Arg(1)
-// ->Arg(5)
-// ->Arg(10)
-// ->Arg(20);
 
 BspConfig::Gps_Info prevPos{17476, 0, 0, 19.556985561977637, 109.44228145496466, 359.49531255476177, 359.49531255476177, 339.5817447173903, -2.8658673724470445, 0.8977233399813679};
 BspConfig::Gps_Info currentPos{17476, 0, 0, 19.557024501297718, 109.44238916966063, 359.54851242434233, 359.54851242434233, 339.7008848804187, -2.8586711836017757, 1.1314910681129875};
@@ -70,13 +56,6 @@ static void GetCoveragePercent(benchmark::State& state)
     }
 }
 
-// BENCHMARK(GetCoveragePercent)
-// ->Unit(benchmark::kMillisecond)
-// ->Setup(PercentDoSetup)
-// ->Arg(1)
-// ->Arg(5)
-// ->Arg(10);
-
 ////////////////////////////////////////////////////////////////////////////
 static void point2seg_distance(benchmark::State& state)
 {
@@ -90,7 +69,38 @@ static void point2seg_distance(benchmark::State& state)
         m_surveyArea.point2seg_distance(p1, target);
     }
 }
+
+#if 1
+BENCHMARK(InitSurveyArea)
+    ->Unit(benchmark::kMillisecond)
+    ->Setup(CoverageDoSetup)
+    ->Arg(5)
+    ->Arg(10)
+    ->Arg(20);
+#endif
+
+#if 0
+BENCHMARK(SetSurveyArea)
+    ->Unit(benchmark::kMillisecond)
+    ->Setup(CoverageDoSetup)
+    ->Arg(1)
+    ->Arg(5)
+    ->Arg(10)
+    ->Arg(20);
+#endif
+
+#if 0
+BENCHMARK(GetCoveragePercent)
+    ->Unit(benchmark::kMillisecond)
+    ->Setup(PercentDoSetup)
+    ->Arg(1)
+    ->Arg(5)
+    ->Arg(10);
+#endif
+
+#if 0
 BENCHMARK(point2seg_distance)
     ->Unit(benchmark::kMicrosecond);
+#endif
 
 BENCHMARK_MAIN();
