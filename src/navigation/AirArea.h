@@ -27,7 +27,11 @@
 ============================================================================= */
 #ifndef AIRAREA_H
 #define AIRAREA_H
+
+#include <algorithm>
+
 #include <QtCore>
+#include <QPolygonF>
 #include "bsp_config.h"
 
 class AirArea : public QObject
@@ -193,6 +197,13 @@ public:
         return m_currentScanLine;
     }
 
+    QPolygonF getScanPolygonF(void)
+    {
+        QPolygonF polygon = m_leftPoints;
+        std::reverse(polygon.begin(), polygon.end());
+        return m_rightPoints + polygon;
+    }
+
     /**
      * @brief 根据当前GPS位置，高度，航向角，翻滚角，俯仰角，计算出雷达扫描宽度在坐标系中的表达式f
      * @param pos
@@ -331,6 +342,8 @@ private:
 
     double           m_currentSpeed{0};
     QLineF           m_currentScanLine;
+    QPolygonF        m_rightPoints;
+    QPolygonF        m_leftPoints;
     int              m_posOnWhichLine{-1};
     double           m_coveragePercent{0};
     QVector<int>     m_coveragePoints;  // QVector的长度和规划航线划分的点个数一致

@@ -152,6 +152,14 @@ void MapView::loadSerialNum(QPointF posi, int num)
     update();
 }
 
+// 需要将经维度转换为屏幕坐标
+void MapView::loadPolygonF(const QPolygonF &polygon)
+{
+    if(m_scanPoly != nullptr)
+        scene->removeItem(m_scanPoly);
+    m_scanPoly = scene->addPolygon(polygon, QPen(Qt::red));
+}
+
 void MapView::loadSurveyBorder(const QRectF &rect)
 {
     QRectF r;

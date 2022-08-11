@@ -180,6 +180,7 @@ void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
     {
         QLineF l = m_designedAirArea.getRadarScanExpression();
         ui->mapView->loadTracker(l.p1(), l.p2(), QPen(Qt::yellow));
+        ui->mapView->loadPolygonF(m_designedAirArea.getScanPolygonF());
     }
 }
 

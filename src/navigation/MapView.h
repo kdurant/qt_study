@@ -13,6 +13,7 @@
 #include <cmath>
 #include <QtDebug>
 #include <QMessageBox>
+#include <QPolygonF>
 
 #include "LineWithArrow.h"
 #include "common.h"
@@ -129,6 +130,8 @@ public:
     void loadTracker(QPointF start, QPointF end, const QPen &pen);
     void loadSerialNum(QPointF posi, int num);
 
+    void loadPolygonF(const QPolygonF &polygon);
+
     /**
      * @brief 显示测区的矩形边界
      * @param rect
@@ -152,10 +155,13 @@ protected:
 private:
     QGraphicsScene *scene;
     QString         m_mapPath;
-    int             m_deviation{10};  // 实际GPS会在瓦片地图的GPS范围之外
-    int             m_tile_X_offset{0};
-    int             m_tile_Y_offset{0};
-    TileMapInfo     m_tileMapInfo{
+
+    QGraphicsPolygonItem *m_scanPoly{nullptr};
+
+    int         m_deviation{10};  // 实际GPS会在瓦片地图的GPS范围之外
+    int         m_tile_X_offset{0};
+    int         m_tile_Y_offset{0};
+    TileMapInfo m_tileMapInfo{
         -1, -1, -1, -1, -1, -1, -1};
 };
 

@@ -198,6 +198,8 @@ double AirArea::__getCoveragePercent()
     AirLine temp;
     temp              = _getRadarScanExpression(m_currentPos);
     m_currentScanLine = temp.line;
+    m_rightPoints << temp.line.p1();
+    m_leftPoints << temp.line.p2();
 
     QVector<BspConfig::Gps_Info> points = interpolateScanPoint(m_prevPos, m_currentPos);
 
