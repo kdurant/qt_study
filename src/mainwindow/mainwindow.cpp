@@ -1631,6 +1631,27 @@ void MainWindow::initSignalSlot()
     });
 
     connect(ui->btn_colorMap, &QPushButton::pressed, this, [this]() {});
+
+    connect(ui->comboBox_DAChSelect, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            [=](int index)
+            {
+        switch(radarType)
+        {
+            case BspConfig::RADAR_TYPE_OCEAN:
+                if(index == 0)
+                    ui->doubleSpinBox_DAValue->setRange(0, 250);
+                else
+                    ui->doubleSpinBox_DAValue->setRange(0, 5);
+                break;
+
+            case BspConfig::RADAR_TYPE_LAND:
+                if(index == 0)
+                    ui->doubleSpinBox_DAValue->setRange(0, 70);
+                break;
+            default:
+                break;
+        }
+    });
 }
 
 void MainWindow::setToolBar()
