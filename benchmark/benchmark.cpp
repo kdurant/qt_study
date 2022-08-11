@@ -1,7 +1,8 @@
 #include <benchmark/benchmark.h>
-#include <qelapsedtimer.h>
-#include <qpoint.h>
+#include <algorithm>
 #include "AirArea.h"
+#include <QtCore>
+#include <QPolygonF>
 
 QString path{"../../check_airway.txt"};
 
@@ -70,7 +71,22 @@ static void point2seg_distance(benchmark::State& state)
     }
 }
 
-#if 1
+////////////////////////////////////////////////////////////////////////////
+static void QPloygonF_Reverse(benchmark::State& state)
+{
+    double    len = state.range(0);
+    QPolygonF polygon;
+    for(int i = 0; i < len; i++)
+    {
+        polygon << QPointF(i, i);
+    }
+    for(auto _ : state)
+    {
+        std::reverse(polygon.begin(), polygon.end());
+    }
+}
+
+#if 0
 BENCHMARK(InitSurveyArea)
     ->Unit(benchmark::kMillisecond)
     ->Setup(CoverageDoSetup)
@@ -101,6 +117,14 @@ BENCHMARK(GetCoveragePercent)
 #if 0
 BENCHMARK(point2seg_distance)
     ->Unit(benchmark::kMicrosecond);
+#endif
+
+#if 1
+BENCHMARK(QPloygonF_Reverse)
+    ->Unit(benchmark::kMicrosecond)
+    ->Arg(10000)
+    ->Arg(50000)
+    ->Arg(100000);
 #endif
 
 BENCHMARK_MAIN();
