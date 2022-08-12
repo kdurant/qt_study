@@ -441,7 +441,7 @@
      <x>0</x>
      <y>0</y>
      <width>1245</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -812,15 +812,15 @@
          <item>
           <widget class="QToolBox" name="toolBox_motor">
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="page">
             <property name="geometry">
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>340</width>
-              <height>247</height>
+              <width>297</width>
+              <height>383</height>
              </rect>
             </property>
             <attribute name="label">
@@ -895,26 +895,26 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>218</width>
-              <height>86</height>
+              <width>297</width>
+              <height>383</height>
              </rect>
             </property>
             <attribute name="label">
              <string>定速模式</string>
             </attribute>
             <layout class="QGridLayout" name="gridLayout_7">
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="lineEdit_motorTargetSpeed">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
+             <item row="3" column="0">
+              <spacer name="verticalSpacer_6">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
                </property>
-               <property name="text">
-                <string>0</string>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
                </property>
-              </widget>
+              </spacer>
              </item>
              <item row="2" column="0">
               <widget class="QPushButton" name="btn_motorStart">
@@ -930,18 +930,12 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
-              <spacer name="verticalSpacer_6">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
+             <item row="0" column="1">
+              <widget class="QSpinBox" name="spinBox_motorTargetSpeed">
+               <property name="maximum">
+                <number>2000</number>
                </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -950,8 +944,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>218</width>
-              <height>146</height>
+              <width>171</width>
+              <height>117</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1206,9 +1200,9 @@
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>-195</y>
-              <width>340</width>
-              <height>970</height>
+              <y>0</y>
+              <width>297</width>
+              <height>774</height>
              </rect>
             </property>
             <attribute name="label">
@@ -1695,8 +1689,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>242</width>
-              <height>467</height>
+              <width>194</width>
+              <height>366</height>
              </rect>
             </property>
             <attribute name="label">

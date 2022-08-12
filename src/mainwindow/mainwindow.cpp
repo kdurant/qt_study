@@ -217,7 +217,6 @@ void MainWindow::uiConfig()
     QRegExp           hexReg("[0-9,a-f,A-F]+$");
     QRegExpValidator *hexValidator = new QRegExpValidator(hexReg, this);
 
-    ui->lineEdit_motorTargetSpeed->setValidator(decValidator);
     ui->lineEdit_sampleLen->setValidator(decValidator);
     ui->lineEdit_sampleRate->setValidator(decValidator);
     ui->lineEdit_firstStartPos->setValidator(decValidator);
@@ -1200,7 +1199,7 @@ void MainWindow::initSignalSlot()
 
     connect(ui->btn_motorStart, &QPushButton::pressed, this, [this]()
             {
-        quint16 speed = ui->lineEdit_motorTargetSpeed->text().toInt(nullptr, 10);
+        quint16 speed = ui->spinBox_motorTargetSpeed->value();
         motorResponse(motorController->run(speed));
     });
 
