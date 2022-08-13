@@ -2422,7 +2422,7 @@ void MainWindow::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh,
             if(radarType == BspConfig::RADAR_TYPE_LAND)
             {
                 for(int n = 0; n < 6; n++)
-                    ui->sampleDataPlot->graph(0)->data().data()->clear();
+                    ui->sampleDataPlot->graph(n)->data().data()->clear();
 
                 for(int n = 0; n < allCh.size(); n++)
                     ui->sampleDataPlot->graph(n)->setData(allCh[n].pos, allCh[n].value);
