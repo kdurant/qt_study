@@ -18,18 +18,8 @@
     <item>
      <widget class="QTabWidget" name="tabWidget_main">
       <property name="currentIndex">
-       <number>0</number>
+       <number>-1</number>
       </property>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>陆地雷达</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="tab_6">
-       <attribute name="title">
-        <string>海洋雷达</string>
-       </attribute>
-      </widget>
      </widget>
     </item>
    </layout>

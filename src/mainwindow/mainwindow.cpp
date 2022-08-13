@@ -9,10 +9,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
 
-    QVBoxLayout *vbox1 = new QVBoxLayout;
+    radarLand  = new RadarWidget(this);
+    radarOcean = new RadarWidget(this);
 
-    QWidget *radarLand = ui->tabWidget_main->widget(0);
-    radarLand->setLayout(vbox1);
+    ui->tabWidget_main->addTab(radarLand, "陆地雷达");
+    ui->tabWidget_main->addTab(radarOcean, "海洋雷达");
 }
 
 MainWindow::~MainWindow()

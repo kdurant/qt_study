@@ -29,8 +29,8 @@
 #include <QThread>
 
 #include "ui_mainwindow.h"
-#include "ui_radarwidget.h"
 #include "ui_navigation.h"
+#include "radarwidget.h"
 
 #include "AdSampleControl.h"
 #include "DevInfo.h"
@@ -72,8 +72,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
-
-    //    RadarWidget *radarLand;
+    RadarWidget    *radarLand;
+    RadarWidget    *radarOcean;
 };
 
 #endif  // MAINWINDOW_H
