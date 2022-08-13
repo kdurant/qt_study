@@ -1,13 +1,13 @@
-#include "mainwidget.h"
+#include "radarwidget.h"
 #include <algorithm>
 #include "bsp_config.h"
 #include "ui_mainwidget.h"
 
 #include "ui_navigation.h"
 
-mainwidget::mainwidget(QWidget *parent) :
+RadarWidget::RadarWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::mainwidget),
+    ui(new Ui::RadarWidget),
     configIni(new QSettings("./config.ini", QSettings::IniFormat)),
     thread(new QThread())
 {
@@ -77,12 +77,12 @@ mainwidget::mainwidget(QWidget *parent) :
     getSysInfo();
 }
 
-mainwidget::~mainwidget()
+RadarWidget::~RadarWidget()
 {
     delete ui;
 }
 
-void mainwidget::initParameter()
+void RadarWidget::initParameter()
 {
     QFileInfo fileInfo("./config.ini");
     if(!fileInfo.exists())
@@ -195,12 +195,12 @@ void mainwidget::initParameter()
         motorController = new EPOS2();
 }
 
-void mainwidget::saveParameter()
+void RadarWidget::saveParameter()
 {
     return;
 }
 
-void mainwidget::uiConfig()
+void RadarWidget::uiConfig()
 {
     ui->groupBox_tempVolt->hide();
     ui->treeWidget_attitude->expandAll();
@@ -552,7 +552,7 @@ void mainwidget::uiConfig()
     }
 }
 
-void mainwidget::udpBind()
+void RadarWidget::udpBind()
 {
     udpSocket  = new QUdpSocket(this);
     int status = 0;
@@ -575,7 +575,7 @@ void mainwidget::udpBind()
     udpSocket->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, 1024 * 1024 * 1);
 }
 
-void mainwidget::processPendingDatagram()
+void RadarWidget::processPendingDatagram()
 {
     QByteArray datagram;
     int        len;
@@ -589,7 +589,7 @@ void mainwidget::processPendingDatagram()
     }
 }
 
-void mainwidget::initSignalSlot()
+void RadarWidget::initSignalSlot()
 {
     // 处理udp接收到的数据
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagram()));
@@ -749,10 +749,10 @@ void mainwidget::initSignalSlot()
             sampleData.append(i);
         emit sampleDataReady(radarType, sampleData);
     });
-    connect(this, &mainwidget::sampleDataReady, waveExtract, &WaveExtract::getWaveform);
-    connect(waveExtract, &WaveExtract::formatedWaveReady, this, &mainwidget::showSampleData);
+    connect(this, &RadarWidget::sampleDataReady, waveExtract, &WaveExtract::getWaveform);
+    connect(waveExtract, &WaveExtract::formatedWaveReady, this, &RadarWidget::showSampleData);
 
-    connect(this, &mainwidget::sampleDataReady, this, [this](BspConfig::RadarType type, const QVector<quint8> &sampleData)
+    connect(this, &RadarWidget::sampleDataReady, this, [this](BspConfig::RadarType type, const QVector<quint8> &sampleData)
             {
         QByteArray frame_head;
         for(int i = 0; i < 88; i++)
@@ -1023,7 +1023,7 @@ void mainwidget::initSignalSlot()
     {
         connect(laserDriver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laserDriver, &LaserController::setNewData);
-        connect(laserDriver, &LaserController::laserInfoReady, this, &mainwidget::showLaserInfo);
+        connect(laserDriver, &LaserController::laserInfoReady, this, &RadarWidget::showLaserInfo);
     }
 
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]()
@@ -1668,7 +1668,7 @@ void mainwidget::initSignalSlot()
     });
 }
 
-void mainwidget::plotLineSettings()
+void RadarWidget::plotLineSettings()
 {
     QSharedPointer<QCPAxisTickerFixed> intTicker(new QCPAxisTickerFixed);
     //设置刻度之间的步长为1
@@ -1714,7 +1714,7 @@ void mainwidget::plotLineSettings()
     ui->sampleDataPlot->graph(7)->setName("通道3第二段");
 }
 
-void mainwidget::plotColormapSettings()
+void RadarWidget::plotColormapSettings()
 {
     QVBoxLayout *widget2VBox;
     widget2VBox = new QVBoxLayout;
@@ -1793,7 +1793,7 @@ void mainwidget::plotColormapSettings()
  * @param key，伪彩色图的y轴, 是采样数据的时间序列
  * @param data，伪彩色图的z轴，颜色显示，是采样数据的值序列，和时间序列一一对应
  */
-void mainwidget::updateColormap(int chart, int angle, const QVector<double> &key, const QVector<double> &data)
+void RadarWidget::updateColormap(int chart, int angle, const QVector<double> &key, const QVector<double> &data)
 {
     QCustomPlot     *customPlot;
     QCPColorMap     *colorMap;
@@ -1820,13 +1820,13 @@ void mainwidget::updateColormap(int chart, int angle, const QVector<double> &key
     //    customPlot->replot();
 }
 
-void mainwidget::initFileListUi()
+void RadarWidget::initFileListUi()
 {
     //    ui->tableWidget_fileList->resizeColumnsToContents();
     ui->tableWidget_fileList->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);  //然后设置要根据内容使用宽度的列
 }
 
-void mainwidget::motorResponse(MotorController::MOTOR_STATUS status)
+void RadarWidget::motorResponse(MotorController::MOTOR_STATUS status)
 {
     switch(status)
     {
@@ -1845,13 +1845,13 @@ void mainwidget::motorResponse(MotorController::MOTOR_STATUS status)
     }
 }
 
-void mainwidget::closeEvent(QCloseEvent *event)
+void RadarWidget::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event);
     saveParameter();
 }
 
-void mainwidget::timerEvent(QTimerEvent *event)
+void RadarWidget::timerEvent(QTimerEvent *event)
 {
     if(timer1s == event->timerId())
     {
@@ -1879,12 +1879,12 @@ void mainwidget::timerEvent(QTimerEvent *event)
     }
 }
 
-void mainwidget::on_actionNote_triggered()
+void RadarWidget::on_actionNote_triggered()
 {
     note->show();
 }
 
-void mainwidget::on_bt_showWave_clicked()
+void RadarWidget::on_bt_showWave_clicked()
 {
     int total = ui->lineEdit_validFrameNum->text().toInt();
     if(total == 0)
@@ -1939,7 +1939,7 @@ void mainwidget::on_bt_showWave_clicked()
     }
 }
 
-void mainwidget::getSysInfo()
+void RadarWidget::getSysInfo()
 {
     if(devInfo->getSysPara(sysParaInfo))
     {
@@ -2007,7 +2007,7 @@ void mainwidget::getSysInfo()
     }
 }
 
-void mainwidget::showLaserInfo(LaserType4::LaserInfo &info)
+void RadarWidget::showLaserInfo(LaserType4::LaserInfo &info)
 {
     QList<QTreeWidgetItem *> itemList;
     switch(radarType)
@@ -2139,7 +2139,7 @@ void mainwidget::showLaserInfo(LaserType4::LaserInfo &info)
     }
 }
 
-QStringList mainwidget::read_ip_address()
+QStringList RadarWidget::read_ip_address()
 {
     QStringList         ips;
     QList<QHostAddress> list = QNetworkInterface::allAddresses();
@@ -2156,7 +2156,7 @@ QStringList mainwidget::read_ip_address()
     return ips;
 }
 
-void mainwidget::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh, int status)
+void RadarWidget::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh, int status)
 {
     //    ret = waveExtract->getWaveform(radarType, sampleData, allCh);
 

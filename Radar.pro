@@ -44,9 +44,9 @@ include(./src/mainwindow/mainwindow.pri)
 
 FORMS += \
         ui/mainwindow.ui \
-        ui/mainwidget.ui \
         ui/navigation.ui \
-        ui/noteinfo.ui
+        ui/noteinfo.ui \
+        ui/radarwidget.ui
 
 RESOURCES += \
     res.qrc

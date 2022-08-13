@@ -55,16 +55,16 @@
 
 namespace Ui
 {
-class mainwidget;
+class RadarWidget;
 }
 
-class mainwidget : public QWidget
+class RadarWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit mainwidget(QWidget *parent = 0);
-    ~mainwidget();
+    explicit RadarWidget(QWidget *parent = 0);
+    ~RadarWidget();
 
     void initParameter();
     void saveParameter();
@@ -142,15 +142,15 @@ private:
         QList<QVector<WaveExtract::WaveformInfo>> data;
     } doubleWaveConfig;
 
-    Ui::mainwidget *ui;
-    QUdpSocket     *udpSocket;
-    QSettings      *configIni;
-    QThread        *thread;
-    qint32          timer1s;
-    QElapsedTimer   elapsedTimer;
-    qint32          timerRefreshUI;
-    bool            refreshUIFlag{false};
-    bool            refreshRadarFlag{false};
+    Ui::RadarWidget *ui;
+    QUdpSocket      *udpSocket;
+    QSettings       *configIni;
+    QThread         *thread;
+    qint32           timer1s;
+    QElapsedTimer    elapsedTimer;
+    qint32           timerRefreshUI;
+    bool             refreshUIFlag{false};
+    bool             refreshRadarFlag{false};
 
     BspConfig::RadarType radarType;
 

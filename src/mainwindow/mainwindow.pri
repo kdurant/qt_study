@@ -1,12 +1,12 @@
 INCLUDEPATH += $$PWD
 
 HEADERS += \
-# $$PWD/mainwindow.h \
- $$PWD/mainwidget.h \
+    $$PWD/mainwindow.h \ 
+    $$PWD/radarwidget.h
 
 
 SOURCES += \
            $$PWD/main.cpp \
-# $$PWD/mainwindow.cpp \
- $$PWD/mainwidget.cpp \
+    $$PWD/mainwindow.cpp \ 
+    $$PWD/radarwidget.cpp
 
