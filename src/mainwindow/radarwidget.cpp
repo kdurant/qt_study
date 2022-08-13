@@ -5,13 +5,16 @@
 
 #include "ui_navigation.h"
 
-RadarWidget::RadarWidget(QWidget *parent) :
+RadarWidget::RadarWidget(QWidget *parent, BspConfig::RadarType type) :
     QWidget(parent),
+    radarType(type),
     ui(new Ui::RadarWidget),
     configIni(new QSettings("./config.ini", QSettings::IniFormat)),
     thread(new QThread())
 {
     ui->setupUi(this);
+    uiConfig();
+
     // setWindowState(Qt::WindowMaximized);
     qRegisterMetaType<BspConfig::RadarType>("BspConfig::RadarType");
     qRegisterMetaType<WaveExtract::WaveformInfo>("WaveExtract::WaveformInfo");
@@ -64,7 +67,6 @@ RadarWidget::RadarWidget(QWidget *parent) :
     //    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
 
     initParameter();
-    uiConfig();
 
     udpBind();
     initSignalSlot();

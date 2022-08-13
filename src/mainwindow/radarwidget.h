@@ -63,7 +63,7 @@ class RadarWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit RadarWidget(QWidget *parent = 0);
+    RadarWidget(QWidget *parent, BspConfig::RadarType type);
     ~RadarWidget();
 
     void initParameter();
@@ -104,7 +104,7 @@ private slots:
     void        showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh, int status);
 
 private:
-    struct __sys_status__
+    struct __radar_status__
     {
         bool ssdLinkStatus;    // ssd是否连接
         bool udpLinkStatus;    // udp是否可以正常通信
@@ -143,16 +143,17 @@ private:
     } doubleWaveConfig;
 
     Ui::RadarWidget *ui;
-    QUdpSocket      *udpSocket;
-    QSettings       *configIni;
-    QThread         *thread;
-    qint32           timer1s;
-    QElapsedTimer    elapsedTimer;
-    qint32           timerRefreshUI;
-    bool             refreshUIFlag{false};
-    bool             refreshRadarFlag{false};
 
     BspConfig::RadarType radarType;
+
+    QUdpSocket   *udpSocket;
+    QSettings    *configIni;
+    QThread      *thread;
+    qint32        timer1s;
+    QElapsedTimer elapsedTimer;
+    qint32        timerRefreshUI;
+    bool          refreshUIFlag{false};
+    bool          refreshRadarFlag{false};
 
     QStringList localIP;
     // QString     localIP;
