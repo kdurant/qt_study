@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "mainwidget.h"
 
 #include <QApplication>
 
@@ -67,7 +68,8 @@ int main(int argc, char *argv[])
     font.setPixelSize(15);
     a.setFont(font);
 
-    MainWindow w;
+    //    MainWindow w;
+    mainwidget w;
     w.show();
 
     //    Navigation n;

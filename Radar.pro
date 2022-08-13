@@ -15,7 +15,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = Radar
 TEMPLATE = app
 
-VERSION = 0.126
+VERSION = 0.130
 DEFINES += SOFT_VERSION=\"\\\"$$VERSION\\\"\"
 
 # DEFINES += DEBUG_WATER_GUARD
@@ -42,9 +42,9 @@ include(./src/third_lib/QCustomPlot/qcustomplot.pri)
 include(./src/NoteInfo/NoteInfo.pri)
 include(./src/mainwindow/mainwindow.pri)
 
-
 FORMS += \
         ui/mainwindow.ui \
+        ui/mainwidget.ui \
         ui/navigation.ui \
         ui/noteinfo.ui
 
@@ -67,3 +67,4 @@ Release: TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH"_release"
 DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
 
 #include($$PWD/deploy.pri)
+
