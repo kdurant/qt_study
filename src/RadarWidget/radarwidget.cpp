@@ -468,12 +468,6 @@ void RadarWidget::uiConfig()
     setWindowTitle(title + QString(SOFT_VERSION));
     ui->checkBox_autoZoom->setChecked(true);
 
-    sysStatus.label_ssdStoreStatus = new QLabel("SSD存储状态: 停止存储");
-
-    sysStatus.label_adCaptureStatus = new QLabel("采集状态：停止采集");
-    sysStatus.label_adCaptureStatus->setObjectName("captureStatus");
-    sysStatus.label_adCaptureStatus->setStyleSheet("color:red");
-
     QLabel *labelVer = new QLabel();
     labelVer->setText("软件版本：v" + QString(SOFT_VERSION) + "_" + GIT_DATE + "_" + GIT_HASH);
 
@@ -1961,12 +1955,10 @@ void RadarWidget::getSysInfo()
                 if(value == 1)
                 {
                     sysStatus.ssdStoreStatus = true;
-                    sysStatus.label_ssdStoreStatus->setText("存储状态：正在存储");
                 }
                 else
                 {
                     sysStatus.ssdStoreStatus = false;
-                    sysStatus.label_ssdStoreStatus->setText("存储状态：停止存储");
                 }
             }
             else if(i == 5)  //  数据采集状态
@@ -1975,13 +1967,11 @@ void RadarWidget::getSysInfo()
                 {
                     itemList.first()->child(i)->setText(1, "正在采集");
                     sysStatus.adCaptureStatus = true;
-                    sysStatus.label_adCaptureStatus->setText("采集状态：正在采集");
                 }
                 else
                 {
                     itemList.first()->child(i)->setText(1, "停止采集");
                     sysStatus.adCaptureStatus = false;
-                    sysStatus.label_adCaptureStatus->setText("采集状态：停止采集");
                 }
             }
             else if(i == 7)  // sata底层读写状态机

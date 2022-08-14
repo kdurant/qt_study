@@ -109,10 +109,6 @@ private:
         bool udpLinkStatus;    // udp是否可以正常通信
         bool adCaptureStatus;  // ad是否正在采集
         bool ssdStoreStatus;   // 是否正在存储采集数据
-
-        QLabel *label_udpLinkStatus;
-        QLabel *label_ssdStoreStatus;
-        QLabel *label_adCaptureStatus;
     } sysStatus;
 
     struct _preview_settings__
