@@ -69,11 +69,13 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    void initParameter();
+    void        initParameter();
+    QStringList read_ip_address();
 
 private:
     Ui::MainWindow *ui;
     QSettings      *configIni;
+    QStringList     localIP;
 
     RadarWidget *radarLand;
     RadarWidget *radarOcean;

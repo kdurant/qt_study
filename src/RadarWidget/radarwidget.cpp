@@ -1,13 +1,14 @@
 #include "radarwidget.h"
+#include <qsystemtrayicon.h>
 #include <algorithm>
 #include "bsp_config.h"
 #include "ui_radarwidget.h"
 
 #include "ui_navigation.h"
 
-RadarWidget::RadarWidget(QWidget *parent, BspConfig::RadarType type) :
+RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
+    sysStatus(para),
     QWidget(parent),
-    radarType(type),
     ui(new Ui::RadarWidget),
     thread(new QThread())
 {
@@ -85,67 +86,44 @@ RadarWidget::~RadarWidget()
 
 void RadarWidget::initParameter()
 {
-    switch(radarType)
+    switch(sysStatus.radarType)
     {
         case 0:
-            radarType   = BspConfig::RADAR_TYPE_OCEAN;
-            laserDriver = new LaserType1();
+            sysStatus.radarType = BspConfig::RADAR_TYPE_OCEAN;
+            laserDriver         = new LaserType1();
             break;
         case 1:
-            radarType   = BspConfig::RADAR_TYPE_LAND;
-            deviceIP    = QHostAddress("192.168.1.101");
-            devicePort  = 5555;
-            laserDriver = new LaserType2();
+            sysStatus.radarType = BspConfig::RADAR_TYPE_LAND;
+            laserDriver         = new LaserType2();
             break;
         case 2:
-            radarType = BspConfig::RADAR_TYPE_760;
+            sysStatus.radarType = BspConfig::RADAR_TYPE_760;
             break;
         case 3:
-            radarType   = BspConfig::RADAR_TYPE_DOUBLE_WAVE;
-            laserDriver = new LaserType5();
+            sysStatus.radarType = BspConfig::RADAR_TYPE_DOUBLE_WAVE;
+            laserDriver         = new LaserType5();
             break;
         case 4:
-            radarType   = BspConfig::RADAR_TYPE_DRONE;
-            laserDriver = new LaserType3();
+            sysStatus.radarType = BspConfig::RADAR_TYPE_DRONE;
+            laserDriver         = new LaserType3();
             break;
         case 5:
-            radarType   = BspConfig::RADAR_TYPE_WATER_GUARD;
-            laserDriver = new LaserType4();
+            sysStatus.radarType = BspConfig::RADAR_TYPE_WATER_GUARD;
+            laserDriver         = new LaserType4();
             break;
         case 6:
-            radarType   = BspConfig::RADAR_TYPE_SECOND_INSTITUDE;
-            laserDriver = new LaserType6();
+            sysStatus.radarType = BspConfig::RADAR_TYPE_SECOND_INSTITUDE;
+            laserDriver         = new LaserType6();
             break;
         default:
-            radarType = BspConfig::RADAR_TYPE_OCEAN;
+            sysStatus.radarType = BspConfig::RADAR_TYPE_OCEAN;
             break;
     }
 
     QString   localHostName = QHostInfo::localHostName();
     QHostInfo info          = QHostInfo::fromName(localHostName);
 
-    if(mode == "debug")
-    {
-        localIP.append("127.0.0.1");
-        QMessageBox::information(this, "通知", "当前为调试模式, IP addr:127.0.0.1");
-    }
-    else
-    {
-        localIP = read_ip_address();
-        if(localIP.length() == 0)
-        {
-            QMessageBox::warning(this, "警告", "没有合适的IP地址或网络连接异常");
-        }
-        else if(localIP.length() >= 2)
-        {
-            QMessageBox::information(this, "通知", "检测本机有多个网卡在192.168.1.xxx网段，如果是连接多个雷达设备，请将连接陆地雷达的网卡IP设置为192.168.1.155，且先打开陆地雷达控制软件");
-        }
-    }
-
-    if(mode == "debug")
-        deviceIP = QHostAddress("127.0.0.1");
-
-    if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
+    if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         motorController = new PusiController();
     else
         motorController = new EPOS2();
@@ -215,10 +193,8 @@ void RadarWidget::uiConfig()
     ui->rbtn_GLH->setVisible(false);
     ui->rbtn_POLARIZATION->setVisible(false);
 
-    QString title;
-    if(radarType == BspConfig::RADAR_TYPE_760)
+    if(sysStatus.radarType == BspConfig::RADAR_TYPE_760)
     {
-        title = "760雷达控制软件";
         ui->lineEdit_radarType->setText("760雷达");
         ui->label_secondStartPos->hide();
         ui->label_secondLen->hide();
@@ -229,9 +205,8 @@ void RadarWidget::uiConfig()
         ui->lineEdit_subThreshold->hide();
         ui->lineEdit_sumThreshold->hide();
     }
-    else if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
+    else if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
     {
-        title = "双波长雷达控制软件";
         ui->lineEdit_radarType->setText("双波长雷达");
 
         ui->label_triggerMode->hide();
@@ -294,9 +269,8 @@ void RadarWidget::uiConfig()
             doubleWaveConfig.max_view_angle = 110;
         });
     }
-    else if(radarType == BspConfig::RADAR_TYPE_OCEAN)
+    else if(sysStatus.radarType == BspConfig::RADAR_TYPE_OCEAN)
     {
-        title = "海洋雷达控制软件";
         ui->lineEdit_radarType->setText("海洋雷达");
         ui->label_laserGreenCurrent->hide();
         ui->doubleSpinBox_laserGreenCurrent->hide();
@@ -318,9 +292,8 @@ void RadarWidget::uiConfig()
         ui->tabWidget->setTabEnabled(5, true);
         //        ui->label
     }
-    else if(radarType == BspConfig::RADAR_TYPE_LAND)
+    else if(sysStatus.radarType == BspConfig::RADAR_TYPE_LAND)
     {
-        title = "陆地雷达控制软件";
         ui->lineEdit_radarType->setText("陆地雷达");
         ui->label_triggerMode->hide();
         ui->rbtn_triggerInside->hide();
@@ -340,9 +313,8 @@ void RadarWidget::uiConfig()
         ui->label_secondLen->hide();
         ui->lineEdit_secondLen->hide();
     }
-    else if(radarType == BspConfig::RADAR_TYPE_DRONE)
+    else if(sysStatus.radarType == BspConfig::RADAR_TYPE_DRONE)
     {
-        title = "无人机雷达控制软件";
         ui->lineEdit_radarType->setText("无人机雷达");
         ui->label_laserPower->hide();
         ui->comboBox_laserPower->hide();
@@ -364,9 +336,8 @@ void RadarWidget::uiConfig()
 
         ui->tabWidget->setTabEnabled(5, true);
     }
-    else if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+    else if(sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
-        title = "水下预警雷达控制软件";
         ui->lineEdit_radarType->setText("水下预警雷达");
 
         ui->comboBox_laserFreq->addItem("2000");
@@ -401,9 +372,8 @@ void RadarWidget::uiConfig()
         ui->tabWidget_main->setTabEnabled(1, true);
         ui->tabWidget_main->setCurrentIndex(1);
     }
-    else if(radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE)
+    else if(sysStatus.radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE)
     {
-        title = "海二所雷达控制软件";
         ui->lineEdit_radarType->setText("海二所雷达");
         QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
         QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
@@ -417,17 +387,12 @@ void RadarWidget::uiConfig()
     }
     else
     {
-        title = "[xx]雷达控制软件";
     }
-    setWindowTitle(title + QString(SOFT_VERSION));
     ui->checkBox_autoZoom->setChecked(true);
-
-    QLabel *labelVer = new QLabel();
-    labelVer->setText("软件版本：v" + QString(SOFT_VERSION) + "_" + GIT_DATE + "_" + GIT_HASH);
 
     QList<QTreeWidgetItem *> topItems;
     QList<QTreeWidgetItem *> subItems;
-    switch(radarType)
+    switch(sysStatus.radarType)
     {
         case BspConfig::RADAR_TYPE_LAND:
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "激光器状态"));
@@ -507,18 +472,12 @@ void RadarWidget::udpBind()
     udpSocket  = new QUdpSocket(this);
     int status = 0;
 
-    for(auto ip : localIP)
+    if(!udpSocket->bind(QHostAddress(sysStatus.localIP), localPort))
+        status = -1;
+    else
     {
-        if(!udpSocket->bind(QHostAddress(ip), localPort))
-        {
-            status = -1;
-        }
-        else
-        {
-            ui->label_softwareVer->setText(ip);
-            status = 0;
-            break;
-        }
+        ui->label_softwareVer->setText(sysStatus.localIP);
+        status = 0;
     }
     if(status == -1)
         QMessageBox::warning(NULL, "警告", "雷达连接失败");
@@ -547,7 +506,7 @@ void RadarWidget::initSignalSlot()
     // 发送已经打包好的数据
     connect(dispatch, &ProtocolDispatch::frameDataReady, this, [this](QByteArray frame)
             {
-        udpSocket->writeDatagram(frame.data(), frame.size(), deviceIP, devicePort);
+        udpSocket->writeDatagram(frame.data(), frame.size(), sysStatus.deviceIP, sysStatus.devicePort);
     });
 
     connect(dispatch, &ProtocolDispatch::errorDataReady, this, [this](QString &error) {});
@@ -574,73 +533,73 @@ void RadarWidget::initSignalSlot()
 
     connect(ui->btn_setPreviewPara, &QPushButton::pressed, this, [this]()
             {
-        previewSettings.sampleLen      = ui->lineEdit_sampleLen->text().toInt();
-        previewSettings.sampleRatio    = ui->lineEdit_sampleRate->text().toInt();
-        previewSettings.firstPos       = ui->lineEdit_firstStartPos->text().toInt();
-        previewSettings.firstLen       = ui->lineEdit_firstLen->text().toInt();
-        previewSettings.secondPos      = ui->lineEdit_secondStartPos->text().toInt();
-        previewSettings.secondLen      = ui->lineEdit_secondLen->text().toInt();
-        previewSettings.sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
-        previewSettings.valueThreshold = ui->lineEdit_subThreshold->text().toInt();
-        int     sampleDelay            = ui->lineEdit_sampleDelay->text().toInt();
-        quint16 pmtDelayTime           = ui->lineEdit_pmtDelayTime->text().toUInt();
-        quint16 pmtGateTime            = ui->lineEdit_pmtGateTime->text().toUInt();
+        sysStatus.previewSettings.sampleLen      = ui->lineEdit_sampleLen->text().toInt();
+        sysStatus.previewSettings.sampleRatio    = ui->lineEdit_sampleRate->text().toInt();
+        sysStatus.previewSettings.firstPos       = ui->lineEdit_firstStartPos->text().toInt();
+        sysStatus.previewSettings.firstLen       = ui->lineEdit_firstLen->text().toInt();
+        sysStatus.previewSettings.secondPos      = ui->lineEdit_secondStartPos->text().toInt();
+        sysStatus.previewSettings.secondLen      = ui->lineEdit_secondLen->text().toInt();
+        sysStatus.previewSettings.sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
+        sysStatus.previewSettings.valueThreshold = ui->lineEdit_subThreshold->text().toInt();
+        int     sampleDelay                      = ui->lineEdit_sampleDelay->text().toInt();
+        quint16 pmtDelayTime                     = ui->lineEdit_pmtDelayTime->text().toUInt();
+        quint16 pmtGateTime                      = ui->lineEdit_pmtGateTime->text().toUInt();
 
-        if(previewSettings.secondPos < previewSettings.firstPos + previewSettings.firstLen)
+        if(sysStatus.previewSettings.secondPos < sysStatus.previewSettings.firstPos + sysStatus.previewSettings.firstLen)
         {
             QMessageBox::critical(NULL, "错误", "第二段起始位置需要小于第一段起始位置+第一段采样长度");
             return;
         }
 
-        preview->setTotalSampleLen(previewSettings.sampleLen);
-        preview->setPreviewRatio(previewSettings.sampleRatio);
+        preview->setTotalSampleLen(sysStatus.previewSettings.sampleLen);
+        preview->setPreviewRatio(sysStatus.previewSettings.sampleRatio);
 
-        if(radarType == BspConfig::RADAR_TYPE_LAND)
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_LAND)
         {
-            preview->setAlgoAPos((previewSettings.firstPos >> 3) << 3);
-            preview->setAlgoALen((previewSettings.firstLen >> 3) << 3);
-            preview->setAlgoBPos((previewSettings.secondPos >> 3) << 3);
-            preview->setAlgoBSumThre(previewSettings.sumThreshold);
-            preview->setAlgoBValueThre(previewSettings.valueThreshold);
+            preview->setAlgoAPos((sysStatus.previewSettings.firstPos >> 3) << 3);
+            preview->setAlgoALen((sysStatus.previewSettings.firstLen >> 3) << 3);
+            preview->setAlgoBPos((sysStatus.previewSettings.secondPos >> 3) << 3);
+            preview->setAlgoBSumThre(sysStatus.previewSettings.sumThreshold);
+            preview->setAlgoBValueThre(sysStatus.previewSettings.valueThreshold);
             return;
         }
-        if(radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE)
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE)
         {
-            if(previewSettings.firstLen + previewSettings.secondLen < 400)
+            if(sysStatus.previewSettings.firstLen + sysStatus.previewSettings.secondLen < 400)
             {
                 QMessageBox::warning(NULL, "警告", "第一段采样长度+第二段采样长度需要大于400");
                 return;
             }
         }
 
-        if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         {
-            if(previewSettings.firstLen + previewSettings.secondLen >= 3000)
+            if(sysStatus.previewSettings.firstLen + sysStatus.previewSettings.secondLen >= 3000)
                 QMessageBox::warning(NULL, "警告", "两段采样长度之和尽量不要大于3000");
         }
         else
         {
-            if(previewSettings.firstLen + previewSettings.secondLen >= 1000)
+            if(sysStatus.previewSettings.firstLen + sysStatus.previewSettings.secondLen >= 1000)
                 QMessageBox::warning(NULL, "警告", "两段采样长度之和尽量不要大于1000");
         }
 
-        if(previewSettings.secondPos + previewSettings.secondLen >= previewSettings.sampleLen)
+        if(sysStatus.previewSettings.secondPos + sysStatus.previewSettings.secondLen >= sysStatus.previewSettings.sampleLen)
         {
             QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
             return;
         }
-        preview->setFirstPos(previewSettings.firstPos);
-        preview->setFirstLen(previewSettings.firstLen);
-        preview->setSecondPos(previewSettings.secondPos);
-        preview->setSecondLen(previewSettings.secondLen);
-        preview->setSumThreshold(previewSettings.sumThreshold);
-        preview->setValueThreshold(previewSettings.valueThreshold);
+        preview->setFirstPos(sysStatus.previewSettings.firstPos);
+        preview->setFirstLen(sysStatus.previewSettings.firstLen);
+        preview->setSecondPos(sysStatus.previewSettings.secondPos);
+        preview->setSecondLen(sysStatus.previewSettings.secondLen);
+        preview->setSumThreshold(sysStatus.previewSettings.sumThreshold);
+        preview->setValueThreshold(sysStatus.previewSettings.valueThreshold);
 
-        if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
         {
             preview->setPmtDelayAndGateTime(pmtDelayTime, pmtGateTime);
         }
-        if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         {
             preview->setSampleDelay((sampleDelay >> 3) << 3);
         }
@@ -671,14 +630,14 @@ void RadarWidget::initSignalSlot()
 
     connect(ui->rbtn_previewOutsideTrg, &QRadioButton::clicked, this, [this]()
             {
-        previewSettings.laserFreq = ui->comboBox_laserFreq->currentText().toInt(nullptr);
+        sysStatus.previewSettings.laserFreq = ui->comboBox_laserFreq->currentText().toInt(nullptr);
         preview->setTrgMode(MasterSet::OUTSIDE_TRG);
     });
 
     connect(ui->rbtn_previewInsideTrg, &QRadioButton::clicked, this, [this]()
             {
-        previewSettings.laserFreq = ui->comboBox_laserFreq->currentText().toInt(nullptr);
-        laserDriver->setFreq(previewSettings.laserFreq);
+        sysStatus.previewSettings.laserFreq = ui->comboBox_laserFreq->currentText().toInt(nullptr);
+        laserDriver->setFreq(sysStatus.previewSettings.laserFreq);
         preview->setTrgMode(MasterSet::INSIDE_TRG);
     });
 
@@ -697,7 +656,7 @@ void RadarWidget::initSignalSlot()
         sampleData.clear();
         for(auto &i : data)  // 数据格式转换
             sampleData.append(i);
-        emit sampleDataReady(radarType, sampleData);
+        emit sampleDataReady(sysStatus.radarType, sampleData);
     });
     connect(this, &RadarWidget::sampleDataReady, waveExtract, &WaveExtract::getWaveform);
     connect(waveExtract, &WaveExtract::formatedWaveReady, this, &RadarWidget::showSampleData);
@@ -964,12 +923,12 @@ void RadarWidget::initSignalSlot()
      * 激光器相关处理
      */
 
-    if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE ||
-       radarType == BspConfig::RADAR_TYPE_WATER_GUARD ||
-       radarType == BspConfig::RADAR_TYPE_LAND ||
-       radarType == BspConfig::RADAR_TYPE_OCEAN ||
-       radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE ||
-       radarType == BspConfig::RADAR_TYPE_DRONE)
+    if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE ||
+       sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD ||
+       sysStatus.radarType == BspConfig::RADAR_TYPE_LAND ||
+       sysStatus.radarType == BspConfig::RADAR_TYPE_OCEAN ||
+       sysStatus.radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE ||
+       sysStatus.radarType == BspConfig::RADAR_TYPE_DRONE)
     {
         connect(laserDriver, &LaserController::sendDataReady, dispatch, &ProtocolDispatch::encode);
         connect(dispatch, &ProtocolDispatch::laserDataReady, laserDriver, &LaserController::setNewData);
@@ -979,7 +938,7 @@ void RadarWidget::initSignalSlot()
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]()
             {
         bool status = false;
-        switch(radarType)
+        switch(sysStatus.radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
             case BspConfig::RADAR_TYPE_OCEAN:
@@ -1040,7 +999,7 @@ void RadarWidget::initSignalSlot()
             {
         bool    status = false;
         QString power;
-        switch(radarType)
+        switch(sysStatus.radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
                 status = laserDriver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
@@ -1097,7 +1056,7 @@ void RadarWidget::initSignalSlot()
     connect(ui->btn_laserReadInfo, &QPushButton::pressed, this, [this]()
             {
         QList<QTreeWidgetItem *> itemList;
-        switch(radarType)
+        switch(sysStatus.radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
             case BspConfig::RADAR_TYPE_OCEAN:
@@ -1161,7 +1120,7 @@ void RadarWidget::initSignalSlot()
 
     connect(ui->btn_motorMovePostion, &QPushButton::pressed, this, [this]()
             {
-        if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         {
             if(ui->rbtn_GLH->isChecked() == false && ui->rbtn_POLARIZATION->isChecked() == false)
             {
@@ -1272,7 +1231,7 @@ void RadarWidget::initSignalSlot()
         quint32 fileUnit = ui->lineEdit_ssdAvailFileUnit->text().toUInt(nullptr, 16);
 
         QString fileName;
-        switch(radarType)
+        switch(sysStatus.radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
                 fileName = "land_";
@@ -1328,14 +1287,14 @@ void RadarWidget::initSignalSlot()
         // #ifdef DEBUG_WATER_GUARD
         qDebug() << "stop: testCnt = " << testCnt;
         int t = elapsedTimer.elapsed();
-        if(previewSettings.laserFreq > 0)
+        if(sysStatus.previewSettings.laserFreq > 0)
         {
-            double   period_s     = 1.0 / previewSettings.laserFreq;
+            double   period_s     = 1.0 / sysStatus.previewSettings.laserFreq;
             uint64_t sample_count = (t / 1000.0) / period_s;
 
-            int      bytes_of_sample = 128 + 8 * previewSettings.firstLen + 4 * (previewSettings.secondLen * 2 + 4);
+            int      bytes_of_sample = 128 + 8 * sysStatus.previewSettings.firstLen + 4 * (sysStatus.previewSettings.secondLen * 2 + 4);
             uint64_t bytes_of_total  = sample_count * bytes_of_sample;
-            // int totalBytes = (t / 1000.0) * (previewSettings.laserFreq / previewSettings.sampleRatio) * (128 + previewSettings.firstLen * 8);
+            // int totalBytes = (t / 1000.0) * (sysStatus.previewSettings.laserFreq / sysStatus.previewSettings.sampleRatio) * (128 + sysStatus.previewSettings.firstLen * 8);
 
             QString info = QString("存储数据时间(ms): %1\n采样波形次数:%2\n单次采样数据量(byte): %3\n理论全部存储数据量(bytes): %4")
                                .arg(t)
@@ -1363,7 +1322,7 @@ void RadarWidget::initSignalSlot()
         quint32 chNum       = ui->comboBox_DAChSelect->currentIndex();
         double  analogValue = ui->doubleSpinBox_DAValue->value();
         qint32  digitValue  = 0;
-        switch(radarType)
+        switch(sysStatus.radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
                 digitValue = static_cast<quint32>((analogValue - 3.434) / 0.017);
@@ -1599,7 +1558,7 @@ void RadarWidget::initSignalSlot()
     connect(ui->comboBox_DAChSelect, QOverload<int>::of(&QComboBox::currentIndexChanged),
             [=](int index)
             {
-        switch(radarType)
+        switch(sysStatus.radarType)
         {
             case BspConfig::RADAR_TYPE_OCEAN:
                 if(index == 0)
@@ -1687,7 +1646,7 @@ void RadarWidget::plotColormapSettings()
         customPlot->setInteractions(QCP::Interaction::iRangeDrag |
                                     QCP::Interaction::iRangeZoom);
         customPlot->axisRect()->setupFullAxesBox(true);  //四刻度轴
-        if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
             customPlot->xAxis->setLabel("采样次数");
         else
             customPlot->xAxis->setLabel("电机角度(°)");
@@ -1703,7 +1662,7 @@ void RadarWidget::plotColormapSettings()
 
         colorMap->data()->setSize(nx, ny);  // nx*ny(cells)
 
-        if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
             colorMap->data()->setRange(QCPRange(0, colorMap_X_max), QCPRange(0, 1500));  // 显示这些点的绘图坐标范围
         else
             colorMap->data()->setRange(QCPRange(-90, 90), QCPRange(0, 500));  // span the coordinate range
@@ -1818,7 +1777,7 @@ void RadarWidget::timerEvent(QTimerEvent *event)
             getSysInfo();
         ui->label_fpgaVer->setText(fpgaVersion);
 
-        if(fpgaRadarType != -1 && fpgaRadarType != radarType)
+        if(fpgaRadarType != -1 && fpgaRadarType != sysStatus.radarType)
         {
             // ui->statusBar->showMessage("底层配置的雷达类型(" + QString::number(fpgaRadarType) + ")与上位机配置的雷达类型不一致", 0);
         }
@@ -1851,7 +1810,7 @@ void RadarWidget::on_bt_showWave_clicked()
         {
             ui->spin_framePos->setValue(i);
             sampleData = offlineWaveForm->getFrameData(i);  // 耗时小于1ms
-            waveExtract->getWaveform(radarType, sampleData);
+            waveExtract->getWaveform(sysStatus.radarType, sampleData);
 
             QByteArray frame_head;
             for(int i = 0; i < 88; i++)
@@ -1890,16 +1849,17 @@ void RadarWidget::getSysInfo()
     {
         // ui->statusBar->setStyleSheet("color:black");
         // ui->statusBar->showMessage(tr("系统通信正常"), 0);
+        sysStatus.udpLinkStatus = false;
 
-        if(devInfo->getRadarType() != radarType)
+        if(devInfo->getRadarType() != sysStatus.radarType)
         {
             // ui->statusBar->showMessage("底层配置的雷达类型(" + QString::number(devInfo->getRadarType()) + ")与上位机配置的雷达类型不一致", 0);
         }
         fpgaVersion = devInfo->getFpgaVer().toUtf8();
 
         QList<QTreeWidgetItem *> itemList;
-        itemList                  = ui->treeWidget_attitude->findItems("系统参数", Qt::MatchExactly);
-        previewSettings.laserFreq = sysParaInfo[0].value.toHex().toUInt(nullptr, 16);
+        itemList                            = ui->treeWidget_attitude->findItems("系统参数", Qt::MatchExactly);
+        sysStatus.previewSettings.laserFreq = sysParaInfo[0].value.toHex().toUInt(nullptr, 16);
         for(int i = 0; i < sysParaInfo.size(); i++)
         {
             if(i == 4)  // 波形存储状态
@@ -1943,6 +1903,7 @@ void RadarWidget::getSysInfo()
     }
     else
     {
+        sysStatus.udpLinkStatus = false;
         // ui->statusBar->setStyleSheet("color:red");
         // ui->statusBar->showMessage("系统无法通信，检查网络连接", 0);
     }
@@ -1951,7 +1912,7 @@ void RadarWidget::getSysInfo()
 void RadarWidget::showLaserInfo(LaserType4::LaserInfo &info)
 {
     QList<QTreeWidgetItem *> itemList;
-    switch(radarType)
+    switch(sysStatus.radarType)
     {
         case BspConfig::RADAR_TYPE_LAND:
 
@@ -2080,26 +2041,9 @@ void RadarWidget::showLaserInfo(LaserType4::LaserInfo &info)
     }
 }
 
-QStringList RadarWidget::read_ip_address()
-{
-    QStringList         ips;
-    QList<QHostAddress> list = QNetworkInterface::allAddresses();
-    foreach(QHostAddress address, list)
-    {
-        if(address.protocol() == QAbstractSocket::IPv4Protocol)
-        {
-            QString ip = address.toString();
-            if(ip.contains("192.168.1."))
-                ips.append(ip);
-        }
-    }
-    std::sort(ips.begin(), ips.end());
-    return ips;
-}
-
 void RadarWidget::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh, int status)
 {
-    //    ret = waveExtract->getWaveform(radarType, sampleData, allCh);
+    //    ret = waveExtract->getWaveform(sysStatus.radarType, sampleData, allCh);
 
     if(status == -1)  // 耗时小于1ms
     {
@@ -2117,7 +2061,7 @@ void RadarWidget::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh
         return;
     }
 
-    if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
+    if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
     {
         if(doubleWaveConfig.data.size() < colorMap_X_max)
             doubleWaveConfig.data.append(allCh);
@@ -2129,7 +2073,7 @@ void RadarWidget::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh
         doubleWaveConfig.sampleCnt++;
     }
 
-    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+    if(sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
         //        QVector<WaveExtract::WaveformInfo> debugCh;
         //        debugCh.append(allCh[0]);
@@ -2277,7 +2221,7 @@ void RadarWidget::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh
                 {
                     refreshRadarFlag = false;
                     // 刷新雷达图
-                    //                    if(radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+                    //                    if(sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
                     {
                         ui->waterGuardTimeColor0->refreshUI();
                         ui->waterGuardTimeColor1->refreshUI();
@@ -2296,7 +2240,7 @@ void RadarWidget::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh
             refreshUIFlag = false;
 
             // 刷新实时数据曲线
-            if(radarType == BspConfig::RADAR_TYPE_LAND)
+            if(sysStatus.radarType == BspConfig::RADAR_TYPE_LAND)
             {
                 for(int n = 0; n < 6; n++)
                     ui->sampleDataPlot->graph(n)->data().data()->clear();

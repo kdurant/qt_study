@@ -61,10 +61,38 @@ class RadarWidget;
 class RadarWidget : public QWidget
 {
     Q_OBJECT
+public:
+    struct _preview_settings__
+    {
+        int laserFreq;
+        int sampleLen;
+        int sampleRatio;
+        int firstPos;
+        int firstLen;
+        int secondPos;
+        int secondLen;
+        int sumThreshold;
+        int valueThreshold;
+    };
+
+    struct __radar_status__
+    {
+        BspConfig::RadarType radarType;
+        QHostAddress         deviceIP{QHostAddress("192.168.1.102")};
+        quint16              devicePort{4444};
+        QString              localIP;
+
+        _preview_settings__ previewSettings;
+
+        bool ssdLinkStatus;    // ssd是否连接
+        bool udpLinkStatus;    // udp是否可以正常通信
+        bool adCaptureStatus;  // ad是否正在采集
+        bool ssdStoreStatus;   // 是否正在存储采集数据
+    } sysStatus;
+
 
 public:
-    RadarWidget(QWidget             *parent = nullptr,
-                BspConfig::RadarType type   = BspConfig::RADAR_TYPE_LAND);
+    RadarWidget(__radar_status__ para, QWidget *parent = nullptr);
     ~RadarWidget();
 
     void initParameter();
@@ -99,31 +127,9 @@ private slots:
     void getSysInfo();
     void showLaserInfo(LaserType4::LaserInfo &info);
 
-    QStringList read_ip_address(void);
-    void        showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh, int status);
+    void showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh, int status);
 
 private:
-    struct __radar_status__
-    {
-        bool ssdLinkStatus;    // ssd是否连接
-        bool udpLinkStatus;    // udp是否可以正常通信
-        bool adCaptureStatus;  // ad是否正在采集
-        bool ssdStoreStatus;   // 是否正在存储采集数据
-    } sysStatus;
-
-    struct _preview_settings__
-    {
-        int laserFreq;
-        int sampleLen;
-        int sampleRatio;
-        int firstPos;
-        int firstLen;
-        int secondPos;
-        int secondLen;
-        int sumThreshold;
-        int valueThreshold;
-    } previewSettings{-1, -1, -1, -1, -1, -1, -1, -1, -1};
-
     struct DoubleWaveConfig
     {
         double prev_angle;
@@ -139,9 +145,6 @@ private:
 
     Ui::RadarWidget *ui;
 
-    BspConfig::RadarType radarType;
-    QString              mode;
-
     QUdpSocket   *udpSocket;
     QThread      *thread;
     qint32        timer1s;
@@ -150,14 +153,11 @@ private:
     bool          refreshUIFlag{false};
     bool          refreshRadarFlag{false};
 
-    QStringList localIP;
     // QString     localIP;
     quint16 localPort{6666};
 
-    QHostAddress deviceIP{QHostAddress("192.168.1.102")};
-    quint16      devicePort{4444};
-    int8_t       fpgaRadarType{-1};  // fpga 内部固化的雷达类型
-    QByteArray   fpgaVersion{5, char(0)};
+    int8_t     fpgaRadarType{-1};  // fpga 内部固化的雷达类型
+    QByteArray fpgaVersion{5, char(0)};
 
     QFile binFile;
 
