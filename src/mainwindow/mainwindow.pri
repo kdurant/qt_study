@@ -2,11 +2,13 @@ INCLUDEPATH += $$PWD
 
 HEADERS += \
     $$PWD/mainwindow.h \ 
-    $$PWD/radarwidget.h
+$$PWD/radarwidget.h
 
 
 SOURCES += \
            $$PWD/main.cpp \
-    $$PWD/mainwindow.cpp \ 
-    $$PWD/radarwidget.cpp
+$$PWD/mainwindow.cpp \ 
+$$PWD/radarwidget.cpp
 
+FORMS += \
+         $$PWD/radarwidget.ui \

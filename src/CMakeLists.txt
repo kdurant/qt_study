@@ -78,7 +78,8 @@ include_directories(
   mainwindow)
 
 # set (Project_UI  ${PROJECT_SOURCE_DIR}/mainwindow.ui)
-set(Project_UI ../ui/mainwindow.ui ../ui/noteinfo.ui ../ui/navigation.ui)
+set(Project_UI ../ui/mainwindow.ui ../ui/noteinfo.ui ../ui/navigation.ui
+               ../ui/radarwidget.ui)
 qt5_wrap_ui(Project_UI_MOC ${Project_UI})
 
 set(SOURCES

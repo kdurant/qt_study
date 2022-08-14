@@ -45,8 +45,7 @@ include(./src/mainwindow/mainwindow.pri)
 FORMS += \
         ui/mainwindow.ui \
         ui/navigation.ui \
-        ui/noteinfo.ui \
-        ui/radarwidget.ui
+        ui/noteinfo.ui 
 
 RESOURCES += \
     res.qrc
@@ -67,4 +66,3 @@ Release: TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH"_release"
 DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
 
 #include($$PWD/deploy.pri)
-

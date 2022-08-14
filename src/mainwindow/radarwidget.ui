@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>mainwidget</class>
- <widget class="QWidget" name="mainwidget">
+ <class>RadarWidget</class>
+ <widget class="QWidget" name="RadarWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1137</width>
-    <height>657</height>
+    <width>1054</width>
+    <height>565</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,6,1">
+  <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
@@ -375,8 +375,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>227</width>
-               <height>113</height>
+               <width>256</width>
+               <height>146</height>
               </rect>
              </property>
              <attribute name="label">
@@ -451,8 +451,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>204</width>
-               <height>232</height>
+               <width>300</width>
+               <height>92</height>
               </rect>
              </property>
              <attribute name="label">
@@ -500,8 +500,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>171</width>
-               <height>117</height>
+               <width>188</width>
+               <height>156</height>
               </rect>
              </property>
              <attribute name="label">
@@ -757,8 +757,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>297</width>
-               <height>774</height>
+               <width>300</width>
+               <height>1092</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1245,8 +1245,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>194</width>
-               <height>368</height>
+               <width>205</width>
+               <height>500</height>
               </rect>
              </property>
              <attribute name="label">

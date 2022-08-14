@@ -63,7 +63,8 @@ class RadarWidget : public QWidget
     Q_OBJECT
 
 public:
-    RadarWidget(QWidget *parent, BspConfig::RadarType type);
+    RadarWidget(QWidget *parent = nullptr, 
+                BspConfig::RadarType type = BspConfig::RADAR_TYPE_LAND);
     ~RadarWidget();
 
     void initParameter();

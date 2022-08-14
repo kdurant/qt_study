@@ -1,7 +1,7 @@
 #include "radarwidget.h"
 #include <algorithm>
 #include "bsp_config.h"
-#include "ui_mainwidget.h"
+#include "ui_radarwidget.h"
 
 #include "ui_navigation.h"
 
@@ -1879,11 +1879,6 @@ void RadarWidget::timerEvent(QTimerEvent *event)
     {
         refreshUIFlag = true;
     }
-}
-
-void RadarWidget::on_actionNote_triggered()
-{
-    note->show();
 }
 
 void RadarWidget::on_bt_showWave_clicked()

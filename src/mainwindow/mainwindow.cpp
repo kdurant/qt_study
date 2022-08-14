@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
 
-    radarLand  = new RadarWidget(this, BspConfig::RADAR_TYPE_LAND);
+    radarLand  = new RadarWidget(this);
     radarOcean = new RadarWidget(this, BspConfig::RADAR_TYPE_OCEAN);
 
     ui->tabWidget_main->addTab(radarLand, "陆地雷达");

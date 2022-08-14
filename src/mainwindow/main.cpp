@@ -68,8 +68,8 @@ int main(int argc, char *argv[])
     font.setPixelSize(15);
     a.setFont(font);
 
-    //    mainwidget w;
-    //    w.show();
+//        RadarWidget w;
+//        w.show();
     MainWindow w1;
     w1.show();
 
