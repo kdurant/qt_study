@@ -63,8 +63,8 @@ class RadarWidget : public QWidget
     Q_OBJECT
 
 public:
-    RadarWidget(QWidget *parent = nullptr, 
-                BspConfig::RadarType type = BspConfig::RADAR_TYPE_LAND);
+    RadarWidget(QWidget             *parent = nullptr,
+                BspConfig::RadarType type   = BspConfig::RADAR_TYPE_LAND);
     ~RadarWidget();
 
     void initParameter();
@@ -140,9 +140,9 @@ private:
     Ui::RadarWidget *ui;
 
     BspConfig::RadarType radarType;
+    QString              mode;
 
     QUdpSocket   *udpSocket;
-    QSettings    *configIni;
     QThread      *thread;
     qint32        timer1s;
     QElapsedTimer elapsedTimer;

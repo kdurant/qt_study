@@ -69,11 +69,14 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void initParameter();
 
 private:
     Ui::MainWindow *ui;
-    RadarWidget    *radarLand;
-    RadarWidget    *radarOcean;
+    QSettings      *configIni;
+
+    RadarWidget *radarLand;
+    RadarWidget *radarOcean;
 };
 
 #endif  // MAINWINDOW_H

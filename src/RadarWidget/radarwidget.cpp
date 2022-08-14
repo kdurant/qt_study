@@ -9,7 +9,6 @@ RadarWidget::RadarWidget(QWidget *parent, BspConfig::RadarType type) :
     QWidget(parent),
     radarType(type),
     ui(new Ui::RadarWidget),
-    configIni(new QSettings("./config.ini", QSettings::IniFormat)),
     thread(new QThread())
 {
     ui->setupUi(this);
@@ -86,41 +85,7 @@ RadarWidget::~RadarWidget()
 
 void RadarWidget::initParameter()
 {
-    QFileInfo fileInfo("./config.ini");
-    if(!fileInfo.exists())
-    {
-        QFile file("./config.ini");
-        file.open(QIODevice::WriteOnly);
-        file.write("; RADAR_TPYE_OCEAN = 0x00,\r\n");
-        file.write("; RADAR_TPYE_LAND = 0x01,\r\n");
-        file.write("; RADAR_TPYE_760 = 0x02,\r\n");
-        file.write("; RADAR_TPYE_DOUBLE_WAVE = 0x03,\r\n");
-        file.write("; RADAR_TPYE_DRONE = 0x04,\r\n");
-        file.write("; RADAR_TPYE_WATER_GUARD = 0x05,\r\n");
-        file.write("; RADAR_TPYE_SECOND_INSTITUDE = 0x06,\r\n");
-        file.write("; RADAR_TPYE_BIG_FLARE = 0x07,\r\n");
-
-        file.write("\r\n[System]\r\n");
-        file.write("; release or debug\r\n");
-        file.write("mode=debug\r\n");
-        file.write("radarType=1\r\n");
-        file.write("\r\n[Preview]\r\n");
-        file.write("compressLen=0\r\n");
-        file.write("compressRatio=0\r\n");
-        file.write("firstLen=32\r\n");
-        file.write("firstStartPos=32\r\n");
-        file.write("sampleLen=6000\r\n");
-        file.write("sampleRate=4000\r\n");
-        file.write("secondLen=128\r\n");
-        file.write("secondStartPos=1280\r\n");
-        file.write("subThreshold=200\r\n");
-        file.write("sumThreshold=2000\r\n");
-
-        file.close();
-    }
-
-    //    radarType = configIni->value("System/radarType").toInt();
-    switch(configIni->value("System/radarType").toInt())
+    switch(radarType)
     {
         case 0:
             radarType   = BspConfig::RADAR_TYPE_OCEAN;
@@ -159,7 +124,7 @@ void RadarWidget::initParameter()
     QString   localHostName = QHostInfo::localHostName();
     QHostInfo info          = QHostInfo::fromName(localHostName);
 
-    if(configIni->value("System/mode").toString() == "debug")
+    if(mode == "debug")
     {
         localIP.append("127.0.0.1");
         QMessageBox::information(this, "通知", "当前为调试模式, IP addr:127.0.0.1");
@@ -177,19 +142,8 @@ void RadarWidget::initParameter()
         }
     }
 
-    if(configIni->value("System/mode").toString() == "debug")
+    if(mode == "debug")
         deviceIP = QHostAddress("127.0.0.1");
-
-    ui->lineEdit_sampleLen->setText(configIni->value("Preview/sampleLen").toString());
-    ui->lineEdit_sampleRate->setText(configIni->value("Preview/sampleRate").toString());
-    ui->lineEdit_firstStartPos->setText(configIni->value("Preview/firstStartPos").toString());
-    ui->lineEdit_firstLen->setText(configIni->value("Preview/firstLen").toString());
-    ui->lineEdit_secondStartPos->setText(configIni->value("Preview/secondStartPos").toString());
-    ui->lineEdit_secondLen->setText(configIni->value("Preview/secondLen").toString());
-    ui->lineEdit_sumThreshold->setText(configIni->value("Preview/sumThreshold").toString());
-    ui->lineEdit_subThreshold->setText(configIni->value("Preview/subThreshold").toString());
-    ui->lineEdit_compressLen->setText(configIni->value("Preview/compressLen").toString());
-    ui->lineEdit_compressRatio->setText(configIni->value("Preview/compressRatio").toString());
 
     if(radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         motorController = new PusiController();
