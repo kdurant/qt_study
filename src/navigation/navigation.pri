@@ -15,3 +15,6 @@ SOURCES += \
            $$PWD/LineWithArrow.cpp \
            $$PWD/MapView.cpp 
 
+
+FORMS += \
+         $$PWD/navigation.ui

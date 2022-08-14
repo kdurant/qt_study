@@ -41,11 +41,7 @@ include(./src/DevInfo/DevInfo.pri)
 include(./src/third_lib/QCustomPlot/qcustomplot.pri)
 include(./src/NoteInfo/NoteInfo.pri)
 include(./src/mainwindow/mainwindow.pri)
-
-FORMS += \
-        ui/mainwindow.ui \
-        ui/navigation.ui \
-        ui/noteinfo.ui 
+include(./src/RadarWidget/radarwidget.pri)
 
 RESOURCES += \
     res.qrc

@@ -94,8 +94,6 @@ private slots:
 
     void processPendingDatagram();
 
-    void on_actionNote_triggered();
-
     void on_bt_showWave_clicked();
 
     void getSysInfo();

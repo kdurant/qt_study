@@ -7,3 +7,5 @@ HEADERS += \
 SOURCES += \
            $$PWD/noteinfo.cpp \
 
+FORMS += \
+        $$PWD/noteinfo.ui 
