@@ -78,6 +78,7 @@ public:
     struct __radar_status__
     {
         BspConfig::RadarType radarType;
+        QString              name;
         QHostAddress         deviceIP{QHostAddress("192.168.1.102")};
         quint16              devicePort{4444};
         QString              localIP;

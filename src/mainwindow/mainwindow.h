@@ -65,12 +65,20 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+public:
+    //    struct _RadarStruct_
+    //    {
+    //        RadarWidget *radar;
+    //    }
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void        initParameter();
+    void        generateDefaultConfig();
     QStringList read_ip_address();
+
+    void setToolBar();
 
 protected:
     void timerEvent(QTimerEvent *event);
@@ -84,9 +92,52 @@ private:
     bool isHaveLand{false};
     bool ishaveOcean{false};
 
-    RadarWidget                  *radarLand;
-    RadarWidget                  *radarOcean;
-    RadarWidget::__radar_status__ radarLandPara, radarOceanPara;
+    int                           radarNumber{0};
+    RadarWidget                  *radar1{nullptr};
+    RadarWidget                  *radar2{nullptr};
+    RadarWidget::__radar_status__ radar1Para, radar2Para;
+
+    NoteInfo   *note;
+    Navigation *engineerView;
+    Navigation *pilotView;
+
+private:
+    void configRadar(RadarWidget::__radar_status__ &radar)
+    {
+        switch(radar.radarType)
+        {
+            case BspConfig::RADAR_TYPE_LAND:
+                radar.deviceIP   = QHostAddress("192.168.1.101");
+                radar.devicePort = 5555;
+                radar.name       = "陆地雷达";
+                break;
+            case BspConfig::RADAR_TYPE_OCEAN:
+                radar.deviceIP   = QHostAddress("192.168.1.102");
+                radar.devicePort = 4444;
+                radar.name       = "海洋雷达";
+                break;
+            case BspConfig::RADAR_TYPE_DRONE:
+                radar.deviceIP   = QHostAddress("192.168.1.102");
+                radar.devicePort = 4444;
+                radar.name       = "无人机雷达";
+            case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
+                radar.deviceIP   = QHostAddress("192.168.1.102");
+                radar.devicePort = 4444;
+                radar.name       = "双波长雷达";
+            case BspConfig::RADAR_TYPE_WATER_GUARD:
+                radar.deviceIP   = QHostAddress("192.168.1.102");
+                radar.devicePort = 4444;
+                radar.name       = "水下预警雷达";
+                break;
+            case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
+                radar.deviceIP   = QHostAddress("192.168.1.102");
+                radar.devicePort = 4444;
+                radar.name       = "海二所雷达";
+                break;
+            default:
+                break;
+        }
+    };
 };
 
 #endif  // MAINWINDOW_H

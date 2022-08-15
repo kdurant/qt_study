@@ -15,63 +15,94 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QPlainTextEdit" name="plainTextEdit">
-     <property name="plainText">
-      <string>正常操作步骤：
-1. 确认系统正常上电
-
-上位机IP地址设置：192.168.1.xxx
-
-陆地雷达IP=192.168.1.101
-陆地雷达端口号=5555
-
-其他雷达IP=192.168.1.102
-其他雷达端口号=4444
-
-文件读写状态机：
-localparam              IDLE            = 0;
-localparam              RD_UNIT         = 1;
-localparam              WR_FILENAME     = 2;
-localparam              START           = 3;
-localparam              CHECK_DATA      = 4;    // 准备写采集数据
-localparam              WR_DATA         = 5;    // 将有效数据写入FIFO
-localparam              WR_APPEND       = 6;    
-localparam              WAIT_BRESP      = 7;
-localparam              WR_FILEINFO     = 8;
-localparam              ERASE           = 9;
-localparam              OVER            = 10;
-
-
-sata读写状态机：
-localparam IDLE   = 0,  // 空闲
-           ADDR   = 1,  // 写命令
-           DATA   = 2,  // 写数据
-           RESP   = 3;  // 读数据
-
-水下预警雷达：
-	设第一段采样数据长度:m,则总共采样长度:L
-	L = 128  + 8 * m
- </string>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="../res.qrc">:/qss/ch_pos.png</pixmap>
-     </property>
-     <property name="scaledContents">
-      <bool>false</bool>
-     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>网络连接</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QPlainTextEdit" name="plainTextEdit">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="plainText">
+          <string>陆地雷达和海洋雷达同时使用时的连接步骤
+1. 将陆地雷达连接的网卡地址修改为192.168.1.155
+
+2. 将海洋雷达连接的网卡地址修改为192.168.1.166
+
+3. 给两台雷达上电
+
+4. 打开上位机软件</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="../../res.qrc">:/qss/ch_pos.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>配置文件使用</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QPlainTextEdit" name="plainTextEdit_2">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="plainText">
+          <string>1. exe下没有配置文件的时候，系统会自动生成一个
+2. 最多支持2个雷达配置。按照下面示例可以配置同时使用两个雷达
+[RadarType1]
+radarType=1
+sampleLen=6000
+sampleRate=20000
+firstStartPos=32
+firstLen=64
+secondStartPos=1280
+secondLen=200
+subThreshold=200
+sumThreshold=2000
+
+[RadarType2]
+radarType=0
+sampleLen=6000
+sampleRate=1000
+firstStartPos=32
+firstLen=100
+secondStartPos=1000
+secondLen=400
+subThreshold=200
+sumThreshold=2000
+
+3. 可以选择只使用一个雷达，删除配置文件中的数据即可</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
  <resources>
-  <include location="../res.qrc"/>
+  <include location="../../res.qrc"/>
  </resources>
  <connections/>
 </ui>

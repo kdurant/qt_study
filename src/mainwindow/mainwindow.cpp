@@ -9,9 +9,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowState(Qt::WindowMaximized);
-    setWindowTitle("雷达控制软件：v" + QString(SOFT_VERSION) + "_" + GIT_DATE + "_" + GIT_HASH);
+    setWindowTitle("雷达控制软件v" + QString(SOFT_VERSION) + "_" + GIT_DATE + "_" + GIT_HASH);
+
+    generateDefaultConfig();
 
     initParameter();
+
+    radarNumber = configIni->value("System/number").toInt();
 
     localIP = read_ip_address();
 
@@ -22,32 +26,51 @@ MainWindow::MainWindow(QWidget *parent) :
     else if(localIP.length() == 2)
     {
         QMessageBox::information(this, "通知", "检测本机有多个网卡在192.168.1.xxx网段，如果是连接多个雷达设备，请将连接陆地雷达的网卡IP设置为192.168.1.155，且先打开陆地雷达控制软件");
-        radarLandPara.localIP  = localIP.at(0);
-        radarOceanPara.localIP = localIP.at(1);
+        radar1Para.localIP = localIP.at(0);
+        radar2Para.localIP = localIP.at(1);
     }
 
-    radarLandPara.radarType  = BspConfig::RADAR_TYPE_LAND;
-    radarLandPara.deviceIP   = QHostAddress("192.168.1.101");
-    radarLandPara.devicePort = 5555;
+    if(radarNumber == 1)
+    {
+        if(configIni->contains("RadarType1/radarType"))
+        {
+            radar1Para.radarType = BspConfig::RadarType(configIni->value("RadarType1/radarType").toInt());
+            configRadar(radar1Para);
 
-    radarOceanPara.radarType  = BspConfig::RADAR_TYPE_OCEAN;
-    radarOceanPara.deviceIP   = QHostAddress("192.168.1.102");
-    radarOceanPara.devicePort = 4444;
+            radar1 = new RadarWidget(radar1Para, this);
+            ui->tabWidget_main->addTab(radar1, radar1Para.name);
+        }
+        else
+            QMessageBox::warning(this, "警告", "配置文件出错");
+    }
+    else if(radarNumber == 2)
+    {
+        radar1Para.radarType = BspConfig::RadarType(configIni->value("RadarType1/radarType").toInt());
+        configRadar(radar1Para);
+        radar1 = new RadarWidget(radar1Para, this);
+        ui->tabWidget_main->addTab(radar1, radar1Para.name);
 
-    if(configIni->contains("RadarType1/radarType"))
-        isHaveLand = true;
-    if(configIni->contains("RadarType2/radarType"))
-        ishaveOcean = true;
+        radar2Para.radarType = BspConfig::RadarType(configIni->value("RadarType2/radarType").toInt());
+        configRadar(radar2Para);
+    }
+    else
+        QMessageBox::warning(this, "警告", "配置文件出错");
+
     if(isHaveLand)
     {
-        radarLand = new RadarWidget(radarLandPara, this);
-        ui->tabWidget_main->addTab(radarLand, "陆地雷达");
+        radar1 = new RadarWidget(radar1Para, this);
+        ui->tabWidget_main->addTab(radar1, "陆地雷达");
     }
     if(ishaveOcean)
     {
-        radarOcean = new RadarWidget(radarOceanPara, this);
-        ui->tabWidget_main->addTab(radarOcean, "海洋雷达");
+        radar2 = new RadarWidget(radar2Para, this);
+        ui->tabWidget_main->addTab(radar2, "海洋雷达");
     }
+    setToolBar();
+
+    note         = new NoteInfo;
+    engineerView = new Navigation;
+    pilotView    = new Navigation;
 
     timer1s = startTimer(1000);
 }
@@ -58,6 +81,15 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::initParameter()
+{
+    if(configIni->value("System/mode").toString() == "debug")
+    {
+        // localIP.append("127.0.0.1");
+        QMessageBox::information(this, "通知", "当前为调试模式, IP addr:127.0.0.1");
+    }
+}
+
+void MainWindow::generateDefaultConfig()
 {
     QFileInfo fileInfo("./config.ini");
     if(!fileInfo.exists())
@@ -76,6 +108,7 @@ void MainWindow::initParameter()
         file.write("\r\n[System]\r\n");
         file.write("; release or debug\r\n");
         file.write("mode=debug\r\n");
+        file.write("number=2\r\n");
 
         file.write("\r\n[RadarType1]\r\n");
         file.write("radarType=1\r\n");
@@ -105,12 +138,6 @@ void MainWindow::initParameter()
 
         file.close();
     }
-
-    if(configIni->value("System/mode").toString() == "debug")
-    {
-        // localIP.append("127.0.0.1");
-        QMessageBox::information(this, "通知", "当前为调试模式, IP addr:127.0.0.1");
-    }
 }
 
 QStringList MainWindow::read_ip_address()
@@ -130,28 +157,43 @@ QStringList MainWindow::read_ip_address()
     return ips;
 }
 
+void MainWindow::setToolBar()
+{
+    QVector<QAction *> act;
+    act.append(new QAction("帮助", this));
+    act.append(new QAction("导航", this));
+    ui->mainToolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    for(int i = 0; i < act.size(); i++)
+    {
+        ui->mainToolBar->addAction(act[i]);
+    }
+
+    connect(act[0], &QAction::triggered, this, [this]()
+            {
+        note->show();
+    });
+    connect(act[1], &QAction::triggered, this, [this]()
+            {
+        engineerView->show();
+        // pilotView->show();
+        //        if(radarType == BspConfig::RADAR_TYPE_LAND)
+        //        {
+        //            engineerView->setScanAngle(60);
+        //            // pilotView->setScanAngle(60);
+        //        }
+        //        else
+        //        {
+        //            engineerView->setScanAngle(30);
+        //            // pilotView->setScanAngle(30);
+        //        }
+    });
+}
+
 void MainWindow::timerEvent(QTimerEvent *event)
 {
     if(timer1s == event->timerId())
     {
         QString udpStatus;
-        if(isHaveLand)
-        {
-            radarLandPara = radarLand->getRadarStatus();
-            if(radarLandPara.udpLinkStatus)
-                udpStatus = "陆地雷达通信正常 ";
-            else
-                udpStatus = "陆地雷达通信异常 ";
-        }
-
-        if(ishaveOcean)
-        {
-            radarOceanPara = radarOcean->getRadarStatus();
-            if(radarOceanPara.udpLinkStatus)
-                udpStatus += "海洋雷达通信正常 ";
-            else
-                udpStatus += "海洋雷达通信异常 ";
-        }
 
         ui->statusBar->showMessage(udpStatus, 3000);
     }
