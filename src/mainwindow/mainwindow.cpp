@@ -11,7 +11,6 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowState(Qt::WindowMaximized);
     setWindowTitle("雷达控制软件：v" + QString(SOFT_VERSION) + "_" + GIT_DATE + "_" + GIT_HASH);
 
-    RadarWidget::__radar_status__ radarLandPara, radarOceanPara;
     initParameter();
 
     localIP = read_ip_address();
@@ -36,15 +35,21 @@ MainWindow::MainWindow(QWidget *parent) :
     radarOceanPara.devicePort = 4444;
 
     if(configIni->contains("RadarType1/radarType"))
+        isHaveLand = true;
+    if(configIni->contains("RadarType2/radarType"))
+        ishaveOcean = true;
+    if(isHaveLand)
     {
         radarLand = new RadarWidget(radarLandPara, this);
         ui->tabWidget_main->addTab(radarLand, "陆地雷达");
     }
-    if(configIni->contains("RadarType2/radarType"))
+    if(ishaveOcean)
     {
         radarOcean = new RadarWidget(radarOceanPara, this);
         ui->tabWidget_main->addTab(radarOcean, "海洋雷达");
     }
+
+    timer1s = startTimer(1000);
 }
 
 MainWindow::~MainWindow()
@@ -123,4 +128,31 @@ QStringList MainWindow::read_ip_address()
     }
     std::sort(ips.begin(), ips.end());
     return ips;
+}
+
+void MainWindow::timerEvent(QTimerEvent *event)
+{
+    if(timer1s == event->timerId())
+    {
+        QString udpStatus;
+        if(isHaveLand)
+        {
+            radarLandPara = radarLand->getRadarStatus();
+            if(radarLandPara.udpLinkStatus)
+                udpStatus = "陆地雷达通信正常 ";
+            else
+                udpStatus = "陆地雷达通信异常 ";
+        }
+
+        if(ishaveOcean)
+        {
+            radarOceanPara = radarOcean->getRadarStatus();
+            if(radarOceanPara.udpLinkStatus)
+                udpStatus += "海洋雷达通信正常 ";
+            else
+                udpStatus += "海洋雷达通信异常 ";
+        }
+
+        ui->statusBar->showMessage(udpStatus, 3000);
+    }
 }

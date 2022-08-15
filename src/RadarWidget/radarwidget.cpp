@@ -46,11 +46,6 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     engineerView->setWindowTitle("Engineer View");
     pilotView->setWindowTitle("Pilot View");
 
-    sysStatus.ssdLinkStatus   = false;
-    sysStatus.udpLinkStatus   = false;
-    sysStatus.adCaptureStatus = false;
-    sysStatus.ssdStoreStatus  = false;
-
     waterGuard.startSaveBase    = false;
     waterGuard.isSavedBase      = false;
     waterGuard.state            = WaveExtract::MOTOR_CNT_STATE::IDLE;
@@ -469,18 +464,15 @@ void RadarWidget::uiConfig()
 
 void RadarWidget::udpBind()
 {
-    udpSocket  = new QUdpSocket(this);
-    int status = 0;
+    udpSocket = new QUdpSocket(this);
 
     if(!udpSocket->bind(QHostAddress(sysStatus.localIP), localPort))
-        status = -1;
+        sysStatus.udpLinkStatus = false;
     else
     {
         ui->label_softwareVer->setText(sysStatus.localIP);
-        status = 0;
+        sysStatus.udpLinkStatus = true;
     }
-    if(status == -1)
-        QMessageBox::warning(NULL, "警告", "雷达连接失败");
     udpSocket->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, 1024 * 1024 * 1);
 }
 

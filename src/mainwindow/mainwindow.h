@@ -72,13 +72,21 @@ public:
     void        initParameter();
     QStringList read_ip_address();
 
+protected:
+    void timerEvent(QTimerEvent *event);
+
 private:
     Ui::MainWindow *ui;
     QSettings      *configIni;
     QStringList     localIP;
+    qint32          timer1s;
 
-    RadarWidget *radarLand;
-    RadarWidget *radarOcean;
+    bool isHaveLand{false};
+    bool ishaveOcean{false};
+
+    RadarWidget                  *radarLand;
+    RadarWidget                  *radarOcean;
+    RadarWidget::__radar_status__ radarLandPara, radarOceanPara;
 };
 
 #endif  // MAINWINDOW_H

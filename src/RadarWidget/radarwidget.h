@@ -84,12 +84,11 @@ public:
 
         _preview_settings__ previewSettings;
 
-        bool ssdLinkStatus;    // ssd是否连接
-        bool udpLinkStatus;    // udp是否可以正常通信
-        bool adCaptureStatus;  // ad是否正在采集
-        bool ssdStoreStatus;   // 是否正在存储采集数据
+        bool ssdLinkStatus{false};    // ssd是否连接
+        bool udpLinkStatus{false};    // udp是否可以正常通信
+        bool adCaptureStatus{false};  // ad是否正在采集
+        bool ssdStoreStatus{false};   // 是否正在存储采集数据
     } sysStatus;
-
 
 public:
     RadarWidget(__radar_status__ para, QWidget *parent = nullptr);
@@ -102,6 +101,11 @@ public:
     void udpBind();
 
     void initSignalSlot();
+
+    __radar_status__ &getRadarStatus(void)
+    {
+        return sysStatus;
+    }
 
     void plotLineSettings(void);
     void plotColormapSettings(void);
