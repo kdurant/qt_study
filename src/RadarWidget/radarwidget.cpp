@@ -65,7 +65,6 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
 
     udpBind();
     initSignalSlot();
-    // setToolBar();
 
     plotLineSettings();
     plotColormapSettings();
@@ -114,9 +113,6 @@ void RadarWidget::initParameter()
             sysStatus.radarType = BspConfig::RADAR_TYPE_OCEAN;
             break;
     }
-
-    QString   localHostName = QHostInfo::localHostName();
-    QHostInfo info          = QHostInfo::fromName(localHostName);
 
     if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         motorController = new PusiController();
@@ -1841,7 +1837,8 @@ void RadarWidget::getSysInfo()
     {
         // ui->statusBar->setStyleSheet("color:black");
         // ui->statusBar->showMessage(tr("系统通信正常"), 0);
-        sysStatus.udpLinkStatus = false;
+        sysStatus.udpLinkStatus             = false;
+        sysStatus.previewSettings.laserFreq = sysParaInfo[0].value.toHex().toUInt(nullptr, 16);
 
         if(devInfo->getRadarType() != sysStatus.radarType)
         {
@@ -1850,8 +1847,8 @@ void RadarWidget::getSysInfo()
         fpgaVersion = devInfo->getFpgaVer().toUtf8();
 
         QList<QTreeWidgetItem *> itemList;
-        itemList                            = ui->treeWidget_attitude->findItems("系统参数", Qt::MatchExactly);
-        sysStatus.previewSettings.laserFreq = sysParaInfo[0].value.toHex().toUInt(nullptr, 16);
+        itemList = ui->treeWidget_attitude->findItems("系统参数", Qt::MatchExactly);
+
         for(int i = 0; i < sysParaInfo.size(); i++)
         {
             if(i == 4)  // 波形存储状态
@@ -1882,7 +1879,9 @@ void RadarWidget::getSysInfo()
             }
             else if(i == 7)  // sata底层读写状态机
             {
-                itemList.first()->child(i)->setText(1, QString::number(sysParaInfo[i].value.toHex().toUInt(nullptr, 16), 2));
+                int value        = sysParaInfo[i].value.toHex().toUInt(nullptr, 16);
+                sysStatus.state1 = value;
+                itemList.first()->child(i)->setText(1, QString::number(value, 2));
             }
             else if(i == 8)  // 文件读写状态机
             {

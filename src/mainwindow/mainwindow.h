@@ -89,6 +89,7 @@ private:
     QSettings      *configIni;
     QStringList     localIP;
     qint32          timer1s;
+    QLabel         *statusLabel;
 
     int     radarNumber{0};
     int     m_loop_i;  // 构造函数里声明变量会导致gdb错误

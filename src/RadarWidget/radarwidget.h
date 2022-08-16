@@ -85,6 +85,7 @@ public:
 
         _preview_settings__ previewSettings;
 
+        int  state1{1};               // sata读写状态机
         bool ssdLinkStatus{false};    // ssd是否连接
         bool udpLinkStatus{false};    // udp是否可以正常通信
         bool adCaptureStatus{false};  // ad是否正在采集

@@ -73,6 +73,9 @@ void MainWindow::initParameter()
     }
     else
         localIP = read_ip_address();
+
+    statusLabel = new QLabel;
+    ui->statusBar->addPermanentWidget(statusLabel);
 }
 
 void MainWindow::generateDefaultConfig()
@@ -195,18 +198,29 @@ void MainWindow::timerEvent(QTimerEvent *event)
 {
     if(timer1s == event->timerId())
     {
-        QString udpStatus;
+        QString udpStatus = "";
+        QString ssdStatus = "";
 
         QVector<_RadarVector_>::iterator iter;
         for(iter = radar.begin(); iter != radar.end(); iter++)
         {
-            iter->para = iter->device->getRadarStatus();
+            QString deviceName = iter->para.name;
+            iter->para         = iter->device->getRadarStatus();
             if(iter->para.udpLinkStatus)
-                udpStatus.append(iter->para.name + "通信成功    ");
+                udpStatus.append(deviceName + "通信成功    ");
             else
-                udpStatus.append(iter->para.name + "通信失败    ");
+                udpStatus.append(deviceName + "通信失败    ");
+
+            if(iter->para.ssdStoreStatus == false && iter->para.state1 != 1)
+            {
+                ssdStatus += deviceName + "写文件失败    ";
+            }
+            else
+                statusLabel->setText("");
         }
 
         ui->statusBar->showMessage(udpStatus, 3000);
+
+        statusLabel->setText(ssdStatus);
     }
 }
