@@ -12,60 +12,43 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle("雷达控制软件v" + QString(SOFT_VERSION) + "_" + GIT_DATE + "_" + GIT_HASH);
 
     generateDefaultConfig();
-
     initParameter();
 
     radarNumber = configIni->value("System/number").toInt();
+    radar.resize(radarNumber);
 
     localIP = read_ip_address();
 
-    if(localIP.length() == 0)
-    {
-        QMessageBox::warning(this, "警告", "没有合适的IP地址或网络连接异常");
-    }
-    else if(localIP.length() == 2)
-    {
-        QMessageBox::information(this, "通知", "检测本机有多个网卡在192.168.1.xxx网段，如果是连接多个雷达设备，请将连接陆地雷达的网卡IP设置为192.168.1.155，且先打开陆地雷达控制软件");
-        radar1Para.localIP = localIP.at(0);
-        radar2Para.localIP = localIP.at(1);
-    }
+    if(radarNumber != localIP.length())
+        QMessageBox::warning(this, "警告", "雷达个数和系统IP地址个数不匹配");
 
-    if(radarNumber == 1)
+    for(m_loop_i = 0; m_loop_i < radarNumber; m_loop_i++)
     {
-        if(configIni->contains("RadarType1/radarType"))
+        item = "RadarType" + QString::number(m_loop_i + 1) + "/radarType";
+        if(configIni->contains(item))
         {
-            radar1Para.radarType = BspConfig::RadarType(configIni->value("RadarType1/radarType").toInt());
-            configRadar(radar1Para);
+            radar[m_loop_i].para.radarType = BspConfig::RadarType(configIni->value(item).toInt());
+            configRadar(radar[m_loop_i].para);
 
-            radar1 = new RadarWidget(radar1Para, this);
-            ui->tabWidget_main->addTab(radar1, radar1Para.name);
+            if(m_loop_i < localIP.length())
+                radar[m_loop_i].para.localIP = localIP.at(m_loop_i);
+            else
+            {
+                radar[m_loop_i].para.localIP = "127.0.0.1";
+                QMessageBox::warning(this, "警告", "雷达个数和系统IP地址个数不匹配, 使用默认回环IP地址");
+            }
+
+            radar[m_loop_i].device = new RadarWidget(radar[m_loop_i].para, this);
+            ui->tabWidget_main->addTab(radar[m_loop_i].device, radar[m_loop_i].para.name);
         }
+
         else
-            QMessageBox::warning(this, "警告", "配置文件出错");
+        {
+            QMessageBox::warning(this, "警告", "配置文件出错, 系统即将退出");
+            return;
+        }
     }
-    else if(radarNumber == 2)
-    {
-        radar1Para.radarType = BspConfig::RadarType(configIni->value("RadarType1/radarType").toInt());
-        configRadar(radar1Para);
-        radar1 = new RadarWidget(radar1Para, this);
-        ui->tabWidget_main->addTab(radar1, radar1Para.name);
 
-        radar2Para.radarType = BspConfig::RadarType(configIni->value("RadarType2/radarType").toInt());
-        configRadar(radar2Para);
-    }
-    else
-        QMessageBox::warning(this, "警告", "配置文件出错");
-
-    if(isHaveLand)
-    {
-        radar1 = new RadarWidget(radar1Para, this);
-        ui->tabWidget_main->addTab(radar1, "陆地雷达");
-    }
-    if(ishaveOcean)
-    {
-        radar2 = new RadarWidget(radar2Para, this);
-        ui->tabWidget_main->addTab(radar2, "海洋雷达");
-    }
     setToolBar();
 
     note         = new NoteInfo;
@@ -194,6 +177,16 @@ void MainWindow::timerEvent(QTimerEvent *event)
     if(timer1s == event->timerId())
     {
         QString udpStatus;
+
+        QVector<_RadarVector_>::iterator iter;
+        for(iter = radar.begin(); iter != radar.end(); iter++)
+        {
+            iter->para = iter->device->getRadarStatus();
+            if(iter->para.udpLinkStatus)
+                udpStatus.append(iter->para.name + "通信成功    ");
+            else
+                udpStatus.append(iter->para.name + "通信失败    ");
+        }
 
         ui->statusBar->showMessage(udpStatus, 3000);
     }

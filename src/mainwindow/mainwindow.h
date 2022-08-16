@@ -66,10 +66,11 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    //    struct _RadarStruct_
-    //    {
-    //        RadarWidget *radar;
-    //    }
+    struct _RadarVector_
+    {
+        RadarWidget                  *device;
+        RadarWidget::__radar_status__ para;
+    };
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -89,13 +90,11 @@ private:
     QStringList     localIP;
     qint32          timer1s;
 
-    bool isHaveLand{false};
-    bool ishaveOcean{false};
+    int     radarNumber{0};
+    int     m_loop_i;  // 构造函数里声明变量会导致gdb错误
+    QString item;
 
-    int                           radarNumber{0};
-    RadarWidget                  *radar1{nullptr};
-    RadarWidget                  *radar2{nullptr};
-    RadarWidget::__radar_status__ radar1Para, radar2Para;
+    QVector<_RadarVector_> radar;
 
     NoteInfo   *note;
     Navigation *engineerView;
