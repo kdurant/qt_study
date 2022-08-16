@@ -17,10 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
     radarNumber = configIni->value("System/number").toInt();
     radar.resize(radarNumber);
 
-    localIP = read_ip_address();
-
     if(radarNumber != localIP.length())
-        QMessageBox::warning(this, "警告", "雷达个数和系统IP地址个数不匹配");
+    {
+        QMessageBox::warning(this, "警告", "雷达个数和系统IP地址个数不匹配，请检查系统配置");
+    }
 
     for(m_loop_i = 0; m_loop_i < radarNumber; m_loop_i++)
     {
@@ -67,9 +67,12 @@ void MainWindow::initParameter()
 {
     if(configIni->value("System/mode").toString() == "debug")
     {
-        // localIP.append("127.0.0.1");
+        localIP.append("127.0.0.1");
+        localIP.append("127.0.0.1");
         QMessageBox::information(this, "通知", "当前为调试模式, IP addr:127.0.0.1");
     }
+    else
+        localIP = read_ip_address();
 }
 
 void MainWindow::generateDefaultConfig()
@@ -125,17 +128,33 @@ void MainWindow::generateDefaultConfig()
 
 QStringList MainWindow::read_ip_address()
 {
-    QStringList         ips;
-    QList<QHostAddress> list = QNetworkInterface::allAddresses();
-    foreach(QHostAddress address, list)
+    QStringList ips;
+    QString     ip;
+
+    const QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
+    QList<QNetworkAddressEntry>    entrys;
+    foreach(QNetworkInterface interface, interfaces)
     {
-        if(address.protocol() == QAbstractSocket::IPv4Protocol)
+        entrys = interface.addressEntries();
+        for(auto entery : entrys)
         {
-            QString ip = address.toString();
-            if(ip.contains("192.168.1."))
-                ips.append(ip);
+            switch(entery.ip().protocol())
+            {
+                case QAbstractSocket::IPv4Protocol:
+                    ip = entery.ip().toString();
+                    if(ip.contains("192.168.1."))
+                        ips.append(ip);
+                    break;
+                case QAbstractSocket::IPv6Protocol:
+                    break;
+                case QAbstractSocket::AnyIPProtocol:
+                    break;
+                case QAbstractSocket::UnknownNetworkLayerProtocol:
+                    break;
+            }
         }
     }
+
     std::sort(ips.begin(), ips.end());
     return ips;
 }

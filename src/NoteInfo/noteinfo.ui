@@ -68,7 +68,8 @@
          </property>
          <property name="plainText">
           <string>1. exe下没有配置文件的时候，系统会自动生成一个
-2. 最多支持2个雷达配置。按照下面示例可以配置同时使用两个雷达
+2. 可以选择支持的雷达个数，最多2个。按照下面示例可以配置同时使用两个雷达
+number=2
 [RadarType1]
 radarType=1
 sampleLen=6000
@@ -90,8 +91,7 @@ secondStartPos=1000
 secondLen=400
 subThreshold=200
 sumThreshold=2000
-
-3. 可以选择只使用一个雷达，删除配置文件中的数据即可</string>
+</string>
          </property>
         </widget>
        </item>
