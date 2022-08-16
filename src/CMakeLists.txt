@@ -33,7 +33,8 @@ add_definitions(-DGIT_DATE=\"${GIT_DATE}\")
 
 add_subdirectory(third_lib/QCustomPlot)
 
-set(CMAKE_AUTOUIC_SEARCH_PATHS ../ui)
+set(CMAKE_AUTOUIC_SEARCH_PATHS ../src/mainwindow ../src/RadarWidget
+                               ../src/NoteInfo ../src/navigation)
 set(CMAKE_AUTOUIC ON) # 如果ui文件和cpp文件不在同一个目录下，不能使用此项
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -75,12 +76,8 @@ include_directories(
   third_lib/QCustomPlot
   navigation
   NoteInfo
-  mainwindow)
-
-# set (Project_UI  ${PROJECT_SOURCE_DIR}/mainwindow.ui)
-set(Project_UI ../ui/mainwindow.ui ../ui/noteinfo.ui ../ui/navigation.ui
-               ../ui/radarwidget.ui)
-qt5_wrap_ui(Project_UI_MOC ${Project_UI})
+  mainwindow
+  RadarWidget)
 
 set(SOURCES
     mainwindow/main.cpp
@@ -109,13 +106,15 @@ set(SOURCES
     wave/WaveExtract.cpp
     wave/OfflineWaveform.cpp
     wave/OnlineWaveform.cpp
+    RadarWidget/radarwidget.cpp
     navigation/navigation.cpp
     navigation/LineWithArrow.cpp
     navigation/MapView.cpp
     navigation/AirArea.cpp
+    navigation/AirArea.cpp
     navigation/CoordCompute.cpp)
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${Project_UI_MOC} ../res.qrc
+add_executable(${PROJECT_NAME} ${SOURCES} ../res.qrc
                                ${APP_ICON_RESOURCE_WINDOWS})
 
 target_link_libraries(
