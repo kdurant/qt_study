@@ -20,6 +20,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     qRegisterMetaType<WaveExtract::WaveformInfo>("WaveExtract::WaveformInfo");
     qRegisterMetaType<QVector<quint8>>("QVector<quint8>");
     qRegisterMetaType<QVector<WaveExtract::WaveformInfo>>("QVector<WaveformInfo>");
+    qRegisterMetaType<BspConfig::Gps_Info>("BspConfig::Gps_Info");
 
     dispatch        = new ProtocolDispatch();
     preview         = new AdSampleControll();
@@ -39,12 +40,6 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
 
     gps      = new GpsInfo();
     attitude = new AttitudeSensor;
-
-    note         = new NoteInfo;
-    engineerView = new Navigation;
-    pilotView    = new Navigation;
-    engineerView->setWindowTitle("Engineer View");
-    pilotView->setWindowTitle("Pilot View");
 
     waterGuard.startSaveBase    = false;
     waterGuard.isSavedBase      = false;
@@ -177,7 +172,7 @@ void RadarWidget::uiConfig()
     ui->tabWidget->setCurrentIndex(0);
 
     ui->tabWidget_main->setTabEnabled(1, false);
-    // ui->tabWidget_main->setTabEnabled(2, false);
+    ui->tabWidget_main->setTabEnabled(2, false);
     ui->tabWidget_main->setCurrentIndex(0);
 
     ui->toolBox_motor->setItemEnabled(2, false);
@@ -1416,9 +1411,7 @@ void RadarWidget::initSignalSlot()
     connect(dispatch, &ProtocolDispatch::gpsFrameReady, gps, &GpsInfo::parserGpsData);
     connect(gps, &GpsInfo::gpsDataReady, this, [this](BspConfig::Gps_Info &data)
             {
-        engineerView->updateGpsInfo(data);
-        // pilotView->updateGpsInfo(data);
-
+        emit                     sendGpsInfo(data);
         QList<QTreeWidgetItem *> itemList;
 
         itemList = ui->treeWidget_attitude->findItems("GPS信息", Qt::MatchExactly);

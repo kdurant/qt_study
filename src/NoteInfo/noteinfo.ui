@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -31,11 +31,14 @@
          </property>
          <property name="plainText">
           <string>陆地雷达和海洋雷达同时使用时的连接步骤
-1. 将陆地雷达连接的网卡地址修改为192.168.1.155
 
-2. 将海洋雷达连接的网卡地址修改为192.168.1.166
+1. 将两台设备连接到相应的网卡
 
-3. 给两台雷达上电
+2. 将海洋雷达连接的网卡IP地址修改为192.168.1.166
+
+3. 将陆地雷达连接的网卡IP地址修改为192.168.1.177
+
+3. 给两台雷达上电，稍微等待几秒，以便计算机找到网络设备
 
 4. 打开上位机软件</string>
          </property>
@@ -70,8 +73,8 @@
           <string>1. exe下没有配置文件的时候，系统会自动生成一个
 2. 可以选择支持的雷达个数，最多2个。按照下面示例可以配置同时使用两个雷达
 number=2
-[RadarType1]
-radarType=1
+[Radar1]
+radarType=0
 sampleLen=6000
 sampleRate=20000
 firstStartPos=32
@@ -81,8 +84,8 @@ secondLen=200
 subThreshold=200
 sumThreshold=2000
 
-[RadarType2]
-radarType=0
+[Radar2]
+radarType=1
 sampleLen=6000
 sampleRate=1000
 firstStartPos=32
@@ -91,7 +94,8 @@ secondStartPos=1000
 secondLen=400
 subThreshold=200
 sumThreshold=2000
-</string>
+
+注意：当两台设备同时连接时，Radar1/radarType不能设置为1</string>
          </property>
         </widget>
        </item>

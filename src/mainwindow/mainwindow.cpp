@@ -52,6 +52,15 @@ MainWindow::MainWindow(QWidget *parent) :
     engineerView = new Navigation;
     pilotView    = new Navigation;
 
+    connect(radar[0].device, &RadarWidget::sendGpsInfo, this, [this](BspConfig::Gps_Info &data)
+            {
+        if(isLoadMap)
+        {
+            engineerView->updateGpsInfo(data);
+            pilotView->updateGpsInfo(data);
+        }
+    });
+
     timer1s = startTimer(1000);
 }
 
@@ -97,7 +106,7 @@ void MainWindow::generateDefaultConfig()
         file.write("number=2\r\n");
 
         file.write("\r\n[Radar1]\r\n");
-        file.write("radarType=1\r\n");
+        file.write("radarType=0\r\n");
         // file.write("radarType1=1\r\n");
         // file.write("radarType2=1\r\n");
         // file.write("compressLen=0\r\n");
@@ -112,7 +121,7 @@ void MainWindow::generateDefaultConfig()
         file.write("sumThreshold=2000\r\n");
 
         file.write("\r\n[Radar2]\r\n");
-        file.write("radarType=0\r\n");
+        file.write("radarType=1\r\n");
         file.write("sampleLen=6000\r\n");
         file.write("sampleRate=1000\r\n");
         file.write("firstStartPos=32\r\n");
@@ -139,6 +148,7 @@ bool MainWindow::checkConfigFile()
         if(!configIni->contains(item))
             return false;
     }
+
     return true;
 }
 
@@ -193,7 +203,8 @@ void MainWindow::setToolBar()
     connect(act[1], &QAction::triggered, this, [this]()
             {
         engineerView->show();
-        // pilotView->show();
+        pilotView->show();
+        isLoadMap = true;
         //        if(radarType == BspConfig::RADAR_TYPE_LAND)
         //        {
         //            engineerView->setScanAngle(60);

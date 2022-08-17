@@ -71,7 +71,6 @@ public:
         RadarWidget                  *device;
         RadarWidget::__radar_status__ para;
     };
-
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -98,9 +97,11 @@ private:
 
     QVector<_RadarVector_> radar;
 
-    NoteInfo   *note;
     Navigation *engineerView;
     Navigation *pilotView;
+    bool isLoadMap{false};
+
+    NoteInfo   *note;
 
 private:
     void configRadar(RadarWidget::__radar_status__ &radar)

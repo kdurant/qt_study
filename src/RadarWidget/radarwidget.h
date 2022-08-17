@@ -123,6 +123,7 @@ protected:
 signals:
     void sampleDataReady(BspConfig::RadarType type, const QVector<quint8> &sampleData);
     void startPaserSampleNumber();
+    void sendGpsInfo(BspConfig::Gps_Info & data);
 
 private slots:
 
@@ -211,11 +212,6 @@ private:
     int colorMap_X_max{512};
 
     WaterGuard waterGuard;
-    QMutex     mutex;
-
-    NoteInfo   *note;
-    Navigation *engineerView;
-    Navigation *pilotView;
 
     qint64           testCnt{0};
     QVector<QString> testString;
