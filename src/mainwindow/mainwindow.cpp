@@ -27,10 +27,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     for(m_loop_i = 0; m_loop_i < radarNumber; m_loop_i++)
     {
-        item = "Radar" + QString::number(m_loop_i + 1) + "/radarType";
-        if(configIni->contains(item))
+        item = "Radar" + QString::number(m_loop_i + 1);
+        if(configIni->contains(item + "/radarType"))
         {
-            radar[m_loop_i].para.radarType = BspConfig::RadarType(configIni->value(item).toInt());
+            radar[m_loop_i].para.radarType = BspConfig::RadarType(configIni->value(item + "/radarType").toInt());
             configRadar(radar[m_loop_i].para);
 
             if(m_loop_i < localIP.length())
@@ -40,6 +40,15 @@ MainWindow::MainWindow(QWidget *parent) :
                 radar[m_loop_i].para.localIP = "127.0.0.1";
                 QMessageBox::warning(this, "警告", "雷达个数和系统IP地址个数不匹配, 使用默认回环IP地址");
             }
+
+            radar[m_loop_i].para.previewSettings.sampleLen      = configIni->value(item + "/sampleLen").toInt();
+            radar[m_loop_i].para.previewSettings.sampleRatio    = configIni->value(item + "/sampleRate").toInt();
+            radar[m_loop_i].para.previewSettings.firstPos       = configIni->value(item + "/firstStartPos").toInt();
+            radar[m_loop_i].para.previewSettings.firstLen       = configIni->value(item + "/firstLen").toInt();
+            radar[m_loop_i].para.previewSettings.secondPos      = configIni->value(item + "/secondStartPos").toInt();
+            radar[m_loop_i].para.previewSettings.secondLen      = configIni->value(item + "/secondLen").toInt();
+            radar[m_loop_i].para.previewSettings.sumThreshold   = configIni->value(item + "/sumThreshold").toInt();
+            radar[m_loop_i].para.previewSettings.valueThreshold = configIni->value(item + "/valueThreshold").toInt();
 
             radar[m_loop_i].device = new RadarWidget(radar[m_loop_i].para, this);
             ui->tabWidget_main->addTab(radar[m_loop_i].device, radar[m_loop_i].para.name);
@@ -112,24 +121,24 @@ void MainWindow::generateDefaultConfig()
         // file.write("compressLen=0\r\n");
         // file.write("compressRatio=0\r\n");
         file.write("sampleLen=6000\r\n");
-        file.write("sampleRate=20000\r\n");
-        file.write("firstStartPos=32\r\n");
-        file.write("firstLen=64\r\n");
-        file.write("secondStartPos=1280\r\n");
-        file.write("secondLen=200\r\n");
-        file.write("subThreshold=200\r\n");
-        file.write("sumThreshold=2000\r\n");
-
-        file.write("\r\n[Radar2]\r\n");
-        file.write("radarType=1\r\n");
-        file.write("sampleLen=6000\r\n");
         file.write("sampleRate=1000\r\n");
         file.write("firstStartPos=32\r\n");
         file.write("firstLen=100\r\n");
         file.write("secondStartPos=1000\r\n");
         file.write("secondLen=400\r\n");
-        file.write("subThreshold=200\r\n");
+        file.write("sumThreshold=1600\r\n");
+        file.write("valueThreshold=200\r\n");
+
+        file.write("\r\n[Radar2]\r\n");
+        file.write("radarType=1\r\n");
+        file.write("sampleLen=6000\r\n");
+        file.write("sampleRate=20000\r\n");
+        file.write("firstStartPos=32\r\n");
+        file.write("firstLen=100\r\n");
+        file.write("secondStartPos=1000\r\n");
+        file.write("secondLen=400\r\n");
         file.write("sumThreshold=2000\r\n");
+        file.write("valueThreshold=200\r\n");
 
         file.close();
     }

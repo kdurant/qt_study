@@ -123,7 +123,7 @@ protected:
 signals:
     void sampleDataReady(BspConfig::RadarType type, const QVector<quint8> &sampleData);
     void startPaserSampleNumber();
-    void sendGpsInfo(BspConfig::Gps_Info & data);
+    void sendGpsInfo(BspConfig::Gps_Info &data);
 
 private slots:
 

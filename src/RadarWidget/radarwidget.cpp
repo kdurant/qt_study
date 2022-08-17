@@ -113,6 +113,17 @@ void RadarWidget::initParameter()
         motorController = new PusiController();
     else
         motorController = new EPOS2();
+
+    ui->lineEdit_sampleLen->setText(QString::number(sysStatus.previewSettings.sampleLen));
+    ui->lineEdit_sampleRate->setText(QString::number(sysStatus.previewSettings.sampleRatio));
+    ui->lineEdit_firstStartPos->setText(QString::number(sysStatus.previewSettings.firstPos));
+    ui->lineEdit_firstLen->setText(QString::number(sysStatus.previewSettings.firstLen));
+    ui->lineEdit_secondStartPos->setText(QString::number(sysStatus.previewSettings.secondPos));
+    ui->lineEdit_secondLen->setText(QString::number(sysStatus.previewSettings.secondLen));
+    ui->lineEdit_sumThreshold->setText(QString::number(sysStatus.previewSettings.sumThreshold));
+    ui->lineEdit_subThreshold->setText(QString::number(sysStatus.previewSettings.valueThreshold));
+    // ui->lineEdit_compressLen->setText(QString::number(sysStatus.previewSettings.compressLen));
+    // ui->lineEdit_compressRatio->setText(QString::number(sysStatus.previewSettings.compressRatio));
 }
 
 void RadarWidget::saveParameter()
@@ -1822,9 +1833,7 @@ void RadarWidget::getSysInfo()
 {
     if(devInfo->getSysPara(sysParaInfo))
     {
-        // ui->statusBar->setStyleSheet("color:black");
-        // ui->statusBar->showMessage(tr("系统通信正常"), 0);
-        sysStatus.udpLinkStatus             = false;
+        sysStatus.udpLinkStatus             = true;
         sysStatus.previewSettings.laserFreq = sysParaInfo[0].value.toHex().toUInt(nullptr, 16);
 
         if(devInfo->getRadarType() != sysStatus.radarType)
