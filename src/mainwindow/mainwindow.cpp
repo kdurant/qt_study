@@ -158,10 +158,12 @@ QStringList MainWindow::read_ip_address()
     QString     ip;
 
     const QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
-    QList<QNetworkAddressEntry>    entrys;
-    foreach(QNetworkInterface interface, interfaces)
+
+    QList<QNetworkAddressEntry> entrys;
+    //    foreach(QNetworkInterface interface, interfaces)
+    for(int i = 0; i < interfaces.size(); i++)
     {
-        entrys = interface.addressEntries();
+        entrys = interfaces.at(i).addressEntries();
         for(auto entery : entrys)
         {
             switch(entery.ip().protocol())
