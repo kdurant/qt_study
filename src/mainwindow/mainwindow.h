@@ -77,6 +77,7 @@ public:
     ~MainWindow();
     void        initParameter();
     void        generateDefaultConfig();
+    bool        checkConfigFile();
     QStringList read_ip_address();
 
     void setToolBar();

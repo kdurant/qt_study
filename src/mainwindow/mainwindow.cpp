@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle("雷达控制软件v" + QString(SOFT_VERSION) + "_" + GIT_DATE + "_" + GIT_HASH);
 
     generateDefaultConfig();
+    if(!checkConfigFile())
+        QMessageBox::critical(this, "错误", "配置文件出错, 请退出软件，检查配置文件");
+
     initParameter();
 
     radarNumber = configIni->value("System/number").toInt();
@@ -24,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     for(m_loop_i = 0; m_loop_i < radarNumber; m_loop_i++)
     {
-        item = "RadarType" + QString::number(m_loop_i + 1) + "/radarType";
+        item = "Radar" + QString::number(m_loop_i + 1) + "/radarType";
         if(configIni->contains(item))
         {
             radar[m_loop_i].para.radarType = BspConfig::RadarType(configIni->value(item).toInt());
@@ -40,12 +43,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
             radar[m_loop_i].device = new RadarWidget(radar[m_loop_i].para, this);
             ui->tabWidget_main->addTab(radar[m_loop_i].device, radar[m_loop_i].para.name);
-        }
-
-        else
-        {
-            QMessageBox::warning(this, "警告", "配置文件出错, 系统即将退出");
-            return;
         }
     }
 
@@ -99,7 +96,7 @@ void MainWindow::generateDefaultConfig()
         file.write("mode=debug\r\n");
         file.write("number=2\r\n");
 
-        file.write("\r\n[RadarType1]\r\n");
+        file.write("\r\n[Radar1]\r\n");
         file.write("radarType=1\r\n");
         // file.write("radarType1=1\r\n");
         // file.write("radarType2=1\r\n");
@@ -114,7 +111,7 @@ void MainWindow::generateDefaultConfig()
         file.write("subThreshold=200\r\n");
         file.write("sumThreshold=2000\r\n");
 
-        file.write("\r\n[RadarType2]\r\n");
+        file.write("\r\n[Radar2]\r\n");
         file.write("radarType=0\r\n");
         file.write("sampleLen=6000\r\n");
         file.write("sampleRate=1000\r\n");
@@ -127,6 +124,22 @@ void MainWindow::generateDefaultConfig()
 
         file.close();
     }
+}
+
+bool MainWindow::checkConfigFile()
+{
+    if(!configIni->contains("System/number"))
+        return false;
+
+    int number = configIni->value("System/number").toInt();
+
+    for(int i = 0; i < number; i++)
+    {
+        QString item = "Radar" + QString::number(i + 1) + "/radarType";
+        if(!configIni->contains(item))
+            return false;
+    }
+    return true;
 }
 
 QStringList MainWindow::read_ip_address()
