@@ -460,15 +460,9 @@ void RadarWidget::uiConfig()
 
 void RadarWidget::udpBind()
 {
-    udpSocket = new QUdpSocket(this);
-
     ui->label_softwareVer->setText(sysStatus.localIP);
-    if(!udpSocket->bind(QHostAddress(sysStatus.localIP), localPort))
-        sysStatus.udpLinkStatus = false;
-    else
-    {
-        sysStatus.udpLinkStatus = true;
-    }
+    udpSocket               = new QUdpSocket(this);
+    sysStatus.udpLinkStatus = udpSocket->bind(QHostAddress(sysStatus.localIP), localPort);
     udpSocket->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption, 1024 * 1024 * 1);
 }
 

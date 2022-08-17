@@ -15,11 +15,11 @@ MainWindow::MainWindow(QWidget *parent) :
     if(!checkConfigFile())
         QMessageBox::critical(this, "错误", "配置文件出错, 请退出软件，检查配置文件");
 
+    radarNumber = configIni->value("System/number").toInt();
+
     initParameter();
 
-    radarNumber = configIni->value("System/number").toInt();
     radar.resize(radarNumber);
-
     if(radarNumber != localIP.length())
     {
         QMessageBox::warning(this, "警告", "雷达个数和系统IP地址个数不匹配，请检查系统配置");
@@ -64,8 +64,8 @@ void MainWindow::initParameter()
 {
     if(configIni->value("System/mode").toString() == "debug")
     {
-        localIP.append("127.0.0.1");
-        localIP.append("127.0.0.1");
+        for(int i = 0; i < radarNumber; i++)
+            localIP.append("127.0.0.1");
         QMessageBox::information(this, "通知", "当前为调试模式, IP addr:127.0.0.1");
     }
     else
