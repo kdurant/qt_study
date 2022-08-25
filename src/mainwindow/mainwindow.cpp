@@ -63,11 +63,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(radar[0].device, &RadarWidget::sendGpsInfo, this, [this](BspConfig::Gps_Info &data)
             {
-        if(isLoadMap)
-        {
+        if(engineerView->getLoadMapInfo())
             engineerView->updateGpsInfo(data);
+        if(pilotView->getLoadMapInfo())
             pilotView->updateGpsInfo(data);
-        }
     });
 
     timer1s = startTimer(1000);
@@ -215,7 +214,6 @@ void MainWindow::setToolBar()
             {
         engineerView->show();
         pilotView->show();
-        isLoadMap = true;
         //        if(radarType == BspConfig::RADAR_TYPE_LAND)
         //        {
         //            engineerView->setScanAngle(60);

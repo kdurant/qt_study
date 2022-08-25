@@ -31,6 +31,10 @@ public:
     void showGpsInfo(const BspConfig::Gps_Info &gps);
     void showSystemInfo(void);
     void setScanAngle(double angle);
+    bool getLoadMapInfo(void) const 
+{ 
+            return isLoadedMap && isLoadedTracker;
+        }
 
 protected:
     void timerEvent(QTimerEvent *event);

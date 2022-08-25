@@ -218,7 +218,8 @@ AirArea::AirLine AirArea::_getRadarScanExpression(BspConfig::Gps_Info &pos)
     CoordCompute coord;
 
     auto [longitude1, latitude1, longitude2, latitude2] =
-        coord.getLaserLineEndPoints(15, pos.longitude, pos.latitude, pos.height, pos.roll, pos.pitch, pos.heading);
+        // coord.getLaserLineEndPoints(15, pos.longitude, pos.latitude, pos.height, pos.roll, pos.pitch, pos.heading);
+        coord.getLaserLineEndPoints(15, pos.longitude, pos.latitude, pos.height, 0, 0, pos.heading);
     scanLine.line.setP1(QPointF(longitude1, latitude1));
     scanLine.line.setP2(QPointF(longitude2, latitude2));
     scanLine.height = pos.height;
