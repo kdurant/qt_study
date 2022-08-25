@@ -121,7 +121,7 @@ void RadarWidget::initParameter()
     ui->lineEdit_secondStartPos->setText(QString::number(sysStatus.previewSettings.secondPos));
     ui->lineEdit_secondLen->setText(QString::number(sysStatus.previewSettings.secondLen));
     ui->lineEdit_sumThreshold->setText(QString::number(sysStatus.previewSettings.sumThreshold));
-    ui->lineEdit_subThreshold->setText(QString::number(sysStatus.previewSettings.valueThreshold));
+    ui->lineEdit_valueThreshold->setText(QString::number(sysStatus.previewSettings.valueThreshold));
     // ui->lineEdit_compressLen->setText(QString::number(sysStatus.previewSettings.compressLen));
     // ui->lineEdit_compressRatio->setText(QString::number(sysStatus.previewSettings.compressRatio));
 }
@@ -154,7 +154,7 @@ void RadarWidget::uiConfig()
     ui->lineEdit_secondStartPos->setValidator(decValidator);
     ui->lineEdit_secondLen->setValidator(decValidator);
     ui->lineEdit_sumThreshold->setValidator(decValidator);
-    ui->lineEdit_subThreshold->setValidator(decValidator);
+    ui->lineEdit_valueThreshold->setValidator(decValidator);
     ui->lineEdit_compressLen->setValidator(decValidator);
     ui->lineEdit_compressRatio->setValidator(decValidator);
     ui->lineEdit_ssdSearchStartUnit->setValidator(hexValidator);
@@ -199,7 +199,7 @@ void RadarWidget::uiConfig()
         ui->label_sumThreshold->hide();
         ui->lineEdit_secondStartPos->hide();
         ui->lineEdit_secondLen->hide();
-        ui->lineEdit_subThreshold->hide();
+        ui->lineEdit_valueThreshold->hide();
         ui->lineEdit_sumThreshold->hide();
     }
     else if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
@@ -358,7 +358,7 @@ void RadarWidget::uiConfig()
         ui->lineEdit_secondStartPos->setEnabled(false);
         ui->lineEdit_secondLen->setEnabled(false);
         ui->lineEdit_sumThreshold->setEnabled(false);
-        ui->lineEdit_subThreshold->setEnabled(false);
+        ui->lineEdit_valueThreshold->setEnabled(false);
 
         ui->label_pmtGateTime->show();
         ui->label_pmtDelayTime->show();
@@ -528,7 +528,7 @@ void RadarWidget::initSignalSlot()
         sysStatus.previewSettings.secondPos      = ui->lineEdit_secondStartPos->text().toInt();
         sysStatus.previewSettings.secondLen      = ui->lineEdit_secondLen->text().toInt();
         sysStatus.previewSettings.sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
-        sysStatus.previewSettings.valueThreshold = ui->lineEdit_subThreshold->text().toInt();
+        sysStatus.previewSettings.valueThreshold = ui->lineEdit_valueThreshold->text().toInt();
         int     sampleDelay                      = ui->lineEdit_sampleDelay->text().toInt();
         quint16 pmtDelayTime                     = ui->lineEdit_pmtDelayTime->text().toUInt();
         quint16 pmtGateTime                      = ui->lineEdit_pmtGateTime->text().toUInt();
@@ -925,7 +925,17 @@ void RadarWidget::initSignalSlot()
 
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]()
             {
-        bool status = false;
+        bool                      status = false;
+        LaserController::OpenMode mode;
+        if(ui->rbtn_triggerOutside->isChecked())
+            mode = LaserController::OUT_SIDE;
+        else
+            mode = LaserController::OUT_SIDE;
+        status = laserDriver->setMode(mode);
+        if(status == false)
+            QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
+
+        sysStatus.previewSettings.laserFreq = ui->comboBox_laserFreq->currentText().toInt(nullptr);
         switch(sysStatus.radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
@@ -990,10 +1000,12 @@ void RadarWidget::initSignalSlot()
         switch(sysStatus.radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
-                status = laserDriver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
+                status                               = laserDriver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
+                sysStatus.previewSettings.laserPower = static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value());
                 break;
             case BspConfig::RADAR_TYPE_OCEAN:
-                power = ui->comboBox_laserPower->currentText();
+                power                                = ui->comboBox_laserPower->currentText();
+                sysStatus.previewSettings.laserPower = ui->comboBox_laserPower->currentText().toFloat();
                 if(power == "1.8")
                     status = laserDriver->setPower(0);
                 else if(power == "4.5")
@@ -1085,7 +1097,8 @@ void RadarWidget::initSignalSlot()
 
     connect(ui->btn_motorStart, &QPushButton::pressed, this, [this]()
             {
-        quint16 speed = ui->spinBox_motorTargetSpeed->value();
+        quint16 speed                        = ui->spinBox_motorTargetSpeed->value();
+        sysStatus.previewSettings.motorSpeed = speed;
         motorResponse(motorController->run(speed));
     });
 
@@ -1218,32 +1231,8 @@ void RadarWidget::initSignalSlot()
 
         quint32 fileUnit = ui->lineEdit_ssdAvailFileUnit->text().toUInt(nullptr, 16);
 
-        QString fileName;
-        switch(sysStatus.radarType)
-        {
-            case BspConfig::RADAR_TYPE_LAND:
-                fileName = "land_";
-                break;
-            case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
-                fileName = "doubleWave_";
-                break;
-            case BspConfig::RADAR_TYPE_OCEAN:
-                fileName = "ocean_";
-                break;
-            case BspConfig::RADAR_TYPE_DRONE:
-                fileName = "drone_";
-                break;
-            case BspConfig::RADAR_TYPE_WATER_GUARD:
-                fileName = "waterGuard_";
-                break;
-            case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
-                fileName = "secondInstitute_";
-                break;
-            default:
-                break;
-        }
+        QString fileName = sysStatus.namePrefix + QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
 
-        fileName.append(QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss"));
         if(ui->lineEdit_ssdStoreFileName->text().length() != 0)
             fileName.append(ui->lineEdit_ssdStoreFileName->text());
         ssd->setSaveFileName(fileUnit, fileName);
@@ -1309,7 +1298,25 @@ void RadarWidget::initSignalSlot()
             {
         quint32 chNum       = ui->comboBox_DAChSelect->currentIndex();
         double  analogValue = ui->doubleSpinBox_DAValue->value();
-        qint32  digitValue  = 0;
+
+        switch(ui->comboBox_DAChSelect->currentIndex())
+        {
+            case 0:
+                sysStatus.previewSettings.APDHV = analogValue;
+                break;
+            case 1:
+                sysStatus.previewSettings.PMT1HV = analogValue;
+                break;
+            case 2:
+                sysStatus.previewSettings.PMT2HV = analogValue;
+                break;
+            case 3:
+                sysStatus.previewSettings.PMT3HV = analogValue;
+                break;
+            default:
+                break;
+        }
+        qint32 digitValue = 0;
         switch(sysStatus.radarType)
         {
             case BspConfig::RADAR_TYPE_LAND:
@@ -1560,6 +1567,91 @@ void RadarWidget::initSignalSlot()
             default:
                 break;
         }
+    });
+
+    /*
+     *  参数保存相关逻辑
+     */
+    connect(ui->btn_parameterSave, &QPushButton::pressed, this, [this]()
+            {
+        QString configPath = sysStatus.namePrefix + QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
+        if(ui->lineEdit_parameterFileName->text().length() != 0)
+            configPath.append(ui->lineEdit_parameterFileName->text());
+        configUser = new QSettings("./data/" + configPath + ".ini", QSettings::IniFormat);
+
+        sysStatus.previewSettings.laserFreq      = ui->comboBox_laserFreq->currentText().toInt();
+        sysStatus.previewSettings.laserPower     = ui->comboBox_laserPower->currentText().toDouble();
+        sysStatus.previewSettings.motorSpeed     = ui->spinBox_motorTargetSpeed->value();
+        sysStatus.previewSettings.sampleLen      = ui->lineEdit_sampleLen->text().toInt();
+        sysStatus.previewSettings.sampleRatio    = ui->lineEdit_sampleRate->text().toInt();
+        sysStatus.previewSettings.firstPos       = ui->lineEdit_firstStartPos->text().toInt();
+        sysStatus.previewSettings.firstLen       = ui->lineEdit_firstLen->text().toInt();
+        sysStatus.previewSettings.secondPos      = ui->lineEdit_secondStartPos->text().toInt();
+        sysStatus.previewSettings.secondLen      = ui->lineEdit_secondLen->text().toInt();
+        sysStatus.previewSettings.sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
+        sysStatus.previewSettings.valueThreshold = ui->lineEdit_valueThreshold->text().toInt();
+
+        configUser->setValue("Laser/freq", sysStatus.previewSettings.laserFreq);
+        configUser->setValue("Laser/power", sysStatus.previewSettings.laserPower);
+        configUser->setValue("Motor/speed", sysStatus.previewSettings.motorSpeed);
+
+        configUser->setValue("Voltage/APDHV", sysStatus.previewSettings.APDHV);
+        configUser->setValue("Voltage/PMT1HV", sysStatus.previewSettings.PMT1HV);
+        configUser->setValue("Voltage/PMT2HV", sysStatus.previewSettings.PMT2HV);
+        configUser->setValue("Voltage/PMT3HV", sysStatus.previewSettings.PMT3HV);
+
+        configUser->setValue("Preview/sampleLen", sysStatus.previewSettings.sampleLen);
+        configUser->setValue("Preview/sampleRatio", sysStatus.previewSettings.sampleRatio);
+        configUser->setValue("Preview/firstPos", sysStatus.previewSettings.firstPos);
+        configUser->setValue("Preview/firstLen", sysStatus.previewSettings.firstLen);
+        configUser->setValue("Preview/secondPos", sysStatus.previewSettings.secondPos);
+        configUser->setValue("Preview/secondLen", sysStatus.previewSettings.secondLen);
+        configUser->setValue("Preview/sumThreshold", sysStatus.previewSettings.sumThreshold);
+        configUser->setValue("Preview/valueThreshold", sysStatus.previewSettings.valueThreshold);
+    });
+
+    connect(ui->btn_parameterLoad, &QPushButton::pressed, this, [this]()
+            {
+        QString configFile = QFileDialog::getOpenFileName(this, tr(""), "", tr("*.ini"));  //选择路径
+        if(configFile.size() == 0)
+            return;
+
+        configUser                               = new QSettings(configFile, QSettings::IniFormat);
+        sysStatus.previewSettings.laserFreq      = configUser->value("Laser/freq").toInt();
+        sysStatus.previewSettings.laserPower     = configUser->value("Laser/power").toDouble();
+        sysStatus.previewSettings.motorSpeed     = configUser->value("Motor/speed").toInt();
+        sysStatus.previewSettings.APDHV          = configUser->value("Voltage/APDHV").toDouble();
+        sysStatus.previewSettings.PMT1HV         = configUser->value("Voltage/PMT1HV").toDouble();
+        sysStatus.previewSettings.PMT2HV         = configUser->value("Voltage/PMT2HV").toDouble();
+        sysStatus.previewSettings.PMT3HV         = configUser->value("Voltage/PMT3HV").toDouble();
+        sysStatus.previewSettings.sampleLen      = configUser->value("Preview/sampleLen").toInt();
+        sysStatus.previewSettings.sampleRatio    = configUser->value("Preview/sampleRatio").toInt();
+        sysStatus.previewSettings.firstPos       = configUser->value("Preview/firstPos").toInt();
+        sysStatus.previewSettings.firstLen       = configUser->value("Preview/firstLen").toInt();
+        sysStatus.previewSettings.secondPos      = configUser->value("Preview/secondPos").toInt();
+        sysStatus.previewSettings.secondLen      = configUser->value("Preview/secondLen").toInt();
+        sysStatus.previewSettings.sumThreshold   = configUser->value("Preview/sumThreshold").toInt();
+        sysStatus.previewSettings.valueThreshold = configUser->value("Preview/valueThreshold").toInt();
+
+        int idx;
+        idx = ui->comboBox_laserFreq->findText(QString::number(sysStatus.previewSettings.laserFreq));
+        if(idx < 0)
+            QMessageBox::warning(this, "警告", "参数读取错误");
+        ui->comboBox_laserFreq->setCurrentIndex(idx);
+
+        idx = ui->comboBox_laserPower->findText(QString::number(sysStatus.previewSettings.laserPower));
+        if(idx < 0)
+            QMessageBox::warning(this, "警告", "参数读取错误");
+        ui->comboBox_laserPower->setCurrentIndex(idx);
+        ui->spinBox_motorTargetSpeed->setValue(sysStatus.previewSettings.motorSpeed);
+        ui->lineEdit_sampleLen->setText(QString::number(sysStatus.previewSettings.sampleLen));
+        ui->lineEdit_sampleRate->setText(QString::number(sysStatus.previewSettings.sampleRatio));
+        ui->lineEdit_firstStartPos->setText(QString::number(sysStatus.previewSettings.firstPos));
+        ui->lineEdit_firstLen->setText(QString::number(sysStatus.previewSettings.firstLen));
+        ui->lineEdit_secondStartPos->setText(QString::number(sysStatus.previewSettings.secondPos));
+        ui->lineEdit_secondLen->setText(QString::number(sysStatus.previewSettings.secondLen));
+        ui->lineEdit_sumThreshold->setText(QString::number(sysStatus.previewSettings.sumThreshold));
+        ui->lineEdit_valueThreshold->setText(QString::number(sysStatus.previewSettings.valueThreshold));
     });
 }
 

@@ -71,6 +71,7 @@ public:
         RadarWidget                  *device;
         RadarWidget::__radar_status__ para;
     };
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -99,9 +100,8 @@ private:
 
     Navigation *engineerView;
     Navigation *pilotView;
-    bool isLoadMap{false};
 
-    NoteInfo   *note;
+    NoteInfo *note;
 
 private:
     void configRadar(RadarWidget::__radar_status__ &radar)
@@ -112,29 +112,35 @@ private:
                 radar.deviceIP   = QHostAddress("192.168.1.101");
                 radar.devicePort = 5555;
                 radar.name       = "陆地雷达";
+                radar.namePrefix = "land_";
                 break;
             case BspConfig::RADAR_TYPE_OCEAN:
                 radar.deviceIP   = QHostAddress("192.168.1.102");
                 radar.devicePort = 4444;
                 radar.name       = "海洋雷达";
+                radar.namePrefix = "ocean_";
                 break;
             case BspConfig::RADAR_TYPE_DRONE:
                 radar.deviceIP   = QHostAddress("192.168.1.102");
                 radar.devicePort = 4444;
                 radar.name       = "无人机雷达";
+                radar.namePrefix = "drone_";
             case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
                 radar.deviceIP   = QHostAddress("192.168.1.102");
                 radar.devicePort = 4444;
                 radar.name       = "双波长雷达";
+                radar.namePrefix = "doubleWave_";
             case BspConfig::RADAR_TYPE_WATER_GUARD:
                 radar.deviceIP   = QHostAddress("192.168.1.102");
                 radar.devicePort = 4444;
                 radar.name       = "水下预警雷达";
+                radar.namePrefix = "waterGuard_";
                 break;
             case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
                 radar.deviceIP   = QHostAddress("192.168.1.102");
                 radar.devicePort = 4444;
                 radar.name       = "海二所雷达";
+                radar.namePrefix = "secondInstitute_";
                 break;
             default:
                 break;

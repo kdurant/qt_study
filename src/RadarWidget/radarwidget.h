@@ -64,21 +64,29 @@ class RadarWidget : public QWidget
 public:
     struct _preview_settings__
     {
-        int laserFreq;
-        int sampleLen;
-        int sampleRatio;
-        int firstPos;
-        int firstLen;
-        int secondPos;
-        int secondLen;
-        int sumThreshold;
-        int valueThreshold;
+        int    laserFreq;
+        double laserPower;
+        int    motorSpeed;
+        int    sampleLen;
+        int    sampleRatio;
+        int    firstPos;
+        int    firstLen;
+        int    secondPos;
+        int    secondLen;
+        int    sumThreshold;
+        int    valueThreshold;
+
+        double APDHV;
+        double PMT1HV;
+        double PMT2HV;
+        double PMT3HV;
     };
 
     struct __radar_status__
     {
         BspConfig::RadarType radarType;
         QString              name;
+        QString              namePrefix;
         QHostAddress         deviceIP{QHostAddress("192.168.1.102")};
         quint16              devicePort{4444};
         QString              localIP;
@@ -151,6 +159,7 @@ private:
     } doubleWaveConfig;
 
     Ui::RadarWidget *ui;
+    QSettings       *configUser;
 
     QUdpSocket   *udpSocket;
     QThread      *thread;

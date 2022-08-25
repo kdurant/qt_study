@@ -118,7 +118,7 @@
          </attribute>
          <layout class="QGridLayout" name="gridLayout_17">
           <item row="0" column="1">
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="lineEdit_parameterFileName">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -177,7 +177,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="tab_2">
          <attribute name="title">
@@ -239,6 +239,9 @@
            <widget class="QRadioButton" name="rbtn_triggerOutside">
             <property name="text">
              <string>外触发</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -427,7 +430,7 @@
           <item>
            <widget class="QToolBox" name="toolBox_motor">
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="page">
              <property name="geometry">
@@ -510,8 +513,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>221</width>
-               <height>87</height>
+               <width>340</width>
+               <height>389</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1022,7 +1025,7 @@
                   </widget>
                  </item>
                  <item row="7" column="1">
-                  <widget class="QLineEdit" name="lineEdit_subThreshold">
+                  <widget class="QLineEdit" name="lineEdit_valueThreshold">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                      <horstretch>0</horstretch>
