@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     radar.resize(radarNumber);
     if(radarNumber != localIP.length())
     {
-        QMessageBox::warning(this, "警告", "雷达个数和系统IP地址个数不匹配，请检查系统配置");
+        QMessageBox::warning(this, "警告", "雷达个数(" + QString::number(radarNumber) + ")和系统IP地址个数(" + QString::number(localIP.length()) + ")不匹配，请检查系统配置");
     }
 
     for(m_loop_i = 0; m_loop_i < radarNumber; m_loop_i++)
@@ -38,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent) :
             else
             {
                 radar[m_loop_i].para.localIP = "127.0.0.1";
-                QMessageBox::warning(this, "警告", "雷达个数和系统IP地址个数不匹配, 使用默认回环IP地址");
+                QMessageBox::warning(this, "警告", "雷达个数和系统IP地址个数不匹配, 雷达" + QString::number(m_loop_i + 1) + "使用回环IP");
             }
 
             radar[m_loop_i].para.previewSettings.sampleLen      = configIni->value(item + "/sampleLen").toInt();

@@ -1652,6 +1652,14 @@ void RadarWidget::initSignalSlot()
         ui->lineEdit_secondLen->setText(QString::number(sysStatus.previewSettings.secondLen));
         ui->lineEdit_sumThreshold->setText(QString::number(sysStatus.previewSettings.sumThreshold));
         ui->lineEdit_valueThreshold->setText(QString::number(sysStatus.previewSettings.valueThreshold));
+
+        QString temp = QString("上次保存的参数:\nAPDHV : %1 \nPMT1HV : %2\nPMT2HV : %3\nPMT3HV : %4\n请依次设置")
+                           .arg(QString::number(sysStatus.previewSettings.APDHV, 'f', 2))
+                           .arg(QString::number(sysStatus.previewSettings.PMT1HV, 'f', 2))
+                           .arg(QString::number(sysStatus.previewSettings.PMT2HV, 'f', 2))
+                           .arg(QString::number(sysStatus.previewSettings.PMT3HV, 'f', 2));
+
+        ui->plainTextEdit_DASetLog->appendPlainText(temp);
     });
 }
 
