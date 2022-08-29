@@ -177,11 +177,11 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_2">
          <attribute name="title">
-          <string>Laser</string>
+          <string>激光</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout">
           <property name="sizeConstraint">
@@ -347,7 +347,7 @@
         </widget>
         <widget class="QWidget" name="tab6">
          <attribute name="title">
-          <string>Motor</string>
+          <string>电机</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_9">
           <item>
@@ -437,8 +437,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>340</width>
-               <height>389</height>
+               <width>227</width>
+               <height>113</height>
               </rect>
              </property>
              <attribute name="label">
@@ -513,8 +513,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>340</width>
-               <height>389</height>
+               <width>297</width>
+               <height>471</height>
               </rect>
              </property>
              <attribute name="label">
@@ -562,8 +562,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>218</width>
-               <height>146</height>
+               <width>171</width>
+               <height>117</height>
               </rect>
              </property>
              <attribute name="label">
@@ -648,7 +648,7 @@
         </widget>
         <widget class="QWidget" name="tab_7">
          <attribute name="title">
-          <string>Volt</string>
+          <string>探测</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_10">
           <item>
@@ -806,7 +806,7 @@
         </widget>
         <widget class="QWidget" name="tab_4">
          <attribute name="title">
-          <string>Preview</string>
+          <string>预览</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
           <item>
@@ -819,8 +819,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>340</width>
-               <height>970</height>
+               <width>297</width>
+               <height>774</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1307,8 +1307,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>242</width>
-               <height>467</height>
+               <width>194</width>
+               <height>368</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1521,7 +1521,7 @@
         </widget>
         <widget class="QWidget" name="tab_5">
          <attribute name="title">
-          <string>Update</string>
+          <string>update</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_6">
           <item>
@@ -1710,7 +1710,7 @@
         </widget>
         <widget class="QWidget" name="tab">
          <attribute name="title">
-          <string>camera</string>
+          <string>相机</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_11">
           <item row="2" column="0">
