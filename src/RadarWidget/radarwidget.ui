@@ -28,7 +28,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
+     <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,10">
       <item>
        <widget class="QTabWidget" name="tabWidget_2">
         <property name="currentIndex">
@@ -60,6 +60,12 @@
           </item>
           <item row="2" column="0">
            <widget class="QLabel" name="label_20">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>上位机软件IP</string>
             </property>
@@ -77,6 +83,12 @@
           </item>
           <item row="2" column="1">
            <widget class="QLabel" name="label_softwareVer">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -98,6 +110,12 @@
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="label_35">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string>底层软件版本：</string>
             </property>
@@ -105,6 +123,12 @@
           </item>
           <item row="3" column="1">
            <widget class="QLabel" name="label_fpgaVer">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -514,7 +538,7 @@
                <x>0</x>
                <y>0</y>
                <width>297</width>
-               <height>471</height>
+               <height>513</height>
               </rect>
              </property>
              <attribute name="label">
