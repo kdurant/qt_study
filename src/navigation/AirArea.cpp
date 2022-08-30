@@ -196,10 +196,18 @@ double AirArea::_getCoveragePercent()
 double AirArea::__getCoveragePercent()
 {
     AirLine temp;
-    temp              = _getRadarScanExpression(m_currentPos);
+    temp = _getRadarScanExpression(m_currentPos);
+
     m_currentScanLine = temp.line;
-    m_rightPoints << temp.line.p1();
-    m_leftPoints << temp.line.p2();
+    if(m_isSavePoints)
+    {
+        QPolygonF poly;
+        if(m_lastScanline.p1() != m_lastScanline.p2())
+            poly << m_lastScanline.p1() << m_lastScanline.p2();
+
+        poly << m_currentScanLine.p2() << m_currentScanLine.p1();
+        m_scanRect = poly;
+    }
 
     QVector<BspConfig::Gps_Info> points = interpolateScanPoint(m_prevPos, m_currentPos);
 
@@ -209,6 +217,9 @@ double AirArea::__getCoveragePercent()
         calcRealSurvey(temp);
     }
     m_surverArea.surveyedPercent = (double)m_surverArea.hasSurveyedEle / m_surverArea.totalValidEle;
+
+    m_lastScanline = temp.line;
+
     return m_surverArea.surveyedPercent;
 }
 

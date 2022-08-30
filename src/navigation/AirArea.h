@@ -197,11 +197,13 @@ public:
         return m_currentScanLine;
     }
 
-    QPolygonF getScanPolygonF(void)
+    /**
+     * @brief 当前扫描线段和上次扫描线段围成的区域
+     * @return
+     */
+    QPolygonF& getScanArea(void)
     {
-        QPolygonF polygon = m_leftPoints;
-        std::reverse(polygon.begin(), polygon.end());
-        return m_rightPoints + polygon;
+        return m_scanRect;
     }
 
     /**
@@ -327,6 +329,11 @@ public:
      */
     double getScanWidth(double height, double angle);
 
+    void setSavePoints(bool status)
+    {
+        m_isSavePoints = status;
+    }
+
 private:
     double              AIRLINE_THRESHOLD{20.0};
     double              COVERAGE_THRESHOLD{20.0};
@@ -340,10 +347,13 @@ private:
     double m_scanAngle{15};   // 飞机雷达的扫描角度；海洋雷达30度，陆地雷达60度
     double m_matrixSize{10};  // 矩阵元素的大小，单位：米
 
-    double           m_currentSpeed{0};
-    QLineF           m_currentScanLine;
-    QPolygonF        m_rightPoints;
-    QPolygonF        m_leftPoints;
+    double m_currentSpeed{0};
+    QLineF m_currentScanLine;
+
+    bool      m_isSavePoints{false};
+    QLineF    m_lastScanline{QPointF(0, 0), QPointF(0, 0)};
+    QPolygonF m_scanRect;
+
     int              m_posOnWhichLine{-1};
     double           m_coveragePercent{0};
     QVector<int>     m_coveragePoints;  // QVector的长度和规划航线划分的点个数一致

@@ -125,9 +125,9 @@ void MapView::loadMap()
 void MapView::loadRealTimePoint(QPointF point)
 {
     QBrush brush;
-    brush.setColor(Qt::green);
+    brush.setColor(QColor(0, 255, 0, 127));
     QPen pen;
-    pen.setColor(Qt::green);
+    pen.setColor(QColor(0, 255, 0, 127));
     pen.setWidth(3);
 
     if(checkPosValid(point.x(), point.y(), m_tileMapInfo.current_zoom) == false)
@@ -155,12 +155,17 @@ void MapView::loadSerialNum(QPointF posi, int num)
 // 需要将经维度转换为屏幕坐标
 void MapView::loadPolygonF(const QPolygonF &polygon)
 {
-    if(m_scanPoly != nullptr)
-        scene->removeItem(m_scanPoly);
-    m_scanPoly = scene->addPolygon(polygon, QPen(Qt::red));
+    //    if(m_scanPoly != nullptr)
+    //        scene->removeItem(m_scanPoly);
+    QPolygonF trans;
+    for(auto &p : polygon)
+    {
+        trans.append(gps2pos(p.x(), p.y(), m_tileMapInfo.current_zoom));
+    }
+    m_scanPoly = scene->addPolygon(trans, QPen(QColor(0, 150, 0, 0)), QBrush(QColor(0, 150, 0, 100)));
 }
 
-void MapView::loadSurveyBorder(const QRectF &rect)
+void MapView::loadRect(const QRectF &rect)
 {
     QRectF r;
     r.setTopLeft(gps2pos(rect.topLeft().x(), rect.topLeft().y(), m_tileMapInfo.current_zoom));

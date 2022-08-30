@@ -43,7 +43,7 @@ void Navigation::initSignalSlot()
         m_designedAirArea.setSurverArea();
         //        m_designedAirArea.printSurverPoints();
 
-        ui->mapView->loadSurveyBorder(m_designedAirArea.getSurveyRect());
+        ui->mapView->loadRect(m_designedAirArea.getSurveyRect());
 
         int len = m_designedAirArea.getAirLineNum();
         for(int i = 0; i < len; i += 1)
@@ -103,6 +103,14 @@ void Navigation::initSignalSlot()
         {
             ui->mapView->loadRealTimePoint(pos);
         }
+    });
+
+    connect(ui->checkBox_scanLine, &QCheckBox::stateChanged, this, [this](int state)
+            {
+        if(state == Qt::Unchecked)
+            m_designedAirArea.setSavePoints(false);
+        else if(state == Qt::Checked)
+            m_designedAirArea.setSavePoints(true);
     });
 }
 
@@ -178,9 +186,10 @@ void Navigation::updateGpsInfo(BspConfig::Gps_Info &data)
 
     if(ui->checkBox_scanLine->isChecked())
     {
-        QLineF l = m_designedAirArea.getRadarScanExpression();
-        ui->mapView->loadTracker(l.p1(), l.p2(), QPen(Qt::yellow));
-        ui->mapView->loadPolygonF(m_designedAirArea.getScanPolygonF());
+        //        QLineF l = m_designedAirArea.getRadarScanExpression();
+        //        ui->mapView->loadTracker(l.p1(), l.p2(), QPen(Qt::yellow));
+        ui->mapView->loadPolygonF(m_designedAirArea.getScanArea());
+        //        ui->mapView->loadRect(m_designedAirArea.getScanArea());
     }
 }
 

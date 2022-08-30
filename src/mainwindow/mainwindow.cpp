@@ -59,7 +59,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     note         = new NoteInfo;
     engineerView = new Navigation;
-    pilotView    = new Navigation;
+    engineerView->setWindowTitle("EngineerView");
+    pilotView = new Navigation;
+    pilotView->setWindowTitle("PilotView");
 
     connect(radar[0].device, &RadarWidget::sendGpsInfo, this, [this](BspConfig::Gps_Info &data)
             {
@@ -178,7 +180,7 @@ QStringList MainWindow::read_ip_address()
             {
                 case QAbstractSocket::IPv4Protocol:
                     ip = entery.ip().toString();
-                    if(ip.contains("192.168.1."))
+                    if(ip.contains("192.168."))
                         ips.append(ip);
                     break;
                 case QAbstractSocket::IPv6Protocol:

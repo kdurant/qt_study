@@ -136,7 +136,9 @@ public:
      * @brief 显示测区的矩形边界
      * @param rect
      */
-    void loadSurveyBorder(const QRectF &rect);
+    void loadRect(const QRectF &rect);
+
+    void loadScanArea(const QPolygonF &rect);
 
     void deleleAllItems()
     {
