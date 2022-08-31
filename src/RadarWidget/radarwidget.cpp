@@ -1579,8 +1579,11 @@ void RadarWidget::initSignalSlot()
             configPath.append(ui->lineEdit_parameterFileName->text());
         configUser = new QSettings("./data/" + configPath + ".ini", QSettings::IniFormat);
 
-        sysStatus.previewSettings.laserFreq      = ui->comboBox_laserFreq->currentText().toInt();
-        sysStatus.previewSettings.laserPower     = ui->comboBox_laserPower->currentText().toDouble();
+        sysStatus.previewSettings.laserFreq = ui->comboBox_laserFreq->currentText().toInt();
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_LAND)
+            sysStatus.previewSettings.laserPower = ui->doubleSpinBox_laserGreenCurrent->value();
+        else
+            sysStatus.previewSettings.laserPower = ui->comboBox_laserPower->currentText().toDouble();
         sysStatus.previewSettings.motorSpeed     = ui->spinBox_motorTargetSpeed->value();
         sysStatus.previewSettings.sampleLen      = ui->lineEdit_sampleLen->text().toInt();
         sysStatus.previewSettings.sampleRatio    = ui->lineEdit_sampleRate->text().toInt();
@@ -1639,10 +1642,17 @@ void RadarWidget::initSignalSlot()
             QMessageBox::warning(this, "警告", "参数读取错误");
         ui->comboBox_laserFreq->setCurrentIndex(idx);
 
-        idx = ui->comboBox_laserPower->findText(QString::number(sysStatus.previewSettings.laserPower));
-        if(idx < 0)
-            QMessageBox::warning(this, "警告", "参数读取错误");
-        ui->comboBox_laserPower->setCurrentIndex(idx);
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_LAND)
+        {
+            ui->doubleSpinBox_laserGreenCurrent->setValue(sysStatus.previewSettings.laserPower);
+        }
+        else
+        {
+            idx = ui->comboBox_laserPower->findText(QString::number(sysStatus.previewSettings.laserPower));
+            if(idx < 0)
+                QMessageBox::warning(this, "警告", "参数读取错误");
+            ui->comboBox_laserPower->setCurrentIndex(idx);
+        }
         ui->spinBox_motorTargetSpeed->setValue(sysStatus.previewSettings.motorSpeed);
         ui->lineEdit_sampleLen->setText(QString::number(sysStatus.previewSettings.sampleLen));
         ui->lineEdit_sampleRate->setText(QString::number(sysStatus.previewSettings.sampleRatio));
