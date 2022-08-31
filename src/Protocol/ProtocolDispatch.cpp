@@ -18,8 +18,7 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
     switch(command)
     {
         case SlaveUp::SYS_INFO:
-            transmitFrame = data.mid(24, 256);
-            emit infoDataReady(transmitFrame);
+            emit infoDataReady(data.mid(24, 256));
             break;
         case SlaveUp::COMMAND_CNT:
             break;
@@ -27,12 +26,10 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
             emit onlineDataReady(data);
             break;
         case SlaveUp::GPS_PENETRATE:
-            transmitFrame = data.mid(24, data_len);
-            emit gpsFrameReady(transmitFrame);
+            emit gpsFrameReady(data.mid(24, data_len));
             break;
         case SlaveUp::LASER_PENETRATE:
-            transmitFrame = data.mid(24, data_len);
-            emit laserDataReady(transmitFrame);
+            emit laserDataReady(data.mid(24, data_len));
             break;
         case SlaveUp::MOTOR_PENETRATE:
             transmitFrame = data.mid(24, data_len);

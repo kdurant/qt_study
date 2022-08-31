@@ -49,7 +49,7 @@ private:
 
         return retValue;
     }
-    void paserGpsData_APPLANIX(QByteArray &frame)
+    void paserGpsData_APPLANIX(const QByteArray &frame)
     {
         int offset          = 7;
         gps.week            = frame.mid(offset + 2, 2).toHex().toUInt(nullptr, 16);
@@ -89,7 +89,7 @@ private:
         gps.heading = getDouble(pData);
     }
 
-    void paserGpsData_NOVATEL(QByteArray &frame)
+    void paserGpsData_NOVATEL(const QByteArray &frame)
     {
         int offset = 12;
         gps.week   = Common::ba2int(frame.mid(offset, 4), 0);
@@ -108,7 +108,7 @@ signals:
     void gpsDataReady(BspConfig::Gps_Info &data);  // 接收到响应数据
 
 public slots:
-    void parserGpsData(QByteArray &frame)
+    void parserGpsData(const QByteArray &frame)
     {
         if(frame.size() == APPLANIX_LEN)
         {

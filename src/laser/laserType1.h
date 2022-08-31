@@ -48,7 +48,7 @@ private:
     bool setLD2DlyTime(quint16 value);
 
 public slots:
-    void setNewData(QByteArray& data) override
+    void setNewData(const QByteArray& data) override
     {
         recvData = data;
         emit responseDataReady();

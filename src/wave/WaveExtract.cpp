@@ -60,8 +60,10 @@ void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
     int          offset    = 88;
     ch.motorCnt            = Common::ba2int(frameData.mid(76, 4), 1);  // BspConfig::ba2int(frameData.mid(76, 4));
 
+    int frame_size = frameData.size();
+
     quint8 skipPointNum = 0;
-    while(offset < frameData.size())
+    while(offset < frame_size)
     {
         // 第一通道数据
         start_pos = (frameData.at(offset) << 8) + frameData.at(offset + 1);
@@ -79,7 +81,7 @@ void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
         ch.pos.clear();
         ch.value.clear();
 
-        if(offset == frameData.size())  // 数据分析结束
+        if(offset == frame_size)  // 数据分析结束
         {
             status = 0;
             break;

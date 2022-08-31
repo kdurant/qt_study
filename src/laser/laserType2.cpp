@@ -2,7 +2,7 @@
 
 bool LaserType2::setMode(LaserController::OpenMode mode)
 {
-    return false;
+    return true;
 }
 
 /**

@@ -40,7 +40,7 @@ private:
     QString getSwitch(void);
 
 public slots:
-    void setNewData(QByteArray& data) override
+    void setNewData(const QByteArray& data) override
     {
         isRecvNewData = true;
         recvData      = data;
