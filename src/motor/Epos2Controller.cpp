@@ -469,6 +469,14 @@ bool EPOS2::setProfileVelocity(quint16 value)
     return true;
 }
 
+/**
+ * @brief
+ *  0x1103: OpCode, 0x11; len, 0x03
+ *  0x607a: WORD index
+ *  0x0100: BYTE SubIndex, 0x01; 0x00, BYTE Node ID
+ * @param value
+ * @return
+ */
 bool EPOS2::setTargetPosition(quint32 value)
 {
     QVector<quint16> word{0x1103, 0x607a, 0x0100, 0xffff, 0xffff};
