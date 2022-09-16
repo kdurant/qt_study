@@ -201,7 +201,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>4</number>
         </property>
         <widget class="QWidget" name="tab_2">
          <attribute name="title">
@@ -461,8 +461,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>290</width>
-               <height>144</height>
+               <width>227</width>
+               <height>113</height>
               </rect>
              </property>
              <attribute name="label">
@@ -537,8 +537,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>340</width>
-               <height>389</height>
+               <width>297</width>
+               <height>513</height>
               </rect>
              </property>
              <attribute name="label">
@@ -586,8 +586,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>218</width>
-               <height>146</height>
+               <width>171</width>
+               <height>117</height>
               </rect>
              </property>
              <attribute name="label">
@@ -843,8 +843,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>340</width>
-               <height>970</height>
+               <width>297</width>
+               <height>774</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1331,8 +1331,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>242</width>
-               <height>467</height>
+               <width>194</width>
+               <height>366</height>
               </rect>
              </property>
              <attribute name="label">
@@ -2178,7 +2178,7 @@
          <attribute name="title">
           <string>SSD文件列表</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_13" stretch="5,0,0">
+         <layout class="QVBoxLayout" name="verticalLayout_13" stretch="5,0,0,0">
           <item>
            <widget class="QTableWidget" name="tableWidget_fileList">
             <row>
@@ -2226,9 +2226,59 @@
               <string>aaa</string>
              </property>
             </item>
+            <item row="0" column="1">
+             <property name="text">
+              <string>1</string>
+             </property>
+            </item>
+            <item row="0" column="2">
+             <property name="text">
+              <string>2</string>
+             </property>
+            </item>
+            <item row="0" column="3">
+             <property name="text">
+              <string>3</string>
+             </property>
+            </item>
+            <item row="0" column="4">
+             <property name="text">
+              <string>4</string>
+             </property>
+            </item>
+            <item row="0" column="5">
+             <property name="text">
+              <string>5</string>
+             </property>
+            </item>
             <item row="1" column="0">
              <property name="text">
               <string>bbb</string>
+             </property>
+            </item>
+            <item row="1" column="1">
+             <property name="text">
+              <string>6</string>
+             </property>
+            </item>
+            <item row="1" column="2">
+             <property name="text">
+              <string>7</string>
+             </property>
+            </item>
+            <item row="1" column="3">
+             <property name="text">
+              <string>8</string>
+             </property>
+            </item>
+            <item row="1" column="4">
+             <property name="text">
+              <string>9</string>
+             </property>
+            </item>
+            <item row="1" column="5">
+             <property name="text">
+              <string>10</string>
              </property>
             </item>
            </widget>
@@ -2247,7 +2297,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="spinBox_extractFileNum"/>
+              <widget class="QSpinBox" name="spinBox_extractFileNum">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QPushButton" name="btn_extractFileByNum">
@@ -2257,6 +2311,13 @@
               </widget>
              </item>
             </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QProgressBar" name="progressBar_extractHardDiskData">
+            <property name="value">
+             <number>24</number>
+            </property>
            </widget>
           </item>
           <item>
@@ -2306,6 +2367,13 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="3">
+              <widget class="QLabel" name="label_extractFileTime">
+               <property name="text">
+                <string/>
                </property>
               </widget>
              </item>

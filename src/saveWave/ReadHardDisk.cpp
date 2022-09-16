@@ -25,18 +25,34 @@ bool ReadHardDisk::readDiskUnit(qint32 unitAddr, QByteArray &ret)
         return false;
     }
     // 发现包序号存在不连续的情况，检查前面几个包，简单判断下
-    for(int i = 0; i < 8; i++)
-    {
-        if(ProtocolDispatch::getPckNum(allData[i]) != i)
-        {
-            allData.clear();
-            return false;
-        }
-    }
+//    for(int i = 0; i < 8; i++)
+//    {
+//        if(ProtocolDispatch::getPckNum(allData[i]) != i)
+//        {
+//            allData.clear();
+//            return false;
+//        }
+//    }
     ret = allData[0];
     allData.clear();
     timer->stop();
     return true;
+}
+
+QVector<QByteArray> &ReadHardDisk::readDiskUnit(qint32 unitAddr)
+{
+    allData.clear();
+    QByteArray frame = BspConfig::int2ba(unitAddr);
+    emit       sendDataReady(MasterSet::READ_SSD_UNIT, 4, frame);
+    QThread::msleep(1);
+
+    QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
+    timer->start();
+    connect(timer, &QTimer::timeout, &waitLoop, &QEventLoop::quit);
+    waitLoop.exec();
+
+    timer->stop();
+    return allData;
 }
 
 /**
@@ -79,9 +95,9 @@ bool ReadHardDisk::inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo)
         // 保存文件信息的unit中，默认追加的数据是0xdd
         readDiskUnit(unit++, filePos);
 
-        QByteArray name      = fileName.mid(24, 252);
-        QByteArray startUnit = filePos.mid(24, 4);
-        QByteArray endUnit   = filePos.mid(28, 4);
+        QByteArray name      = fileName.mid(0, 252);
+        QByteArray startUnit = filePos.mid(0, 4);
+        QByteArray endUnit   = filePos.mid(4, 4);
         // 上面得到数据因为大小端的问题，在每4个字节内，需要交换字节序
         swapByteOrder(name);
         swapByteOrder(startUnit);

@@ -45,6 +45,7 @@ public:
         timer->setInterval(50);
     }
     bool readDiskUnit(qint32 unitAddr, QByteArray &ret);
+    QVector<QByteArray> &readDiskUnit(qint32 unitAddr);
     bool inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo);
 
     QList<ValidFileInfo> getFileList(void)

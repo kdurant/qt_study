@@ -45,7 +45,8 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
             break;
 
         case SlaveUp::RESPONSE_SSD_UNIT:
-            emit ssdDataReady(data);
+            transmitFrame = data.mid(24, data_len);
+            emit ssdDataReady(transmitFrame);
             break;
         case SlaveUp::AD_RETURN_DATA:
             emit ADDataReady(data);

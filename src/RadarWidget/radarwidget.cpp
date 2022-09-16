@@ -1176,12 +1176,13 @@ void RadarWidget::initSignalSlot()
             return;
         }
         ui->btn_ssdSearchSpace->setEnabled(false);
+        ui->tabWidget_main->setCurrentIndex(3);
 
         ui->tableWidget_fileList->clearContents();
         ui->tableWidget_fileList->setRowCount(1);
 
         ReadHardDisk::ValidFileInfo fileInfo;
-        quint32                 startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt(nullptr, 16);
+        quint32                     startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt(nullptr, 16);
 
         ssd->inquireSpace(startUnit, fileInfo);
 
@@ -1200,25 +1201,74 @@ void RadarWidget::initSignalSlot()
         }
 
         ui->btn_ssdSearchSpace->setEnabled(true);
-
-        // 显示已经查询到的文件信息
     });
+
+    // 显示已经查询到的文件信息
     connect(ssd, &ReadHardDisk::fileDataReady, this, [this](ReadHardDisk::ValidFileInfo &fileInfo)
             {
         int row = ui->tableWidget_fileList->rowCount();
-        ui->tableWidget_fileList->setCellWidget(row - 1, 0, new QLabel(fileInfo.name));
-
-        ui->tableWidget_fileList->setCellWidget(row - 1, 1, new QLabel(QString::number(fileInfo.startUnit)));
-        ui->tableWidget_fileList->setCellWidget(row - 1, 2, new QLabel(QString::number(fileInfo.endUnit)));
-        ui->tableWidget_fileList->setCellWidget(row - 1, 3, new QLabel(QString::number(fileInfo.startUnit, 16)));
-        ui->tableWidget_fileList->setCellWidget(row - 1, 4, new QLabel(QString::number(fileInfo.endUnit, 16)));
 
         quint32 fileSize = (fileInfo.endUnit - fileInfo.startUnit) * 16;
         QString size     = QString("%1GB / %2MB").arg(fileSize / 1024.0 / 1024).arg(fileSize / 1024.0);
-        ui->tableWidget_fileList->setCellWidget(row - 1, 5, new QLabel(size));
+        ui->tableWidget_fileList->setItem(row - 1, 0, new QTableWidgetItem(QString(fileInfo.name)));
+        ui->tableWidget_fileList->setItem(row - 1, 1, new QTableWidgetItem(QString::number(fileInfo.startUnit)));
+        ui->tableWidget_fileList->setItem(row - 1, 2, new QTableWidgetItem(QString::number(fileInfo.endUnit)));
+        ui->tableWidget_fileList->setItem(row - 1, 3, new QTableWidgetItem(QString::number(fileInfo.startUnit, 16)));
+        ui->tableWidget_fileList->setItem(row - 1, 4, new QTableWidgetItem(QString::number(fileInfo.endUnit, 16)));
+        ui->tableWidget_fileList->setItem(row - 1, 5, new QTableWidgetItem(size));
+
         ui->tableWidget_fileList->setRowCount(row + 1);
+        ui->tableWidget_fileList->resizeColumnsToContents();
     });
 
+    connect(ui->btn_extractFileByNum, &QPushButton::pressed, this, [this]()
+            {
+        int row    = ui->tableWidget_fileList->rowCount();
+        int number = ui->spinBox_extractFileNum->value();
+        if(number > row)
+            return;
+
+        QString filePath;
+        // QString filePath = QFileDialog::getExistingDirectory();  //选择路径
+        // if(filePath.size() == 0)
+        // return;
+        //        filePath += "/";
+
+        QTableWidgetItem *item     = ui->tableWidget_fileList->item(number - 1, 0);
+        QString           fileName = item->text();
+        filePath += fileName;
+        filePath += ".bin";
+
+        QFile file(filePath);
+        file.open(QIODevice::WriteOnly);
+
+        item               = ui->tableWidget_fileList->item(number - 1, 1);
+        uint32_t startAddr = item->text().toUInt(nullptr, 10);
+        item               = ui->tableWidget_fileList->item(number - 1, 2);
+        uint32_t stopAddr  = item->text().toUInt(nullptr, 10);
+
+        ui->progressBar_extractHardDiskData->setRange(startAddr, stopAddr-1);
+        ui->progressBar_extractHardDiskData->setValue(startAddr);
+        QVector<QByteArray> data;
+        QElapsedTimer timer;
+        timer.start();
+
+        for(uint32_t addr = startAddr; addr < stopAddr; addr++)
+//            for(uint32_t addr = startAddr; addr < startAddr + 1; addr++)
+        {
+            QByteArray array;
+            data = ssd->readDiskUnit(addr);
+
+            for(int i = 0; i < data.size(); i++)
+                array.append(data[i]);
+            file.write(array);
+
+            ui->progressBar_extractHardDiskData->setValue(addr);
+            ui->label_extractFileTime->setText("消耗时间:" + QString::number(timer.elapsed()/1000) +"s");
+        }
+
+        file.close();
+    });
     connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this]()
             {
         if(!sysStatus.adCaptureStatus)
