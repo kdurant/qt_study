@@ -1,5 +1,5 @@
-#ifndef SAVEWAVE_H
-#define SAVEWAVE_H
+#ifndef READHARDDISK_H
+#define READHARDDISK_H
 #include <QQueue>
 #include <QtCore>
 
@@ -12,7 +12,7 @@
  * 基数unit前面252个字节保存文件名称，后面填充0xee
  * 偶数unit保存文件的起始地址（4Bytes）和结束地址（4Bytes），后面填充0xdd
  */
-class SaveWave : public QObject
+class ReadHardDisk : public QObject
 {
     Q_OBJECT
 
@@ -39,7 +39,7 @@ private:
     QList<ValidFileInfo> fileList;
 
 public:
-    SaveWave()
+    ReadHardDisk()
     {
         timer = new QTimer();
         timer->setInterval(50);

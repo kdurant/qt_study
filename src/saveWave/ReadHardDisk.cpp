@@ -1,4 +1,4 @@
-#include "SaveWave.h"
+#include "ReadHardDisk.h"
 
 /**
  * @brief 读取指定unit地址的数据
@@ -6,7 +6,7 @@
  * @param ret, 返回的数据
  * @return
  */
-bool SaveWave::readDiskUnit(qint32 unitAddr, QByteArray &ret)
+bool ReadHardDisk::readDiskUnit(qint32 unitAddr, QByteArray &ret)
 {
     QByteArray frame = BspConfig::int2ba(unitAddr);
     emit       sendDataReady(MasterSet::READ_SSD_UNIT, 4, frame);
@@ -47,7 +47,7 @@ bool SaveWave::readDiskUnit(qint32 unitAddr, QByteArray &ret)
  * @param fileInfo
  * @return
  */
-bool SaveWave::inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo)
+bool ReadHardDisk::inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo)
 {
     bool       status = true;
     QByteArray fileName;
@@ -123,7 +123,7 @@ bool SaveWave::inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo)
  * @brief 设置存储文件的名称
  * @return
  */
-bool SaveWave::setSaveFileName(quint32 unit, QString &name)
+bool ReadHardDisk::setSaveFileName(quint32 unit, QString &name)
 {
     QByteArray frame;
     frame.append(BspConfig::int2ba(unit));
@@ -132,7 +132,7 @@ bool SaveWave::setSaveFileName(quint32 unit, QString &name)
     return true;
 }
 
-bool SaveWave::setSaveFileAddr(quint32 unit)
+bool ReadHardDisk::setSaveFileAddr(quint32 unit)
 {
     QByteArray frame;
     frame.append(BspConfig::int2ba(unit));
@@ -140,7 +140,7 @@ bool SaveWave::setSaveFileAddr(quint32 unit)
     return true;
 }
 
-bool SaveWave::enableStoreFile(quint32 status)
+bool ReadHardDisk::enableStoreFile(quint32 status)
 {
     QByteArray frame;
     frame.append(BspConfig::int2ba(status));

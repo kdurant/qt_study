@@ -461,8 +461,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>227</width>
-               <height>113</height>
+               <width>290</width>
+               <height>144</height>
               </rect>
              </property>
              <attribute name="label">
@@ -537,8 +537,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>297</width>
-               <height>513</height>
+               <width>340</width>
+               <height>389</height>
               </rect>
              </property>
              <attribute name="label">
@@ -586,8 +586,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>171</width>
-               <height>117</height>
+               <width>218</width>
+               <height>146</height>
               </rect>
              </property>
              <attribute name="label">
@@ -843,8 +843,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>297</width>
-               <height>774</height>
+               <width>340</width>
+               <height>970</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1331,8 +1331,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>194</width>
-               <height>368</height>
+               <width>242</width>
+               <height>467</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1812,7 +1812,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget_main">
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="tab_3">
          <attribute name="title">
@@ -2178,9 +2178,19 @@
          <attribute name="title">
           <string>SSD文件列表</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_13" stretch="5,1">
+         <layout class="QVBoxLayout" name="verticalLayout_13" stretch="5,0,0">
           <item>
            <widget class="QTableWidget" name="tableWidget_fileList">
+            <row>
+             <property name="text">
+              <string>1</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>2</string>
+             </property>
+            </row>
             <column>
              <property name="text">
               <string>文件名</string>
@@ -2211,16 +2221,95 @@
               <string>文件大小</string>
              </property>
             </column>
+            <item row="0" column="0">
+             <property name="text">
+              <string>aaa</string>
+             </property>
+            </item>
+            <item row="1" column="0">
+             <property name="text">
+              <string>bbb</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item>
-           <widget class="QFrame" name="frame_4">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
+           <widget class="QGroupBox" name="groupBox_12">
+            <property name="title">
+             <string>按文件编号提取</string>
             </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <item>
+              <widget class="QLabel" name="label_31">
+               <property name="text">
+                <string>编号</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBox_extractFileNum"/>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_extractFileByNum">
+               <property name="text">
+                <string>提取文件</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_7">
+            <property name="title">
+             <string>按文件地址提取</string>
             </property>
+            <layout class="QGridLayout" name="gridLayout_13">
+             <item row="1" column="0">
+              <widget class="QSpinBox" name="spinBox_extractFileStartAddr"/>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLabel" name="label_26">
+               <property name="text">
+                <string>结束地址</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QSpinBox" name="spinBox_extractFileStopAddr"/>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_25">
+               <property name="text">
+                <string>开始地址</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <widget class="QPushButton" name="btn_extractFileByAddr">
+               <property name="text">
+                <string>提取文件</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QLabel" name="label_33">
+               <property name="text">
+                <string>文件名</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QLineEdit" name="lineEdit_extractFileName">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>

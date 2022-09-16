@@ -48,7 +48,7 @@
 #include "Epos2Controller.h"
 #include "PusiController.h"
 
-#include "SaveWave.h"
+#include "ReadHardDisk.h"
 #include "gpsInfo.h"
 #include "AttitudeSensor.h"
 #include "qcustomplot.h"
@@ -200,7 +200,7 @@ private:
     DevInfo                   *devInfo;
     QVector<DevInfo::ParaInfo> sysParaInfo;
 
-    SaveWave       *ssd;
+    ReadHardDisk       *ssd;
     GpsInfo        *gps;
     AttitudeSensor *attitude;
 
