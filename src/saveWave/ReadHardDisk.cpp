@@ -2,6 +2,8 @@
 
 /**
  * @brief 读取指定unit地址的数据
+ * 第一次读取硬盘数据时，需要3-4ms,才会从网络上看到数据
+ * 后面就会很快
  * @param unitAddr
  * @param ret, 返回的数据
  * @return
@@ -11,30 +13,29 @@ bool ReadHardDisk::readDiskUnit(qint32 unitAddr, QByteArray &ret)
     QByteArray frame = BspConfig::int2ba(unitAddr);
     emit       sendDataReady(MasterSet::READ_SSD_UNIT, 4, frame);
 
-    QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
-    timer->start();
-    connect(timer, &QTimer::timeout, &waitLoop, &QEventLoop::quit);
-    waitLoop.exec();
-    if(allData.size() == 0)
-        return false;
-
-    if(allData.size() != 64)
+    QElapsedTimer timer;
+    timer.start();
+    while(allData.size() != 64 && timer.elapsed() < 50)
     {
-        allData.clear();
-        return false;
+        QCoreApplication::processEvents(QEventLoop::AllEvents);
     }
-    // 发现包序号存在不连续的情况，检查前面几个包，简单判断下
-    //    for(int i = 0; i < 8; i++)
+
+    //    QEventLoop waitLoop;
+    //    timer->start();
+    //    connect(timer, &QTimer::timeout, &waitLoop, &QEventLoop::quit);
+    //    waitLoop.exec();
+    //    if(allData.size() == 0)
+    //        return false;
+
+    //    if(allData.size() != 64)
     //    {
-    //        if(ProtocolDispatch::getPckNum(allData[i]) != i)
-    //        {
-    //            allData.clear();
-    //            return false;
-    //        }
+    //        allData.clear();
+    //        return false;
     //    }
+
     ret = allData[0];
     allData.clear();
-    timer->stop();
+    //    timer->stop();
     return true;
 }
 
@@ -43,14 +44,13 @@ QVector<QByteArray> &ReadHardDisk::readDiskUnit(qint32 unitAddr)
     allData.clear();
     QByteArray frame = BspConfig::int2ba(unitAddr);
     emit       sendDataReady(MasterSet::READ_SSD_UNIT, 4, frame);
-    QThread::msleep(1);
 
-    QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
-    timer->start();
-    connect(timer, &QTimer::timeout, &waitLoop, &QEventLoop::quit);
-    waitLoop.exec();
-
-    timer->stop();
+    QElapsedTimer timer;
+    timer.start();
+    while(allData.size() != 64 && timer.elapsed() < 50)
+    {
+        QCoreApplication::processEvents(QEventLoop::AllEvents);
+    }
     return allData;
 }
 

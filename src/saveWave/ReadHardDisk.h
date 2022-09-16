@@ -42,7 +42,7 @@ public:
     ReadHardDisk()
     {
         timer = new QTimer();
-        timer->setInterval(4);
+        timer->setInterval(5);
     }
     bool                 readDiskUnit(qint32 unitAddr, QByteArray &ret);
     QVector<QByteArray> &readDiskUnit(qint32 unitAddr);
