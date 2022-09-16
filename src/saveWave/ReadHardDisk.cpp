@@ -10,7 +10,6 @@ bool ReadHardDisk::readDiskUnit(qint32 unitAddr, QByteArray &ret)
 {
     QByteArray frame = BspConfig::int2ba(unitAddr);
     emit       sendDataReady(MasterSet::READ_SSD_UNIT, 4, frame);
-    QThread::msleep(1);
 
     QEventLoop waitLoop;  // 等待响应数据，或者1000ms超时
     timer->start();
@@ -25,14 +24,14 @@ bool ReadHardDisk::readDiskUnit(qint32 unitAddr, QByteArray &ret)
         return false;
     }
     // 发现包序号存在不连续的情况，检查前面几个包，简单判断下
-//    for(int i = 0; i < 8; i++)
-//    {
-//        if(ProtocolDispatch::getPckNum(allData[i]) != i)
-//        {
-//            allData.clear();
-//            return false;
-//        }
-//    }
+    //    for(int i = 0; i < 8; i++)
+    //    {
+    //        if(ProtocolDispatch::getPckNum(allData[i]) != i)
+    //        {
+    //            allData.clear();
+    //            return false;
+    //        }
+    //    }
     ret = allData[0];
     allData.clear();
     timer->stop();

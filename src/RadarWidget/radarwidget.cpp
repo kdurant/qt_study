@@ -1247,14 +1247,14 @@ void RadarWidget::initSignalSlot()
         item               = ui->tableWidget_fileList->item(number - 1, 2);
         uint32_t stopAddr  = item->text().toUInt(nullptr, 10);
 
-        ui->progressBar_extractHardDiskData->setRange(startAddr, stopAddr-1);
+        ui->progressBar_extractHardDiskData->setRange(startAddr, stopAddr - 1);
         ui->progressBar_extractHardDiskData->setValue(startAddr);
         QVector<QByteArray> data;
-        QElapsedTimer timer;
+        QElapsedTimer       timer;
         timer.start();
 
         for(uint32_t addr = startAddr; addr < stopAddr; addr++)
-//            for(uint32_t addr = startAddr; addr < startAddr + 1; addr++)
+        //        for(uint32_t addr = startAddr; addr < startAddr + 1; addr++)
         {
             QByteArray array;
             data = ssd->readDiskUnit(addr);
@@ -1264,7 +1264,7 @@ void RadarWidget::initSignalSlot()
             file.write(array);
 
             ui->progressBar_extractHardDiskData->setValue(addr);
-            ui->label_extractFileTime->setText("消耗时间:" + QString::number(timer.elapsed()/1000) +"s");
+            ui->label_extractFileTime->setText("消耗时间:" + QString::number(timer.elapsed() / 1000) + "s");
         }
 
         file.close();
