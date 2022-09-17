@@ -1229,10 +1229,10 @@ void RadarWidget::initSignalSlot()
             return;
 
         QString filePath;
-        // QString filePath = QFileDialog::getExistingDirectory();  //选择路径
-        // if(filePath.size() == 0)
-        // return;
-        //        filePath += "/";
+        filePath = QFileDialog::getExistingDirectory();  //选择路径
+        if(filePath.size() == 0)
+            return;
+        filePath += "/";
 
         QTableWidgetItem *item     = ui->tableWidget_fileList->item(number - 1, 0);
         QString           fileName = item->text();
@@ -1249,6 +1249,8 @@ void RadarWidget::initSignalSlot()
 
         ui->progressBar_extractHardDiskData->setRange(startAddr, stopAddr - 1);
         ui->progressBar_extractHardDiskData->setValue(startAddr);
+        ui->btn_extractFileByNum->setEnabled(false);
+
         QVector<QByteArray> data;
         QElapsedTimer       timer;
         timer.start();
@@ -1268,7 +1270,63 @@ void RadarWidget::initSignalSlot()
         }
 
         file.close();
+        ui->btn_extractFileByNum->setEnabled(true);
     });
+
+    connect(ui->btn_extractFileByAddr, &QPushButton::pressed, this, [this]()
+            {
+        if(ui->spinBox_extractFileStopAddr->value() <= ui->spinBox_extractFileStartAddr->value())
+            return;
+        if(ui->lineEdit_extractFileName->text().length() == 0)
+            return;
+
+        QString filePath;
+        filePath = QFileDialog::getExistingDirectory();  //选择路径
+        if(filePath.size() == 0)
+            return;
+        filePath += "/";
+
+        QString fileName = ui->lineEdit_extractFileName->text();
+        filePath += fileName;
+
+        QFile file(filePath);
+        file.open(QIODevice::WriteOnly);
+
+        uint32_t startAddr = ui->spinBox_extractFileStartAddr->value();
+        uint32_t stopAddr  = ui->spinBox_extractFileStopAddr->value();
+
+        ui->progressBar_extractHardDiskData->setRange(startAddr, stopAddr - 1);
+        ui->progressBar_extractHardDiskData->setValue(startAddr);
+        ui->btn_extractFileByNum->setEnabled(false);
+        QVector<QByteArray> data;
+        QElapsedTimer       timer;
+        timer.start();
+
+        for(uint32_t addr = startAddr; addr < stopAddr; addr++)
+        {
+            QByteArray array;
+            data = ssd->readDiskUnit(addr);
+
+            if(data.size() == 0)
+            {
+                QMessageBox::warning(this, "warning", "没有读取到硬盘数据, 读取结束");
+                ui->btn_extractFileByNum->setEnabled(true);
+                file.close();
+                return;
+            }
+
+            for(int i = 0; i < data.size(); i++)
+                array.append(data[i]);
+            file.write(array);
+
+            ui->progressBar_extractHardDiskData->setValue(addr);
+            ui->label_extractFileTime->setText("消耗时间:" + QString::number(timer.elapsed() / 1000) + "s");
+        }
+
+        file.close();
+        ui->btn_extractFileByNum->setEnabled(true);
+    });
+
     connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this]()
             {
         if(!sysStatus.adCaptureStatus)
