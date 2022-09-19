@@ -842,9 +842,9 @@
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>0</y>
+               <y>-333</y>
                <width>288</width>
-               <height>957</height>
+               <height>959</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1161,26 +1161,6 @@
                  <string>保存文件</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_8">
-                 <item row="2" column="1">
-                  <widget class="QLineEdit" name="lineEdit_ssdAvailDataUnit">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="1">
-                  <widget class="QLineEdit" name="lineEdit_ssdAvailFileUnit">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="3" column="0">
                   <widget class="QLabel" name="label_5">
                    <property name="text">
@@ -1208,6 +1188,12 @@
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
+                   </property>
+                   <property name="inputMask">
+                    <string/>
+                   </property>
+                   <property name="placeholderText">
+                    <string>user define</string>
                    </property>
                   </widget>
                  </item>
@@ -1259,6 +1245,22 @@
                    </property>
                   </spacer>
                  </item>
+                 <item row="1" column="1">
+                  <widget class="QSpinBox" name="spinBox_ssdAvailFileUnit">
+                   <property name="maximum">
+                    <number>18841</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>2</number>
+                   </property>
+                   <property name="displayIntegerBase">
+                    <number>16</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QSpinBox" name="spinBox_ssdAvailDataUnit"/>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -1299,6 +1301,9 @@
                    </property>
                    <property name="maximum">
                     <number>1000</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>5</number>
                    </property>
                   </widget>
                  </item>

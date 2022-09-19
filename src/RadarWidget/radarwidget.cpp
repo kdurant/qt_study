@@ -1182,8 +1182,8 @@ void RadarWidget::initSignalSlot()
         switch(fileInfo.status)
         {
             case ReadHardDisk::FileStatus::FILE_INFO_FULL:
-                ui->lineEdit_ssdAvailFileUnit->setText(QString::number(fileInfo.fileUnit + 2, 16));
-                ui->lineEdit_ssdAvailDataUnit->setText(QString::number(fileInfo.endUnit + 1, 16));
+                ui->spinBox_ssdAvailFileUnit->setValue(fileInfo.fileUnit + 2);
+                ui->spinBox_ssdAvailDataUnit->setValue(fileInfo.endUnit + 1);
                 break;
             case ReadHardDisk::FileStatus::FILE_POSITION_ERROR:
                 QMessageBox::warning(this, "warning", "上次文件信息写入出错, 请断电更换硬盘！");
@@ -1330,7 +1330,7 @@ void RadarWidget::initSignalSlot()
 
         ui->btn_ssdEnableStore->setEnabled(false);
 
-        quint32 fileUnit = ui->lineEdit_ssdAvailFileUnit->text().toUInt(nullptr, 16);
+        quint32 fileUnit = ui->spinBox_ssdAvailFileUnit->value();
 
         QString fileName = sysStatus.namePrefix + QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
 
@@ -1343,7 +1343,7 @@ void RadarWidget::initSignalSlot()
             binFile.open(QIODevice::WriteOnly);
         }
 
-        quint32 dataUnit = ui->lineEdit_ssdAvailDataUnit->text().toUInt(nullptr, 16);
+        quint32 dataUnit = ui->spinBox_ssdAvailDataUnit->value();
         ssd->setSaveFileAddr(dataUnit);
         ssd->enableStoreFile(0x01);
 
