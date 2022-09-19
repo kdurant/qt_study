@@ -200,6 +200,8 @@ private:
     DevInfo                   *devInfo;
     QVector<DevInfo::ParaInfo> sysParaInfo;
 
+    QAction *m_pActionCopy;
+
     ReadHardDisk       *ssd;
     GpsInfo        *gps;
     AttitudeSensor *attitude;

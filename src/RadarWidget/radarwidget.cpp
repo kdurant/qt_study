@@ -1,4 +1,5 @@
 #include "radarwidget.h"
+#include <qmessagebox.h>
 #include <qsystemtrayicon.h>
 #include <algorithm>
 #include "bsp_config.h"
@@ -133,6 +134,11 @@ void RadarWidget::saveParameter()
 
 void RadarWidget::uiConfig()
 {
+    ui->tableWidget_fileList->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableWidget_fileList->setContextMenuPolicy(Qt::ActionsContextMenu);  //设置为action菜单模式
+    m_pActionCopy = new QAction(tr("读取当前文件"), ui->tableWidget_fileList);
+    ui->tableWidget_fileList->addAction(m_pActionCopy);
+
     ui->groupBox_tempVolt->hide();
     ui->treeWidget_attitude->expandAll();
     ui->treeWidget_attitude->resizeColumnToContents(0);
@@ -1212,6 +1218,58 @@ void RadarWidget::initSignalSlot()
 
         ui->tableWidget_fileList->setRowCount(row + 1);
         ui->tableWidget_fileList->resizeColumnsToContents();
+    });
+
+    connect(m_pActionCopy, &QAction::triggered, this, [this]
+            {
+        QMessageBox message(QMessageBox::NoIcon, "读取文件", "确定读取", QMessageBox::Yes | QMessageBox::No, NULL);
+        if(message.exec() == QMessageBox::No)
+            return;
+
+        QModelIndexList indexes = ui->tableWidget_fileList->selectionModel()->selectedIndexes();
+
+        QString filePath;
+        filePath = QFileDialog::getExistingDirectory();  //选择路径
+        if(filePath.size() == 0)
+            return;
+        filePath += "/";
+
+        QString fileName = ui->tableWidget_fileList->item(indexes[0].row(), indexes[0].column())->text();
+        filePath += fileName;
+        filePath += ".bin";
+
+        QFile file(filePath);
+        file.open(QIODevice::WriteOnly);
+
+        uint32_t startAddr = ui->tableWidget_fileList->item(indexes[1].row(), indexes[1].column())->text().toUInt(nullptr, 10);
+        uint32_t stopAddr  = ui->tableWidget_fileList->item(indexes[2].row(), indexes[2].column())->text().toUInt(nullptr, 10);
+
+        ui->progressBar_extractHardDiskData->setRange(startAddr, stopAddr - 1);
+        ui->progressBar_extractHardDiskData->setValue(startAddr);
+        ui->tableWidget_fileList->setContextMenuPolicy(Qt::NoContextMenu);  //设置为action菜单模式
+
+
+        QVector<QByteArray> data;
+        QElapsedTimer       timer;
+        timer.start();
+
+        for(uint32_t addr = startAddr; addr < stopAddr; addr++)
+        //        for(uint32_t addr = startAddr; addr < startAddr + 1; addr++)
+        {
+            QByteArray array;
+            data = ssd->readDiskUnit(addr);
+
+            for(int i = 0; i < data.size(); i++)
+                array.append(data[i]);
+            file.write(array);
+
+            ui->progressBar_extractHardDiskData->setValue(addr);
+            ui->label_extractFileTime->setText("消耗时间:" + QString::number(timer.elapsed() / 1000) + "s");
+        }
+
+        file.close();
+        ui->tableWidget_fileList->setContextMenuPolicy(Qt::ActionsContextMenu);  //设置为action菜单模式
+
     });
 
     connect(ui->btn_extractFileByNum, &QPushButton::pressed, this, [this]()
