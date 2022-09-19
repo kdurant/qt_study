@@ -537,7 +537,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>302</width>
+               <width>289</width>
                <height>405</height>
               </rect>
              </property>
@@ -1340,8 +1340,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>208</width>
-               <height>467</height>
+               <width>289</width>
+               <height>619</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1383,26 +1383,17 @@
                  <string>采集波形</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_15">
-                 <item row="0" column="0" colspan="3">
-                  <widget class="QLabel" name="lable_validFrameNum">
+                 <item row="2" column="0" colspan="3">
+                  <widget class="QLabel" name="label_19">
                    <property name="text">
-                    <string>有效采样帧个数:</string>
+                    <string>预览时间间隔(ms)：</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="3">
-                  <widget class="QLineEdit" name="lineEdit_validFrameNum">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>0</string>
-                   </property>
-                   <property name="readOnly">
-                    <bool>true</bool>
+                 <item row="4" column="1" colspan="3">
+                  <widget class="QSlider" name="slider_framePos">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
                    </property>
                   </widget>
                  </item>
@@ -1413,8 +1404,8 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="3">
-                  <widget class="QLineEdit" name="lineEdit_previewFrameInterval">
+                 <item row="3" column="2" colspan="2">
+                  <widget class="QPushButton" name="btn_stopShowWave">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -1422,30 +1413,14 @@
                     </sizepolicy>
                    </property>
                    <property name="text">
-                    <string>1</string>
-                   </property>
-                   <property name="readOnly">
-                    <bool>false</bool>
+                    <string>停止</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0" colspan="3">
-                  <widget class="QLabel" name="label_19">
-                   <property name="text">
-                    <string>预览时间间隔(ms)：</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="3">
-                  <widget class="QLineEdit" name="lineEdit_previewTimeInterval">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>100</string>
+                 <item row="0" column="3">
+                  <widget class="QSpinBox" name="spinBox_validFrameNum">
+                   <property name="maximum">
+                    <number>999999999</number>
                    </property>
                   </widget>
                  </item>
@@ -1462,16 +1437,10 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="3" column="2" colspan="2">
-                  <widget class="QPushButton" name="btn_stopShowWave">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
+                 <item row="0" column="0" colspan="3">
+                  <widget class="QLabel" name="lable_validFrameNum">
                    <property name="text">
-                    <string>停止</string>
+                    <string>有效采样帧个数:</string>
                    </property>
                   </widget>
                  </item>
@@ -1491,10 +1460,32 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="4" column="1" colspan="3">
-                  <widget class="QSlider" name="slider_framePos">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
+                 <item row="1" column="3">
+                  <widget class="QSpinBox" name="spinBox_previewFrameInterval">
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>10000</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>10</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="3">
+                  <widget class="QSpinBox" name="spinBox_previewTimeInterval">
+                   <property name="minimum">
+                    <number>10</number>
+                   </property>
+                   <property name="maximum">
+                    <number>5000</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>10</number>
+                   </property>
+                   <property name="value">
+                    <number>50</number>
                    </property>
                   </widget>
                  </item>

@@ -724,7 +724,7 @@ void RadarWidget::initSignalSlot()
 
     connect(offlineWaveForm, &OfflineWaveform::sendSampleFrameNumber, this, [this](qint32 number)
             {
-        ui->lineEdit_validFrameNum->setText(QString::number(number));
+        ui->spinBox_validFrameNum->setValue(number);
     });
 
     connect(offlineWaveForm, &OfflineWaveform::sendSampleFrameNumber, this, [this](qint32 number)
@@ -1987,12 +1987,12 @@ void RadarWidget::timerEvent(QTimerEvent *event)
 
 void RadarWidget::on_bt_showWave_clicked()
 {
-    int total = ui->lineEdit_validFrameNum->text().toInt();
+    int total = ui->spinBox_validFrameNum->value();
     if(total == 0)
         QMessageBox::warning(this, "warning", "没有有效数据");
     int start_index   = ui->spin_framePos->value();
-    int interval_num  = ui->lineEdit_previewFrameInterval->text().toInt();
-    int interval_time = ui->lineEdit_previewTimeInterval->text().toInt();
+    int interval_num  = ui->spinBox_previewFrameInterval->value();
+    int interval_time = ui->spinBox_previewTimeInterval->value();
 
     QPushButton *btn = qobject_cast<QPushButton *>(sender());
     if(btn->objectName() == "bt_showWave")
