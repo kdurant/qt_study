@@ -157,7 +157,6 @@ void RadarWidget::uiConfig()
     ui->lineEdit_valueThreshold->setValidator(decValidator);
     ui->lineEdit_compressLen->setValidator(decValidator);
     ui->lineEdit_compressRatio->setValidator(decValidator);
-    ui->lineEdit_ssdSearchStartUnit->setValidator(hexValidator);
     ui->lineEdit_pmtDelayTime->setValidator(decValidator);
     ui->lineEdit_pmtGateTime->setValidator(decValidator);
 
@@ -189,6 +188,8 @@ void RadarWidget::uiConfig()
     ui->toolBox_motor->setItemEnabled(2, false);
     ui->rbtn_GLH->setVisible(false);
     ui->rbtn_POLARIZATION->setVisible(false);
+    ui->groupBox_12->setVisible(false);
+    ui->groupBox_7->setVisible(false);
 
     if(sysStatus.radarType == BspConfig::RADAR_TYPE_760)
     {
@@ -1182,7 +1183,7 @@ void RadarWidget::initSignalSlot()
         ui->tableWidget_fileList->setRowCount(1);
 
         ReadHardDisk::ValidFileInfo fileInfo;
-        quint32                     startUnit = ui->lineEdit_ssdSearchStartUnit->text().toUInt(nullptr, 16);
+        quint32                     startUnit = 0;
 
         ssd->inquireSpace(startUnit, fileInfo);
 
@@ -1665,12 +1666,12 @@ void RadarWidget::initSignalSlot()
                 if(index == 0)
                     ui->doubleSpinBox_DAValue->setRange(0, 250);
                 else
-                    ui->doubleSpinBox_DAValue->setRange(0, 5);
+                    ui->doubleSpinBox_DAValue->setRange(0, 4);
                 break;
 
             case BspConfig::RADAR_TYPE_LAND:
                 if(index == 0)
-                    ui->doubleSpinBox_DAValue->setRange(0, 70);
+                    ui->doubleSpinBox_DAValue->setRange(0, 60);
                 break;
             default:
                 break;
