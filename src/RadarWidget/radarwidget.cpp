@@ -114,14 +114,14 @@ void RadarWidget::initParameter()
     else
         motorController = new EPOS2();
 
-    ui->lineEdit_sampleLen->setText(QString::number(sysStatus.previewSettings.sampleLen));
-    ui->lineEdit_sampleRate->setText(QString::number(sysStatus.previewSettings.sampleRatio));
-    ui->lineEdit_firstStartPos->setText(QString::number(sysStatus.previewSettings.firstPos));
-    ui->lineEdit_firstLen->setText(QString::number(sysStatus.previewSettings.firstLen));
-    ui->lineEdit_secondStartPos->setText(QString::number(sysStatus.previewSettings.secondPos));
-    ui->lineEdit_secondLen->setText(QString::number(sysStatus.previewSettings.secondLen));
-    ui->lineEdit_sumThreshold->setText(QString::number(sysStatus.previewSettings.sumThreshold));
-    ui->lineEdit_valueThreshold->setText(QString::number(sysStatus.previewSettings.valueThreshold));
+    ui->spinBox_sampleLen->setValue(sysStatus.previewSettings.sampleLen);
+    ui->spinBox_sampleRate->setValue(sysStatus.previewSettings.sampleRatio);
+    ui->spinBox_firstStartPos->setValue(sysStatus.previewSettings.firstPos);
+    ui->spinBox_firstLen->setValue(sysStatus.previewSettings.firstLen);
+    ui->spinBox_secondStartPos->setValue(sysStatus.previewSettings.secondPos);
+    ui->spinBox_secondLen->setValue(sysStatus.previewSettings.secondLen);
+    ui->spinBox_sumThreshold->setValue(sysStatus.previewSettings.sumThreshold);
+    ui->spinBox_valueThreshold->setValue(sysStatus.previewSettings.valueThreshold);
     // ui->lineEdit_compressLen->setText(QString::number(sysStatus.previewSettings.compressLen));
     // ui->lineEdit_compressRatio->setText(QString::number(sysStatus.previewSettings.compressRatio));
 }
@@ -147,14 +147,6 @@ void RadarWidget::uiConfig()
     QRegExp           hexReg("[0-9,a-f,A-F]+$");
     QRegExpValidator *hexValidator = new QRegExpValidator(hexReg, this);
 
-    ui->lineEdit_sampleLen->setValidator(decValidator);
-    ui->lineEdit_sampleRate->setValidator(decValidator);
-    ui->lineEdit_firstStartPos->setValidator(decValidator);
-    ui->lineEdit_firstLen->setValidator(decValidator);
-    ui->lineEdit_secondStartPos->setValidator(decValidator);
-    ui->lineEdit_secondLen->setValidator(decValidator);
-    ui->lineEdit_sumThreshold->setValidator(decValidator);
-    ui->lineEdit_valueThreshold->setValidator(decValidator);
     ui->lineEdit_compressLen->setValidator(decValidator);
     ui->lineEdit_compressRatio->setValidator(decValidator);
     ui->lineEdit_pmtDelayTime->setValidator(decValidator);
@@ -198,10 +190,10 @@ void RadarWidget::uiConfig()
         ui->label_secondLen->hide();
         ui->label_subThreshold->hide();
         ui->label_sumThreshold->hide();
-        ui->lineEdit_secondStartPos->hide();
-        ui->lineEdit_secondLen->hide();
-        ui->lineEdit_valueThreshold->hide();
-        ui->lineEdit_sumThreshold->hide();
+        ui->spinBox_secondStartPos->hide();
+        ui->spinBox_secondLen->hide();
+        ui->spinBox_valueThreshold->hide();
+        ui->spinBox_sumThreshold->hide();
     }
     else if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
     {
@@ -309,7 +301,7 @@ void RadarWidget::uiConfig()
         ui->doubleSpinBox_laserGreenCurrent->setRange(0, 5000);
 
         ui->label_secondLen->hide();
-        ui->lineEdit_secondLen->hide();
+        ui->spinBox_secondLen->hide();
     }
     else if(sysStatus.radarType == BspConfig::RADAR_TYPE_DRONE)
     {
@@ -355,11 +347,11 @@ void RadarWidget::uiConfig()
         ui->doubleSpinBox_laserGreenCurrent->setRange(0, 6000);
         ui->doubleSpinBox_laserGreenCurrent->setValue(4000);
 
-        ui->lineEdit_firstLen->setEnabled(false);
-        ui->lineEdit_secondStartPos->setEnabled(false);
-        ui->lineEdit_secondLen->setEnabled(false);
-        ui->lineEdit_sumThreshold->setEnabled(false);
-        ui->lineEdit_valueThreshold->setEnabled(false);
+        ui->spinBox_firstLen->setEnabled(false);
+        ui->spinBox_secondStartPos->setEnabled(false);
+        ui->spinBox_secondLen->setEnabled(false);
+        ui->spinBox_sumThreshold->setEnabled(false);
+        ui->spinBox_valueThreshold->setEnabled(false);
 
         ui->label_pmtGateTime->show();
         ui->label_pmtDelayTime->show();
@@ -381,7 +373,7 @@ void RadarWidget::uiConfig()
         ui->comboBox_laserFreq->addItem("10");
         ui->label_laserGreenCurrent->setText("激光电流(A)");
         ui->doubleSpinBox_laserGreenCurrent->setValue(200);
-        ui->lineEdit_sampleRate->setText("10");
+        ui->spinBox_sampleRate->setValue(10);
     }
     else
     {
@@ -515,21 +507,21 @@ void RadarWidget::initSignalSlot()
      */
     connect(ui->btn_updateUI_intervalTime, &QPushButton::pressed, this, [this]()
             {
-        int time       = ui->lineEdit_updateUI_intervalTime->text().toUInt(nullptr, 10);
+        int time       = ui->spinBox_updateUI_intervalTime->value();
         timerRefreshUI = startTimer(time);
     });
     connect(preview, &AdSampleControll::sendDataReady, dispatch, &ProtocolDispatch::encode);
 
     connect(ui->btn_setPreviewPara, &QPushButton::pressed, this, [this]()
             {
-        sysStatus.previewSettings.sampleLen      = ui->lineEdit_sampleLen->text().toInt();
-        sysStatus.previewSettings.sampleRatio    = ui->lineEdit_sampleRate->text().toInt();
-        sysStatus.previewSettings.firstPos       = ui->lineEdit_firstStartPos->text().toInt();
-        sysStatus.previewSettings.firstLen       = ui->lineEdit_firstLen->text().toInt();
-        sysStatus.previewSettings.secondPos      = ui->lineEdit_secondStartPos->text().toInt();
-        sysStatus.previewSettings.secondLen      = ui->lineEdit_secondLen->text().toInt();
-        sysStatus.previewSettings.sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
-        sysStatus.previewSettings.valueThreshold = ui->lineEdit_valueThreshold->text().toInt();
+        sysStatus.previewSettings.sampleLen      = ui->spinBox_sampleLen->value();
+        sysStatus.previewSettings.sampleRatio    = ui->spinBox_sampleRate->value();
+        sysStatus.previewSettings.firstPos       = ui->spinBox_firstStartPos->value();
+        sysStatus.previewSettings.firstLen       = ui->spinBox_firstLen->value();
+        sysStatus.previewSettings.secondPos      = ui->spinBox_secondStartPos->value();
+        sysStatus.previewSettings.secondLen      = ui->spinBox_secondLen->value();
+        sysStatus.previewSettings.sumThreshold   = ui->spinBox_sumThreshold->value();
+        sysStatus.previewSettings.valueThreshold = ui->spinBox_valueThreshold->value();
         int     sampleDelay                      = ui->lineEdit_sampleDelay->text().toInt();
         quint16 pmtDelayTime                     = ui->lineEdit_pmtDelayTime->text().toUInt();
         quint16 pmtGateTime                      = ui->lineEdit_pmtGateTime->text().toUInt();
@@ -1694,14 +1686,14 @@ void RadarWidget::initSignalSlot()
         else
             sysStatus.previewSettings.laserPower = ui->comboBox_laserPower->currentText().toDouble();
         sysStatus.previewSettings.motorSpeed     = ui->spinBox_motorTargetSpeed->value();
-        sysStatus.previewSettings.sampleLen      = ui->lineEdit_sampleLen->text().toInt();
-        sysStatus.previewSettings.sampleRatio    = ui->lineEdit_sampleRate->text().toInt();
-        sysStatus.previewSettings.firstPos       = ui->lineEdit_firstStartPos->text().toInt();
-        sysStatus.previewSettings.firstLen       = ui->lineEdit_firstLen->text().toInt();
-        sysStatus.previewSettings.secondPos      = ui->lineEdit_secondStartPos->text().toInt();
-        sysStatus.previewSettings.secondLen      = ui->lineEdit_secondLen->text().toInt();
-        sysStatus.previewSettings.sumThreshold   = ui->lineEdit_sumThreshold->text().toInt();
-        sysStatus.previewSettings.valueThreshold = ui->lineEdit_valueThreshold->text().toInt();
+        sysStatus.previewSettings.sampleLen      = ui->spinBox_sampleLen->value();
+        sysStatus.previewSettings.sampleRatio    = ui->spinBox_sampleRate->value();
+        sysStatus.previewSettings.firstPos       = ui->spinBox_firstStartPos->value();
+        sysStatus.previewSettings.firstLen       = ui->spinBox_firstLen->value();
+        sysStatus.previewSettings.secondPos      = ui->spinBox_secondStartPos->value();
+        sysStatus.previewSettings.secondLen      = ui->spinBox_secondLen->value();
+        sysStatus.previewSettings.sumThreshold   = ui->spinBox_sumThreshold->value();
+        sysStatus.previewSettings.valueThreshold = ui->spinBox_valueThreshold->value();
 
         configUser->setValue("Laser/freq", sysStatus.previewSettings.laserFreq);
         configUser->setValue("Laser/power", sysStatus.previewSettings.laserPower);
@@ -1763,14 +1755,14 @@ void RadarWidget::initSignalSlot()
             ui->comboBox_laserPower->setCurrentIndex(idx);
         }
         ui->spinBox_motorTargetSpeed->setValue(sysStatus.previewSettings.motorSpeed);
-        ui->lineEdit_sampleLen->setText(QString::number(sysStatus.previewSettings.sampleLen));
-        ui->lineEdit_sampleRate->setText(QString::number(sysStatus.previewSettings.sampleRatio));
-        ui->lineEdit_firstStartPos->setText(QString::number(sysStatus.previewSettings.firstPos));
-        ui->lineEdit_firstLen->setText(QString::number(sysStatus.previewSettings.firstLen));
-        ui->lineEdit_secondStartPos->setText(QString::number(sysStatus.previewSettings.secondPos));
-        ui->lineEdit_secondLen->setText(QString::number(sysStatus.previewSettings.secondLen));
-        ui->lineEdit_sumThreshold->setText(QString::number(sysStatus.previewSettings.sumThreshold));
-        ui->lineEdit_valueThreshold->setText(QString::number(sysStatus.previewSettings.valueThreshold));
+        ui->spinBox_sampleLen->setValue(sysStatus.previewSettings.sampleLen);
+        ui->spinBox_sampleRate->setValue(sysStatus.previewSettings.sampleRatio);
+        ui->spinBox_firstStartPos->setValue(sysStatus.previewSettings.firstPos);
+        ui->spinBox_firstLen->setValue(sysStatus.previewSettings.firstLen);
+        ui->spinBox_secondStartPos->setValue(sysStatus.previewSettings.secondPos);
+        ui->spinBox_secondLen->setValue(sysStatus.previewSettings.secondLen);
+        ui->spinBox_sumThreshold->setValue(sysStatus.previewSettings.sumThreshold);
+        ui->spinBox_valueThreshold->setValue(sysStatus.previewSettings.valueThreshold);
 
         QString temp = QString("上次保存的参数:\nAPDHV : %1 \nPMT1HV : %2\nPMT2HV : %3\nPMT3HV : %4\n请依次设置")
                            .arg(QString::number(sysStatus.previewSettings.APDHV, 'f', 2))
