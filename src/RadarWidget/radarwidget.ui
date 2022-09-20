@@ -461,8 +461,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>259</width>
-               <height>142</height>
+               <width>227</width>
+               <height>113</height>
               </rect>
              </property>
              <attribute name="label">
@@ -537,8 +537,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>302</width>
-               <height>405</height>
+               <width>174</width>
+               <height>73</height>
               </rect>
              </property>
              <attribute name="label">
@@ -586,8 +586,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>166</width>
-               <height>144</height>
+               <width>171</width>
+               <height>117</height>
               </rect>
              </property>
              <attribute name="label">
@@ -842,9 +842,9 @@
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>-333</y>
-               <width>288</width>
-               <height>959</height>
+               <y>0</y>
+               <width>239</width>
+               <height>748</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1340,8 +1340,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>289</width>
-               <height>619</height>
+               <width>236</width>
+               <height>366</height>
               </rect>
              </property>
              <attribute name="label">
@@ -2181,16 +2181,6 @@
          <layout class="QVBoxLayout" name="verticalLayout_13" stretch="5,0,0,0">
           <item>
            <widget class="QTableWidget" name="tableWidget_fileList">
-            <row>
-             <property name="text">
-              <string>1</string>
-             </property>
-            </row>
-            <row>
-             <property name="text">
-              <string>2</string>
-             </property>
-            </row>
             <column>
              <property name="text">
               <string>文件名</string>
@@ -2221,16 +2211,6 @@
               <string>文件大小</string>
              </property>
             </column>
-            <item row="0" column="0">
-             <property name="text">
-              <string>aaa</string>
-             </property>
-            </item>
-            <item row="1" column="0">
-             <property name="text">
-              <string>ccc</string>
-             </property>
-            </item>
            </widget>
           </item>
           <item>

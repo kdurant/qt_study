@@ -137,7 +137,8 @@ void RadarWidget::uiConfig()
     ui->tableWidget_fileList->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableWidget_fileList->setContextMenuPolicy(Qt::ActionsContextMenu);  //设置为action菜单模式
     m_pActionCopy = new QAction(tr("读取当前文件"), ui->tableWidget_fileList);
-    ui->tableWidget_fileList->addAction(m_pActionCopy);
+    // ui->tableWidget_fileList->addAction(m_pActionCopy);
+    ui->progressBar_extractHardDiskData->hide();
 
     ui->groupBox_tempVolt->hide();
     ui->treeWidget_attitude->expandAll();
@@ -1248,7 +1249,6 @@ void RadarWidget::initSignalSlot()
         ui->progressBar_extractHardDiskData->setValue(startAddr);
         ui->tableWidget_fileList->setContextMenuPolicy(Qt::NoContextMenu);  //设置为action菜单模式
 
-
         QVector<QByteArray> data;
         QElapsedTimer       timer;
         timer.start();
@@ -1269,7 +1269,6 @@ void RadarWidget::initSignalSlot()
 
         file.close();
         ui->tableWidget_fileList->setContextMenuPolicy(Qt::ActionsContextMenu);  //设置为action菜单模式
-
     });
 
     connect(ui->btn_extractFileByNum, &QPushButton::pressed, this, [this]()
