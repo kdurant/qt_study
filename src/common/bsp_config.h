@@ -21,6 +21,7 @@ public:
         RADAR_TYPE_DRONE            = 0x04,
         RADAR_TYPE_WATER_GUARD      = 0x05,
         RADAR_TYPE_SECOND_INSTITUDE = 0x06,
+        RADAR_TYPE_DALIAN           = 0x08,
     };
 
     struct Gps_Info

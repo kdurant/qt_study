@@ -105,8 +105,13 @@ void RadarWidget::initParameter()
             sysStatus.radarType = BspConfig::RADAR_TYPE_SECOND_INSTITUDE;
             laserDriver         = new LaserType6();
             break;
+        case 8:
+            sysStatus.radarType = BspConfig::RADAR_TYPE_SECOND_INSTITUDE;
+            laserDriver         = new LaserType6();
+            break;
         default:
-            sysStatus.radarType = BspConfig::RADAR_TYPE_OCEAN;
+            sysStatus.radarType = BspConfig::RADAR_TYPE_DALIAN;
+            laserDriver         = new LaserType3();
             break;
     }
 
@@ -382,6 +387,33 @@ void RadarWidget::uiConfig()
         ui->doubleSpinBox_laserGreenCurrent->setValue(200);
         ui->spinBox_sampleRate->setValue(10);
     }
+    else if(sysStatus.radarType == BspConfig::RADAR_TYPE_DALIAN)
+    {
+        ui->lineEdit_radarType->setText("大连雷达");
+
+        ui->comboBox_laserFreq->addItem("5000");
+
+        QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
+        QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
+        ui->comboBox_DAChSelect->addItems(DA1List);
+        ui->comboBox_ADChSelect->addItems(AD1List);
+
+        QList<QTreeWidgetItem *> itemList;
+        itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
+        itemList.first()->setHidden(false);
+
+        ui->doubleSpinBox_laserGreenCurrent->setRange(0, 6000);
+        ui->doubleSpinBox_laserGreenCurrent->setValue(4000);
+
+        ui->label_pmtGateTime->show();
+        ui->label_pmtDelayTime->show();
+        ui->lineEdit_pmtDelayTime->show();
+        ui->lineEdit_pmtGateTime->show();
+
+        // ui->tabWidget_main->setTabEnabled(0, false);
+        ui->tabWidget_main->setTabEnabled(1, true);
+        ui->tabWidget_main->setCurrentIndex(1);
+    }
     else
     {
     }
@@ -414,6 +446,7 @@ void RadarWidget::uiConfig()
             break;
         case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
         case BspConfig::RADAR_TYPE_DRONE:
+        case BspConfig::RADAR_TYPE_DALIAN:
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流设定值(mA)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "电流实际值(mA)"));
             topItems.append(new QTreeWidgetItem(ui->treeWidget_laser, QStringList() << "外触发频率(Hz)"));
@@ -915,6 +948,7 @@ void RadarWidget::initSignalSlot()
        sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD ||
        sysStatus.radarType == BspConfig::RADAR_TYPE_LAND ||
        sysStatus.radarType == BspConfig::RADAR_TYPE_OCEAN ||
+       sysStatus.radarType == BspConfig::RADAR_TYPE_DALIAN ||
        sysStatus.radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE ||
        sysStatus.radarType == BspConfig::RADAR_TYPE_DRONE)
     {
@@ -943,6 +977,7 @@ void RadarWidget::initSignalSlot()
             case BspConfig::RADAR_TYPE_DRONE:
             case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
+            case BspConfig::RADAR_TYPE_DALIAN:
                 laserDriver->setFreq(ui->comboBox_laserFreq->currentText().toInt(nullptr));
                 status = laserDriver->open();
                 break;
@@ -1016,6 +1051,7 @@ void RadarWidget::initSignalSlot()
                 break;
 
             case BspConfig::RADAR_TYPE_DRONE:
+            case BspConfig::RADAR_TYPE_DALIAN:
                 // 上位机界面单位mA， 设置1000mA(0x3e8), 设置下去的值：100, 单位是0.01A，结果还是1000mA
                 status = laserDriver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()) / 10);
                 break;
@@ -1061,6 +1097,7 @@ void RadarWidget::initSignalSlot()
             case BspConfig::RADAR_TYPE_LAND:
             case BspConfig::RADAR_TYPE_OCEAN:
             case BspConfig::RADAR_TYPE_DRONE:
+            case BspConfig::RADAR_TYPE_DALIAN:
             case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
                 while(laserDriver->getStatus() != true)
                     ;
@@ -1489,6 +1526,7 @@ void RadarWidget::initSignalSlot()
             case BspConfig::RADAR_TYPE_DRONE:
             case BspConfig::RADAR_TYPE_WATER_GUARD:
             case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
+            case BspConfig::RADAR_TYPE_DALIAN:
                 if(chNum == 0)
                 {
                     digitValue       = static_cast<qint32>((analogValue - 8.208) / 0.113);
@@ -2198,6 +2236,7 @@ void RadarWidget::showLaserInfo(LaserType4::LaserInfo &info)
             itemList.first()->setText(1, QString::number(static_cast<int>(info.multiCrystalTemp)));
             break;
         case BspConfig::RADAR_TYPE_DRONE:
+        case BspConfig::RADAR_TYPE_DALIAN:
             itemList = ui->treeWidget_laser->findItems("电流设定值(mA)", Qt::MatchExactly);
             itemList.first()->setText(1, QString::number(info.expected_current * 10));
 

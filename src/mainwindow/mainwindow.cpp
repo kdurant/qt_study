@@ -101,14 +101,15 @@ void MainWindow::generateDefaultConfig()
     {
         QFile file("./config.ini");
         file.open(QIODevice::WriteOnly);
-        file.write("; RADAR_TPYE_OCEAN = 0x00,\r\n");
-        file.write("; RADAR_TPYE_LAND = 0x01,\r\n");
-        file.write("; RADAR_TPYE_760 = 0x02,\r\n");
-        file.write("; RADAR_TPYE_DOUBLE_WAVE = 0x03,\r\n");
-        file.write("; RADAR_TPYE_DRONE = 0x04,\r\n");
-        file.write("; RADAR_TPYE_WATER_GUARD = 0x05,\r\n");
-        file.write("; RADAR_TPYE_SECOND_INSTITUDE = 0x06,\r\n");
-        file.write("; RADAR_TPYE_BIG_FLARE = 0x07,\r\n");
+        file.write("; RADAR_TYPE_OCEAN = 0x00,\r\n");
+        file.write("; RADAR_TYPE_LAND = 0x01,\r\n");
+        file.write("; RADAR_TYPE_760 = 0x02,\r\n");
+        file.write("; RADAR_TYPE_DOUBLE_WAVE = 0x03,\r\n");
+        file.write("; RADAR_TYPE_DRONE = 0x04,\r\n");
+        file.write("; RADAR_TYPE_WATER_GUARD = 0x05,\r\n");
+        file.write("; RADAR_TYPE_SECOND_INSTITUDE = 0x06,\r\n");
+        file.write("; RADAR_TYPE_BIG_FLARE = 0x07,\r\n");
+        file.write("; RADAR_TYPE_DALIAN = 0x08,\r\n");
 
         file.write("\r\n[System]\r\n");
         file.write("; release or debug\r\n");
