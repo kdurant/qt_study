@@ -46,6 +46,7 @@
 #include "laserType6.h"
 
 #include "Epos2Controller.h"
+#include "Epos4Controller.h"
 #include "PusiController.h"
 
 #include "ReadHardDisk.h"

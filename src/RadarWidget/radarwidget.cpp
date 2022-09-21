@@ -117,6 +117,8 @@ void RadarWidget::initParameter()
 
     if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         motorController = new PusiController();
+    else if(sysStatus.radarType == BspConfig::RADAR_TYPE_DALIAN)
+        motorController = new EPOS4();
     else
         motorController = new EPOS2();
 

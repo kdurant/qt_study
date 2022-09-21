@@ -46,42 +46,39 @@ public slots:
         emit responseDataReady();
     }
 
-private:
-    QVector<uint8_t> frame;
-    QVector<uint8_t> packetControlWordFrame(uint16_t index, uint8_t nodeId, uint8_t subindex, uint16_t default_value)
-    {
-        frame.clear();
-        frame.append(0x90);
-        frame.append(0x02);
-        frame.append(0x68);
-        frame.append(0x04);
-        frame.append(nodeId);
-        frame.append((index >> 8) & 0xff);
-        frame.append((index >> 0) & 0xff);
-        frame.append(subindex);
-        frame.append((default_value >> 8) & 0xff);
-        frame.append((default_value >> 0) & 0xff);
-        frame.append(0x00);
-        frame.append(0x00);
-        return frame;
-    };
-
+public:
     quint16          calcFieldCRC(quint16* pDataArray, quint16 numberofWords);  // CRC-CCITT
-    QVector<uint8_t> WordPlusCRC(QVector<uint8_t>& word);
-    QByteArray       transmitWord2Byte(const QVector<uint8_t>& word);
+    QVector<quint16> WordPlusCRC(QVector<quint16> word);
+    QByteArray       transmitWord2Byte(QVector<quint16> word);
+    QVector<quint16> receiveByte2Word(QByteArray array);
 
+    bool setDisableState();
     bool clearFault();
     bool setShutdown();
     bool setEnableState();
     bool setHalt();
-    bool setProfileVelocityMode();
-    bool setMaxProfileVelocity(uint16_t value = 0x0df3);
-    bool setProfileVelocity(quint16 value);
-    bool setQuickstopDeceleration(quint16 value = 45);
-    bool setProfileAcceleration(quint16 value = 45);
-    bool setProfileDeceleration(quint16 value = 45);
+
+    bool       setProfileVelocityMode();
+    bool       setMaximalProfileVelocity(quint16 value);
+    bool       setQuickstopDeceleration(quint16 value);
+    bool       setProfileAcceleration(quint16 value);
+    bool       setProfileDeceleration(quint16 value);
+    QByteArray setMaxAcceleration(quint16 value);
+
+    bool setTargetVelocity(quint16 velocity);
+
+    QByteArray setPositionControlWord();
+    bool       setProfilePositionMode();
+    bool       setProfileVelocity(quint16 value);
+    bool       setTargetPosition(quint32 value);
+
+    bool setAbsolutePositionStartImmdeitaly(void);
 
     bool setHomeMode();
+    bool startHoming();
+    bool stopHoming();
+    bool setPositiveSpeed();
 };
 
 #endif
+
