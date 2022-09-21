@@ -207,6 +207,9 @@ void WaveExtract::getWaveFromWaterGuard(const QVector<quint8> &frameData)
 #endif
     }
     status = 0;
+
+    findPeakPosition(ret);
+
     emit formatedWaveReady(ret, status);
 #endif
 }
@@ -269,4 +272,20 @@ int WaveExtract::getSettingsFromWaterGuard(const QVector<quint8> &frameData, Wav
         return -1;
 
     return 0;
+}
+
+void WaveExtract::findPeakPosition(QVector<WaveformInfo> &data)
+{
+    int len = data.size();
+
+    auto peakPosition = [&](int i)
+    {
+        auto max            = std::max_element(std::begin(data[i].pos), std::end(data[i].pos));
+        data[i].maxPosition = std::distance(std::begin(data[i].pos), max);
+    };
+
+    for(int i = 0; i < len; i++)
+    {
+        peakPosition(i);
+    }
 }

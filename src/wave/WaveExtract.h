@@ -7,6 +7,7 @@
 #include "bsp_config.h"
 #include "common.h"
 #include <QtCore>
+#include <algorithm>
 
 class WaveExtract : public QObject
 {
@@ -19,9 +20,10 @@ public:
     // 如果有8个元素，0，2，4，6为采样数据的第一段；1，3，5，7为采样数据的第二段
     struct WaveformInfo
     {
-        quint32         motorCnt;  // 电机位置计数
-        QVector<double> pos;       // 相当于x轴
-        QVector<double> value;     // 相当于y轴
+        quint32         motorCnt;     // 电机位置计数
+        quint32         maxPosition;  // 波形峰值的位置
+        QVector<double> pos;          // 相当于x轴
+        QVector<double> value;        // 相当于y轴
     };
 
     struct WaveSettings
@@ -49,6 +51,8 @@ public:
     void getWaveFromLand(const QVector<quint8> &frameData);
     void getWaveFromWaterGuard(const QVector<quint8> &frameData);
     int  getSettingsFromWaterGuard(const QVector<quint8> &frameData, WaveSettings &settings);
+
+    void findPeakPosition(QVector<WaveExtract::WaveformInfo> &data);
 
     friend QDebug operator<<(QDebug debug, const WaveExtract &wave)
     {
