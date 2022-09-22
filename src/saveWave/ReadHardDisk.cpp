@@ -33,6 +33,8 @@ bool ReadHardDisk::readDiskUnit(qint32 unitAddr, QByteArray &ret)
     //        return false;
     //    }
 
+    if(allData.size() == 0)
+        return false;
     ret = allData[0];
     allData.clear();
     //    timer->stop();

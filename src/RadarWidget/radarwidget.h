@@ -125,6 +125,8 @@ public:
     void initFileListUi(void);
     void motorResponse(MotorController::MOTOR_STATUS status);
 
+    void displayColorMap(const QVector<WaveExtract::WaveformInfo> &allCh);
+
 protected:
     void closeEvent(QCloseEvent *event);
     void timerEvent(QTimerEvent *event);
@@ -203,7 +205,7 @@ private:
 
     QAction *m_pActionCopy;
 
-    ReadHardDisk       *ssd;
+    ReadHardDisk   *ssd;
     GpsInfo        *gps;
     AttitudeSensor *attitude;
 
