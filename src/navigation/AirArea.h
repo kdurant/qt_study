@@ -137,6 +137,7 @@ public:
     void setCoverageThreshold(double threshold)
     {
         COVERAGE_THRESHOLD = threshold;
+        m_matrixSize       = threshold;
     }
     void setScanAngle(double angle)
     {
@@ -269,6 +270,7 @@ public:
      * @param interval unit:m, 内部会将m转换为经纬度值,  应该和COVERAGE_THRESHOLD保持一致
      */
     void initSurveyArea(int interval);
+
     /**
      * @brief 根据航迹，初始化矩阵的内容
      * 要对已有航线进行拟合扩展，使用拟合后的航线集对矩阵元素进行标记

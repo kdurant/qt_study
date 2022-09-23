@@ -116,6 +116,7 @@ void MainWindow::generateDefaultConfig()
         file.write("mode=debug\r\n");
         file.write("number=2\r\n");
         file.write("mapThreshold=50\r\n");
+        file.write("planeSpeed=230\r\n");
 
         file.write("\r\n[Radar1]\r\n");
         file.write("radarType=0\r\n");

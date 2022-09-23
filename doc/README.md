@@ -54,3 +54,10 @@ setSurverArea --> SurveyArea
 setCurrentPos --> getCoveragePercent
 SurveyArea --> getCoveragePercent
 @enduml
+
+
+# 七连屿航线
+测区矩形区域大概为20km*10km
+20000/50*(10000/50) = 80000
+20000/50=400
+10000/50=200

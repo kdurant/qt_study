@@ -63,6 +63,13 @@ int AirArea::parseFile()
     QVector<double> lng_set;
     QVector<double> lat_set;
 
+    QSettings *configIni = new QSettings("./config.ini", QSettings::IniFormat);
+    int        planeSpeed;
+    if(!configIni->contains("System/planeSpeed"))
+        planeSpeed = 230;
+    else
+        planeSpeed = configIni->value("System/planeSpeed").toInt();
+
     while(!file.atEnd())
     {
         QByteArray        line = file.readLine();
@@ -86,7 +93,7 @@ int AirArea::parseFile()
         AirLine temp;
         temp.line   = QLineF(QPointF(lng_start, lat_start), QPointF(lng_end, lat_end));
         temp.height = height;
-        temp.speed  = 200;
+        temp.speed  = planeSpeed;
         m_surverArea.airLine.append(temp);
     }
 
@@ -199,7 +206,7 @@ double AirArea::__getCoveragePercent()
     temp = _getRadarScanExpression(m_currentPos);
 
     m_currentScanLine = temp.line;
-    if(m_isSavePoints)
+    if(m_isSavePoints)  // 保存实时扫描区域
     {
         QPolygonF poly;
         if(m_lastScanline.p1() != m_lastScanline.p2())
@@ -527,18 +534,26 @@ QVector<AirArea::LinePara> AirArea::interpolateAirLine(AirLine &airLine)
     QVector<AirArea::LinePara> ret;
 
     double   width = getScanWidth(airLine.height, m_scanAngle);  // 1. 获得雷达扫描宽度，可知需要新增多少条虚拟航线
-    int      num   = width / m_matrixSize - 2;
-    LinePara line  = getLinePara(airLine.line);  // 2. 获得规划航线的参数
+    int      num   = width / m_matrixSize - 1;
+    LinePara line;
+    if(num < 1)
+    {
+        line = getLinePara(airLine.line);
+        ret.append(line);
+        return ret;
+    }
+
+    line = getLinePara(airLine.line);  // 2. 获得规划航线的参数
 
     ret.append(line);
-    for(int i = 1; i < num / 2; i++)
+    for(int i = 0; i < num / 2; i++)
     {
-        LinePara temp = shiftLine(line, m_matrixSize * i);
+        LinePara temp = shiftLine(line, m_matrixSize * (i + 1));
         ret.append(temp);
     }
-    for(int i = 1; i < num / 2; i++)
+    for(int i = 0; i < num / 2; i++)
     {
-        LinePara temp = shiftLine(line, -m_matrixSize * i);
+        LinePara temp = shiftLine(line, -m_matrixSize * (i + 1));
         ret.append(temp);
     }
     return ret;
