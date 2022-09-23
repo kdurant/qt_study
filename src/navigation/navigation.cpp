@@ -38,8 +38,15 @@ void Navigation::initSignalSlot()
         ui->lineEdit_trackerFile->setText(trackerFile);
         m_designedAirArea.setFile(trackerFile);
         m_designedAirArea.parseFile();
-        m_designedAirArea.setCoverageThreshold(5);
-        m_designedAirArea.initSurveyArea(5);  // COVERAGE_THRESHOLD
+        QSettings *configIni = new QSettings("./config.ini", QSettings::IniFormat);
+        int        threshold = 50;
+        if(!configIni->contains("System/mapThreshold"))
+            QMessageBox::warning(this, "警告", "请在配置文件中设置mapThreshold参数, 默认值=50");
+        else
+            threshold = configIni->value("System/mapThreshold").toInt();
+
+        m_designedAirArea.setCoverageThreshold(threshold);
+        m_designedAirArea.initSurveyArea(threshold);  // COVERAGE_THRESHOLD
         m_designedAirArea.setSurverArea();
         //        m_designedAirArea.printSurverPoints();
 

@@ -381,6 +381,7 @@ void AirArea::setSurverArea()
                         m_surverArea.points[row][col].marker++;
                 }
             }
+            QCoreApplication::processEvents(QEventLoop::AllEvents);
         }
     }
     // 3. 计算有多少有效的测区
