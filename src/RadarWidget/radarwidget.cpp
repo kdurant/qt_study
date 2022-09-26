@@ -1755,7 +1755,7 @@ void RadarWidget::initSignalSlot()
                 if(index == 0)
                     ui->doubleSpinBox_DAValue->setRange(0, 250);
                 else
-                    ui->doubleSpinBox_DAValue->setRange(0, 4);
+                    ui->doubleSpinBox_DAValue->setRange(0, 5);
                 break;
 
             case BspConfig::RADAR_TYPE_LAND:
