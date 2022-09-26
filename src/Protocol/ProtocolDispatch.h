@@ -75,6 +75,7 @@ signals:
     void laserDataReady(const QByteArray &data);
     void motorDataReady(QByteArray &data);
     void attitudeDataReady(QByteArray &data);
+    void ms5837DataReady(QByteArray &data);
     void ADDataReady(QByteArray &data);
     void DADataReady(QByteArray &data);
 

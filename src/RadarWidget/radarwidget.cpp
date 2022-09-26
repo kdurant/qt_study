@@ -8,8 +8,8 @@
 #include "ui_navigation.h"
 
 RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
-    sysStatus(para),
     QWidget(parent),
+    sysStatus(para),
     ui(new Ui::RadarWidget),
     thread(new QThread())
 {
@@ -41,6 +41,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
 
     gps      = new GpsInfo();
     attitude = new AttitudeSensor;
+    ms5837   = new MS5837;
 
     waterGuard.startSaveBase    = false;
     waterGuard.isSavedBase      = false;
@@ -152,6 +153,8 @@ void RadarWidget::uiConfig()
     ui->treeWidget_attitude->resizeColumnToContents(0);
     QList<QTreeWidgetItem *> itemList;
     itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
+    itemList.first()->setHidden(true);
+    itemList = ui->treeWidget_attitude->findItems("深度传感器", Qt::MatchExactly);
     itemList.first()->setHidden(true);
 
     QRegExp           decReg("[0-9]+$");
@@ -402,6 +405,8 @@ void RadarWidget::uiConfig()
 
         QList<QTreeWidgetItem *> itemList;
         itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
+        itemList.first()->setHidden(false);
+        itemList = ui->treeWidget_attitude->findItems("深度传感器", Qt::MatchExactly);
         itemList.first()->setHidden(false);
 
         ui->doubleSpinBox_laserGreenCurrent->setRange(0, 6000);
@@ -1685,6 +1690,16 @@ void RadarWidget::initSignalSlot()
         itemList.first()->child(3)->child(1)->setText(1, QString::number(magneticField.y, 'g', 6));
         itemList.first()->child(3)->child(2)->setText(1, QString::number(magneticField.z, 'g', 6));
         itemList.first()->child(3)->child(3)->setText(1, QString::number(magneticField.temp, 'g', 6));
+    });
+
+    connect(dispatch, &ProtocolDispatch::ms5837DataReady, ms5837, &MS5837::parserFrame);
+    connect(ms5837, &MS5837::sendMS5837Result, this, [this](MS5837::Info info)
+            {
+        QList<QTreeWidgetItem *> itemList;
+
+        itemList = ui->treeWidget_attitude->findItems("深度传感器", Qt::MatchExactly);
+        itemList.first()->child(0)->setText(1, QString::number(info.temperature, 'g', 6));
+        itemList.first()->child(0)->setText(1, QString::number(info.depth, 'g', 6));
     });
 
     /*

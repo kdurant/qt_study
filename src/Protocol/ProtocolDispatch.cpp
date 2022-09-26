@@ -39,6 +39,10 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
             transmitFrame = data.mid(24, data_len);
             emit attitudeDataReady(transmitFrame);
             break;
+        case SlaveUp::MS5837_PENETRATE:
+            transmitFrame = data.mid(24, data_len);
+            emit ms5837DataReady(transmitFrame);
+            break;
 
         case SlaveUp::FLASH_DATA:
             emit flashDataReady(data);

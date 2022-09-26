@@ -125,6 +125,10 @@ public:
     {
         ATTITUDE_PENETRATE = 0x80600001,
     };
+    enum ms5837
+    {
+        MS5837_PENETRATE = 0x80600002,
+    };
     enum saveWave
     {
         RESPONSE_SSD_UNIT = 0x8000000A,  // 硬盘数据

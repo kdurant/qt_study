@@ -461,8 +461,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>227</width>
-               <height>113</height>
+               <width>290</width>
+               <height>144</height>
               </rect>
              </property>
              <attribute name="label">
@@ -537,8 +537,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>174</width>
-               <height>73</height>
+               <width>329</width>
+               <height>389</height>
               </rect>
              </property>
              <attribute name="label">
@@ -586,8 +586,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>171</width>
-               <height>117</height>
+               <width>218</width>
+               <height>146</height>
               </rect>
              </property>
              <attribute name="label">
@@ -843,8 +843,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>239</width>
-               <height>748</height>
+               <width>315</width>
+               <height>950</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1340,8 +1340,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>236</width>
-               <height>366</height>
+               <width>287</width>
+               <height>470</height>
               </rect>
              </property>
              <attribute name="label">
@@ -2693,6 +2693,21 @@
             <string/>
            </property>
           </item>
+         </item>
+        </item>
+        <item>
+         <property name="text">
+          <string>深度传感器</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>温度</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>深度</string>
+          </property>
          </item>
         </item>
        </widget>

@@ -52,6 +52,7 @@
 #include "ReadHardDisk.h"
 #include "gpsInfo.h"
 #include "AttitudeSensor.h"
+#include "ms5837.h"
 #include "qcustomplot.h"
 
 namespace Ui
@@ -208,6 +209,7 @@ private:
     ReadHardDisk   *ssd;
     GpsInfo        *gps;
     AttitudeSensor *attitude;
+    MS5837   *ms5837;
 
     QList<QCustomPlot *> widget2CustomPlotList;
     QList<QCPColorMap *> widget2QCPColorMapList;
