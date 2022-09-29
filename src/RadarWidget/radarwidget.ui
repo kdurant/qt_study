@@ -201,7 +201,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="tab_2">
          <attribute name="title">
@@ -461,8 +461,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>290</width>
-               <height>144</height>
+               <width>227</width>
+               <height>113</height>
               </rect>
              </property>
              <attribute name="label">
@@ -537,8 +537,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>329</width>
-               <height>389</height>
+               <width>291</width>
+               <height>513</height>
               </rect>
              </property>
              <attribute name="label">
@@ -586,8 +586,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>218</width>
-               <height>146</height>
+               <width>171</width>
+               <height>117</height>
               </rect>
              </property>
              <attribute name="label">
@@ -843,8 +843,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>315</width>
-               <height>950</height>
+               <width>274</width>
+               <height>748</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1248,7 +1248,7 @@
                  <item row="1" column="1">
                   <widget class="QSpinBox" name="spinBox_ssdAvailFileUnit">
                    <property name="maximum">
-                    <number>18841</number>
+                    <number>999999999</number>
                    </property>
                    <property name="singleStep">
                     <number>2</number>
@@ -1259,7 +1259,14 @@
                   </widget>
                  </item>
                  <item row="2" column="1">
-                  <widget class="QSpinBox" name="spinBox_ssdAvailDataUnit"/>
+                  <widget class="QSpinBox" name="spinBox_ssdAvailDataUnit">
+                   <property name="maximum">
+                    <number>999999999</number>
+                   </property>
+                   <property name="displayIntegerBase">
+                    <number>16</number>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -1340,8 +1347,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>287</width>
-               <height>470</height>
+               <width>236</width>
+               <height>366</height>
               </rect>
              </property>
              <attribute name="label">
