@@ -73,6 +73,11 @@ public:
     }
 
 signals:
+    /**
+     * @brief formatedWaveReady
+     * @param wave, 单次采样中所有通道的数据，最多有4*2 = 8
+     * @param status
+     */
     void formatedWaveReady(const QVector<WaveformInfo> &wave, int status);
 
 private:

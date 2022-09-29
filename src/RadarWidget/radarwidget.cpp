@@ -2472,6 +2472,7 @@ void RadarWidget::displayColorMap(const QVector<WaveExtract::WaveformInfo> &allC
             double  angle;
             angle = (allCh[0].motorCnt - start_range) * 360 / 163840.0;  // 角度偏移修正
 
+            // 通道0的波峰位置作为起点，截取后面的数据作为有效数据，这样波形相减时结果还好点
             int max_point_pos = Common::maxIndexInVector(allCh[0].value);
 
             QVector<WaveExtract::WaveformInfo> reduce;
