@@ -7,6 +7,12 @@ class EncodeProtocol():
         self.pck_num = (1).to_bytes(4, byteorder='big')
         self.checksum = b'\xaa\xbb\xcc\xdd'
 
+    def set_command(self, data):
+        self.command = data
+
+    def set_pck_num(self, data):
+        self.pck_num = (data).to_bytes(4, byteorder='big')
+
     def set_data(self, data):
         self.data_len = len(data).to_bytes(4, byteorder='big')
         self.data = data + (256 - len(data)) * b'\x00'
