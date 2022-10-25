@@ -70,10 +70,10 @@ bool LaserType2::setCurrent(quint16 current)
     if(isRecvNewData)
     {
         isRecvNewData = false;
-        if(recvData.contains(packet.mid(0, packet.length() - 2)))
+//        if(recvData.contains(packet.mid(0, packet.length() - 2)))
             return true;
-        else
-            return false;
+//        else
+//            return false;
     }
     return false;
 }
