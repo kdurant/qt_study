@@ -678,7 +678,7 @@ void RadarWidget::initSignalSlot()
     connect(dispatch, &ProtocolDispatch::onlineDataReady, onlineWaveForm, &OnlineWaveform::setNewData);
     connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data)
             {
-        if(ui->checkBox_saveDataToFile->isChecked())
+        if(binFile.isOpen())
             binFile.write(data);
         testCnt += data.size();
         sampleData.clear();
@@ -688,6 +688,18 @@ void RadarWidget::initSignalSlot()
     });
     connect(this, &RadarWidget::sampleDataReady, waveExtract, &WaveExtract::getWaveform);
     connect(waveExtract, &WaveExtract::formatedWaveReady, this, &RadarWidget::showSampleData);
+
+    connect(ui->checkBox_saveDataToFile, &QCheckBox::stateChanged, this, [this](int state)
+            {
+        if(state == Qt::Checked)
+        {
+            QString fileName = sysStatus.namePrefix + QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
+            binFile.setFileName(fileName + ".bin");
+            binFile.open(QIODevice::WriteOnly);
+        }
+        else
+            binFile.close();
+    });
 
     connect(this, &RadarWidget::sampleDataReady, this, [this](BspConfig::RadarType type, const QVector<quint8> &sampleData)
             {
@@ -1438,11 +1450,6 @@ void RadarWidget::initSignalSlot()
         if(ui->lineEdit_ssdStoreFileName->text().length() != 0)
             fileName.append(ui->lineEdit_ssdStoreFileName->text());
         ssd->setSaveFileName(fileUnit, fileName);
-        if(ui->checkBox_saveDataToFile->isChecked())
-        {
-            binFile.setFileName(fileName + ".bin");
-            binFile.open(QIODevice::WriteOnly);
-        }
 
         quint32 dataUnit = ui->spinBox_ssdAvailDataUnit->value();
         ssd->setSaveFileAddr(dataUnit);
@@ -1487,9 +1494,6 @@ void RadarWidget::initSignalSlot()
             QMessageBox::information(this, "information", "请先设置激光器采样频率");
         }
         // #endif
-
-        if(ui->checkBox_saveDataToFile->isChecked())
-            binFile.close();
     });
 
     /*
