@@ -1055,6 +1055,7 @@ void RadarWidget::initSignalSlot()
         {
             case BspConfig::RADAR_TYPE_LAND:
                 status                               = laserDriver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
+                status                               = laserDriver->setCurrent(static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value()));
                 sysStatus.previewSettings.laserPower = static_cast<int>(ui->doubleSpinBox_laserGreenCurrent->value());
                 break;
             case BspConfig::RADAR_TYPE_OCEAN:
