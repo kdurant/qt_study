@@ -91,6 +91,8 @@ void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
          * 陆地雷达第二段可能有四个小波形组成，每个小波形又由24个采样点构成
          * 连续的小波形可能有8个采样点是重复的
          */
+        // 最多有4个小段波形，每段24个点，相邻的两个小段波形可能会有2个点的数据重叠
+        int subWave = 0;
         while(isFrameHead(frameData, offset) == false)  // 说明后面还是波形数据
         {
             start_pos = (frameData.at(offset) << 24) +
@@ -99,24 +101,32 @@ void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
                         (frameData.at(offset + 3) << 0);
             offset += 4;
 
-            if(ch.pos.length() != 0 && (ch.pos.last() - 7) == start_pos)  // 两个小波形是连续的
+            // 当前小波形和上一个小波形的最后的8个点是重复的， 跳过这8个点不读
+            if(ch.pos.length() != 0 && (ch.pos.last() - 7) == start_pos)
             {
                 skipPointNum = 8;
                 offset += (skipPointNum * 2);
             }
             else
                 skipPointNum = 0;
+
+            // 提前判断要取的数据是否超过数组范围
+            if(offset + (24 - skipPointNum) *2 > frame_size)
+                return;
+
             for(int i = 0; i < 24 - skipPointNum; i++)
             {
                 ch.pos.append(i + skipPointNum + start_pos);
                 ch.value.append((frameData.at(offset + 0) << 8) + frameData.at(offset + 1));
                 offset += 2;
             }
-            if(offset == frameData.size())  // 数据分析结束
+            subWave++;
+
+            if(offset == frameData.size() || subWave == 4)  // 当数据结束时，保存数据
             {
-                if(ch.pos.length() != 0)
+                if(ch.pos.length() != 0)  // ch里面有了有效数据
                 {
-                    ret.append(ch);  // 数据保存好后，清除当前的缓存，准备重新接收
+                    ret.append(ch);
                 }
                 break;
             }
