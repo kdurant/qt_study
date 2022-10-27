@@ -39,9 +39,6 @@ class EncodeProtocol():
 
 import struct
 
-from numpy import double
-
-
 class NovatelFrame():
 
     def __init__(self):

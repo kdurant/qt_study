@@ -17,8 +17,8 @@
 #include <QFile>
 
 const QString logFilePath = "debug.log";
-bool          logToFile   = false;
-
+#ifdef QT_NO_DEBUG
+bool logToFile = true;
 void customMessageOutput(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
     QHash<QtMsgType, QString> msgLevelHash({
@@ -50,10 +50,13 @@ void customMessageOutput(QtMsgType type, const QMessageLogContext &context, cons
     if(type == QtFatalMsg)
         abort();
 }
+#endif
 
 int main(int argc, char *argv[])
 {
-    //    qInstallMessageHandler(customMessageOutput);
+#if QT_NO_DEBUG
+    qInstallMessageHandler(customMessageOutput);
+#endif
     QApplication a(argc, argv);
 
     //    QFile qss("../Radar/qss/basic.qss");
@@ -68,8 +71,8 @@ int main(int argc, char *argv[])
     font.setPixelSize(15);
     a.setFont(font);
 
-//        RadarWidget w;
-//        w.show();
+    //        RadarWidget w;
+    //        w.show();
     MainWindow w1;
     w1.show();
 
