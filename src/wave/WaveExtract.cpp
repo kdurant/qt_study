@@ -71,6 +71,12 @@ void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
         len = (frameData.at(offset) << 8) + frameData.at(offset + 1);
         offset += 2;
 
+        if(offset + len * 2 > frame_size)
+        {
+            qCritical() << "There is a error in first section.\n";
+            return;
+        }
+
         for(int i = 0; i < len; i++)
         {
             ch.pos.append(i + start_pos);
@@ -113,7 +119,7 @@ void WaveExtract::getWaveFromLand(const QVector<quint8> &frameData)
             // 提前判断要取的数据是否超过数组范围
             if(offset + (24 - skipPointNum) * 2 > frame_size)
             {
-                qCritical() << "There is a error in current frame.\n";
+                qCritical() << "There is a error in second section.\n";
                 return;
             }
 
