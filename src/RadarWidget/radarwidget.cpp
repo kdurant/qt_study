@@ -584,6 +584,24 @@ void RadarWidget::initSignalSlot()
 
         if(sysStatus.radarType == BspConfig::RADAR_TYPE_LAND)
         {
+            switch(sysStatus.previewSettings.laserFreq)
+            {
+                case 100000:
+                    if(sysStatus.previewSettings.sampleLen > 9000)
+                        QMessageBox::warning(NULL, "警告", "激光器频率=100Khz时，采样长度不大于9000.");
+                    break;
+                case 200000:
+                    if(sysStatus.previewSettings.sampleLen > 4500)
+                        QMessageBox::warning(NULL, "警告", "激光器频率=200Khz时，采样长度不大于4500.");
+                    break;
+                case 400000:
+                    if(sysStatus.previewSettings.sampleLen > 2000)
+                        QMessageBox::warning(NULL, "警告", "激光器频率=200Khz时，采样长度不大于2000.");
+                    break;
+                default:
+                    break;
+            }
+
             preview->setAlgoAPos((sysStatus.previewSettings.firstPos >> 3) << 3);
             preview->setAlgoALen((sysStatus.previewSettings.firstLen >> 3) << 3);
             preview->setAlgoBPos((sysStatus.previewSettings.secondPos >> 3) << 3);
