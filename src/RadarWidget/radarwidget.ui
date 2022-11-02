@@ -461,8 +461,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>227</width>
-               <height>113</height>
+               <width>290</width>
+               <height>144</height>
               </rect>
              </property>
              <attribute name="label">
@@ -537,8 +537,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>291</width>
-               <height>513</height>
+               <width>207</width>
+               <height>87</height>
               </rect>
              </property>
              <attribute name="label">
@@ -586,8 +586,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>171</width>
-               <height>117</height>
+               <width>218</width>
+               <height>146</height>
               </rect>
              </property>
              <attribute name="label">
@@ -843,8 +843,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>274</width>
-               <height>748</height>
+               <width>315</width>
+               <height>950</height>
               </rect>
              </property>
              <attribute name="label">
@@ -944,7 +944,7 @@
                  <item row="0" column="1">
                   <widget class="QSpinBox" name="spinBox_sampleLen">
                    <property name="minimum">
-                    <number>6000</number>
+                    <number>2000</number>
                    </property>
                    <property name="maximum">
                     <number>10000</number>
@@ -1347,8 +1347,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>236</width>
-               <height>366</height>
+               <width>287</width>
+               <height>470</height>
               </rect>
              </property>
              <attribute name="label">

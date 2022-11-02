@@ -319,6 +319,8 @@ void RadarWidget::uiConfig()
 
         ui->label_secondLen->hide();
         ui->spinBox_secondLen->hide();
+
+        timerRefreshUI = startTimer(20);
     }
     else if(sysStatus.radarType == BspConfig::RADAR_TYPE_DRONE)
     {

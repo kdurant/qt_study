@@ -34,6 +34,22 @@ void OnlineWaveform::getSampleData(QByteArray &frame)
                 fullSampleWave.append(frame.mid(FrameField::DATA_POS, data_len));
                 return;
             }
+#ifdef QT_DEBUG
+            uint32_t size = fullSampleWave.size();
+            switch(size)
+            {
+                case 284:
+                case 336:
+                case 388:
+                case 440:
+                case 492:
+                    break;
+                default:
+                    qDebug() << "fullSampleWave.size() = " << fullSampleWave.size();
+                    break;
+            }
+#endif
+
             emit fullSampleDataReady(fullSampleWave);
             fullSampleWave.clear();
         }
@@ -44,19 +60,5 @@ void OnlineWaveform::getSampleData(QByteArray &frame)
         if(fullSampleWave.length() != 0)
             fullSampleWave.append(frame.mid(FrameField::DATA_POS, data_len));
     }
-
-    //    if(curPckNumber < prePckNumber && prePckNumber != 0xffff)  // 已经接收到新一次采集的数据了
-    //    {
-    //        emit fullSampleDataReady(fullSampleWave);
-    //        fullSampleWave.clear();
-
-    //        data_len = ProtocolDispatch::getDataLen(frame);
-    //        fullSampleWave.append(frame.mid(FrameField::DATA_POS, data_len));
-    //    }
-    //    else  // 持续接收一次采样数据
-    //    {
-    //        data_len = ProtocolDispatch::getDataLen(frame);
-    //        fullSampleWave.append(frame.mid(FrameField::DATA_POS, data_len));
-    //    }
     prePckNumber = curPckNumber;
 }
