@@ -577,7 +577,13 @@ void RadarWidget::initSignalSlot()
 
         if(sysStatus.previewSettings.secondPos < sysStatus.previewSettings.firstPos + sysStatus.previewSettings.firstLen)
         {
-            QMessageBox::critical(NULL, "错误", "第二段起始位置需要小于第一段起始位置+第一段采样长度");
+            QMessageBox::critical(NULL, "参数配置错误", "第二段起始位置需要小于第一段起始位置+第一段采样长度");
+            return;
+        }
+
+        if(sysStatus.previewSettings.secondPos + sysStatus.previewSettings.secondLen >= sysStatus.previewSettings.sampleLen)
+        {
+            QMessageBox::critical(NULL, "参数配置错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
             return;
         }
 
@@ -631,11 +637,6 @@ void RadarWidget::initSignalSlot()
                 QMessageBox::warning(NULL, "警告", "两段采样长度之和尽量不要大于1000");
         }
 
-        if(sysStatus.previewSettings.secondPos + sysStatus.previewSettings.secondLen >= sysStatus.previewSettings.sampleLen)
-        {
-            QMessageBox::critical(NULL, "错误", "第二段起始位置+第二段采样长度需要小于总采样长度");
-            return;
-        }
         preview->setFirstPos(sysStatus.previewSettings.firstPos);
         preview->setFirstLen(sysStatus.previewSettings.firstLen);
         preview->setSecondPos(sysStatus.previewSettings.secondPos);
