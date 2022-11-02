@@ -15,7 +15,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = Radar
 TEMPLATE = app
 
-VERSION = 0.130
+VERSION = 0.131
 DEFINES += SOFT_VERSION=\"\\\"$$VERSION\\\"\"
 
 # DEFINES += DEBUG_WATER_GUARD
