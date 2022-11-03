@@ -135,8 +135,8 @@ void MainWindow::generateDefaultConfig()
 
         file.write("\r\n[Radar2]\r\n");
         file.write("radarType=1\r\n");
-        file.write("sampleLen=6000\r\n");
-        file.write("sampleRate=20000\r\n");
+        file.write("sampleLen=9000\r\n");
+        file.write("sampleRate=10000\r\n");
         file.write("firstStartPos=32\r\n");
         file.write("firstLen=100\r\n");
         file.write("secondStartPos=1000\r\n");

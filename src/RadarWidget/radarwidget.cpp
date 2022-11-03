@@ -1000,6 +1000,16 @@ void RadarWidget::initSignalSlot()
         connect(laserDriver, &LaserController::laserInfoReady, this, &RadarWidget::showLaserInfo);
     }
 
+    connect(ui->comboBox_laserFreq, &QComboBox::currentTextChanged, this, [this](const QString &text)
+            {
+        if(text == "100000")
+            ui->spinBox_sampleLen->setValue(9000);
+        else if(text == "200000")
+            ui->spinBox_sampleLen->setValue(4500);
+        else if(text == "400000")
+            ui->spinBox_sampleLen->setValue(2000);
+    });
+
     connect(ui->btn_laserOpen, &QPushButton::pressed, this, [this]()
             {
         bool                      status = false;
