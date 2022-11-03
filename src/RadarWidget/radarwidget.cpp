@@ -563,12 +563,15 @@ void RadarWidget::initSignalSlot()
 
     connect(ui->btn_setPreviewPara, &QPushButton::pressed, this, [this]()
             {
-        sysStatus.previewSettings.sampleLen      = ui->spinBox_sampleLen->value();
-        sysStatus.previewSettings.sampleRatio    = ui->spinBox_sampleRate->value();
-        sysStatus.previewSettings.firstPos       = ui->spinBox_firstStartPos->value();
-        sysStatus.previewSettings.firstLen       = ui->spinBox_firstLen->value();
-        sysStatus.previewSettings.secondPos      = ui->spinBox_secondStartPos->value();
-        sysStatus.previewSettings.secondLen      = ui->spinBox_secondLen->value();
+        sysStatus.previewSettings.sampleLen   = ui->spinBox_sampleLen->value();
+        sysStatus.previewSettings.sampleRatio = ui->spinBox_sampleRate->value();
+        sysStatus.previewSettings.firstPos    = ui->spinBox_firstStartPos->value();
+        sysStatus.previewSettings.firstLen    = ui->spinBox_firstLen->value();
+        sysStatus.previewSettings.secondPos   = ui->spinBox_secondStartPos->value();
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_LAND)
+            sysStatus.previewSettings.secondLen = 0;
+        else
+            sysStatus.previewSettings.secondLen = ui->spinBox_secondLen->value();
         sysStatus.previewSettings.sumThreshold   = ui->spinBox_sumThreshold->value();
         sysStatus.previewSettings.valueThreshold = ui->spinBox_valueThreshold->value();
         int     sampleDelay                      = ui->lineEdit_sampleDelay->text().toInt();
