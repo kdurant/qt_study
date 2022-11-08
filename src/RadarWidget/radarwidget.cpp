@@ -107,8 +107,8 @@ void RadarWidget::initParameter()
             laserDriver         = new LaserType6();
             break;
         case 8:
-            sysStatus.radarType = BspConfig::RADAR_TYPE_SECOND_INSTITUDE;
-            laserDriver         = new LaserType6();
+            sysStatus.radarType = BspConfig::RADAR_TYPE_DALIAN;
+            laserDriver         = new LaserType8();
             break;
         default:
             sysStatus.radarType = BspConfig::RADAR_TYPE_DALIAN;
@@ -1017,7 +1017,7 @@ void RadarWidget::initSignalSlot()
         if(ui->rbtn_triggerOutside->isChecked())
             mode = LaserController::OUT_SIDE;
         else
-            mode = LaserController::OUT_SIDE;
+            mode = LaserController::IN_SIDE;
         status = laserDriver->setMode(mode);
         if(status == false)
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");

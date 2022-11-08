@@ -1,18 +1,20 @@
 INCLUDEPATH += $$PWD
 
 HEADERS += $$PWD/LaserController.h \
-           $$PWD/LaserType1.h \
-           $$PWD/LaserType2.h \
-           $$PWD/LaserType3.h \
-           $$PWD/LaserType4.h \
-           $$PWD/LaserType5.h \
-           $$PWD/LaserType6.h \
+           $$PWD/laserType1.h \
+           $$PWD/laserType2.h \
+           $$PWD/laserType3.h \
+           $$PWD/laserType4.h \
+           $$PWD/laserType5.h \
+           $$PWD/laserType6.h \
+           $$PWD/laserType8.h \
 
 
 SOURCES += $$PWD/LaserController.cpp \
-           $$PWD/LaserType1.cpp \
-           $$PWD/LaserType2.cpp \
-           $$PWD/LaserType3.cpp \
-           $$PWD/LaserType4.cpp \
-           $$PWD/LaserType5.cpp \
-           $$PWD/LaserType6.cpp \
+           $$PWD/laserType1.cpp \
+           $$PWD/laserType2.cpp \
+           $$PWD/laserType3.cpp \
+           $$PWD/laserType4.cpp \
+           $$PWD/laserType5.cpp \
+           $$PWD/laserType6.cpp \
+           $$PWD/laserType8.cpp \

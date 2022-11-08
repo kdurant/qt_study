@@ -44,6 +44,7 @@
 #include "laserType4.h"
 #include "laserType5.h"
 #include "laserType6.h"
+#include "laserType8.h"
 
 #include "Epos2Controller.h"
 #include "Epos4Controller.h"
@@ -209,7 +210,7 @@ private:
     ReadHardDisk   *ssd;
     GpsInfo        *gps;
     AttitudeSensor *attitude;
-    MS5837   *ms5837;
+    MS5837         *ms5837;
 
     QList<QCustomPlot *> widget2CustomPlotList;
     QList<QCPColorMap *> widget2QCPColorMapList;

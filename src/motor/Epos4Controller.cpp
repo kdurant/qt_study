@@ -314,6 +314,7 @@ qint32 EPOS4::getActualVelocity(void)
     QVector<quint16> word{0x9002, 0x1002, 0x606C, 0x0100};
     word             = WordPlusCRC(word);
     QByteArray frame = transmitWord2Byte(word);
+    emit       sendDataReady(MasterSet::MOTOR_PENETRATE, frame.length(), frame);
 
     waitResponse(waitTime);
     if(recvData.length() == 0x0b)
@@ -370,6 +371,8 @@ qint32 EPOS4::getActualPosition(void)
     QVector<quint16> word{0x9002, 0x1002, 0x6064, 0x0100};
     word             = WordPlusCRC(word);
     QByteArray frame = transmitWord2Byte(word);
+
+    emit sendDataReady(MasterSet::MOTOR_PENETRATE, frame.length(), frame);
 
     waitResponse(waitTime);
     if(recvData.length() == 0x0b)
