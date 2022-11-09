@@ -73,7 +73,6 @@ bool Elmo::moveToHome()
         emit sendDataReady(MasterSet::MOTOR_PENETRATE, frame.length(), frame);
         waitResponse(waitTime);
     }
-
     return true;
 }
 

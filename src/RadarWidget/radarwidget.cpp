@@ -1740,7 +1740,7 @@ void RadarWidget::initSignalSlot()
 
         itemList = ui->treeWidget_attitude->findItems("深度传感器", Qt::MatchExactly);
         itemList.first()->child(0)->setText(1, QString::number(info.temperature, 'g', 6));
-        itemList.first()->child(0)->setText(1, QString::number(info.depth, 'g', 6));
+        itemList.first()->child(1)->setText(1, QString::number(info.depth, 'g', 6));
     });
 
     /*
