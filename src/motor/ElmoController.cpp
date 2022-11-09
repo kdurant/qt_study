@@ -55,7 +55,8 @@ bool Elmo::moveToHome()
         //        "CW=31\r",
         "MO=1\r",
         "OV[35]=-4\r",
-        "OV[37]=200000\r",
+        "OV[36]=100000\r",
+        "OV[37]=50000\r",
         "OF[7]=6\r",
         "OF[7]\r",
         "CW=15\r",
@@ -76,7 +77,7 @@ bool Elmo::moveToHome()
 // 1degree = 658
 MotorController::MOTOR_STATUS Elmo::moveToPosition(double postion, int direct)
 {
-    quint32 data = postion * 658;
+    quint32 data = postion * 657.857;
     QString s    = "PA=" + QString::number(data, 10) + '\r';
 
     QVector<QByteArray> flow = {
@@ -84,6 +85,8 @@ MotorController::MOTOR_STATUS Elmo::moveToPosition(double postion, int direct)
         "MO=1\r",
         "PA=921\r",
         "MR[1]=0\r",
+        "OV[36]=100000\r",
+        "OV[37]=50000\r",
         "BG\r",
     };
     flow[2] = s.toUtf8();
