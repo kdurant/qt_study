@@ -11,33 +11,38 @@ MotorController::MOTOR_STATUS Elmo::run(quint16 speed)
     return MOTOR_STATUS::SUCCESS;
 }
 
+// set velocity = 10, return 38996
 qint32 Elmo::getActualVelocity()
 {
     QByteArray frame = "VU\r";
     emit       sendDataReady(MasterSet::MOTOR_PENETRATE, frame.length(), frame);
-
-    if(recvData.contains("VU\r"))
+    waitResponse(waitTime);
+    uint32_t speed = 0;
+    if(recvData.contains("VU"))
     {
         int len = recvData.size();
         len -= 4;
-        return recvData.mid(3, len).toHex().toUInt();
+        speed = recvData.mid(3, len).toUInt();
+        speed /= 3900;
     }
-    return 0;
+    return speed;
 }
 
+// move 10degree, return 6578
 qint32 Elmo::getActualPosition()
 {
     QByteArray frame = "PU\r";
     emit       sendDataReady(MasterSet::MOTOR_PENETRATE, frame.length(), frame);
-
+    uint32_t   pos = 0;
     waitResponse(waitTime);
-    if(recvData.contains("PU\r"))
+    if(recvData.contains("PU"))
     {
         int len = recvData.size();
         len -= 4;
-        return recvData.mid(3, len).toHex().toUInt();
+        pos = recvData.mid(3, len).toUInt();
+        pos /= 657.857;
     }
-    return 0;
+    return pos;
 }
 
 bool Elmo::moveToHome()
@@ -85,8 +90,6 @@ MotorController::MOTOR_STATUS Elmo::moveToPosition(double postion, int direct)
         "MO=1\r",
         "PA=921\r",
         "MR[1]=0\r",
-        "OV[36]=100000\r",
-        "OV[37]=50000\r",
         "BG\r",
     };
     flow[2] = s.toUtf8();
