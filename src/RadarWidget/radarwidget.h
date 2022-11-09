@@ -49,6 +49,7 @@
 #include "Epos2Controller.h"
 #include "Epos4Controller.h"
 #include "PusiController.h"
+#include "ElmoController.h"
 
 #include "ReadHardDisk.h"
 #include "gpsInfo.h"

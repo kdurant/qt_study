@@ -197,8 +197,8 @@ QByteArray EPOS4::transmitWord2Byte(QVector<quint16> word)
     array[1] = (quint8)(word[0] & 0x00ff);
     for(int i = 1; i < word.length(); i++)
     {
-        array[2 * i]     = (quint8)(word[i] & 0x00ff);
-        array[2 * i + 1] = (quint8)((word[i] & 0xff00) >> 8);
+        array[2 * i]     = (quint8)((word[i] & 0xff00) >> 8);
+        array[2 * i + 1] = (quint8)(word[i] & 0x00ff);
     }
     return array;
 }

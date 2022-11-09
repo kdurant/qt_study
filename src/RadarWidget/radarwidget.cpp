@@ -119,7 +119,7 @@ void RadarWidget::initParameter()
     if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         motorController = new PusiController();
     else if(sysStatus.radarType == BspConfig::RADAR_TYPE_DALIAN)
-        motorController = new EPOS4();
+        motorController = new Elmo();
     else
         motorController = new EPOS2();
 
@@ -1198,6 +1198,7 @@ void RadarWidget::initSignalSlot()
         ui->btn_motorInit->setEnabled(false);
         motorResponse(motorController->init());
         ui->btn_motorInit->setEnabled(true);
+        ui->toolBox_motor->setCurrentIndex(1);
     });
 
     connect(ui->btn_motorMoveHome, &QPushButton::pressed, this, [this]()
@@ -1208,6 +1209,7 @@ void RadarWidget::initSignalSlot()
         else
             QMessageBox::warning(this, "warning", "电机通信异常");
         ui->btn_motorMoveHome->setEnabled(true);
+        ui->toolBox_motor->setCurrentIndex(0);
     });
 
     connect(ui->btn_motorMovePostion, &QPushButton::pressed, this, [this]()
