@@ -647,7 +647,7 @@ void RadarWidget::initSignalSlot()
         preview->setSumThreshold(sysStatus.previewSettings.sumThreshold);
         preview->setValueThreshold(sysStatus.previewSettings.valueThreshold);
 
-        if(sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD || sysStatus.radarType == BspConfig::RADAR_TYPE_DALIAN)
         {
             preview->setPmtDelayAndGateTime(pmtDelayTime, pmtGateTime);
         }
