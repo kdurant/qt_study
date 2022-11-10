@@ -43,6 +43,9 @@ void WaveExtract::getWaveform(BspConfig::RadarType   type,
         case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
             getWaveFromWaterGuard(frameData);
             break;
+        default:
+            getWaveFromWaterGuard(frameData);
+            break;
     }
 }
 

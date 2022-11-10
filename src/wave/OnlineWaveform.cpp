@@ -34,21 +34,21 @@ void OnlineWaveform::getSampleData(QByteArray &frame)
                 fullSampleWave.append(frame.mid(FrameField::DATA_POS, data_len));
                 return;
             }
-#ifdef QT_DEBUG
-            uint32_t size = fullSampleWave.size();
-            switch(size)
-            {
-                case 284:
-                case 336:
-                case 388:
-                case 440:
-                case 492:
-                    break;
-                default:
-                    qDebug() << "fullSampleWave.size() = " << fullSampleWave.size();
-                    break;
-            }
-#endif
+            //#ifdef QT_DEBUG
+            //            uint32_t size = fullSampleWave.size();
+            //            switch(size)
+            //            {
+            //                case 284:
+            //                case 336:
+            //                case 388:
+            //                case 440:
+            //                case 492:
+            //                    break;
+            //                default:
+            //                    qDebug() << "fullSampleWave.size() = " << fullSampleWave.size();
+            //                    break;
+            //            }
+            //#endif
 
             emit fullSampleDataReady(fullSampleWave);
             fullSampleWave.clear();

@@ -408,6 +408,7 @@ void RadarWidget::uiConfig()
         QList<QTreeWidgetItem *> itemList;
         itemList = ui->treeWidget_attitude->findItems("姿态传感器", Qt::MatchExactly);
         itemList.first()->setHidden(false);
+        itemList.first()->setExpanded(false);
         itemList = ui->treeWidget_attitude->findItems("深度传感器", Qt::MatchExactly);
         itemList.first()->setHidden(false);
 
