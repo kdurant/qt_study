@@ -1785,6 +1785,7 @@ void RadarWidget::initSignalSlot()
         switch(sysStatus.radarType)
         {
             case BspConfig::RADAR_TYPE_OCEAN:
+            case BspConfig::RADAR_TYPE_DALIAN:
                 if(index == 0)
                     ui->doubleSpinBox_DAValue->setRange(0, 250);
                 else
