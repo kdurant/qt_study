@@ -1143,29 +1143,6 @@ void RadarWidget::initSignalSlot()
             QMessageBox::warning(this, "警告", "指令流程异常，请尝试重新发送");
     });
 
-    connect(ui->btn_laserReadInfo, &QPushButton::pressed, this, [this]()
-            {
-        QList<QTreeWidgetItem *> itemList;
-        switch(sysStatus.radarType)
-        {
-            case BspConfig::RADAR_TYPE_LAND:
-            case BspConfig::RADAR_TYPE_OCEAN:
-            case BspConfig::RADAR_TYPE_DRONE:
-            case BspConfig::RADAR_TYPE_DALIAN:
-            case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
-                while(laserDriver->getStatus() != true)
-                    ;
-                break;
-            case BspConfig::RADAR_TYPE_WATER_GUARD:
-                break;
-            case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
-                //                laser6Driver->getInfo();
-                break;
-            default:
-                break;
-        }
-    });
-
     /*
      * 电机相关逻辑
      */
@@ -2130,6 +2107,28 @@ void RadarWidget::timerEvent(QTimerEvent *event)
         if(fpgaRadarType != -1 && fpgaRadarType != sysStatus.radarType)
         {
             // ui->statusBar->showMessage("底层配置的雷达类型(" + QString::number(fpgaRadarType) + ")与上位机配置的雷达类型不一致", 0);
+        }
+
+        if(ui->checkBox_readLaserStatus->isChecked())
+        {
+            switch(sysStatus.radarType)
+            {
+                case BspConfig::RADAR_TYPE_LAND:
+                case BspConfig::RADAR_TYPE_OCEAN:
+                case BspConfig::RADAR_TYPE_DRONE:
+                case BspConfig::RADAR_TYPE_DALIAN:
+                case BspConfig::RADAR_TYPE_DOUBLE_WAVE:
+                    while(laserDriver->getStatus() != true)
+                        ;
+                    break;
+                case BspConfig::RADAR_TYPE_WATER_GUARD:
+                    break;
+                case BspConfig::RADAR_TYPE_SECOND_INSTITUDE:
+                    //                laser6Driver->getInfo();
+                    break;
+                default:
+                    break;
+            }
         }
     }
     if(timerRefreshUI == event->timerId())
