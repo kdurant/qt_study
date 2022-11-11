@@ -665,7 +665,10 @@ void RadarWidget::initSignalSlot()
 
         if(ui->btn_sampleEnable->text() == "开始采集")
         {
-            status = 0x01010101;
+            if(sysStatus.radarType == BspConfig::RADAR_TYPE_LAND)
+                status = 0x00000101;
+            else
+                status = 0x01010101;
             ui->btn_sampleEnable->setText("停止采集");
         }
         else
