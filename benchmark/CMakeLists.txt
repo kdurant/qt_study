@@ -24,8 +24,8 @@ find_package(
   COMPONENTS Widgets
   REQUIRED)
 
-# add_executable(
-# ${projectName} benchmark.cpp ${CMAKE_SOURCE_DIR}/src/navigation/AirArea.cpp
+# add_executable( ${projectName} benchmark.cpp
+# ${CMAKE_SOURCE_DIR}/src/navigation/AirArea.cpp
 # ${CMAKE_SOURCE_DIR}/src/navigation/CoordCompute.cpp)
 # target_link_libraries(${projectName} Qt5::Core Qt5::Widgets Qt5::Gui
 # benchmark::benchmark)
@@ -34,4 +34,5 @@ find_package(
 # target_link_libraries(optimization Qt5::Core benchmark::benchmark)
 
 add_executable(bench_drawLineWithAngle bench_drawLineWithAngle.cpp)
-target_link_libraries(bench_drawLineWithAngle Qt5::Core benchmark::benchmark)
+target_link_libraries(bench_drawLineWithAngle Qt5::Core Qt5::Widgets Qt5::Gui
+                      benchmark::benchmark)
