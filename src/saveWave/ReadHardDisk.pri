@@ -1,7 +1,8 @@
 INCLUDEPATH += $$PWD
 
 HEADERS += \
-    $$PWD/ReadHardDisk.h
+    $$PWD/ReadHardDisk.h \
+    $$PWD/SavePreviewData.h
 
 SOURCES += \
-    $$PWD/ReadHardDisk.cpp
+    $$PWD/ReadHardDisk.cpp \

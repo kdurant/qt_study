@@ -37,6 +37,7 @@
 #include "WaveExtract.h"
 #include "ADControl.h"
 #include "DAControl.h"
+#include "SavePreviewData.h"
 
 #include "laserType1.h"
 #include "laserType2.h"
@@ -138,6 +139,7 @@ signals:
     void sampleDataReady(BspConfig::RadarType type, const QVector<quint8> &sampleData);
     void startPaserSampleNumber();
     void sendGpsInfo(BspConfig::Gps_Info &data);
+    void savePreviewData(QFile &file, const QByteArray &data);
 
 private slots:
 
@@ -168,7 +170,7 @@ private:
     QSettings       *configUser;
 
     QUdpSocket   *udpSocket;
-    QThread      *thread;
+    QThread      *miscThread;
     qint32        timer1s;
     QElapsedTimer elapsedTimer;
     qint32        timerRefreshUI;
@@ -192,6 +194,7 @@ private:
     bool              running;
     WaveExtract      *waveExtract;
     QVector<quint8>   sampleData;
+    SavePreviewData  *prevewData;
 
     DAControl *daDriver;
     ADControl *adDriver;

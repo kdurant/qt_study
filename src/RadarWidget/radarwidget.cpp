@@ -1,5 +1,6 @@
 #include "radarwidget.h"
 #include <qmessagebox.h>
+#include <qobjectdefs.h>
 #include <qsystemtrayicon.h>
 #include <algorithm>
 #include "bsp_config.h"
@@ -11,7 +12,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     QWidget(parent),
     sysStatus(para),
     ui(new Ui::RadarWidget),
-    thread(new QThread())
+    miscThread(new QThread())
 {
     ui->setupUi(this);
     uiConfig();
@@ -29,6 +30,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     offlineWaveForm = new OfflineWaveform();
     onlineWaveForm  = new OnlineWaveform();
     waveExtract     = new WaveExtract();
+    prevewData      = new SavePreviewData;
 
     daDriver = new DAControl();
     adDriver = new ADControl();
@@ -48,12 +50,13 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     waterGuard.state            = WaveExtract::MOTOR_CNT_STATE::IDLE;
     waterGuard.videoMemoryDepth = 180;
 
-    offlineWaveForm->moveToThread(thread);
+    offlineWaveForm->moveToThread(miscThread);
     connect(this, SIGNAL(startPaserSampleNumber()), offlineWaveForm, SLOT(getADsampleNumber()));
-    connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), thread, SLOT(quit()));
+    connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), miscThread, SLOT(quit()));
 
-    waveExtract->moveToThread(thread);
-    thread->start();
+    waveExtract->moveToThread(miscThread);
+    //    prevewData->moveToThread(miscThread);
+    miscThread->start();
 
     //    connect(waveShow, SIGNAL(finishSampleFrameNumber()), waveShow, SLOT(deleteLater()));
     //    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
@@ -704,10 +707,11 @@ void RadarWidget::initSignalSlot()
     });
 
     connect(dispatch, &ProtocolDispatch::onlineDataReady, onlineWaveForm, &OnlineWaveform::setNewData);
+    connect(this, &RadarWidget::savePreviewData, prevewData, &SavePreviewData::writeToFile);
     connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data)
             {
         if(binFile.isOpen())
-            binFile.write(data);
+            emit savePreviewData(binFile, data);
         testCnt += data.size();
         sampleData.clear();
         for(auto &i : data)  // 数据格式转换
