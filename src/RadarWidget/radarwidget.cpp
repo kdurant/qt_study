@@ -50,13 +50,12 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     waterGuard.state            = WaveExtract::MOTOR_CNT_STATE::IDLE;
     waterGuard.videoMemoryDepth = 180;
 
-    offlineWaveForm->moveToThread(miscThread);
-    connect(this, SIGNAL(startPaserSampleNumber()), offlineWaveForm, SLOT(getADsampleNumber()));
-    connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), miscThread, SLOT(quit()));
-
-    waveExtract->moveToThread(miscThread);
-    //    prevewData->moveToThread(miscThread);
     miscThread->start();
+    offlineWaveForm->moveToThread(miscThread);
+    waveExtract->moveToThread(miscThread);
+    prevewData->moveToThread(miscThread);
+
+    // connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), miscThread, SLOT(quit()));
 
     //    connect(waveShow, SIGNAL(finishSampleFrameNumber()), waveShow, SLOT(deleteLater()));
     //    connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
@@ -718,7 +717,6 @@ void RadarWidget::initSignalSlot()
             sampleData.append(i);
         emit sampleDataReady(sysStatus.radarType, sampleData);
     });
-    connect(this, &RadarWidget::sampleDataReady, waveExtract, &WaveExtract::getWaveform);
     connect(waveExtract, &WaveExtract::formatedWaveReady, this, &RadarWidget::showSampleData);
 
     connect(ui->checkBox_saveDataToFile, &QCheckBox::stateChanged, this, [this](int state)
@@ -747,6 +745,8 @@ void RadarWidget::initSignalSlot()
         fpgaVersion[3] = frame_head[86];
         fpgaVersion[4] = frame_head[87];
     });
+    connect(this, &RadarWidget::sampleDataReady, waveExtract, &WaveExtract::getWaveform);
+    connect(this, &RadarWidget::startPaserSampleNumber, offlineWaveForm, &OfflineWaveform::getADsampleNumber);
 
     /*
      * 图表控制相关逻辑
@@ -2168,7 +2168,8 @@ void RadarWidget::on_bt_showWave_clicked()
         {
             ui->spin_framePos->setValue(i);
             sampleData = offlineWaveForm->getFrameData(i);  // 耗时小于1ms
-            waveExtract->getWaveform(sysStatus.radarType, sampleData);
+            // waveExtract->getWaveform(sysStatus.radarType, sampleData);
+            emit sampleDataReady(sysStatus.radarType, sampleData);
 
             QByteArray frame_head;
             for(int i = 0; i < 88; i++)
