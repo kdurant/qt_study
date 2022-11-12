@@ -194,7 +194,7 @@ private:
     bool              running;
     WaveExtract      *waveExtract;
     QVector<quint8>   sampleData;
-    SavePreviewData  *prevewData;
+    SavePreviewData  *previewData;
 
     DAControl *daDriver;
     ADControl *adDriver;

@@ -30,7 +30,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     offlineWaveForm = new OfflineWaveform();
     onlineWaveForm  = new OnlineWaveform();
     waveExtract     = new WaveExtract();
-    prevewData      = new SavePreviewData;
+    previewData      = new SavePreviewData;
 
     daDriver = new DAControl();
     adDriver = new ADControl();
@@ -53,7 +53,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     miscThread->start();
     offlineWaveForm->moveToThread(miscThread);
     waveExtract->moveToThread(miscThread);
-    prevewData->moveToThread(miscThread);
+    previewData->moveToThread(miscThread);
 
     // connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), miscThread, SLOT(quit()));
 
@@ -706,7 +706,7 @@ void RadarWidget::initSignalSlot()
     });
 
     connect(dispatch, &ProtocolDispatch::onlineDataReady, onlineWaveForm, &OnlineWaveform::setNewData);
-    connect(this, &RadarWidget::savePreviewData, prevewData, &SavePreviewData::writeToFile);
+    connect(this, &RadarWidget::savePreviewData, previewData, &SavePreviewData::writeToFile);
     connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data)
             {
         if(binFile.isOpen())
