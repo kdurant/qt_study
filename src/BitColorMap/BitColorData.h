@@ -2,10 +2,22 @@
 #define BITCOLORDATA_H
 
 #include <QtCore>
+#include "WaveExtract.h"
 
+/**
+ * @brief 使用乒乓操作
+ */
 class BitColorData
 {
-private:
+public:
+    enum MOTOR_CNT_STATE
+    {
+        IDLE,
+        WAIT_START,  // 电机计数重新进入开始范围, 要开始保存数据了
+        SAVE_DATA,
+        WAIT_END,
+    };
+
 public:
     BitColorData() = default;
     /**
@@ -17,21 +29,21 @@ public:
      * @param end_angle, 如果起始角度和结束角度一致，则说明一圈数据都要保存
      *                   这时需要乒乓操作
      */
-    void config(int freq = 5000, int motorSpeed = 1200, int startAngle, int endAngle);
+    void config(int freq = 5000, int motorSpeed = 1200, double startAngle = 0, double endAngle = 180);
 
     /**
-     * @brief 在接下来的数据中寻找设定角度范围内的数据作为基准
-     *
-     * @param mode
+     * @brief 直接使用上一圈的数据作为基准
      */
-    void savingBase(bool mode);
+    void savingBase(void);
 
     /**
      * @brief
      *
      * @param allCh, 单次采样的所有通道数据
      */
-    void addData(const QVector<WaveExtract::WaveformInfo> &allCh);
+    void updateData(const QVector<WaveExtract::WaveformInfo> &allCh);
+
+    void generateDiff(QVector<QVector<WaveExtract::WaveformInfo>> &round);
 
 private:
     /**
@@ -41,12 +53,22 @@ private:
            如果有4个元素，说明没有第二段采样数据; 如果有8个元素，0，2，4，6为采样数据的第一段；1，3，5，7为采样数据的第二段
          QVector<QVector<WaveExtract::WaveformInfo>> base; 0-180度的全部数据
      */
+    uint32_t                                    sampleNumber{0};  // 根据外触发频率，保存相应次数的采样数据作为一圈数据
     QVector<QVector<WaveExtract::WaveformInfo>> base;
+    bool                                        tableTenisFlag{false};  // true, 往tableTenis1写数据; false , 往tableTenis2写数据
+    QVector<QVector<WaveExtract::WaveformInfo>> tableTennis1;
+    QVector<QVector<WaveExtract::WaveformInfo>> tableTennis2;
 
-    int  freq{0};
-    int  motorSpeed{0};
-    int  startAngle{0};
-    int  endAngle{0};
-    bool isSavedBase{false};  // 已经保存好了基准数据
+    QVector<QVector<WaveExtract::WaveformInfo>> diff;
+
+    uint32_t TICK_PER_CYCLE{163840};
+
+    uint32_t freq{0};
+    uint32_t motorSpeed{0};
+    uint32_t startAngle{0};
+    uint32_t endAngle{0};
+    bool     isSavedBase{false};  // 已经保存好了基准数据
+
+    MOTOR_CNT_STATE state{MOTOR_CNT_STATE::IDLE};
 };
 #endif
