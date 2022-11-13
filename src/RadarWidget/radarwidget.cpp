@@ -30,7 +30,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     offlineWaveForm = new OfflineWaveform();
     onlineWaveForm  = new OnlineWaveform();
     waveExtract     = new WaveExtract();
-    previewData      = new SavePreviewData;
+    previewData     = new SavePreviewData;
 
     daDriver = new DAControl();
     adDriver = new ADControl();
@@ -2235,7 +2235,7 @@ void RadarWidget::getSysInfo()
             }
             else if(i == 5)  //  数据采集状态
             {
-                if(sysParaInfo[i].value.contains(QByteArray(4, 0x01)))
+                if(sysParaInfo[i].value.contains(0x01))
                 {
                     itemList.first()->child(i)->setText(1, "正在采集");
                     sysStatus.adCaptureStatus = true;
