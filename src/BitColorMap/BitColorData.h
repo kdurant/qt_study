@@ -6,6 +6,8 @@
 
 /**
  * @brief 使用乒乓操作
+ *
+ *
  */
 class BitColorData
 {
@@ -16,6 +18,11 @@ public:
         WAIT_START,  // 电机计数重新进入开始范围, 要开始保存数据了
         SAVE_DATA,
         WAIT_END,
+    };
+    struct SingleSampleData
+    {
+        QVector<double> data;
+        double          angle;
     };
 
 public:
@@ -59,7 +66,13 @@ private:
     QVector<QVector<WaveExtract::WaveformInfo>> tableTennis1;
     QVector<QVector<WaveExtract::WaveformInfo>> tableTennis2;
 
-    QVector<QVector<WaveExtract::WaveformInfo>> diff;
+    /**
+     * @brief result
+     * struct _bit_map_, 一个角度，某个通道的数据
+     * QVector<struct _bit_map_>， 全部角度，某个通道的数据
+     * QVector<QVector<struct SingleSampleData>>， 4个通道，全部角度，某个通道的数据
+     */
+    QVector<QVector<struct SingleSampleData>> result;  // 一圈数据的计算结果
 
     uint32_t TICK_PER_CYCLE{163840};
 
