@@ -25,8 +25,10 @@ public:
     {
         APPLANIX_LEN     = 115,  // 第一个字节0x02
         NOVATEL_LEN      = 104,  // 前3个字节数据0xAA,0x44,0x13
-        DISK_DATA_LEN    = 88,   // 硬盘数据里包括帧头的GPS数据
-        PREVIEW_DATA_LEN = 64,   // 预览数据里的GPS数据
+        XW_GI7600_LEN    = 61,
+        XW_GI5610_LEN    = 68,
+        DISK_DATA_LEN    = 88,  // 硬盘数据里包括帧头的GPS数据
+        PREVIEW_DATA_LEN = 64,  // 预览数据里的GPS数据
     };
 
 private:
@@ -103,6 +105,12 @@ private:
         gps.roll    = Common::byteArrayToDouble(frame.mid(offset + 60, 8), 1);
         gps.pitch   = Common::byteArrayToDouble(frame.mid(offset + 68, 8), 1);
         gps.heading = Common::byteArrayToDouble(frame.mid(offset + 76, 8), 1);
+    }
+    void paserGpsData_XW_GI7600(const QByteArray &frame)
+    {
+    }
+    void paserGpsData_XW_GI5610(const QByteArray &frame)
+    {
     }
 signals:
     void gpsDataReady(BspConfig::Gps_Info &data);  // 接收到响应数据

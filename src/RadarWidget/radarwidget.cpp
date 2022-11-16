@@ -19,10 +19,11 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
 
     // setWindowState(Qt::WindowMaximized);
     qRegisterMetaType<BspConfig::RadarType>("BspConfig::RadarType");
-    qRegisterMetaType<WaveExtract::WaveformInfo>("WaveExtract::WaveformInfo");
-    qRegisterMetaType<QVector<quint8>>("QVector<quint8>");
-    qRegisterMetaType<QVector<WaveExtract::WaveformInfo>>("QVector<WaveformInfo>");
     qRegisterMetaType<BspConfig::Gps_Info>("BspConfig::Gps_Info");
+    qRegisterMetaType<WaveExtract::WaveformInfo>("WaveExtract::WaveformInfo");
+    qRegisterMetaType<QVector<WaveExtract::WaveformInfo>>("QVector<WaveformInfo>");
+    qRegisterMetaType<BitColorData::SingleSampleData>("BitColorData::SingleSampleData");
+    qRegisterMetaType<QVector<QVector<BitColorData::SingleSampleData>>>("QVector<QVector<BitColorData::SingleSampleData>>");
 
     dispatch        = new ProtocolDispatch();
     preview         = new AdSampleControll();
@@ -1910,6 +1911,11 @@ void RadarWidget::initSignalSlot()
                            .arg(QString::number(sysStatus.previewSettings.PMT3HV, 'f', 2));
 
         ui->plainTextEdit_DASetLog->appendPlainText(temp);
+    });
+
+    connect(bitColorData, &BitColorData::bitColorDataReady, this, [](QVector<QVector<BitColorData::SingleSampleData>> &result)
+            {
+        qDebug() << "bitColorDataReady";
     });
 }
 
