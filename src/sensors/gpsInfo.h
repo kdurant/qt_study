@@ -25,7 +25,7 @@ public:
     {
         APPLANIX_LEN     = 115,  // 第一个字节0x02
         NOVATEL_LEN      = 104,  // 前3个字节数据0xAA,0x44,0x13
-        XW_GI7600_LEN    = 61,
+        XW_GI7660_LEN    = 61,
         XW_GI5610_LEN    = 68,
         DISK_DATA_LEN    = 88,  // 硬盘数据里包括帧头的GPS数据
         PREVIEW_DATA_LEN = 64,  // 预览数据里的GPS数据
@@ -106,11 +106,60 @@ private:
         gps.pitch   = Common::byteArrayToDouble(frame.mid(offset + 68, 8), 1);
         gps.heading = Common::byteArrayToDouble(frame.mid(offset + 76, 8), 1);
     }
-    void paserGpsData_XW_GI7600(const QByteArray &frame)
+    void paserGpsData_XW_GI7660(const QByteArray &frame)
     {
+        int offset          = 3;
+        gps.week            = frame.mid(offset + 0, 2).toHex().toUInt(nullptr, 16);
+        gps.current_week_ms = frame.mid(offset + 2, 4).toHex().toUInt(nullptr, 16) * 0.001;
+        gps.latitude        = frame.mid(offset + 6, 4).toHex().toUInt(nullptr, 16) * 1e-7;
+        gps.longitude       = frame.mid(offset + 10, 4).toHex().toUInt(nullptr, 16) * 1e-7;
+        gps.altitude        = frame.mid(offset + 14, 4).toHex().toUInt(nullptr, 16) * 0.01;
+        gps.heading         = frame.mid(offset + 18, 2).toHex().toUInt(nullptr, 16) * 0.01;
+        gps.pitch           = frame.mid(offset + 20, 2).toHex().toUInt(nullptr, 16) * 0.01;
+        gps.roll            = frame.mid(offset + 22, 2).toHex().toUInt(nullptr, 16) * 0.01;
     }
+
+    /**
+     * @brief paserGpsData_XW_GI5610
+     * @param frame
+     * AA 76 35 BC 08 A8 52 DB 10
+     * gps_week = 0x08
+     */
     void paserGpsData_XW_GI5610(const QByteArray &frame)
     {
+        int        offset = 3;
+        QByteArray data   = frame.mid(offset + 0, 2);
+        std::reverse(data.begin(), data.end());
+        gps.week = data.toHex().toUInt(nullptr, 16);
+
+        data = frame.mid(offset + 2, 4);
+        std::reverse(data.begin(), data.end());
+        gps.current_week_ms = data.toHex().toUInt(nullptr, 16) * 0.001;
+
+        data = frame.mid(offset + 6, 4);
+        std::reverse(data.begin(), data.end());
+        gps.latitude = data.toHex().toUInt(nullptr, 16) * 1e-7;
+
+        data = frame.mid(offset + 10, 4);
+        std::reverse(data.begin(), data.end());
+        gps.longitude = data.toHex().toUInt(nullptr, 16) * 1e-7;
+
+        data = frame.mid(offset + 14, 4);
+        std::reverse(data.begin(), data.end());
+        gps.altitude = data.toHex().toUInt(nullptr, 16) * 0.001;
+
+        data = frame.mid(offset + 18, 2);
+        std::reverse(data.begin(), data.end());
+        gps.heading = data.toHex().toUInt(nullptr, 16) * 0.01;
+
+        data = frame.mid(offset + 20, 2);
+        std::reverse(data.begin(), data.end());
+        quint16 temp = data.toHex().toUInt(nullptr, 10);
+        gps.pitch    = static_cast<qint16>(temp) * 0.01;
+
+        data = frame.mid(offset + 22, 2);
+        std::reverse(data.begin(), data.end());
+        gps.roll = data.toHex().toInt(nullptr, 16) * 0.01;
     }
 signals:
     void gpsDataReady(BspConfig::Gps_Info &data);  // 接收到响应数据
@@ -118,33 +167,40 @@ signals:
 public slots:
     void parserGpsData(const QByteArray &frame)
     {
-        if(frame.size() == APPLANIX_LEN)
+        switch(frame.size())
         {
-            paserGpsData_APPLANIX(frame);
-        }
-        else if(frame.size() == NOVATEL_LEN)
-        {
-            paserGpsData_NOVATEL(frame);
-        }
-        else if(frame.size() == DISK_DATA_LEN)
-        {
-            gps.week = frame.mid(8, 4).toHex().toUInt(nullptr, 16);
-            // TODO: 不同GPS型号的秒都是占用8个字节，但数据类型不同，所以解析方式不同，后续完善
-            // NOVATEL GPS 秒存储方式：8字节，按照double类型
-            // XW-GI7660 GPS 秒存储方式：高4字节0，低4字节按照uint32类型处理, 比例系数0.001
-            // APPLANIX GPS 秒存储方式：高4字节0，低4字节按照uint32类型处理，单位ms
-            //            gps.current_week_ms = BspConfig::ba2int(frame.mid(12, 8));
-            if(frame.at(12) == 0 && frame.at(13) == 0)
-                gps.current_week_ms = Common::ba2int(frame.mid(16, 4), 1) / 1000;
-            else
-                gps.current_week_ms = Common::byteArrayToDouble(frame.mid(12, 8), 0);  // 无人机雷达GPS格式
-            gps.sub_time  = Common::ba2int(frame.mid(20, 4), 1);
-            gps.latitude  = Common::byteArrayToDouble(frame.mid(48, 8), 0);
-            gps.longitude = Common::byteArrayToDouble(frame.mid(56, 8), 0);
-            gps.altitude  = Common::byteArrayToDouble(frame.mid(64, 8), 0);
-            gps.heading   = Common::byteArrayToDouble(frame.mid(24, 8), 0);
-            gps.pitch     = Common::byteArrayToDouble(frame.mid(32, 8), 0);
-            gps.roll      = Common::byteArrayToDouble(frame.mid(40, 8), 0);
+            case APPLANIX_LEN:
+                paserGpsData_APPLANIX(frame);
+                break;
+            case NOVATEL_LEN:
+                paserGpsData_NOVATEL(frame);
+                break;
+            case XW_GI7660_LEN:
+                paserGpsData_XW_GI7660(frame);
+                break;
+            case XW_GI5610_LEN:
+                paserGpsData_XW_GI5610(frame);
+                break;
+                // 主要用于显示离线文件中的GPS信息
+            case DISK_DATA_LEN:
+                gps.week = frame.mid(8, 4).toHex().toUInt(nullptr, 16);
+                // TODO: 不同GPS型号的秒都是占用8个字节，但数据类型不同，所以解析方式不同，后续完善
+                // NOVATEL GPS 秒存储方式：8字节，按照double类型
+                // XW-GI7660 GPS 秒存储方式：高4字节0，低4字节按照uint32类型处理, 比例系数0.001
+                // APPLANIX GPS 秒存储方式：高4字节0，低4字节按照uint32类型处理，单位ms
+                //            gps.current_week_ms = BspConfig::ba2int(frame.mid(12, 8));
+                if(frame.at(12) == 0 && frame.at(13) == 0)
+                    gps.current_week_ms = Common::ba2int(frame.mid(16, 4), 1) / 1000;
+                else
+                    gps.current_week_ms = Common::byteArrayToDouble(frame.mid(12, 8), 0);  // 无人机雷达GPS格式
+                gps.sub_time  = Common::ba2int(frame.mid(20, 4), 1);
+                gps.latitude  = Common::byteArrayToDouble(frame.mid(48, 8), 0);
+                gps.longitude = Common::byteArrayToDouble(frame.mid(56, 8), 0);
+                gps.altitude  = Common::byteArrayToDouble(frame.mid(64, 8), 0);
+                gps.heading   = Common::byteArrayToDouble(frame.mid(24, 8), 0);
+                gps.pitch     = Common::byteArrayToDouble(frame.mid(32, 8), 0);
+                gps.roll      = Common::byteArrayToDouble(frame.mid(40, 8), 0);
+                break;
         }
         emit gpsDataReady(gps);
     }
