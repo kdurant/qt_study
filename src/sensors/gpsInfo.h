@@ -108,38 +108,22 @@ private:
     }
     void paserGpsData_XW_GI7660(const QByteArray &frame)
     {
-        int        offset = 3;
-        QByteArray data   = frame.mid(offset + 0, 2);
-        std::reverse(data.begin(), data.end());
-        gps.week = data.toHex().toUInt(nullptr, 16);
+        auto convert1 = [](const QByteArray &frame) -> uint32_t
+        {
+            QByteArray data = frame;
+            std::reverse(data.begin(), data.end());
+            return data.toHex().toUInt(nullptr, 16);
+        };
 
-        data = frame.mid(offset + 2, 4);
-        std::reverse(data.begin(), data.end());
-        gps.current_week_ms = data.toHex().toUInt(nullptr, 16) * 0.001;
-
-        data = frame.mid(offset + 18, 4);
-        std::reverse(data.begin(), data.end());
-        gps.latitude = data.toHex().toUInt(nullptr, 16) * 1e-7;
-
-        data = frame.mid(offset + 22, 4);
-        std::reverse(data.begin(), data.end());
-        gps.longitude = data.toHex().toUInt(nullptr, 16) * 1e-7;
-
-        data = frame.mid(offset + 26, 4);
-        std::reverse(data.begin(), data.end());
-        gps.altitude = data.toHex().toUInt(nullptr, 16) * 0.001;
-
-        data = frame.mid(offset + 6, 4);
-        //        std::reverse(data.begin(), data.end());
-        gps.heading = Common::byteArrayToFloat(data, 1);
-
-        data = frame.mid(offset + 10, 4);
-        //        std::reverse(data.begin(), data.end());
-        gps.pitch = Common::byteArrayToFloat(data, 1);
-
-        data = frame.mid(offset + 14, 4);
-        //        std::reverse(data.begin(), data.end());
-        gps.roll = Common::byteArrayToFloat(data, 1);
+        int offset          = 3;
+        gps.week            = convert1(frame.mid(offset + 0, 2));
+        gps.current_week_ms = convert1(frame.mid(offset + 2, 4)) * 0.001;
+        gps.latitude        = convert1(frame.mid(offset + 18, 4)) * 1e-7;
+        gps.longitude       = convert1(frame.mid(offset + 22, 4)) * 1e-7;
+        gps.altitude        = convert1(frame.mid(offset + 26, 4)) * 0.001;
+        gps.heading         = Common::byteArrayToFloat(frame.mid(offset + 6, 4), 1);
+        gps.pitch           = Common::byteArrayToFloat(frame.mid(offset + 10, 4), 1);
+        gps.roll            = Common::byteArrayToFloat(frame.mid(offset + 14, 4), 1);
     }
 
     /**
@@ -150,40 +134,23 @@ private:
      */
     void paserGpsData_XW_GI5610(const QByteArray &frame)
     {
-        int        offset = 3;
-        QByteArray data   = frame.mid(offset + 0, 2);
-        std::reverse(data.begin(), data.end());
-        gps.week = data.toHex().toUInt(nullptr, 16);
+        auto convert1 = [](const QByteArray &frame) -> uint32_t
+        {
+            QByteArray data = frame;
+            std::reverse(data.begin(), data.end());
+            return data.toHex().toUInt(nullptr, 16);
+        };
 
-        data = frame.mid(offset + 2, 4);
-        std::reverse(data.begin(), data.end());
-        gps.current_week_ms = data.toHex().toUInt(nullptr, 16) * 0.001;
-
-        data = frame.mid(offset + 6, 4);
-        std::reverse(data.begin(), data.end());
-        gps.latitude = data.toHex().toUInt(nullptr, 16) * 1e-7;
-
-        data = frame.mid(offset + 10, 4);
-        std::reverse(data.begin(), data.end());
-        gps.longitude = data.toHex().toUInt(nullptr, 16) * 1e-7;
-
-        data = frame.mid(offset + 14, 4);
-        std::reverse(data.begin(), data.end());
-        gps.altitude = data.toHex().toUInt(nullptr, 16) * 0.001;
-
-        data = frame.mid(offset + 18, 2);
-        std::reverse(data.begin(), data.end());
-        gps.heading = data.toHex().toUInt(nullptr, 16) * 0.01;
-
-        data = frame.mid(offset + 20, 2);
-        std::reverse(data.begin(), data.end());
-        quint16 temp = data.toHex().toUInt(nullptr, 16);
-        gps.pitch    = static_cast<qint16>(temp) * 0.01;
-
-        data = frame.mid(offset + 22, 2);
-        std::reverse(data.begin(), data.end());
-        temp     = data.toHex().toUInt(nullptr, 16);
-        gps.roll = static_cast<qint16>(temp) * 0.01;
+        int        offset   = 3;
+        QByteArray data     = frame.mid(offset + 0, 2);
+        gps.week            = convert1(frame.mid(offset + 0, 2));
+        gps.current_week_ms = convert1(frame.mid(offset + 2, 4)) * 0.001;
+        gps.latitude        = convert1(frame.mid(offset + 6, 4)) * 1e-7;
+        gps.longitude       = convert1(frame.mid(offset + 10, 4)) * 1e-7;
+        gps.altitude        = convert1(frame.mid(offset + 14, 4)) * 0.001;
+        gps.heading         = convert1(frame.mid(offset + 18, 2)) * 0.01;
+        gps.pitch           = static_cast<qint16>(convert1(frame.mid(offset + 20, 2))) * 0.01;
+        gps.roll            = static_cast<qint16>(convert1(frame.mid(offset + 22, 2))) * 0.01;
     }
 signals:
     void gpsDataReady(BspConfig::Gps_Info &data);  // 接收到响应数据
