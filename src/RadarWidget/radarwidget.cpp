@@ -1711,7 +1711,6 @@ void RadarWidget::initSignalSlot()
         itemList.first()->child(2)->child(0)->setText(1, QString::number(angular.x, 'g', 6));
         itemList.first()->child(2)->child(1)->setText(1, QString::number(angular.z, 'g', 6));
         itemList.first()->child(2)->child(2)->setText(1, QString::number(angular.y, 'g', 6));
-        itemList.first()->child(2)->child(3)->setText(1, QString::number(angular.temp, 'g', 6));
 
         itemList.first()->child(3)->child(0)->setText(1, QString::number(magneticField.x, 'g', 6));
         itemList.first()->child(3)->child(1)->setText(1, QString::number(magneticField.y, 'g', 6));
