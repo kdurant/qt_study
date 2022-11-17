@@ -154,12 +154,13 @@ private:
 
         data = frame.mid(offset + 20, 2);
         std::reverse(data.begin(), data.end());
-        quint16 temp = data.toHex().toUInt(nullptr, 10);
+        quint16 temp = data.toHex().toUInt(nullptr, 16);
         gps.pitch    = static_cast<qint16>(temp) * 0.01;
 
         data = frame.mid(offset + 22, 2);
         std::reverse(data.begin(), data.end());
-        gps.roll = data.toHex().toInt(nullptr, 16) * 0.01;
+        temp     = data.toHex().toUInt(nullptr, 16);
+        gps.roll = static_cast<qint16>(temp) * 0.01;
     }
 signals:
     void gpsDataReady(BspConfig::Gps_Info &data);  // 接收到响应数据
