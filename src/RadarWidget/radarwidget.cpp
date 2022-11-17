@@ -150,7 +150,6 @@ void RadarWidget::uiConfig()
     ui->tableWidget_fileList->setContextMenuPolicy(Qt::ActionsContextMenu);  //设置为action菜单模式
     m_pActionCopy = new QAction(tr("读取当前文件"), ui->tableWidget_fileList);
     // ui->tableWidget_fileList->addAction(m_pActionCopy);
-    ui->progressBar_extractHardDiskData->hide();
 
     ui->groupBox_tempVolt->hide();
     ui->treeWidget_attitude->expandAll();
@@ -202,6 +201,7 @@ void RadarWidget::uiConfig()
     ui->rbtn_GLH->setVisible(false);
     ui->rbtn_POLARIZATION->setVisible(false);
     ui->groupBox_12->setVisible(false);
+    ui->progressBar_extractHardDiskData->setVisible(false);
     ui->groupBox_7->setVisible(false);
 
     if(sysStatus.radarType == BspConfig::RADAR_TYPE_760)
@@ -404,8 +404,8 @@ void RadarWidget::uiConfig()
 
         ui->comboBox_laserFreq->addItem("5000");
 
-        QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
-        QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
+        QStringList DA1List{"     ", "PMT1HV门控", "PMT2HV", "       "};
+        QStringList AD1List{"        ", "        ", "PMT1HV门控 FB", "PMT2HV FB", "          "};
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_ADChSelect->addItems(AD1List);
 
@@ -427,6 +427,10 @@ void RadarWidget::uiConfig()
         // ui->tabWidget_main->setTabEnabled(0, false);
         ui->tabWidget_main->setTabEnabled(1, true);
         ui->tabWidget_main->setCurrentIndex(1);
+
+        ui->groupBox_12->setVisible(true);
+        ui->progressBar_extractHardDiskData->setVisible(true);
+        ui->groupBox_7->setVisible(true);
     }
     else
     {
@@ -1948,21 +1952,37 @@ void RadarWidget::plotLineSettings()
         // ui->sampleDataPlot->graph(i)->setScatterStyle(QCPScatterStyle::ssDisc);
     }
     ui->sampleDataPlot->graph(0)->setPen(QPen(Qt::red));
-    ui->sampleDataPlot->graph(0)->setName("通道0第一段");
     ui->sampleDataPlot->graph(1)->setPen(QPen(Qt::red));
-    ui->sampleDataPlot->graph(1)->setName("通道0第二段");
     ui->sampleDataPlot->graph(2)->setPen(QPen(Qt::blue));
-    ui->sampleDataPlot->graph(2)->setName("通道1第一段");
     ui->sampleDataPlot->graph(3)->setPen(QPen(Qt::blue));
-    ui->sampleDataPlot->graph(3)->setName("通道1第二段");
     ui->sampleDataPlot->graph(4)->setPen(QPen(Qt::green));
-    ui->sampleDataPlot->graph(4)->setName("通道2第一段");
     ui->sampleDataPlot->graph(5)->setPen(QPen(Qt::green));
-    ui->sampleDataPlot->graph(5)->setName("通道2第二段");
     ui->sampleDataPlot->graph(6)->setPen(QPen(Qt::black));
-    ui->sampleDataPlot->graph(6)->setName("通道3第一段");
     ui->sampleDataPlot->graph(7)->setPen(QPen(Qt::black));
-    ui->sampleDataPlot->graph(7)->setName("通道3第二段");
+
+    switch(sysStatus.radarType)
+    {
+        case BspConfig::RADAR_TYPE_DALIAN:
+            ui->sampleDataPlot->graph(0)->setName("PIN 第一段");
+            ui->sampleDataPlot->graph(1)->setName("PIN 第二段");
+            ui->sampleDataPlot->graph(2)->setName("PMT-门控 第一段");
+            ui->sampleDataPlot->graph(3)->setName("PMT-门控 第二段");
+            ui->sampleDataPlot->graph(4)->setName("PMT2高 第一段");
+            ui->sampleDataPlot->graph(5)->setName("PMT2高 第二段");
+            ui->sampleDataPlot->graph(6)->setName("PMT3低 第一段");
+            ui->sampleDataPlot->graph(7)->setName("PMT3低 第二段");
+            break;
+        default:
+            ui->sampleDataPlot->graph(0)->setName("通道0第一段");
+            ui->sampleDataPlot->graph(1)->setName("通道0第二段");
+            ui->sampleDataPlot->graph(2)->setName("通道1第一段");
+            ui->sampleDataPlot->graph(3)->setName("通道1第二段");
+            ui->sampleDataPlot->graph(4)->setName("通道2第一段");
+            ui->sampleDataPlot->graph(5)->setName("通道2第二段");
+            ui->sampleDataPlot->graph(6)->setName("通道3第一段");
+            ui->sampleDataPlot->graph(7)->setName("通道3第二段");
+            break;
+    }
 }
 
 void RadarWidget::plotColormapSettings()
