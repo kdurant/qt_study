@@ -1460,6 +1460,19 @@ void RadarWidget::initSignalSlot()
         file.close();
         ui->btn_extractFileByNum->setEnabled(true);
     });
+    connect(ui->btn_earseSSD, &QPushButton::pressed, this, [this]()
+            {
+        QMessageBox message(QMessageBox::NoIcon, "擦除已存储文件", "确定吗?擦除文件不可恢复", QMessageBox::Yes | QMessageBox::No, NULL);
+        if(message.exec() == QMessageBox::No)
+            return;
+        int row = ui->tableWidget_fileList->rowCount();
+        ui->btn_earseSSD->setEnabled(false);
+        for(int i = 0; i < row * 2; i++)
+        {
+            ssd->eraseDiskUnit(i);
+        }
+        ui->btn_earseSSD->setEnabled(true);
+    });
 
     connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this]()
             {

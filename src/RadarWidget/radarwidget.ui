@@ -2256,6 +2256,13 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QPushButton" name="btn_earseSSD">
+               <property name="text">
+                <string>擦除已存储文件</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>

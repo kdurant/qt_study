@@ -136,6 +136,16 @@ bool ReadHardDisk::inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo)
     return true;
 }
 
+bool ReadHardDisk::eraseDiskUnit(quint16 unitAddr)
+{
+    quint16 data = 0x0000;
+
+    QByteArray frame = BspConfig::int2ba((data << 16) | unitAddr);
+    emit       sendDataReady(MasterSet::WRITE_SSD_UNIT, 4, frame);
+    Common::sleepWithoutBlock(5);
+    return true;
+}
+
 /**
  * @brief 设置存储文件的名称
  * @return

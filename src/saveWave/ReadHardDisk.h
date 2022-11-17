@@ -6,6 +6,7 @@
 #include "ProtocolDispatch.h"
 #include "bsp_config.h"
 #include "protocol.h"
+#include "common.h"
 
 /*
  * SSD 16KBytes存储空间为一个基本unit
@@ -47,6 +48,7 @@ public:
     bool                 readDiskUnit(qint32 unitAddr, QByteArray &ret);
     QVector<QByteArray> &readDiskUnit(qint32 unitAddr);
     bool                 inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo);
+    bool                 eraseDiskUnit(quint16 unitAddr);
 
     QList<ValidFileInfo> getFileList(void)
     {
