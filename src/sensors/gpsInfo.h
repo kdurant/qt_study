@@ -108,15 +108,38 @@ private:
     }
     void paserGpsData_XW_GI7660(const QByteArray &frame)
     {
-        int offset          = 3;
-        gps.week            = frame.mid(offset + 0, 2).toHex().toUInt(nullptr, 16);
-        gps.current_week_ms = frame.mid(offset + 2, 4).toHex().toUInt(nullptr, 16) * 0.001;
-        gps.latitude        = frame.mid(offset + 6, 4).toHex().toUInt(nullptr, 16) * 1e-7;
-        gps.longitude       = frame.mid(offset + 10, 4).toHex().toUInt(nullptr, 16) * 1e-7;
-        gps.altitude        = frame.mid(offset + 14, 4).toHex().toUInt(nullptr, 16) * 0.01;
-        gps.heading         = frame.mid(offset + 18, 2).toHex().toUInt(nullptr, 16) * 0.01;
-        gps.pitch           = frame.mid(offset + 20, 2).toHex().toUInt(nullptr, 16) * 0.01;
-        gps.roll            = frame.mid(offset + 22, 2).toHex().toUInt(nullptr, 16) * 0.01;
+        int        offset = 3;
+        QByteArray data   = frame.mid(offset + 0, 2);
+        std::reverse(data.begin(), data.end());
+        gps.week = data.toHex().toUInt(nullptr, 16);
+
+        data = frame.mid(offset + 2, 4);
+        std::reverse(data.begin(), data.end());
+        gps.current_week_ms = data.toHex().toUInt(nullptr, 16) * 0.001;
+
+        data = frame.mid(offset + 18, 4);
+        std::reverse(data.begin(), data.end());
+        gps.latitude = data.toHex().toUInt(nullptr, 16) * 1e-7;
+
+        data = frame.mid(offset + 22, 4);
+        std::reverse(data.begin(), data.end());
+        gps.longitude = data.toHex().toUInt(nullptr, 16) * 1e-7;
+
+        data = frame.mid(offset + 26, 4);
+        std::reverse(data.begin(), data.end());
+        gps.altitude = data.toHex().toUInt(nullptr, 16) * 0.001;
+
+        data = frame.mid(offset + 6, 4);
+        //        std::reverse(data.begin(), data.end());
+        gps.heading = Common::byteArrayToFloat(data, 1);
+
+        data = frame.mid(offset + 10, 4);
+        //        std::reverse(data.begin(), data.end());
+        gps.pitch = Common::byteArrayToFloat(data, 1);
+
+        data = frame.mid(offset + 14, 4);
+        //        std::reverse(data.begin(), data.end());
+        gps.roll = Common::byteArrayToFloat(data, 1);
     }
 
     /**

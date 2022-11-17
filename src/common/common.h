@@ -370,7 +370,7 @@ public:
     static double byteArrayToFloat(const QByteArray &bytes, int mode)
     {
         assert(bytes.size() == 4);
-        double  fltRtn = 0.f;
+        float   fltRtn = 0.f;
         uint8_t cTmp[4];
         if(mode == 1)
         {
