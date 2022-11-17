@@ -20,6 +20,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     // setWindowState(Qt::WindowMaximized);
     qRegisterMetaType<BspConfig::RadarType>("BspConfig::RadarType");
     qRegisterMetaType<BspConfig::Gps_Info>("BspConfig::Gps_Info");
+    qRegisterMetaType<QVector<quint8>>("QVector<quint8>");
     qRegisterMetaType<WaveExtract::WaveformInfo>("WaveExtract::WaveformInfo");
     qRegisterMetaType<QVector<WaveExtract::WaveformInfo>>("QVector<WaveformInfo>");
     qRegisterMetaType<BitColorData::SingleSampleData>("BitColorData::SingleSampleData");
