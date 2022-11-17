@@ -3,6 +3,7 @@
 #include "LaserController.h"
 #include "bsp_config.h"
 #include "protocol.h"
+#include "common.h"
 
 // 和无人机雷达协议类似，读取状态成功，但关闭激光器失败
 // 将lasertype3的代码fork一份修改
@@ -43,6 +44,9 @@ public:
     bool setFreq(qint32 freq) override;
     bool setCurrent(quint16 current) override;
     bool getStatus(void) override;
+    int reset(void) override;
+
+    void setFactoryMode(void);
 
 public slots:
     void setNewData(const QByteArray& data) override

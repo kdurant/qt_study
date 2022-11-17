@@ -1064,12 +1064,13 @@ void RadarWidget::initSignalSlot()
 
     connect(ui->btn_laserReset, &QPushButton::pressed, this, [this]()
             {
-        int status;
+        int status = 0;
         if(laserDriver == nullptr)
         {
             QMessageBox::information(this, "消息", "激光器不支持此功能");
             return;
         }
+        status = laserDriver->reset();
 
         switch(status)
         {
