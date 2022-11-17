@@ -74,6 +74,10 @@ public:
         STORE_FILE_STATUS   = 0x0000000B,  //使能存储：数据00 00 00 01 停止存储：数据 00 00 00 00
 
         READ_SSD_UNIT = 0x00000018,
+
+        // Data[31:16]擦除后的数据 Data[15:00]需要擦除的Unit序号
+        // 例如，发送数据0xaaaa0013，将 0x0013unit地址全部重写为0xaaaa
+        WRITE_SSD_UNIT = 0x00000031,
     };
 
     enum misc

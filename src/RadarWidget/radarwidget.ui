@@ -543,8 +543,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>207</width>
-               <height>87</height>
+               <width>329</width>
+               <height>389</height>
               </rect>
              </property>
              <attribute name="label">
@@ -2256,6 +2256,13 @@
                </property>
               </widget>
              </item>
+             <item>
+              <widget class="QPushButton" name="btn_earseSSD">
+               <property name="text">
+                <string>擦除已存储文件</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
           </item>
@@ -2653,14 +2660,6 @@
           <item>
            <property name="text">
             <string>z轴</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>温度</string>
            </property>
            <property name="text">
             <string/>

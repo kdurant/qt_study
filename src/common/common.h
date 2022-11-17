@@ -367,6 +367,25 @@ public:
         return fltRtn;
     }
 
+    static double byteArrayToFloat(const QByteArray &bytes, int mode)
+    {
+        assert(bytes.size() == 4);
+        float   fltRtn = 0.f;
+        uint8_t cTmp[4];
+        if(mode == 1)
+        {
+            for(int i = 0; i < 4; i++)
+                cTmp[i] = bytes[i];
+        }
+        else
+        {
+            for(int i = 0; i < 4; i++)
+                cTmp[i] = bytes[3 - i];
+        }
+        memcpy(&fltRtn, cTmp, 4);
+        return fltRtn;
+    }
+
     /**
      * @brief 返回数组中最大元素的索引
      * 如果数组中有多于一个最大值，返回第一个最大值的索引

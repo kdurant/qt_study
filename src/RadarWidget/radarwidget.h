@@ -57,6 +57,7 @@
 #include "AttitudeSensor.h"
 #include "ms5837.h"
 #include "qcustomplot.h"
+#include "BitColorData.h"
 
 namespace Ui
 {
@@ -232,7 +233,8 @@ private:
 
     int colorMap_X_max{512};
 
-    WaterGuard waterGuard;
+    WaterGuard    waterGuard;
+    BitColorData *bitColorData{new BitColorData};
 
     qint64           testCnt{0};
     QVector<QString> testString;

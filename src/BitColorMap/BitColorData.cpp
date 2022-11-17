@@ -35,6 +35,7 @@ void BitColorData::updateData(const QVector<WaveExtract::WaveformInfo> &allCh)
     tableTenisFlag ? tableTennis1.append(allCh) : tableTennis2.append(allCh);
 
     sampleNumber++;
+    // 保存到一圈数据后，和基准数据比较
     if(sampleNumber == static_cast<uint32_t>(freq / (motorSpeed / 60) - 1))
     {
         sampleNumber   = 0;
@@ -84,4 +85,5 @@ void BitColorData::generateDiff(QVector<QVector<WaveExtract::WaveformInfo>> &rou
             result[ch][cycle].angle = angle;
         }
     }
+    emit bitColorDataReady(result);
 }

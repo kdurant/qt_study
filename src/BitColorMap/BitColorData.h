@@ -2,6 +2,7 @@
 #define BITCOLORDATA_H
 
 #include <QtCore>
+#include <QObject>
 #include "WaveExtract.h"
 
 /**
@@ -9,8 +10,10 @@
  *
  *
  */
-class BitColorData
+class BitColorData : public QObject
 {
+    Q_OBJECT
+
 public:
     enum MOTOR_CNT_STATE
     {
@@ -52,6 +55,9 @@ public:
 
     void generateDiff(QVector<QVector<WaveExtract::WaveformInfo>> &round);
 
+signals:
+    void bitColorDataReady(QVector<QVector<SingleSampleData>> &result);
+
 private:
     /**
      * @brief
@@ -67,12 +73,12 @@ private:
     QVector<QVector<WaveExtract::WaveformInfo>> tableTennis2;
 
     /**
-     * @brief result
+     * @brief 数据处理的结果，以通道为单位，一个通道在一圈的采样结果放在一起
      * struct _bit_map_, 一个角度，某个通道的数据
      * QVector<struct _bit_map_>， 全部角度，某个通道的数据
      * QVector<QVector<struct SingleSampleData>>， 4个通道，全部角度，某个通道的数据
      */
-    QVector<QVector<struct SingleSampleData>> result;  // 一圈数据的计算结果
+    QVector<QVector<SingleSampleData>> result;  // 一圈数据的计算结果
 
     uint32_t TICK_PER_CYCLE{163840};
 

@@ -19,10 +19,12 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
 
     // setWindowState(Qt::WindowMaximized);
     qRegisterMetaType<BspConfig::RadarType>("BspConfig::RadarType");
-    qRegisterMetaType<WaveExtract::WaveformInfo>("WaveExtract::WaveformInfo");
-    qRegisterMetaType<QVector<quint8>>("QVector<quint8>");
-    qRegisterMetaType<QVector<WaveExtract::WaveformInfo>>("QVector<WaveformInfo>");
     qRegisterMetaType<BspConfig::Gps_Info>("BspConfig::Gps_Info");
+    qRegisterMetaType<QVector<quint8>>("QVector<quint8>");
+    qRegisterMetaType<WaveExtract::WaveformInfo>("WaveExtract::WaveformInfo");
+    qRegisterMetaType<QVector<WaveExtract::WaveformInfo>>("QVector<WaveformInfo>");
+    qRegisterMetaType<BitColorData::SingleSampleData>("BitColorData::SingleSampleData");
+    qRegisterMetaType<QVector<QVector<BitColorData::SingleSampleData>>>("QVector<QVector<BitColorData::SingleSampleData>>");
 
     dispatch        = new ProtocolDispatch();
     preview         = new AdSampleControll();
@@ -148,7 +150,6 @@ void RadarWidget::uiConfig()
     ui->tableWidget_fileList->setContextMenuPolicy(Qt::ActionsContextMenu);  //设置为action菜单模式
     m_pActionCopy = new QAction(tr("读取当前文件"), ui->tableWidget_fileList);
     // ui->tableWidget_fileList->addAction(m_pActionCopy);
-    ui->progressBar_extractHardDiskData->hide();
 
     ui->groupBox_tempVolt->hide();
     ui->treeWidget_attitude->expandAll();
@@ -200,6 +201,7 @@ void RadarWidget::uiConfig()
     ui->rbtn_GLH->setVisible(false);
     ui->rbtn_POLARIZATION->setVisible(false);
     ui->groupBox_12->setVisible(false);
+    ui->progressBar_extractHardDiskData->setVisible(false);
     ui->groupBox_7->setVisible(false);
 
     if(sysStatus.radarType == BspConfig::RADAR_TYPE_760)
@@ -402,8 +404,8 @@ void RadarWidget::uiConfig()
 
         ui->comboBox_laserFreq->addItem("5000");
 
-        QStringList DA1List{"APDHV", "PMT1HV", "PMT2HV", "PMT3HV"};
-        QStringList AD1List{"APD TEMP", "APDHV FB", "PMT1HV FB", "PMT2HV FB", "PMT3HV FB"};
+        QStringList DA1List{"     ", "PMT1HV门控", "PMT2HV", "       "};
+        QStringList AD1List{"        ", "        ", "PMT1HV门控 FB", "PMT2HV FB", "          "};
         ui->comboBox_DAChSelect->addItems(DA1List);
         ui->comboBox_ADChSelect->addItems(AD1List);
 
@@ -425,6 +427,10 @@ void RadarWidget::uiConfig()
         // ui->tabWidget_main->setTabEnabled(0, false);
         ui->tabWidget_main->setTabEnabled(1, true);
         ui->tabWidget_main->setCurrentIndex(1);
+
+        ui->groupBox_12->setVisible(true);
+        ui->progressBar_extractHardDiskData->setVisible(true);
+        ui->groupBox_7->setVisible(true);
     }
     else
     {
@@ -1455,6 +1461,19 @@ void RadarWidget::initSignalSlot()
         file.close();
         ui->btn_extractFileByNum->setEnabled(true);
     });
+    connect(ui->btn_earseSSD, &QPushButton::pressed, this, [this]()
+            {
+        QMessageBox message(QMessageBox::NoIcon, "擦除已存储文件", "确定吗?擦除文件不可恢复", QMessageBox::Yes | QMessageBox::No, NULL);
+        if(message.exec() == QMessageBox::No)
+            return;
+        int row = ui->tableWidget_fileList->rowCount();
+        ui->btn_earseSSD->setEnabled(false);
+        for(int i = 0; i < row * 2; i++)
+        {
+            ssd->eraseDiskUnit(i);
+        }
+        ui->btn_earseSSD->setEnabled(true);
+    });
 
     connect(ui->btn_ssdEnableStore, &QPushButton::pressed, this, [this]()
             {
@@ -1711,7 +1730,6 @@ void RadarWidget::initSignalSlot()
         itemList.first()->child(2)->child(0)->setText(1, QString::number(angular.x, 'g', 6));
         itemList.first()->child(2)->child(1)->setText(1, QString::number(angular.z, 'g', 6));
         itemList.first()->child(2)->child(2)->setText(1, QString::number(angular.y, 'g', 6));
-        itemList.first()->child(2)->child(3)->setText(1, QString::number(angular.temp, 'g', 6));
 
         itemList.first()->child(3)->child(0)->setText(1, QString::number(magneticField.x, 'g', 6));
         itemList.first()->child(3)->child(1)->setText(1, QString::number(magneticField.y, 'g', 6));
@@ -1912,6 +1930,11 @@ void RadarWidget::initSignalSlot()
 
         ui->plainTextEdit_DASetLog->appendPlainText(temp);
     });
+
+    connect(bitColorData, &BitColorData::bitColorDataReady, this, [](QVector<QVector<BitColorData::SingleSampleData>> &result)
+            {
+        qDebug() << "bitColorDataReady";
+    });
 }
 
 void RadarWidget::plotLineSettings()
@@ -1943,21 +1966,37 @@ void RadarWidget::plotLineSettings()
         // ui->sampleDataPlot->graph(i)->setScatterStyle(QCPScatterStyle::ssDisc);
     }
     ui->sampleDataPlot->graph(0)->setPen(QPen(Qt::red));
-    ui->sampleDataPlot->graph(0)->setName("通道0第一段");
     ui->sampleDataPlot->graph(1)->setPen(QPen(Qt::red));
-    ui->sampleDataPlot->graph(1)->setName("通道0第二段");
     ui->sampleDataPlot->graph(2)->setPen(QPen(Qt::blue));
-    ui->sampleDataPlot->graph(2)->setName("通道1第一段");
     ui->sampleDataPlot->graph(3)->setPen(QPen(Qt::blue));
-    ui->sampleDataPlot->graph(3)->setName("通道1第二段");
     ui->sampleDataPlot->graph(4)->setPen(QPen(Qt::green));
-    ui->sampleDataPlot->graph(4)->setName("通道2第一段");
     ui->sampleDataPlot->graph(5)->setPen(QPen(Qt::green));
-    ui->sampleDataPlot->graph(5)->setName("通道2第二段");
     ui->sampleDataPlot->graph(6)->setPen(QPen(Qt::black));
-    ui->sampleDataPlot->graph(6)->setName("通道3第一段");
     ui->sampleDataPlot->graph(7)->setPen(QPen(Qt::black));
-    ui->sampleDataPlot->graph(7)->setName("通道3第二段");
+
+    switch(sysStatus.radarType)
+    {
+        case BspConfig::RADAR_TYPE_DALIAN:
+            ui->sampleDataPlot->graph(0)->setName("PIN 第一段");
+            ui->sampleDataPlot->graph(1)->setName("PIN 第二段");
+            ui->sampleDataPlot->graph(2)->setName("PMT-门控 第一段");
+            ui->sampleDataPlot->graph(3)->setName("PMT-门控 第二段");
+            ui->sampleDataPlot->graph(4)->setName("PMT2高 第一段");
+            ui->sampleDataPlot->graph(5)->setName("PMT2高 第二段");
+            ui->sampleDataPlot->graph(6)->setName("PMT3低 第一段");
+            ui->sampleDataPlot->graph(7)->setName("PMT3低 第二段");
+            break;
+        default:
+            ui->sampleDataPlot->graph(0)->setName("通道0第一段");
+            ui->sampleDataPlot->graph(1)->setName("通道0第二段");
+            ui->sampleDataPlot->graph(2)->setName("通道1第一段");
+            ui->sampleDataPlot->graph(3)->setName("通道1第二段");
+            ui->sampleDataPlot->graph(4)->setName("通道2第一段");
+            ui->sampleDataPlot->graph(5)->setName("通道2第二段");
+            ui->sampleDataPlot->graph(6)->setName("通道3第一段");
+            ui->sampleDataPlot->graph(7)->setName("通道3第二段");
+            break;
+    }
 }
 
 void RadarWidget::plotColormapSettings()

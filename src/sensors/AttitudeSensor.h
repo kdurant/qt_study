@@ -61,10 +61,9 @@ private:
     {
         AttitudeInfo data;
 
-        data.x    = ((static_cast<quint8>(frame[3]) << 8) | static_cast<quint8>(frame[2])) / 32768.0 * 180;
-        data.y    = ((static_cast<quint8>(frame[5]) << 8) | static_cast<quint8>(frame[4])) / 32768.0 * 180;
-        data.z    = ((static_cast<quint8>(frame[7]) << 8) | static_cast<quint8>(frame[6])) / 32768.0 * 180;
-        data.temp = ((static_cast<quint8>(frame[9]) << 8) | static_cast<quint8>(frame[8])) / 100.0;
+        data.x = ((static_cast<quint8>(frame[3]) << 8) | static_cast<quint8>(frame[2])) / 32768.0 * 180;
+        data.y = ((static_cast<quint8>(frame[5]) << 8) | static_cast<quint8>(frame[4])) / 32768.0 * 180;
+        data.z = ((static_cast<quint8>(frame[7]) << 8) | static_cast<quint8>(frame[6])) / 32768.0 * 180;
 
         return data;
     }
@@ -76,9 +75,9 @@ private:
     AttitudeInfo getMagneticField(QByteArray& frame)
     {
         AttitudeInfo data;
-        data.x    = ((static_cast<quint8>(frame[3]) << 8) | static_cast<quint8>(frame[2])) / 32768.0 * 180;
-        data.y    = ((static_cast<quint8>(frame[5]) << 8) | static_cast<quint8>(frame[4])) / 32768.0 * 180;
-        data.z    = ((static_cast<quint8>(frame[7]) << 8) | static_cast<quint8>(frame[6])) / 32768.0 * 180;
+        data.x    = ((static_cast<quint8>(frame[3]) << 8) | static_cast<quint8>(frame[2]));
+        data.y    = ((static_cast<quint8>(frame[5]) << 8) | static_cast<quint8>(frame[4]));
+        data.z    = ((static_cast<quint8>(frame[7]) << 8) | static_cast<quint8>(frame[6]));
         data.temp = ((static_cast<quint8>(frame[9]) << 8) | static_cast<quint8>(frame[8])) / 100.0;
 
         return data;
