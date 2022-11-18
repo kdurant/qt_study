@@ -201,7 +201,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="tab_2">
          <attribute name="title">
@@ -467,8 +467,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>290</width>
-               <height>144</height>
+               <width>227</width>
+               <height>113</height>
               </rect>
              </property>
              <attribute name="label">
@@ -543,8 +543,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>329</width>
-               <height>389</height>
+               <width>291</width>
+               <height>513</height>
               </rect>
              </property>
              <attribute name="label">
@@ -592,8 +592,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>218</width>
-               <height>146</height>
+               <width>171</width>
+               <height>117</height>
               </rect>
              </property>
              <attribute name="label">
@@ -849,8 +849,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>315</width>
-               <height>950</height>
+               <width>274</width>
+               <height>748</height>
               </rect>
              </property>
              <attribute name="label">
@@ -907,7 +907,7 @@
                  <item row="1" column="1">
                   <widget class="QSpinBox" name="spinBox_sampleRate">
                    <property name="minimum">
-                    <number>10</number>
+                    <number>1</number>
                    </property>
                    <property name="maximum">
                     <number>100000</number>
@@ -1353,8 +1353,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>287</width>
-               <height>470</height>
+               <width>236</width>
+               <height>366</height>
               </rect>
              </property>
              <attribute name="label">

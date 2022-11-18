@@ -715,8 +715,7 @@ void RadarWidget::initSignalSlot()
     connect(this, &RadarWidget::savePreviewData, previewData, &SavePreviewData::writeToFile);
     connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data)
             {
-        if(binFile.isOpen())
-            emit savePreviewData(binFile, data);
+        emit savePreviewData(data);
         testCnt += data.size();
         sampleData.clear();
         for(auto &i : data)  // 数据格式转换
@@ -730,11 +729,20 @@ void RadarWidget::initSignalSlot()
         if(state == Qt::Checked)
         {
             QString fileName = sysStatus.namePrefix + QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
-            binFile.setFileName(fileName + ".bin");
-            binFile.open(QIODevice::WriteOnly);
+            previewData->openFile(fileName);
+            testCnt = 0;
+            elapsedTimer.start();
         }
         else
-            binFile.close();
+        {
+            previewData->closeFile();
+
+            int     t    = elapsedTimer.elapsed();
+            QString info = QString("存储数据时间(ms): %1\n全部存储数据量(kBytes): %4")
+                               .arg(t)
+                               .arg(testCnt / 1024);
+            QMessageBox::information(NULL, "information", info);
+        }
     });
 
     connect(this, &RadarWidget::sampleDataReady, this, [this](BspConfig::RadarType type, const QVector<quint8> &sampleData)
@@ -1496,12 +1504,6 @@ void RadarWidget::initSignalSlot()
         quint32 dataUnit = ui->spinBox_ssdAvailDataUnit->value();
         ssd->setSaveFileAddr(dataUnit);
         ssd->enableStoreFile(0x01);
-
-        // #ifdef DEBUG_WATER_GUARD
-        testCnt = 0;
-        elapsedTimer.start();
-        qDebug() << "start: testCnt = " << testCnt;
-        // #endif
     });
 
     connect(ui->btn_ssdDisableStore, &QPushButton::pressed, this, [this]()
@@ -1512,30 +1514,6 @@ void RadarWidget::initSignalSlot()
         ui->btn_ssdEnableStore->setEnabled(true);
         ssd->enableStoreFile(0x00);
         //
-        // #ifdef DEBUG_WATER_GUARD
-        qDebug() << "stop: testCnt = " << testCnt;
-        int t = elapsedTimer.elapsed();
-        if(sysStatus.previewSettings.laserFreq > 0)
-        {
-            double   period_s     = 1.0 / sysStatus.previewSettings.laserFreq;
-            uint64_t sample_count = (t / 1000.0) / period_s;
-
-            int      bytes_of_sample = 128 + 8 * sysStatus.previewSettings.firstLen + 4 * (sysStatus.previewSettings.secondLen * 2 + 4);
-            uint64_t bytes_of_total  = sample_count * bytes_of_sample;
-            // int totalBytes = (t / 1000.0) * (sysStatus.previewSettings.laserFreq / sysStatus.previewSettings.sampleRatio) * (128 + sysStatus.previewSettings.firstLen * 8);
-
-            QString info = QString("存储数据时间(ms): %1\n采样波形次数:%2\n单次采样数据量(byte): %3\n理论全部存储数据量(bytes): %4")
-                               .arg(t)
-                               .arg(sample_count)
-                               .arg(bytes_of_sample)
-                               .arg(bytes_of_total);
-            QMessageBox::information(NULL, "information", info);
-        }
-        else
-        {
-            QMessageBox::information(this, "information", "请先设置激光器采样频率");
-        }
-        // #endif
     });
 
     /*

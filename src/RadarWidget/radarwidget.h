@@ -140,7 +140,7 @@ signals:
     void sampleDataReady(BspConfig::RadarType type, const QVector<quint8> &sampleData);
     void startPaserSampleNumber();
     void sendGpsInfo(BspConfig::Gps_Info &data);
-    void savePreviewData(QFile &file, const QByteArray &data);
+    void savePreviewData(const QByteArray &data);
 
 private slots:
 
@@ -183,8 +183,6 @@ private:
 
     int8_t     fpgaRadarType{-1};  // fpga 内部固化的雷达类型
     QByteArray fpgaVersion{5, char(0)};
-
-    QFile binFile;
 
     ProtocolDispatch *dispatch;
 
