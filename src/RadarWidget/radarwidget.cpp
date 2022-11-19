@@ -32,7 +32,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     offlineWaveForm = new OfflineWaveform();
     onlineWaveForm  = new OnlineWaveform();
     waveExtract     = new WaveExtract();
-    previewData     = new SavePreviewData;
+    savePreviewData     = new SavePreviewData;
 
     daDriver = new DAControl();
     adDriver = new ADControl();
@@ -55,7 +55,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     miscThread->start();
     offlineWaveForm->moveToThread(miscThread);
     waveExtract->moveToThread(miscThread);
-    previewData->moveToThread(miscThread);
+    savePreviewData->moveToThread(miscThread);
 
     // connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), miscThread, SLOT(quit()));
 
@@ -712,10 +712,10 @@ void RadarWidget::initSignalSlot()
     });
 
     connect(dispatch, &ProtocolDispatch::onlineDataReady, onlineWaveForm, &OnlineWaveform::setNewData);
-    connect(this, &RadarWidget::savePreviewData, previewData, &SavePreviewData::writeToFile);
+    connect(this, &RadarWidget::previewdDataReady, savePreviewData, &SavePreviewData::writeToFile);
     connect(onlineWaveForm, &OnlineWaveform::fullSampleDataReady, this, [this](QByteArray &data)
             {
-        emit savePreviewData(data);
+        emit previewdDataReady(data);
         testCnt += data.size();
         sampleData.clear();
         for(auto &i : data)  // 数据格式转换
@@ -729,13 +729,13 @@ void RadarWidget::initSignalSlot()
         if(state == Qt::Checked)
         {
             QString fileName = sysStatus.namePrefix + QDateTime::currentDateTime().toString("yyyy_MM_dd_hh_mm_ss");
-            previewData->openFile(fileName);
+            savePreviewData->openFile(fileName);
             testCnt = 0;
             elapsedTimer.start();
         }
         else
         {
-            previewData->closeFile();
+            savePreviewData->closeFile();
 
             int     t    = elapsedTimer.elapsed();
             QString info = QString("存储数据时间(ms): %1\n全部存储数据量(kBytes): %4")

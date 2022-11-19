@@ -140,7 +140,7 @@ signals:
     void sampleDataReady(BspConfig::RadarType type, const QVector<quint8> &sampleData);
     void startPaserSampleNumber();
     void sendGpsInfo(BspConfig::Gps_Info &data);
-    void savePreviewData(const QByteArray &data);
+    void previewdDataReady(const QByteArray &data);
 
 private slots:
 
@@ -193,7 +193,7 @@ private:
     bool              running;
     WaveExtract      *waveExtract;
     QVector<quint8>   sampleData;
-    SavePreviewData  *previewData;
+    SavePreviewData  *savePreviewData;
 
     DAControl *daDriver;
     ADControl *adDriver;
