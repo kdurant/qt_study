@@ -16,6 +16,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
 {
     ui->setupUi(this);
     uiConfig();
+    qDebug() << "mainThread id = " << QThread::currentThreadId();
 
     // setWindowState(Qt::WindowMaximized);
     qRegisterMetaType<BspConfig::RadarType>("BspConfig::RadarType");
@@ -56,6 +57,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     offlineWaveForm->moveToThread(miscThread);
     waveExtract->moveToThread(miscThread);
     savePreviewData->moveToThread(miscThread);
+    bitColorData->moveToThread(miscThread);
 
     // connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), miscThread, SLOT(quit()));
 
@@ -113,6 +115,7 @@ void RadarWidget::initParameter()
         case 8:
             sysStatus.radarType = BspConfig::RADAR_TYPE_DALIAN;
             laserDriver         = new LaserType8();
+            bitColorData->config(5000, 1200, 0, 360);
             break;
         default:
             sysStatus.radarType = BspConfig::RADAR_TYPE_DALIAN;
@@ -722,7 +725,7 @@ void RadarWidget::initSignalSlot()
             sampleData.append(i);
         emit sampleDataReady(sysStatus.radarType, sampleData);
     });
-    //    connect(waveExtract, &WaveExtract::formatedWaveReady, this, &RadarWidget::showLineChart);
+    connect(waveExtract, &WaveExtract::formatedWaveReady, bitColorData, &BitColorData::updateData);
 
     connect(waveExtract, &WaveExtract::formatedWaveReady, this, [this](const QVector<WaveExtract::WaveformInfo> &wave, int status)
             {
@@ -737,6 +740,11 @@ void RadarWidget::initSignalSlot()
         {
             showPseudoColorMap(wave);
         }
+    });
+
+    connect(bitColorData, &BitColorData::bitColorDataReady, this, [](QVector<QVector<BitColorData::SingleSampleData>> &result)
+            {
+        qDebug() << "bitColorDataReady";
     });
 
     connect(ui->checkBox_saveDataToFile, &QCheckBox::stateChanged, this, [this](int state)
@@ -1922,11 +1930,6 @@ void RadarWidget::initSignalSlot()
                            .arg(QString::number(sysStatus.previewSettings.PMT3HV, 'f', 2));
 
         ui->plainTextEdit_DASetLog->appendPlainText(temp);
-    });
-
-    connect(bitColorData, &BitColorData::bitColorDataReady, this, [](QVector<QVector<BitColorData::SingleSampleData>> &result)
-            {
-        qDebug() << "bitColorDataReady";
     });
 }
 

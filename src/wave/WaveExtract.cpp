@@ -28,6 +28,7 @@ bool WaveExtract::isChDataHead(const QVector<quint8> &frameData, int offset)
 void WaveExtract::getWaveform(BspConfig::RadarType   type,
                               const QVector<quint8> &frameData)
 {
+    qDebug() << "WaveExtract::getWaveform run in Thread = " << QThread::currentThreadId();
     radarType = type;
     switch(type)
     {

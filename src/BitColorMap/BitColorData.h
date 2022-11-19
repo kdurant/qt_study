@@ -51,7 +51,7 @@ public:
      *
      * @param allCh, 单次采样的所有通道数据
      */
-    void updateData(const QVector<WaveExtract::WaveformInfo> &allCh);
+    void updateData(const QVector<WaveExtract::WaveformInfo> &allCh, int status);
 
     void generateDiff(QVector<QVector<WaveExtract::WaveformInfo>> &round);
 
@@ -82,10 +82,11 @@ private:
 
     uint32_t TICK_PER_CYCLE{163840};
 
-    uint32_t freq{0};
+    uint32_t freq{5000};
     uint32_t motorSpeed{0};
     uint32_t startAngle{0};
     uint32_t endAngle{0};
+    int      MAX_POINTS{400};
     bool     isSavedBase{false};  // 已经保存好了基准数据
 
     MOTOR_CNT_STATE state{MOTOR_CNT_STATE::IDLE};
