@@ -52,7 +52,19 @@ public:
     void getWaveFromWaterGuard(const QVector<quint8> &frameData);
     int  getSettingsFromWaterGuard(const QVector<quint8> &frameData, WaveSettings &settings);
 
-    void findPeakPosition(QVector<WaveExtract::WaveformInfo> &data);
+    double getDistance(void)
+    {
+        return distance;
+    }
+
+    /**
+     * @brief 4个通道，每个通道有两段波形
+     * 第一通道的一段数据中(data[0])，找出主波峰值点
+     * data[1], data[3], data[5], data[7]中分别找出每个通道第二段数据的峰值点
+     * 最后计算峰值点的距离
+     * @param data
+     */
+    double calcDistance(QVector<WaveExtract::WaveformInfo> &data);
 
     friend QDebug operator<<(QDebug debug, const WaveExtract &wave)
     {
@@ -83,5 +95,6 @@ signals:
 private:
     BspConfig::RadarType               radarType;
     QVector<WaveExtract::WaveformInfo> ret;
+    double                             distance{0};
 };
 #endif

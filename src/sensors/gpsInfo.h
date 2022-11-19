@@ -164,12 +164,12 @@ private:
         gps.sub_time = Common::ba2int(frame.mid(offset + 12, 4), 1);
 
         // TODO: 不同GPS型号的秒都是占用8个字节，但数据类型不同，所以解析方式不同，后续完善
-        if(frame.mid(offset + 40, 4).toHex().toUInt(nullptr, 10) == 0)  // XW-GI5610, XW-GI7660
+        if(frame.mid(offset + 40, 4).toHex().toUInt(nullptr, 16) == 0)  // XW-GI5610, XW-GI7660
         {
             gps.week            = byte2uint32(frame.mid(offset + 0, 4));
             gps.current_week_ms = byte2uint32(frame.mid(offset + 4, 8)) * 0.001;
 
-            if(frame.mid(offset + 16, 2).toHex().toUInt(nullptr, 10) == 0)  // XW-GI5610
+            if(frame.mid(offset + 16, 2).toHex().toUInt(nullptr, 16) == 0)  // XW-GI5610
             {
                 gps.latitude  = byte2uint32(frame.mid(offset + 40, 8)) * 1e-7;
                 gps.longitude = byte2uint32(frame.mid(offset + 48, 8)) * 1e-7;

@@ -32,7 +32,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     offlineWaveForm = new OfflineWaveform();
     onlineWaveForm  = new OnlineWaveform();
     waveExtract     = new WaveExtract();
-    savePreviewData     = new SavePreviewData;
+    savePreviewData = new SavePreviewData;
 
     daDriver = new DAControl();
     adDriver = new ADControl();
