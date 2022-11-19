@@ -130,7 +130,9 @@ public:
     void initFileListUi(void);
     void motorResponse(MotorController::MOTOR_STATUS status);
 
-    void displayColorMap(const QVector<WaveExtract::WaveformInfo> &allCh);
+    void showLineChart(const QVector<WaveExtract::WaveformInfo> &allCh, int status);
+    void showBitColorMap(const QVector<WaveExtract::WaveformInfo> &allCh);
+    void showPseudoColorMap(const QVector<WaveExtract::WaveformInfo> &allCh);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -150,8 +152,6 @@ private slots:
 
     void getSysInfo();
     void showLaserInfo(LaserType4::LaserInfo &info);
-
-    void showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh, int status);
 
 private:
     struct DoubleWaveConfig

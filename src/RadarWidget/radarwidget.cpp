@@ -722,7 +722,22 @@ void RadarWidget::initSignalSlot()
             sampleData.append(i);
         emit sampleDataReady(sysStatus.radarType, sampleData);
     });
-    connect(waveExtract, &WaveExtract::formatedWaveReady, this, &RadarWidget::showSampleData);
+    //    connect(waveExtract, &WaveExtract::formatedWaveReady, this, &RadarWidget::showLineChart);
+
+    connect(waveExtract, &WaveExtract::formatedWaveReady, this, [this](const QVector<WaveExtract::WaveformInfo> &wave, int status)
+            {
+        showLineChart(wave, status);
+
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+        {
+            showBitColorMap(wave);
+        }
+
+        if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
+        {
+            showPseudoColorMap(wave);
+        }
+    });
 
     connect(ui->checkBox_saveDataToFile, &QCheckBox::stateChanged, this, [this](int state)
             {
@@ -2420,7 +2435,7 @@ void RadarWidget::showLaserInfo(LaserType4::LaserInfo &info)
     }
 }
 
-void RadarWidget::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh, int status)
+void RadarWidget::showLineChart(const QVector<WaveExtract::WaveformInfo> &allCh, int status)
 {
     //    ret = waveExtract->getWaveform(sysStatus.radarType, sampleData, allCh);
 
@@ -2439,19 +2454,6 @@ void RadarWidget::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh
         // ui->statusBar->showMessage("通道标志数据错误", 3);
         return;
     }
-
-    if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
-    {
-        if(doubleWaveConfig.data.size() < colorMap_X_max)
-            doubleWaveConfig.data.append(allCh);
-        else
-        {
-            doubleWaveConfig.data.removeFirst();
-            doubleWaveConfig.data.append(allCh);
-        }
-        doubleWaveConfig.sampleCnt++;
-    }
-    displayColorMap(allCh);
 
     if(ui->checkBox_isRerfreshUI->isChecked())
     {
@@ -2484,38 +2486,11 @@ void RadarWidget::showSampleData(const QVector<WaveExtract::WaveformInfo> &allCh
             if(autoZoomPlot)
                 ui->sampleDataPlot->rescaleAxes();
             ui->sampleDataPlot->replot();
-
-            // 刷新伪彩色图
-            if(allCh.size() == 8)
-            {
-                for(int m = 0; m < doubleWaveConfig.data.size(); m++)
-                {
-                    for(int i = 0; i < 4; i++)
-                        updateColormap(i, m, allCh[i * 2 + 1].pos, allCh[i * 2 + 1].value);
-                }
-            }
-            else
-            {
-                for(int m = 0; m < doubleWaveConfig.data.size(); m++)
-                {
-                    for(int i = 0; i < 4; i++)
-                        updateColormap(i, m, allCh[i].pos, allCh[i].value);
-                }
-            }
-
-            QCustomPlot *customPlot;
-            for(int i = 0; i < 4; i++)
-            {
-                if(doubleWaveConfig.rescale[i])
-                    widget2QCPColorMapList.at(i)->rescaleDataRange();
-                customPlot = widget2CustomPlotList.at(i);
-                customPlot->replot();
-            }
         }
     }
 }
 
-void RadarWidget::displayColorMap(const QVector<WaveExtract::WaveformInfo> &allCh)
+void RadarWidget::showBitColorMap(const QVector<WaveExtract::WaveformInfo> &allCh)
 {
     if(sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
     {
@@ -2676,5 +2651,47 @@ void RadarWidget::displayColorMap(const QVector<WaveExtract::WaveformInfo> &allC
 #endif
             }
         }
+    }
+}
+
+void RadarWidget::showPseudoColorMap(const QVector<WaveExtract::WaveformInfo> &allCh)
+{
+    if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
+    {
+        if(doubleWaveConfig.data.size() < colorMap_X_max)
+            doubleWaveConfig.data.append(allCh);
+        else
+        {
+            doubleWaveConfig.data.removeFirst();
+            doubleWaveConfig.data.append(allCh);
+        }
+        doubleWaveConfig.sampleCnt++;
+    }
+
+    // 刷新伪彩色图
+    if(allCh.size() == 8)
+    {
+        for(int m = 0; m < doubleWaveConfig.data.size(); m++)
+        {
+            for(int i = 0; i < 4; i++)
+                updateColormap(i, m, allCh[i * 2 + 1].pos, allCh[i * 2 + 1].value);
+        }
+    }
+    else
+    {
+        for(int m = 0; m < doubleWaveConfig.data.size(); m++)
+        {
+            for(int i = 0; i < 4; i++)
+                updateColormap(i, m, allCh[i].pos, allCh[i].value);
+        }
+    }
+
+    QCustomPlot *customPlot;
+    for(int i = 0; i < 4; i++)
+    {
+        if(doubleWaveConfig.rescale[i])
+            widget2QCPColorMapList.at(i)->rescaleDataRange();
+        customPlot = widget2CustomPlotList.at(i);
+        customPlot->replot();
     }
 }
