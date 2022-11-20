@@ -70,7 +70,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     initSignalSlot();
 
     plotLineSettings();
-    plotColormapSettings();
+    plotPseudoColorSettings();
     devInfo->getSysPara(sysParaInfo);
     initFileListUi();
     getSysInfo();
@@ -2000,7 +2000,7 @@ void RadarWidget::plotLineSettings()
     }
 }
 
-void RadarWidget::plotColormapSettings()
+void RadarWidget::plotPseudoColorSettings()
 {
     QVBoxLayout *widget2VBox;
     widget2VBox = new QVBoxLayout;
@@ -2070,6 +2070,11 @@ void RadarWidget::plotColormapSettings()
         // rescale the key and value axes so the whole color map is visible;
         customPlot->rescaleAxes();
     }
+}
+
+void RadarWidget::plotBitColorSettings()
+{
+
 }
 
 /**
