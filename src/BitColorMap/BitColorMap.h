@@ -17,8 +17,12 @@ public:
         double          angle;
     };
 
-    int data2rgb(int data, int *r, int *g, int *b);
-    int setData(const QVector<double> &line, double angle);
+    int  data2rgb(int data, int *r, int *g, int *b);
+    int  setData(const QVector<double> &line, double angle);
+    void setImage(QImage *img)
+    {
+        image = img;
+    }
 
     void drawHalfCircle(QImage *img);
     void drawLineWithAngle(QImage *img, const QVector<double> &data, double angle);

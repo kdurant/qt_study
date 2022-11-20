@@ -3,6 +3,7 @@
 
 #include <QtCore>
 #include <QObject>
+#include <QImage>
 #include "WaveExtract.h"
 
 /**
@@ -29,7 +30,7 @@ public:
     };
 
 public:
-    BitColorData() = default;
+    BitColorData();
     /**
      * @brief
      *
@@ -55,8 +56,13 @@ public:
 
     void generateDiff(QVector<QVector<WaveExtract::WaveformInfo>> &round);
 
+    int  data2rgb(int data, int *r, int *g, int *b);
+    void drawLineWithAngle(QImage *img, const QVector<double> &data, double angle);
+    void generateImage(void);
+
 signals:
     void bitColorDataReady(QVector<QVector<SingleSampleData>> &result);
+    void bitImageReady(QVector<QImage *> image);
 
 private:
     /**
@@ -80,6 +86,7 @@ private:
      */
     QVector<QVector<SingleSampleData>> result;  // 一圈数据的计算结果
 
+    double   pi{3.1415926};
     uint32_t TICK_PER_CYCLE{163840};
 
     uint32_t freq{5000};
@@ -90,5 +97,7 @@ private:
     bool     isSavedBase{false};  // 已经保存好了基准数据
 
     MOTOR_CNT_STATE state{MOTOR_CNT_STATE::IDLE};
+
+    QVector<QImage *> image;
 };
 #endif

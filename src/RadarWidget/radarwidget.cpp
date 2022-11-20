@@ -747,6 +747,11 @@ void RadarWidget::initSignalSlot()
         qDebug() << "bitColorDataReady";
     });
 
+    connect(bitColorData, &BitColorData::bitImageReady, this, [](QVector<QImage *> image)
+            {
+        qDebug() << "bitColorDataReady";
+    });
+
     connect(ui->checkBox_saveDataToFile, &QCheckBox::stateChanged, this, [this](int state)
             {
         if(state == Qt::Checked)
