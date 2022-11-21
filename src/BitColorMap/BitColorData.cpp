@@ -22,7 +22,7 @@ void BitColorData::savingBase(void)
 
 void BitColorData::updateData(const QVector<WaveExtract::WaveformInfo> &allCh, int status)
 {
-    qDebug() << "BitColorData::updateData() run in Thread = " << QThread::currentThreadId();
+    //    qDebug() << "BitColorData::updateData() run in Thread = " << QThread::currentThreadId();
     QVector<WaveExtract::WaveformInfo> data;
 
     if(allCh.size() == 8)
@@ -68,7 +68,7 @@ void BitColorData::updateData(const QVector<WaveExtract::WaveformInfo> &allCh, i
 
 void BitColorData::generateDiff(QVector<QVector<WaveExtract::WaveformInfo>> &round)
 {
-    qDebug() << "BitColorData::generateDiff() run in Thread = " << QThread::currentThreadId();
+    //    qDebug() << "BitColorData::generateDiff() run in Thread = " << QThread::currentThreadId();
     if(round.size() == 0)
         return;
     int    base_size  = base.size();
