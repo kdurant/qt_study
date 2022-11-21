@@ -45,7 +45,7 @@ private:
     QByteArray recvData;
 
 public slots:
-    void setNewData(QByteArray& data)
+    void setNewData(QByteArray data)
     {
         recvData = data;
         emit responseDataReady();

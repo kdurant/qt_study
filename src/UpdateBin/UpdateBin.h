@@ -36,7 +36,7 @@ public:
     bool flashUpdate(QString& filePath);
 
 public slots:
-    void setDataFrame(QByteArray& frame);
+    void setDataFrame(QByteArray frame);
 
 signals:
     void flashCommandReadySet(uint32_t command, uint32_t data_len, QByteArray data);

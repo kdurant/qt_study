@@ -186,7 +186,7 @@ bool UpdateBin::flashUpdate(QString &filePath)
     return updateStatus;
 }
 
-void UpdateBin::setDataFrame(QByteArray &frame)
+void UpdateBin::setDataFrame(QByteArray frame)
 {
     if(ProtocolDispatch::getCommand(frame) == SlaveUp::FLASH_DATA)
     {

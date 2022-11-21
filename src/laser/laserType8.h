@@ -44,12 +44,12 @@ public:
     bool setFreq(qint32 freq) override;
     bool setCurrent(quint16 current) override;
     bool getStatus(void) override;
-    int reset(void) override;
+    int  reset(void) override;
 
     void setFactoryMode(void);
 
 public slots:
-    void setNewData(const QByteArray& data) override
+    void setNewData(const QByteArray data) override
     {
         isRecvNewData = true;
         recvData      = data;

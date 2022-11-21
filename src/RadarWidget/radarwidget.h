@@ -1,6 +1,7 @@
 #ifndef MAIN_WIDGET_H
 #define MAIN_WIDGET_H
 
+#include <qthread.h>
 #include <QWidget>
 
 #include "common.h"
@@ -144,6 +145,7 @@ signals:
     void startPaserSampleNumber();
     void sendGpsInfo(BspConfig::Gps_Info &data);
     void previewdDataReady(const QByteArray &data);
+    void udpDatagramReady(QByteArray data);
 
 private slots:
 
@@ -173,6 +175,7 @@ private:
 
     QUdpSocket   *udpSocket;
     QThread      *threadMisc;
+    QThread      *threadParseProtocol{new QThread};
     qint32        timer1s;
     QElapsedTimer elapsedTimer;
     qint32        timerRefreshUI;

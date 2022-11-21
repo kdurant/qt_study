@@ -90,7 +90,7 @@ signals:
                        AttitudeInfo angular,
                        AttitudeInfo magneticField);
 public slots:
-    void parserFrame(QByteArray& data)
+    void parserFrame(QByteArray data)
     {
         if(data.size() != 0x2c)
             return;

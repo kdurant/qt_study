@@ -45,7 +45,7 @@ signals:
     void fullSampleDataReady(QByteArray &data);  // 找到一次完整的采样数据
 
 public slots:
-    void setNewData(QByteArray &data)
+    void setNewData(QByteArray data)
     {
         isRecvNewData = true;
         recvData      = data;

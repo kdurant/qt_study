@@ -208,7 +208,7 @@ signals:
     void gpsDataReady(BspConfig::Gps_Info &data);  // 接收到响应数据
 
 public slots:
-    void parserGpsData(const QByteArray &frame)
+    void parserGpsData(const QByteArray frame)
     {
         switch(frame.size())
         {

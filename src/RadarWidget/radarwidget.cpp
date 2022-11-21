@@ -59,7 +59,9 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     savePreviewData->moveToThread(threadMisc);
     bitColorData->moveToThread(threadMisc);
 
-    dispatch->moveToThread(threadMisc);
+    threadParseProtocol->start();
+    dispatch->moveToThread(threadParseProtocol);
+    // dispatch->moveToThread(threadMisc);
 
     // connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), miscThread, SLOT(quit()));
 
@@ -538,7 +540,8 @@ void RadarWidget::processPendingDatagram()
         datagram.resize(len);
         udpSocket->readDatagram(datagram.data(), datagram.size());
 
-        dispatch->parserFrame(datagram);
+        // dispatch->parserFrame(datagram);
+        emit udpDatagramReady(datagram);
     }
 }
 
@@ -547,13 +550,15 @@ void RadarWidget::initSignalSlot()
     // 处理udp接收到的数据
     connect(udpSocket, SIGNAL(readyRead()), this, SLOT(processPendingDatagram()));
 
+    connect(this, &RadarWidget::udpDatagramReady, dispatch, &ProtocolDispatch::parserFrame);
+
     // 发送已经打包好的数据
     connect(dispatch, &ProtocolDispatch::frameDataReady, this, [this](QByteArray frame)
             {
         udpSocket->writeDatagram(frame.data(), frame.size(), sysStatus.deviceIP, sysStatus.devicePort);
     });
 
-    connect(dispatch, &ProtocolDispatch::errorDataReady, this, [this](QString &error) {});
+    connect(dispatch, &ProtocolDispatch::errorDataReady, this, [this](QString error) {});
 
     /*
      * 读取系统参数信息相关逻辑

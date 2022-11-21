@@ -68,7 +68,7 @@ private:
 
 public slots:
 
-    void setNewData(QByteArray& data)
+    void setNewData(QByteArray data)
     {
         isRecvNewData = true;
         recvData      = data;

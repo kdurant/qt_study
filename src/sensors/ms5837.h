@@ -27,7 +27,7 @@ public:
 signals:
     void sendMS5837Result(Info info);
 public slots:
-    void parserFrame(QByteArray& data)
+    void parserFrame(QByteArray data)
     {
         if(data.size() != 16)
             return;

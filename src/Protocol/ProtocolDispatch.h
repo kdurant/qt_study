@@ -38,8 +38,6 @@ public:
     {
     }
 
-    void parserFrame(QByteArray &data);
-
     static uint32_t getCommand(QByteArray &data)
     {
         return data.mid(FrameField::COMMAND_POS, FrameField::COMMAND_LEN).toHex().toUInt(nullptr, 16);
@@ -54,6 +52,8 @@ public:
     }
 
 public slots:
+    void parserFrame(QByteArray data);
+
     void encode(qint32 command, qint32 data_len, QByteArray data);
 
 signals:
@@ -67,17 +67,17 @@ signals:
      * @brief 通过信号将数据传递给预览数据处理模块
      * @param data
      */
-    void onlineDataReady(QByteArray &data);
-    void flashDataReady(QByteArray &data);
-    void ssdDataReady(QByteArray &data);
+    void onlineDataReady(QByteArray data);
+    void flashDataReady(QByteArray data);
+    void ssdDataReady(QByteArray data);
 
-    void gpsFrameReady(const QByteArray &data);
-    void laserDataReady(const QByteArray &data);
-    void motorDataReady(QByteArray &data);
-    void attitudeDataReady(QByteArray &data);
-    void ms5837DataReady(QByteArray &data);
-    void ADDataReady(QByteArray &data);
-    void DADataReady(QByteArray &data);
+    void gpsFrameReady(const QByteArray data);
+    void laserDataReady(const QByteArray data);
+    void motorDataReady(QByteArray data);
+    void attitudeDataReady(QByteArray data);
+    void ms5837DataReady(QByteArray data);
+    void ADDataReady(QByteArray data);
+    void DADataReady(QByteArray data);
 
     void errorDataReady(QString &data);
 

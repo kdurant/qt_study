@@ -61,7 +61,7 @@ public:
     virtual qint32 getActualPosition(void) = 0;
 
 public slots:
-    virtual void setNewData(QByteArray& data) = 0;
+    virtual void setNewData(QByteArray data) = 0;
 
 signals:
     //    void sendDataReady(QByteArray& data);  // 需要发送的数据已经准备好

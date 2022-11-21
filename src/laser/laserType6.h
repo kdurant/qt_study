@@ -69,7 +69,7 @@ signals:
     void laserInfoReady(LaserInfo& data);  // 接收到响应数据
 
 public slots:
-    void setNewData(const QByteArray& data) override
+    void setNewData(const QByteArray data) override
     {
         recvData = data;
         emit responseDataReady();

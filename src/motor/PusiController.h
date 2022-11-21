@@ -210,7 +210,7 @@ private:
 
 public slots:
 
-    void setNewData(QByteArray& data) override
+    void setNewData(QByteArray data) override
     {
         isRecvNewData = true;
         recvData      = data;

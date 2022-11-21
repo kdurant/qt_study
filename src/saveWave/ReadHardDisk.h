@@ -68,7 +68,7 @@ signals:
 
 public slots:
     // data为通信协议中的完整数据帧
-    void setNewData(QByteArray &data)
+    void setNewData(QByteArray data)
     {
         allData.append(data);
         timer->start();

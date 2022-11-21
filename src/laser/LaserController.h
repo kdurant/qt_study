@@ -99,7 +99,7 @@ public:
     }
 
 public slots:
-    virtual void setNewData(const QByteArray& data)
+    virtual void setNewData(const QByteArray data)
     {
     }
 
