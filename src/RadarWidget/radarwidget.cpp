@@ -1198,9 +1198,8 @@ void RadarWidget::initSignalSlot()
     /*
      * 电机相关逻辑
      */
-    connect(motorController, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
+    connect(motorController, &MotorController::sendDataReady, dispatch, &ProtocolDispatch::encode);
     connect(dispatch, &ProtocolDispatch::motorDataReady, motorController, &MotorController::setNewData);
-
     connect(ui->btn_motorReadSpeed, &QPushButton::pressed, this, [this]()
             {
         qint32 speed = 0;
@@ -1288,7 +1287,7 @@ void RadarWidget::initSignalSlot()
     /*
      * 采集数据保存相关逻辑
      */
-    connect(ssd, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
+    connect(ssd, &ReadHardDisk::sendDataReady, dispatch, &ProtocolDispatch::encode);
     connect(dispatch, &ProtocolDispatch::ssdDataReady, ssd, &ReadHardDisk::setNewData);
     connect(ui->btn_ssdSearchSpace, &QPushButton::pressed, this, [this]()
             {
@@ -1548,7 +1547,7 @@ void RadarWidget::initSignalSlot()
     /*
      * DA设置相关逻辑
      */
-    connect(daDriver, SIGNAL(sendDataReady(qint32, qint32, QByteArray &)), dispatch, SLOT(encode(qint32, qint32, QByteArray &)));
+    connect(daDriver, &DAControl::sendDataReady, dispatch, &ProtocolDispatch::encode);
     connect(ui->btn_DASetValue, &QPushButton::pressed, this, [this]()
             {
         quint32 chNum       = ui->comboBox_DAChSelect->currentIndex();
