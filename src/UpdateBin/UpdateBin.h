@@ -39,7 +39,7 @@ public slots:
     void setDataFrame(QByteArray& frame);
 
 signals:
-    void flashCommandReadySet(uint32_t command, uint32_t data_len, QByteArray& data);
+    void flashCommandReadySet(uint32_t command, uint32_t data_len, QByteArray data);
     void flashCommandReadySet1();
     void recvFlashData();
     // 已经更新的字节数

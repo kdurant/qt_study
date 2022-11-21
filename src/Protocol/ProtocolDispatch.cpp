@@ -65,7 +65,7 @@ void ProtocolDispatch::parserFrame(QByteArray &data)
     }
 }
 
-void ProtocolDispatch::encode(qint32 command, qint32 data_len, QByteArray &data)
+void ProtocolDispatch::encode(qint32 command, qint32 data_len, QByteArray data)
 {
     QByteArray frame;
     uint32_t   checksum = 0xeeeeffff;

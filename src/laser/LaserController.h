@@ -104,7 +104,7 @@ public slots:
     }
 
 signals:
-    void sendDataReady(qint32 command, qint32 data_len, QByteArray& data);  // 需要发送的数据已经准备好
+    void sendDataReady(qint32 command, qint32 data_len, QByteArray data);  // 需要发送的数据已经准备好
     void responseDataReady(void);
     void laserInfoReady(LaserInfo& data);
 };

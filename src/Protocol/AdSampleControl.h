@@ -155,7 +155,7 @@ public:
     }
 
 signals:
-    void sendDataReady(qint32 command, qint32 data_len, QByteArray &data);
+    void sendDataReady(qint32 command, qint32 data_len, QByteArray data);
 
 private:
     qint32 interval{20};

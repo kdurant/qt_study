@@ -59,6 +59,8 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     savePreviewData->moveToThread(threadMisc);
     bitColorData->moveToThread(threadMisc);
 
+    dispatch->moveToThread(threadMisc);
+
     // connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), miscThread, SLOT(quit()));
 
     //    connect(waveShow, SIGNAL(finishSampleFrameNumber()), waveShow, SLOT(deleteLater()));

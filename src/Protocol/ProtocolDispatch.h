@@ -54,7 +54,7 @@ public:
     }
 
 public slots:
-    void encode(qint32 command, qint32 data_len, QByteArray &data);
+    void encode(qint32 command, qint32 data_len, QByteArray data);
 
 signals:
     /**
@@ -86,7 +86,7 @@ signals:
     /**
      * @brief 数据封包已经完成，可以通过UDP发送出去
      */
-    void frameDataReady(QByteArray &data);
+    void frameDataReady(QByteArray data);
 
 private:
     QVector<quint8>  head;
