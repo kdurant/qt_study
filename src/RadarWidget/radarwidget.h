@@ -172,7 +172,7 @@ private:
     QSettings       *configUser;
 
     QUdpSocket   *udpSocket;
-    QThread      *miscThread;
+    QThread      *threadMisc;
     qint32        timer1s;
     QElapsedTimer elapsedTimer;
     qint32        timerRefreshUI;

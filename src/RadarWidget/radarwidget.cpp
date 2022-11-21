@@ -12,7 +12,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     QWidget(parent),
     sysStatus(para),
     ui(new Ui::RadarWidget),
-    miscThread(new QThread())
+    threadMisc(new QThread())
 {
     ui->setupUi(this);
     uiConfig();
@@ -53,11 +53,11 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     waterGuard.state            = WaveExtract::MOTOR_CNT_STATE::IDLE;
     waterGuard.videoMemoryDepth = 180;
 
-    miscThread->start();
-    offlineWaveForm->moveToThread(miscThread);
-    waveExtract->moveToThread(miscThread);
-    savePreviewData->moveToThread(miscThread);
-    bitColorData->moveToThread(miscThread);
+    threadMisc->start();
+    offlineWaveForm->moveToThread(threadMisc);
+    waveExtract->moveToThread(threadMisc);
+    savePreviewData->moveToThread(threadMisc);
+    bitColorData->moveToThread(threadMisc);
 
     // connect(offlineWaveForm, SIGNAL(finishSampleFrameNumber()), miscThread, SLOT(quit()));
 
