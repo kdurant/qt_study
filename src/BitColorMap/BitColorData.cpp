@@ -200,11 +200,11 @@ void BitColorData::generateImage()
     for(int i = 0; i < image.size(); i++)
     {
         image[i] = new QImage(MAX_POINTS, (MAX_POINTS >> 2) * 3, QImage::Format_RGB32);
-        for(int i = 0; i < image[i]->width(); i += 1)  // change background color
+        for(int m = 0; m < image[i]->width(); m += 1)  // change background color
         {
             for(int j = 0; j < image[i]->height(); ++j)
             {
-                image[i]->setPixelColor(i, j, QColor(62, 62, 62));
+                image[i]->setPixelColor(m, j, QColor(62, 62, 62));
             }
         }
         //        image[i]->fill(QColor(62, 62, 62));
@@ -213,10 +213,10 @@ void BitColorData::generateImage()
         double radius = image[i]->width() / 2;
         double x, y;
         //    for(int i = 180; i >= 0; i--)
-        for(int i = 360; i >= 180; i--)
+        for(int m = 360; m >= 180; m--)
         {
-            x = cos((i * pi) / 180);
-            y = sin((i * pi) / 180);
+            x = cos((m * pi) / 180);
+            y = sin((m * pi) / 180);
             x *= radius;
             y *= radius;
             x += radius;

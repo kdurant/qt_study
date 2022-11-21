@@ -725,7 +725,8 @@ void RadarWidget::initSignalSlot()
             sampleData.append(i);
         emit sampleDataReady(sysStatus.radarType, sampleData);
     });
-    connect(waveExtract, &WaveExtract::formatedWaveReady, bitColorData, &BitColorData::updateData);
+    if(sysStatus.radarType == BspConfig::RADAR_TYPE_DALIAN)
+        connect(waveExtract, &WaveExtract::formatedWaveReady, bitColorData, &BitColorData::updateData);
 
     connect(waveExtract, &WaveExtract::formatedWaveReady, this, [this](const QVector<WaveExtract::WaveformInfo> &wave, int status)
             {
@@ -2074,7 +2075,6 @@ void RadarWidget::plotPseudoColorSettings()
 
 void RadarWidget::plotBitColorSettings()
 {
-
 }
 
 /**

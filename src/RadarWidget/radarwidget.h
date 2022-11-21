@@ -126,6 +126,7 @@ public:
     void plotLineSettings(void);
     void plotPseudoColorSettings(void);
     void updateColormap(int chart, int angle, const QVector<double> &key, const QVector<double> &data);
+    void plotBitColorSettings(void);
 
     void initFileListUi(void);
     void motorResponse(MotorController::MOTOR_STATUS status);
