@@ -233,4 +233,5 @@ void BitColorData::generateImage()
             drawLineWithAngle(image[i], result[i][j].data, result[i][j].angle);
         }
     }
+    emit bitImageReady(image);
 }

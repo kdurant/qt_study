@@ -467,8 +467,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>227</width>
-               <height>113</height>
+               <width>290</width>
+               <height>144</height>
               </rect>
              </property>
              <attribute name="label">
@@ -543,8 +543,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>291</width>
-               <height>513</height>
+               <width>329</width>
+               <height>389</height>
               </rect>
              </property>
              <attribute name="label">
@@ -592,8 +592,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>171</width>
-               <height>117</height>
+               <width>218</width>
+               <height>146</height>
               </rect>
              </property>
              <attribute name="label">
@@ -849,8 +849,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>274</width>
-               <height>748</height>
+               <width>315</width>
+               <height>987</height>
               </rect>
              </property>
              <attribute name="label">
@@ -863,39 +863,57 @@
                  <string>实时采集参数</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_9">
-                 <item row="13" column="0">
-                  <widget class="QPushButton" name="btn_setPreviewPara">
-                   <property name="text">
-                    <string>设置</string>
+                 <item row="6" column="1">
+                  <widget class="QSpinBox" name="spinBox_sumThreshold">
+                   <property name="minimum">
+                    <number>1000</number>
+                   </property>
+                   <property name="maximum">
+                    <number>6000</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>100</number>
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_15">
+                 <item row="6" column="0">
+                  <widget class="QLabel" name="label_sumThreshold">
                    <property name="text">
-                    <string>采样长度：</string>
+                    <string>和阈值：</string>
                    </property>
                   </widget>
                  </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="label_17">
-                   <property name="text">
-                    <string>第一段提取位置：</string>
+                 <item row="3" column="1">
+                  <widget class="QSpinBox" name="spinBox_firstLen">
+                   <property name="minimum">
+                    <number>8</number>
+                   </property>
+                   <property name="maximum">
+                    <number>2000</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>8</number>
+                   </property>
+                   <property name="value">
+                    <number>128</number>
                    </property>
                   </widget>
                  </item>
-                 <item row="12" column="0">
-                  <widget class="QLabel" name="label_pmtGateTime">
-                   <property name="toolTip">
-                    <string>经过PMT延迟时间后产生的高电平时间</string>
+                 <item row="7" column="1">
+                  <widget class="QSpinBox" name="spinBox_valueThreshold">
+                   <property name="minimum">
+                    <number>100</number>
                    </property>
-                   <property name="text">
-                    <string>PMT门控时间(ns)</string>
+                   <property name="maximum">
+                    <number>4000</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>10</number>
                    </property>
                   </widget>
                  </item>
-                 <item row="10" column="1">
-                  <widget class="QLineEdit" name="lineEdit_compressRatio">
+                 <item row="9" column="1">
+                  <widget class="QLineEdit" name="lineEdit_compressLen">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -904,16 +922,10 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="1">
-                  <widget class="QSpinBox" name="spinBox_sampleRate">
-                   <property name="minimum">
-                    <number>1</number>
-                   </property>
-                   <property name="maximum">
-                    <number>100000</number>
-                   </property>
-                   <property name="singleStep">
-                    <number>100</number>
+                 <item row="10" column="0">
+                  <widget class="QLabel" name="label_compressRatio">
+                   <property name="text">
+                    <string>压缩比：</string>
                    </property>
                   </widget>
                  </item>
@@ -940,83 +952,13 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="5" column="0">
-                  <widget class="QLabel" name="label_secondLen">
-                   <property name="text">
-                    <string>第二段提取长度：</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1">
-                  <widget class="QSpinBox" name="spinBox_sampleLen">
-                   <property name="minimum">
-                    <number>1000</number>
-                   </property>
-                   <property name="maximum">
-                    <number>10000</number>
-                   </property>
-                   <property name="singleStep">
-                    <number>200</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="9" column="0">
-                  <widget class="QLabel" name="label_compressLen">
-                   <property name="text">
-                    <string>压缩长度：</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="1">
-                  <widget class="QSpinBox" name="spinBox_secondStartPos">
-                   <property name="minimum">
-                    <number>8</number>
-                   </property>
-                   <property name="maximum">
-                    <number>10000</number>
-                   </property>
-                   <property name="singleStep">
-                    <number>8</number>
-                   </property>
-                   <property name="value">
-                    <number>1000</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="12" column="1">
-                  <widget class="QLineEdit" name="lineEdit_pmtGateTime">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
+                 <item row="12" column="0">
+                  <widget class="QLabel" name="label_pmtGateTime">
                    <property name="toolTip">
-                    <string>PMT门控高电平持续时间</string>
+                    <string>经过PMT延迟时间后产生的高电平时间</string>
                    </property>
                    <property name="text">
-                    <string>500</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="0">
-                  <widget class="QLabel" name="label_18">
-                   <property name="text">
-                    <string>第一段提取长度：</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="4" column="0">
-                  <widget class="QLabel" name="label_secondStartPos">
-                   <property name="text">
-                    <string>第二段提取位置：</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="6" column="0">
-                  <widget class="QLabel" name="label_sumThreshold">
-                   <property name="text">
-                    <string>和阈值：</string>
+                    <string>PMT门控时间(ns)</string>
                    </property>
                   </widget>
                  </item>
@@ -1024,88 +966,6 @@
                   <widget class="QLabel" name="label_sampleDelay">
                    <property name="text">
                     <string>采样延迟(ns)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="8" column="1">
-                  <widget class="QLineEdit" name="lineEdit_sampleDelay">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="toolTip">
-                    <string>触发信号来临时，延迟多少时间才开始采集数据</string>
-                   </property>
-                   <property name="text">
-                    <string>1000</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <widget class="QLabel" name="label_16">
-                   <property name="text">
-                    <string>采集数据抽样率：</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="10" column="0">
-                  <widget class="QLabel" name="label_compressRatio">
-                   <property name="text">
-                    <string>压缩比：</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="3" column="1">
-                  <widget class="QSpinBox" name="spinBox_firstLen">
-                   <property name="minimum">
-                    <number>8</number>
-                   </property>
-                   <property name="maximum">
-                    <number>2000</number>
-                   </property>
-                   <property name="singleStep">
-                    <number>8</number>
-                   </property>
-                   <property name="value">
-                    <number>128</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="11" column="0">
-                  <widget class="QLabel" name="label_pmtDelayTime">
-                   <property name="toolTip">
-                    <string>相对于触发信号的延迟</string>
-                   </property>
-                   <property name="text">
-                    <string>PMT延迟时间(ns)</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="2" column="1">
-                  <widget class="QSpinBox" name="spinBox_firstStartPos">
-                   <property name="minimum">
-                    <number>8</number>
-                   </property>
-                   <property name="maximum">
-                    <number>1000</number>
-                   </property>
-                   <property name="singleStep">
-                    <number>8</number>
-                   </property>
-                   <property name="value">
-                    <number>100</number>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="9" column="1">
-                  <widget class="QLineEdit" name="lineEdit_compressLen">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
                    </property>
                   </widget>
                  </item>
@@ -1125,6 +985,78 @@
                    </property>
                   </widget>
                  </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_15">
+                   <property name="text">
+                    <string>采样长度：</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="1">
+                  <widget class="QSpinBox" name="spinBox_firstStartPos">
+                   <property name="minimum">
+                    <number>8</number>
+                   </property>
+                   <property name="maximum">
+                    <number>1000</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>8</number>
+                   </property>
+                   <property name="value">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="8" column="1">
+                  <widget class="QLineEdit" name="lineEdit_sampleDelay">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>触发信号来临时，延迟多少时间才开始采集数据</string>
+                   </property>
+                   <property name="text">
+                    <string>1000</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="5" column="0">
+                  <widget class="QLabel" name="label_secondLen">
+                   <property name="text">
+                    <string>第二段提取长度：</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="12" column="1">
+                  <widget class="QLineEdit" name="lineEdit_pmtGateTime">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="toolTip">
+                    <string>PMT门控高电平持续时间</string>
+                   </property>
+                   <property name="text">
+                    <string>500</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="11" column="0">
+                  <widget class="QLabel" name="label_pmtDelayTime">
+                   <property name="toolTip">
+                    <string>相对于触发信号的延迟</string>
+                   </property>
+                   <property name="text">
+                    <string>PMT延迟时间(ns)</string>
+                   </property>
+                  </widget>
+                 </item>
                  <item row="7" column="0">
                   <widget class="QLabel" name="label_subThreshold">
                    <property name="text">
@@ -1132,29 +1064,104 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="6" column="1">
-                  <widget class="QSpinBox" name="spinBox_sumThreshold">
+                 <item row="0" column="1">
+                  <widget class="QSpinBox" name="spinBox_sampleLen">
                    <property name="minimum">
                     <number>1000</number>
                    </property>
                    <property name="maximum">
-                    <number>6000</number>
+                    <number>10000</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>200</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="13" column="0">
+                  <widget class="QPushButton" name="btn_setPreviewPara">
+                   <property name="text">
+                    <string>设置</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="3" column="0">
+                  <widget class="QLabel" name="label_18">
+                   <property name="text">
+                    <string>第一段提取长度：</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="4" column="1">
+                  <widget class="QSpinBox" name="spinBox_secondStartPos">
+                   <property name="minimum">
+                    <number>8</number>
+                   </property>
+                   <property name="maximum">
+                    <number>10000</number>
+                   </property>
+                   <property name="singleStep">
+                    <number>8</number>
+                   </property>
+                   <property name="value">
+                    <number>1000</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QSpinBox" name="spinBox_sampleRate">
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100000</number>
                    </property>
                    <property name="singleStep">
                     <number>100</number>
                    </property>
                   </widget>
                  </item>
-                 <item row="7" column="1">
-                  <widget class="QSpinBox" name="spinBox_valueThreshold">
-                   <property name="minimum">
-                    <number>100</number>
+                 <item row="10" column="1">
+                  <widget class="QLineEdit" name="lineEdit_compressRatio">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
                    </property>
-                   <property name="maximum">
-                    <number>4000</number>
+                  </widget>
+                 </item>
+                 <item row="2" column="0">
+                  <widget class="QLabel" name="label_17">
+                   <property name="text">
+                    <string>第一段提取位置：</string>
                    </property>
-                   <property name="singleStep">
-                    <number>10</number>
+                  </widget>
+                 </item>
+                 <item row="4" column="0">
+                  <widget class="QLabel" name="label_secondStartPos">
+                   <property name="text">
+                    <string>第二段提取位置：</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="label_16">
+                   <property name="text">
+                    <string>采集数据抽样率：</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="9" column="0">
+                  <widget class="QLabel" name="label_compressLen">
+                   <property name="text">
+                    <string>压缩长度：</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="14" column="1">
+                  <widget class="QPushButton" name="btn_baseCapture">
+                   <property name="text">
+                    <string>保存基准数据</string>
                    </property>
                   </widget>
                  </item>
@@ -1269,6 +1276,9 @@
                    <property name="maximum">
                     <number>999999999</number>
                    </property>
+                   <property name="value">
+                    <number>20480</number>
+                   </property>
                    <property name="displayIntegerBase">
                     <number>16</number>
                    </property>
@@ -1353,8 +1363,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>236</width>
-               <height>366</height>
+               <width>287</width>
+               <height>470</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1825,7 +1835,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget_main">
         <property name="currentIndex">
-         <number>3</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_3">
          <attribute name="title">
@@ -1986,74 +1996,9 @@
          <attribute name="title">
           <string>雷达格式预览</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_14" stretch="11,1">
+         <layout class="QVBoxLayout" name="verticalLayout_14" stretch="0">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QGroupBox" name="groupBox_17">
-              <property name="title">
-               <string>channal 0</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_16">
-               <item>
-                <widget class="BitColorMap" name="waterGuardBaseColor0" native="true"/>
-               </item>
-               <item>
-                <widget class="BitColorMap" name="waterGuardTimeColor0" native="true"/>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_18">
-              <property name="title">
-               <string>channal 1</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_17">
-               <item>
-                <widget class="BitColorMap" name="waterGuardBaseColor1" native="true"/>
-               </item>
-               <item>
-                <widget class="BitColorMap" name="waterGuardTimeColor1" native="true"/>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_19">
-              <property name="title">
-               <string>channal 2</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_18">
-               <item>
-                <widget class="BitColorMap" name="waterGuardBaseColor2" native="true"/>
-               </item>
-               <item>
-                <widget class="BitColorMap" name="waterGuardTimeColor2" native="true"/>
-               </item>
-              </layout>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_12">
-            <item>
-             <widget class="QLabel" name="label_37">
-              <property name="text">
-               <string>第一排为0-180°的基准数据，电机保存按钮后就不在更新
-第二排为通道的实时数据减去基准数据后的值</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="btn_baseCapture">
-              <property name="text">
-               <string>save</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QWidget" name="widget" native="true"/>
           </item>
          </layout>
         </widget>
@@ -2734,12 +2679,6 @@
    <class>QCustomPlot</class>
    <extends>QWidget</extends>
    <header>third_lib/QCustomPlot/qcustomplot.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>BitColorMap</class>
-   <extends>QWidget</extends>
-   <header>BitColorMap/BitColorMap.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

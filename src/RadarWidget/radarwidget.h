@@ -58,6 +58,7 @@
 #include "AttitudeSensor.h"
 #include "ms5837.h"
 #include "qcustomplot.h"
+#include "BitColorMap.h"
 #include "BitColorData.h"
 
 namespace Ui
@@ -221,6 +222,9 @@ private:
 
     QList<QCustomPlot *> widget2CustomPlotList;
     QList<QCPColorMap *> widget2QCPColorMapList;
+
+    QVector<BitColorMap *> widget2baseColorMap;
+    QVector<BitColorMap *> widget2diffColorMap;
 
     // RADAR_TYPE_WATER_GUARD 用的变量
     struct WaterGuard

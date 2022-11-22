@@ -22,6 +22,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     qRegisterMetaType<BspConfig::RadarType>("BspConfig::RadarType");
     qRegisterMetaType<BspConfig::Gps_Info>("BspConfig::Gps_Info");
     qRegisterMetaType<QVector<quint8>>("QVector<quint8>");
+    qRegisterMetaType<QVector<QImage *>>("QVector<QImage *>");
     qRegisterMetaType<WaveExtract::WaveformInfo>("WaveExtract::WaveformInfo");
     qRegisterMetaType<QVector<WaveExtract::WaveformInfo>>("QVector<WaveformInfo>");
     qRegisterMetaType<BitColorData::SingleSampleData>("BitColorData::SingleSampleData");
@@ -75,6 +76,7 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
 
     plotLineSettings();
     plotPseudoColorSettings();
+    plotBitColorSettings();
     devInfo->getSysPara(sysParaInfo);
     initFileListUi();
     getSysInfo();
@@ -714,10 +716,7 @@ void RadarWidget::initSignalSlot()
     });
 
     // 水下预警雷达相关设置
-    connect(ui->btn_baseCapture, &QPushButton::pressed, this, [this]()
-            {
-        waterGuard.startSaveBase = true;
-    });
+    // connect(ui->btn_baseCapture, &QPushButton::pressed, this, [this]() {});
 
     connect(dispatch, &ProtocolDispatch::onlineDataReady, onlineWaveForm, &OnlineWaveform::setNewData);
     connect(this, &RadarWidget::previewdDataReady, savePreviewData, &SavePreviewData::writeToFile);
@@ -737,10 +736,10 @@ void RadarWidget::initSignalSlot()
             {
         showLineChart(wave, status);
 
-        if(sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
-        {
-            showBitColorMap(wave);
-        }
+        // if(sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
+        // {
+        // showBitColorMap(wave);
+        // }
 
         if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         {
@@ -748,14 +747,13 @@ void RadarWidget::initSignalSlot()
         }
     });
 
-    connect(bitColorData, &BitColorData::bitColorDataReady, this, [](QVector<QVector<BitColorData::SingleSampleData>> &result)
+    connect(bitColorData, &BitColorData::bitImageReady, this, [this](QVector<QImage *> image)
             {
-        qDebug() << "bitColorDataReady";
-    });
-
-    connect(bitColorData, &BitColorData::bitImageReady, this, [](QVector<QImage *> image)
-            {
-        qDebug() << "bitColorDataReady";
+        for(int i = 0; i < image.size(); i++)
+        {
+            widget2diffColorMap[i]->setImage(image[i]);
+            widget2diffColorMap[i]->refreshUI();
+        }
     });
 
     connect(ui->checkBox_saveDataToFile, &QCheckBox::stateChanged, this, [this](int state)
@@ -2079,6 +2077,27 @@ void RadarWidget::plotPseudoColorSettings()
 
 void RadarWidget::plotBitColorSettings()
 {
+    QVBoxLayout *main = new QVBoxLayout;
+    QHBoxLayout *base = new QHBoxLayout;
+    QHBoxLayout *diff = new QHBoxLayout;
+    ui->widget->setLayout(main);
+    main->addLayout(base);
+    main->addLayout(diff);
+
+    for(int i = 0; i < 4; i++)
+    {
+        BitColorMap *colorMap = new BitColorMap(this);
+        widget2baseColorMap.append(colorMap);
+        base->addWidget(colorMap, 4);
+    }
+    for(int i = 0; i < 4; i++)
+    {
+        BitColorMap *colorMap = new BitColorMap(this);
+        widget2diffColorMap.append(colorMap);
+        diff->addWidget(colorMap, 4);
+    }
+
+    //    ui->tabWidget_main->tabBar()
 }
 
 /**
@@ -2509,166 +2528,6 @@ void RadarWidget::showLineChart(const QVector<WaveExtract::WaveformInfo> &allCh,
 
 void RadarWidget::showBitColorMap(const QVector<WaveExtract::WaveformInfo> &allCh)
 {
-    if(sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
-    {
-        //        QVector<WaveExtract::WaveformInfo> debugCh;
-        //        debugCh.append(allCh[0]);
-        //        debugCh.append(allCh[2]);
-        //        debugCh.append(allCh[4]);
-        //        debugCh.append(allCh[6]);
-
-        //        allCh.clear();
-        //        allCh.append(debugCh[0]);
-        //        allCh.append(debugCh[1]);
-        //        allCh.append(debugCh[2]);
-        //        allCh.append(debugCh[3]);
-
-        if(allCh.size() == 4)
-        {
-            int     valid_angle_cnt = 0;
-            quint32 angle_90_offset = 109778;
-            quint32 start_range     = angle_90_offset - 40960;
-            quint32 stop_range      = angle_90_offset + 40960;
-            double  angle;
-            angle = (allCh[0].motorCnt - start_range) * 360 / 163840.0;  // 角度偏移修正
-
-            // 通道0的波峰位置作为起点，截取后面的数据作为有效数据，这样波形相减时结果还好点
-            int max_point_pos = Common::maxIndexInVector(allCh[0].value);
-
-            QVector<WaveExtract::WaveformInfo> reduce;
-            reduce.resize(4);
-            for(int i = 0; i < 4; i++)
-                reduce[i].value.resize(400);
-#if 1
-            switch(waterGuard.state)
-            {
-                case WaveExtract::MOTOR_CNT_STATE::IDLE:
-                    if(waterGuard.startSaveBase)
-                    {
-                        waterGuard.base.clear();
-                        waterGuard.base.resize(3);
-                        waterGuard.state = WaveExtract::MOTOR_CNT_STATE::WAIT_START;
-                        ui->btn_baseCapture->setEnabled(false);
-
-                        ui->waterGuardBaseColor0->clearUI();
-                        ui->waterGuardBaseColor1->clearUI();
-                        ui->waterGuardBaseColor2->clearUI();
-                    }
-                    break;
-                case WaveExtract::MOTOR_CNT_STATE::WAIT_START:
-                    //采样率：2000Hz(0.5ms), 电机转速：120r/min, 163840/1000 = 163
-                    // 电机计数值间隔大概163
-                    if(allCh[0].motorCnt > start_range &&
-                       allCh[0].motorCnt < start_range + 1000)
-                    {
-                        waterGuard.state = WaveExtract::MOTOR_CNT_STATE::LOAD_DATA;
-                    }
-                    break;
-
-                case WaveExtract::MOTOR_CNT_STATE::LOAD_DATA:
-                    // 0-180°的每次采样数据都保存起来
-                    if(allCh[0].motorCnt < stop_range)
-                    {
-                        for(int i = 0; i < allCh.size(); ++i)
-                        {  // 根据0通道峰值点，截取出作为基底的数据
-                            reduce[i].value = allCh[i].value.mid(max_point_pos);
-                        }
-
-                        for(int i = 0; i < 3; i++)
-                        {  // 保存每个通道的基本数据，用于比较
-                            waterGuard.base[i].append(reduce[i + 1]);
-                        }
-
-                        ui->waterGuardBaseColor0->setData(reduce[1].value, angle);
-                        ui->waterGuardBaseColor1->setData(reduce[2].value, angle);
-                        ui->waterGuardBaseColor2->setData(reduce[3].value, angle);
-                    }
-                    else
-                        waterGuard.state = WaveExtract::MOTOR_CNT_STATE::WAIT_END;
-                    break;
-                case WaveExtract::MOTOR_CNT_STATE::WAIT_END:
-
-                    ui->waterGuardBaseColor0->refreshUI();
-                    ui->waterGuardBaseColor1->refreshUI();
-                    ui->waterGuardBaseColor2->refreshUI();
-
-                    waterGuard.startSaveBase = false;
-                    waterGuard.isSavedBase   = true;
-                    waterGuard.state         = WaveExtract::MOTOR_CNT_STATE::IDLE;
-                    ui->btn_baseCapture->setEnabled(true);
-
-                    break;
-                default:
-                    waterGuard.startSaveBase = false;
-                    break;
-            }
-
-#endif
-            if(allCh[0].motorCnt < start_range && allCh[0].motorCnt > start_range - 1000)
-            {
-                ui->waterGuardTimeColor0->clearUI();
-                ui->waterGuardTimeColor1->clearUI();
-                ui->waterGuardTimeColor2->clearUI();
-            }
-            if(allCh[0].motorCnt > start_range && allCh[0].motorCnt < stop_range)
-            {
-                refreshRadarFlag = true;
-#if 1
-                if(waterGuard.isSavedBase == true)  // 有了基底后，要先减去基底
-                {
-                    for(int m = 0; m < 3; m++)  // 通道
-                    {
-                        const QVector<WaveExtract::WaveformInfo> &all_base_data = waterGuard.base[m];
-
-                        if(valid_angle_cnt < all_base_data.size())  // 保证索引不会出界
-                        {
-                            const WaveExtract::WaveformInfo &angle_data = all_base_data[valid_angle_cnt];
-                            QVector<double>                  data{400, 255};
-
-                            const QVector<double> &temp = allCh[m + 1].value.mid(max_point_pos);
-
-                            for(int n = 0, len1 = angle_data.value.size(), len2 = temp.size(); n < len1 && n < len2; n++)
-                            {
-                                data.append(temp[n] - angle_data.value[n]);
-                            }
-                            if(m == 0)
-                                ui->waterGuardTimeColor0->setData(data, angle);
-                            else if(m == 1)
-                                ui->waterGuardTimeColor1->setData(data, angle);
-                            else if(m == 2)
-                                ui->waterGuardTimeColor2->setData(data, angle);
-                        }
-                    }
-                }
-
-                else
-#endif
-                {
-                    ui->waterGuardTimeColor0->setData(allCh[1].value.mid(max_point_pos), angle);
-                    ui->waterGuardTimeColor1->setData(allCh[2].value.mid(max_point_pos), angle);
-                    ui->waterGuardTimeColor2->setData(allCh[3].value.mid(max_point_pos), angle);
-                }
-                valid_angle_cnt++;
-            }
-            else
-            {
-                valid_angle_cnt = 0;
-#if 1
-                if(refreshRadarFlag)
-                {
-                    refreshRadarFlag = false;
-                    // 刷新雷达图
-                    //                    if(sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
-                    {
-                        ui->waterGuardTimeColor0->refreshUI();
-                        ui->waterGuardTimeColor1->refreshUI();
-                        ui->waterGuardTimeColor2->refreshUI();
-                    }
-                }
-#endif
-            }
-        }
-    }
 }
 
 void RadarWidget::showPseudoColorMap(const QVector<WaveExtract::WaveformInfo> &allCh)
