@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     configIni(new QSettings("./config.ini", QSettings::IniFormat))
 {
     ui->setupUi(this);
+
     setWindowState(Qt::WindowMaximized);
     setWindowTitle("雷达控制软件v" + QString(SOFT_VERSION) + "_" + GIT_DATE + "_" + GIT_HASH);
 

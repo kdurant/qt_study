@@ -140,6 +140,7 @@ public:
 protected:
     void closeEvent(QCloseEvent *event);
     void timerEvent(QTimerEvent *event);
+    bool eventFilter(QObject *obj, QEvent *event);
 
 signals:
     void sampleDataReady(BspConfig::RadarType type, const QVector<quint8> &sampleData);

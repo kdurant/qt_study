@@ -15,6 +15,11 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     threadMisc(new QThread())
 {
     ui->setupUi(this);
+    foreach(QAbstractSpinBox *sb, this->findChildren<QAbstractSpinBox *>())
+    {
+        sb->installEventFilter(this);
+    }
+
     uiConfig();
     qDebug() << "mainThread id = " << QThread::currentThreadId();
 
@@ -2208,6 +2213,16 @@ void RadarWidget::timerEvent(QTimerEvent *event)
     {
         refreshUIFlag = true;
     }
+}
+
+bool RadarWidget::eventFilter(QObject *obj, QEvent *event)
+{
+    if(obj->inherits("QAbstractSpinBox"))
+    {
+        if(event->type() == QEvent::Wheel)
+            return true;
+    }
+    return QWidget::eventFilter(obj, event);
 }
 
 void RadarWidget::on_bt_showWave_clicked()
