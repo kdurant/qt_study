@@ -4,6 +4,7 @@
 #include <QtCore>
 #include <QObject>
 #include <QImage>
+#include <QPainter>
 #include "WaveExtract.h"
 
 /**

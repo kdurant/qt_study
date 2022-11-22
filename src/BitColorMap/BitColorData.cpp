@@ -5,7 +5,8 @@ BitColorData::BitColorData()
     image.resize(4);
     for(int i = 0; i < image.size(); i++)
     {
-        image[i] = new QImage(MAX_POINTS, (MAX_POINTS >> 2) * 3, QImage::Format_RGB32);
+        //        image[i] = new QImage(MAX_POINTS, (MAX_POINTS >> 2) * 3, QImage::Format_RGB32);
+        image[i] = new QImage(MAX_POINTS, MAX_POINTS, QImage::Format_RGB32);
     }
 }
 
@@ -184,6 +185,8 @@ void BitColorData::drawLineWithAngle(QImage *img, const QVector<double> &data, d
 
     int len = data.size();
 
+    QPainter painter(img);
+
     for(int i = 1; i < img->width() / 2 && i < len / 2; i++)
     // for(int i = 1; i < img->width() / 2; i++)
     {
@@ -195,7 +198,10 @@ void BitColorData::drawLineWithAngle(QImage *img, const QVector<double> &data, d
         y = 1.5 * (img->height() / 2) - y;
 
         data2rgb(data[i * 2], &r, &g, &b);  // 间隔取点，不然显示不了
-        img->setPixelColor(x, y, QColor(r, g, b));
+
+        //        img->setPixelColor(x, y, QColor(r, g, b));
+        painter.setPen(QColor(r, g, b));
+        painter.drawPoint(QPoint(x, y));
     }
 }
 
@@ -203,30 +209,13 @@ void BitColorData::generateImage()
 {
     for(int i = 0; i < image.size(); i++)
     {
-        for(int m = 0; m < image[i]->width(); m += 1)  // change background color
-        {
-            for(int j = 0; j < image[i]->height(); ++j)
-            {
-                image[i]->setPixelColor(m, j, QColor(62, 62, 62));
-            }
-        }
-        //        image[i]->fill(QColor(62, 62, 62));
+        image[i]->fill(QColor(62, 62, 62, 150));
 
-        // 在图像上画个半圆
-        double radius = image[i]->width() / 2;
-        double x, y;
-        //    for(int i = 180; i >= 0; i--)
-        for(int m = 360; m >= 180; m--)
-        {
-            x = cos((m * pi) / 180);
-            y = sin((m * pi) / 180);
-            x *= radius;
-            y *= radius;
-            x += radius;
-            y += 1.5 * (image[i]->height() / 2);
-
-            image[i]->setPixelColor(x, y, QColor(Qt::red));
-        }
+        QPainter painter(image[i]);
+        painter.setPen(Qt::red);
+        painter.drawEllipse(0, 0, std::min(image[i]->width(), image[i]->height()), std::min(image[i]->width(), image[i]->height()));
+        painter.setPen(QPen(Qt::green, 6, Qt::SolidLine, Qt::RoundCap));
+        painter.drawPoint(QPoint(image[i]->width() / 2, image[i]->height() / 2));
     }
 
     for(int i = 0; i < result.size(); i++)

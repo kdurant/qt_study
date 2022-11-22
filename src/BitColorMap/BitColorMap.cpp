@@ -1,17 +1,20 @@
 #include "BitColorMap.h"
+#include <QPainter>
 
 BitColorMap::BitColorMap(QWidget *parent) :
     QWidget(parent)
 {
-    image = new QImage(img_size, (img_size >> 2) * 3, QImage::Format_RGB32);
-    for(double i = 0; i < image->width(); i += 1)  // change background color
-    {
-        for(int j = 0; j < image->height(); ++j)
-        {
-            image->setPixelColor(i, j, QColor(62, 62, 62));
-        }
-    }
-    drawHalfCircle(image);
+    resize(img_size, img_size);
+    image = new QImage(img_size, img_size, QImage::Format_RGB32);
+    image->fill(QColor(62, 62, 62, 150));
+
+    QPainter painter(image);
+    painter.setPen(Qt::red);
+
+    painter.drawEllipse(0, 0, std::min(image->width(), image->height()), std::min(image->width(), image->height()));
+    //    painter.drawEllipse(0, 0, 200, 200);
+    painter.setPen(QPen(Qt::green, 6, Qt::SolidLine, Qt::RoundCap));
+    painter.drawPoint(QPoint(image->width() / 2, image->height() / 2));
 }
 
 int BitColorMap::data2rgb(int data, int *r, int *g, int *b)
@@ -141,5 +144,6 @@ void BitColorMap::paintEvent(QPaintEvent *event)
     QRect source(0.0, 0.0, img_size, img_size);  //建立源矩形，用来划定来自外部的源图像文件中需要显示的区域
 
     QPainter painter(this);
+
     painter.drawImage(target, *image, source);
 }
