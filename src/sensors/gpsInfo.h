@@ -190,12 +190,12 @@ private:
         }
         else
         {
-            gps.week = frame.mid(offset + 8, 4).toHex().toUInt(nullptr, 16);
+            gps.week = frame.mid(offset, 4).toHex().toUInt(nullptr, 16);
 
-            if(frame.at(12) == 0 && frame.at(13) == 0)
+            if(frame.at(12) == 0 && frame.at(13) == 0)  // APPLANIX
                 gps.current_week_ms = Common::ba2int(frame.mid(offset + 12 + 4, 4), 1) / 1000;
-            else
-                gps.current_week_ms = Common::byteArrayToDouble(frame.mid(12, 8), 0);  // 无人机雷达GPS格式
+            else  // NOVALTEL
+                gps.current_week_ms = Common::byteArrayToDouble(frame.mid(12, 8), 0);
             gps.latitude  = Common::byteArrayToDouble(frame.mid(48, 8), 0);
             gps.longitude = Common::byteArrayToDouble(frame.mid(56, 8), 0);
             gps.altitude  = Common::byteArrayToDouble(frame.mid(64, 8), 0);
