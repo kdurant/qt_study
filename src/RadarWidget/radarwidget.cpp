@@ -54,11 +54,6 @@ RadarWidget::RadarWidget(__radar_status__ para, QWidget *parent) :
     attitude = new AttitudeSensor;
     ms5837   = new MS5837;
 
-    waterGuard.startSaveBase    = false;
-    waterGuard.isSavedBase      = false;
-    waterGuard.state            = WaveExtract::MOTOR_CNT_STATE::IDLE;
-    waterGuard.videoMemoryDepth = 180;
-
     threadMisc->start();
     offlineWaveForm->moveToThread(threadMisc);
     waveExtract->moveToThread(threadMisc);
@@ -721,7 +716,11 @@ void RadarWidget::initSignalSlot()
     });
 
     // 水下预警雷达相关设置
-    // connect(ui->btn_baseCapture, &QPushButton::pressed, this, [this]() {});
+    connect(ui->btn_baseCapture, &QPushButton::pressed, this, [this]()
+            {
+        bitColorData->savingBase();
+        updateBaseFlag = true;
+    });
 
     connect(dispatch, &ProtocolDispatch::onlineDataReady, onlineWaveForm, &OnlineWaveform::setNewData);
     connect(this, &RadarWidget::previewdDataReady, savePreviewData, &SavePreviewData::writeToFile);
@@ -749,10 +748,21 @@ void RadarWidget::initSignalSlot()
 
     connect(bitColorData, &BitColorData::bitImageReady, this, [this](QVector<QImage *> image)
             {
-        for(int i = 0; i < image.size(); i++)
+        if(updateBaseFlag)
         {
-            widget2diffColorMap[i]->setImage(image[i]);
-            widget2diffColorMap[i]->refreshUI();
+            for(int i = 0; i < image.size(); i++)
+            {
+                widget2baseColorMap[i]->setImage(image[i]);
+                widget2baseColorMap[i]->refreshUI();
+            }
+        }
+        else
+        {
+            for(int i = 0; i < image.size(); i++)
+            {
+                widget2diffColorMap[i]->setImage(image[i]);
+                widget2diffColorMap[i]->refreshUI();
+            }
         }
     });
 

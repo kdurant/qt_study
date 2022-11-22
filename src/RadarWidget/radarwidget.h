@@ -224,23 +224,12 @@ private:
     QList<QCustomPlot *> widget2CustomPlotList;
     QList<QCPColorMap *> widget2QCPColorMapList;
 
+    bool                   updateBaseFlag{false};
     QVector<BitColorMap *> widget2baseColorMap;
     QVector<BitColorMap *> widget2diffColorMap;
 
-    // RADAR_TYPE_WATER_GUARD 用的变量
-    struct WaterGuard
-    {
-        bool                                        startSaveBase;
-        bool                                        isSavedBase;  // 以及保存了用于比较的数据
-        int                                         videoMemoryDepth;
-        WaveExtract::MOTOR_CNT_STATE                state;
-        QVector<QVector<WaveExtract::WaveformInfo>> base;
-        QVector<WaveExtract::WaveformInfo>          diff;
-    };
-
     int colorMap_X_max{512};
 
-    WaterGuard    waterGuard;
     BitColorData *bitColorData{new BitColorData};
 
     qint64           testCnt{0};
