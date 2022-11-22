@@ -2,6 +2,11 @@
 
 BitColorData::BitColorData()
 {
+    image.resize(4);
+    for(int i = 0; i < image.size(); i++)
+    {
+        image[i] = new QImage(MAX_POINTS, (MAX_POINTS >> 2) * 3, QImage::Format_RGB32);
+    }
 }
 
 void BitColorData::config(int freq, int motorSpeed, double startAngle, double endAngle)
@@ -196,10 +201,8 @@ void BitColorData::drawLineWithAngle(QImage *img, const QVector<double> &data, d
 
 void BitColorData::generateImage()
 {
-    image.resize(4);
     for(int i = 0; i < image.size(); i++)
     {
-        image[i] = new QImage(MAX_POINTS, (MAX_POINTS >> 2) * 3, QImage::Format_RGB32);
         for(int m = 0; m < image[i]->width(); m += 1)  // change background color
         {
             for(int j = 0; j < image[i]->height(); ++j)

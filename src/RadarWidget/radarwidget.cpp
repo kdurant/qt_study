@@ -736,11 +736,6 @@ void RadarWidget::initSignalSlot()
             {
         showLineChart(wave, status);
 
-        // if(sysStatus.radarType == BspConfig::RADAR_TYPE_WATER_GUARD)
-        // {
-        // showBitColorMap(wave);
-        // }
-
         if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
         {
             showPseudoColorMap(wave);
