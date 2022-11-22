@@ -648,15 +648,13 @@ void RadarWidget::initSignalSlot()
             }
         }
 
-        if(sysStatus.radarType == BspConfig::RADAR_TYPE_DOUBLE_WAVE)
+        int dataBytes    = (sysStatus.previewSettings.firstLen + sysStatus.previewSettings.secondLen) * 8 + 128 + 128;
+        int interval_min = (1e6 / sysStatus.previewSettings.laserFreq) / (dataBytes / 256) * sysStatus.previewSettings.sampleRatio;
+
+        if(interval_min < 6)
         {
-            if(sysStatus.previewSettings.firstLen + sysStatus.previewSettings.secondLen >= 3000)
-                QMessageBox::warning(NULL, "警告", "两段采样长度之和尽量不要大于3000");
-        }
-        else
-        {
-            if(sysStatus.previewSettings.firstLen + sysStatus.previewSettings.secondLen >= 1000)
-                QMessageBox::warning(NULL, "警告", "两段采样长度之和尽量不要大于1000");
+            QMessageBox::warning(NULL, "警告", "请降低采集数据抽样率，然后重新设置");
+            return;
         }
 
         preview->setFirstPos(sysStatus.previewSettings.firstPos);
