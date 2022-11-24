@@ -1392,6 +1392,8 @@ void RadarWidget::initSignalSlot()
 
             for(int i = 0; i < data.size(); i++)
                 array.append(data[i]);
+            for(auto iter = array.begin(); iter != array.end(); iter += 4)
+                std::reverse(iter, iter + 4);
             file.write(array);
 
             ui->progressBar_extractHardDiskData->setValue(addr);
@@ -1444,6 +1446,8 @@ void RadarWidget::initSignalSlot()
 
             for(int i = 0; i < data.size(); i++)
                 array.append(data[i]);
+            for(auto iter = array.begin(); iter != array.end(); iter += 4)
+                std::reverse(iter, iter + 4);
             file.write(array);
 
             ui->progressBar_extractHardDiskData->setValue(addr);
@@ -1498,6 +1502,8 @@ void RadarWidget::initSignalSlot()
 
             for(int i = 0; i < data.size(); i++)
                 array.append(data[i]);
+            for(auto iter = array.begin(); iter != array.end(); iter += 4)
+                std::reverse(iter, iter + 4);
             file.write(array);
 
             ui->progressBar_extractHardDiskData->setValue(addr);

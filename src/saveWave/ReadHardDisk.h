@@ -45,7 +45,17 @@ public:
         timer = new QTimer();
         timer->setInterval(5);
     }
-    bool                 readDiskUnit(qint32 unitAddr, QByteArray &ret);
+    bool readDiskUnit(qint32 unitAddr, QByteArray &ret);
+
+    /**
+     * @brief 从硬盘中指定的地址读取一个单位（16KB）数据
+     * @param unitAddr
+     * 底层数据流 00 01 02 03
+     * 写入SATA IP时 ： 03 02 01 00
+     * PC查看SSD时 ： 00 01 02 03
+     * UDP读取IP时 ： 03 02 01 00
+     * @return
+     */
     QVector<QByteArray> &readDiskUnit(qint32 unitAddr);
     bool                 inquireSpace(qint32 startUnit, ValidFileInfo &fileInfo);
     bool                 eraseDiskUnit(quint16 unitAddr);
