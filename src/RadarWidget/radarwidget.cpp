@@ -209,8 +209,6 @@ void RadarWidget::uiConfig()
     ui->toolBox_motor->setItemEnabled(2, false);
     ui->rbtn_GLH->setVisible(false);
     ui->rbtn_POLARIZATION->setVisible(false);
-    ui->groupBox_12->setVisible(false);
-    ui->progressBar_extractHardDiskData->setVisible(false);
     ui->groupBox_7->setVisible(false);
     ui->btn_baseCapture->setVisible(false);
     if(sysStatus.radarType == BspConfig::RADAR_TYPE_760)
@@ -437,8 +435,6 @@ void RadarWidget::uiConfig()
         ui->tabWidget_main->setTabEnabled(1, true);
         ui->tabWidget_main->setCurrentIndex(1);
 
-        ui->groupBox_12->setVisible(true);
-        ui->progressBar_extractHardDiskData->setVisible(true);
         ui->groupBox_7->setVisible(true);
         ui->btn_baseCapture->setVisible(true);
     }
