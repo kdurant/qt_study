@@ -212,7 +212,7 @@ void RadarWidget::uiConfig()
     ui->groupBox_12->setVisible(false);
     ui->progressBar_extractHardDiskData->setVisible(false);
     ui->groupBox_7->setVisible(false);
-
+    ui->btn_baseCapture->setVisible(false);
     if(sysStatus.radarType == BspConfig::RADAR_TYPE_760)
     {
         ui->lineEdit_radarType->setText("760雷达");
@@ -440,6 +440,7 @@ void RadarWidget::uiConfig()
         ui->groupBox_12->setVisible(true);
         ui->progressBar_extractHardDiskData->setVisible(true);
         ui->groupBox_7->setVisible(true);
+        ui->btn_baseCapture->setVisible(true);
     }
     else
     {
