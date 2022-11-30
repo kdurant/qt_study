@@ -194,8 +194,11 @@ void BitColorData::drawLineWithAngle(QImage *img, const QVector<double> &data, d
         y = qSin((angle * pi) / 180);
         x *= i;
         y *= i;
+
+        // image的左上角坐标是(0, 0)
+        //  实际显示的时候，image中心的坐标应该是(0, 0)
         x = radius - x;
-        y = 1.5 * (img->height() / 2) - y;
+        y = img->height() / 2 - y;
 
         data2rgb(data[i * 2], &r, &g, &b);  // 间隔取点，不然显示不了
 

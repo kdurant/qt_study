@@ -59,6 +59,6 @@ Debug: TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH"_debug"
 Release: TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH"_release"
 #TARGET = Radar_$$VERSION
 
-DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
+unix: DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
 
 #include($$PWD/deploy.pri)
