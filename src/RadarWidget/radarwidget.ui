@@ -850,7 +850,7 @@
                <x>0</x>
                <y>0</y>
                <width>315</width>
-               <height>987</height>
+               <height>950</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1155,13 +1155,6 @@
                   <widget class="QLabel" name="label_compressLen">
                    <property name="text">
                     <string>压缩长度：</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="14" column="1">
-                  <widget class="QPushButton" name="btn_baseCapture">
-                   <property name="text">
-                    <string>保存基准数据</string>
                    </property>
                   </widget>
                  </item>
@@ -1996,9 +1989,45 @@
          <attribute name="title">
           <string>雷达格式预览</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_14" stretch="0">
+         <layout class="QVBoxLayout" name="verticalLayout_14" stretch="10,1">
           <item>
            <widget class="QWidget" name="widget" native="true"/>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_bitMapCtrl">
+            <property name="title">
+             <string>控制</string>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_23">
+             <item row="0" column="1">
+              <widget class="QRadioButton" name="radioButton">
+               <property name="text">
+                <string>显示基准</string>
+               </property>
+               <property name="checked">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QRadioButton" name="radioButton_2">
+               <property name="text">
+                <string>显示实时</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QPushButton" name="btn_baseCapture">
+               <property name="text">
+                <string>保存基准数据</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
           </item>
          </layout>
         </widget>

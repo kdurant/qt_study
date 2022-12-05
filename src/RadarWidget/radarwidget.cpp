@@ -210,7 +210,6 @@ void RadarWidget::uiConfig()
     ui->rbtn_GLH->setVisible(false);
     ui->rbtn_POLARIZATION->setVisible(false);
     ui->groupBox_7->setVisible(false);
-    ui->btn_baseCapture->setVisible(false);
     if(sysStatus.radarType == BspConfig::RADAR_TYPE_760)
     {
         ui->lineEdit_radarType->setText("760雷达");
@@ -436,7 +435,6 @@ void RadarWidget::uiConfig()
         ui->tabWidget_main->setCurrentIndex(1);
 
         ui->groupBox_7->setVisible(true);
-        ui->btn_baseCapture->setVisible(true);
     }
     else
     {
@@ -2090,27 +2088,23 @@ void RadarWidget::plotPseudoColorSettings()
 
 void RadarWidget::plotBitColorSettings()
 {
-    QVBoxLayout *main = new QVBoxLayout;
-    QHBoxLayout *base = new QHBoxLayout;
-    QHBoxLayout *diff = new QHBoxLayout;
-    ui->widget->setLayout(main);
-    main->addLayout(base);
-    main->addLayout(diff);
+    QGridLayout *grid = new QGridLayout;
+    ui->widget->setLayout(grid);
 
     for(int i = 0; i < 4; i++)
     {
         BitColorMap *colorMap = new BitColorMap(this);
         widget2baseColorMap.append(colorMap);
-        base->addWidget(colorMap, 4);
-    }
-    for(int i = 0; i < 4; i++)
-    {
-        BitColorMap *colorMap = new BitColorMap(this);
-        widget2diffColorMap.append(colorMap);
-        diff->addWidget(colorMap, 4);
+        grid->addWidget(colorMap, i / 2, i % 2);
     }
 
-    //    ui->tabWidget_main->tabBar()
+    for(int i = 4; i < 8; i++)
+    {
+        BitColorMap *colorMap = new BitColorMap(this);
+        colorMap->setVisible(false);
+        widget2diffColorMap.append(colorMap);
+        grid->addWidget(colorMap, i / 2, i % 2);
+    }
 }
 
 /**
