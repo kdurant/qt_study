@@ -25,6 +25,8 @@ qint32 Elmo::getActualVelocity()
         speed = recvData.mid(3, len).toUInt();
         speed /= 3900;
     }
+    else
+        speed = -1;
     return speed;
 }
 
@@ -42,6 +44,8 @@ qint32 Elmo::getActualPosition()
         pos = recvData.mid(3, len).toUInt();
         pos /= 657.857;
     }
+    else
+        pos = -1;
     return pos;
 }
 
