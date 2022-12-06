@@ -62,8 +62,9 @@ public:
     void generateImage(void);
 
 signals:
-    void bitColorDataReady(QVector<QVector<SingleSampleData>> &result);
-    void bitImageReady(QVector<QImage *> image);
+    //    void bitColorDataReady(QVector<QVector<SingleSampleData>> &result);
+    void bitBaseImageReady(QVector<QImage *> image);
+    void bitRealImageReady(QVector<QImage *> image);
 
 private:
     /**
@@ -87,8 +88,10 @@ private:
      */
     QVector<QVector<SingleSampleData>> result;  // 一圈数据的计算结果
 
-    double   pi{3.1415926};
-    uint32_t TICK_PER_CYCLE{163840};
+    double pi{3.1415926};
+    // ELMO :236780
+    // EPOS :163840
+    uint32_t TICK_PER_CYCLE{236780};
 
     uint32_t freq{5000};
     uint32_t motorSpeed{0};

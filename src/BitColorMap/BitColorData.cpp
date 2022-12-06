@@ -24,6 +24,10 @@ void BitColorData::savingBase(void)
         base = tableTennis2;
     else
         base = tableTennis1;
+
+    generateDiff(base);
+    generateImage();
+    emit bitBaseImageReady(image);
 }
 
 void BitColorData::updateData(const QVector<WaveExtract::WaveformInfo> &allCh, int status)
@@ -69,6 +73,7 @@ void BitColorData::updateData(const QVector<WaveExtract::WaveformInfo> &allCh, i
         else
             generateDiff(tableTennis1);
         generateImage();
+        emit bitRealImageReady(image);
     }
 }
 
@@ -93,7 +98,7 @@ void BitColorData::generateDiff(QVector<QVector<WaveExtract::WaveformInfo>> &rou
         {
             QVector<WaveExtract::WaveformInfo> &current = round[cycle];
 
-            angle = current[0].motorCnt / TICK_PER_CYCLE;
+            angle = static_cast<double>(current[0].motorCnt * 360) / TICK_PER_CYCLE;
 
             for(int ch = 0; ch < current.size(); ch++)  // 采样数据里的通道
             {
@@ -107,7 +112,6 @@ void BitColorData::generateDiff(QVector<QVector<WaveExtract::WaveformInfo>> &rou
                 result[ch][cycle].angle = angle;
             }
         }
-        //        emit bitColorDataReady(result);
         return;
     }
 
@@ -127,7 +131,7 @@ void BitColorData::generateDiff(QVector<QVector<WaveExtract::WaveformInfo>> &rou
         QVector<WaveExtract::WaveformInfo> &current  = round[cycle];
         QVector<WaveExtract::WaveformInfo> &previous = base[cycle];
 
-        angle = current[0].motorCnt / TICK_PER_CYCLE;
+        angle = static_cast<double>(current[0].motorCnt * 360) / TICK_PER_CYCLE;
 
         for(int ch = 0; ch < previous.size(); ch++)  // 采样数据里的通道
         {
@@ -141,7 +145,6 @@ void BitColorData::generateDiff(QVector<QVector<WaveExtract::WaveformInfo>> &rou
             result[ch][cycle].angle = angle;
         }
     }
-    //    emit bitColorDataReady(result);
 }
 
 int BitColorData::data2rgb(int data, int *r, int *g, int *b)
@@ -228,5 +231,4 @@ void BitColorData::generateImage()
             drawLineWithAngle(image[i], result[i][j].data, result[i][j].angle);
         }
     }
-    emit bitImageReady(image);
 }

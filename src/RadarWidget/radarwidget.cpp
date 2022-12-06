@@ -740,24 +740,48 @@ void RadarWidget::initSignalSlot()
             showPseudoColorMap(wave);
         }
     });
-
-    connect(bitColorData, &BitColorData::bitImageReady, this, [this](QVector<QImage *> image)
+    connect(bitColorData, &BitColorData::bitBaseImageReady, this, [this](QVector<QImage *> image)
             {
-        if(updateBaseFlag)
+        for(int i = 0; i < image.size(); i++)
         {
-            for(int i = 0; i < image.size(); i++)
+            widget2baseColorMap[i]->setImage(image[i]);
+            widget2baseColorMap[i]->refreshUI();
+        }
+    });
+
+    connect(bitColorData, &BitColorData::bitRealImageReady, this, [this](QVector<QImage *> image)
             {
-                widget2baseColorMap[i]->setImage(image[i]);
-                widget2baseColorMap[i]->refreshUI();
-            }
+        for(int i = 0; i < image.size(); i++)
+        {
+            widget2diffColorMap[i]->setImage(image[i]);
+            widget2diffColorMap[i]->refreshUI();
+        }
+    });
+
+    connect(ui->radioButton_showBase, &QRadioButton::toggled, [this]()
+            {
+        if(ui->radioButton_showBase->isChecked())
+        {
+            for(int i = 0; i < 4; i++)
+                widget2baseColorMap.at(i)->setVisible(true);
         }
         else
         {
-            for(int i = 0; i < image.size(); i++)
+            for(int i = 0; i < 4; i++)
+                widget2baseColorMap.at(i)->setVisible(false);
+        }
+    });
+    connect(ui->radioButton_showRealTime, &QRadioButton::toggled, [this]()
             {
-                widget2diffColorMap[i]->setImage(image[i]);
-                widget2diffColorMap[i]->refreshUI();
-            }
+        if(ui->radioButton_showRealTime->isChecked())
+        {
+            for(int i = 0; i < 4; i++)
+                widget2diffColorMap.at(i)->setVisible(true);
+        }
+        else
+        {
+            for(int i = 0; i < 4; i++)
+                widget2diffColorMap.at(i)->setVisible(false);
         }
     });
 
@@ -2094,6 +2118,7 @@ void RadarWidget::plotBitColorSettings()
     for(int i = 0; i < 4; i++)
     {
         BitColorMap *colorMap = new BitColorMap(this);
+        colorMap->setVisible(false);
         widget2baseColorMap.append(colorMap);
         grid->addWidget(colorMap, i / 2, i % 2);
     }
@@ -2101,7 +2126,6 @@ void RadarWidget::plotBitColorSettings()
     for(int i = 4; i < 8; i++)
     {
         BitColorMap *colorMap = new BitColorMap(this);
-        colorMap->setVisible(false);
         widget2diffColorMap.append(colorMap);
         grid->addWidget(colorMap, i / 2, i % 2);
     }
