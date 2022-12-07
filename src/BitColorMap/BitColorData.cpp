@@ -21,13 +21,30 @@ void BitColorData::config(int freq, int motorSpeed, double startAngle, double en
 void BitColorData::savingBase(void)
 {
     if(tableTenisFlag)
+    {
+        generateDiff(tableTennis2);
         base = tableTennis2;
+    }
     else
+    {
+        generateDiff(tableTennis1);
         base = tableTennis1;
+    }
 
-    generateDiff(base);
     generateImage();
-    emit bitBaseImageReady(image);
+
+    a = QImage(*image[0]);
+    b = QImage(*image[1]);
+    c = QImage(*image[2]);
+    d = QImage(*image[3]);
+
+    baseImage.clear();
+    baseImage.append(&a);
+    baseImage.append(&b);
+    baseImage.append(&c);
+    baseImage.append(&d);
+    emit bitBaseImageReady(baseImage);
+    //    emit bitBaseImageReady(image);
 }
 
 void BitColorData::updateData(const QVector<WaveExtract::WaveformInfo> &allCh, int status)

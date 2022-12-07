@@ -2118,7 +2118,7 @@ void RadarWidget::plotBitColorSettings()
     for(int i = 0; i < 4; i++)
     {
         BitColorMap *colorMap = new BitColorMap(this);
-        colorMap->setVisible(false);
+        //        colorMap->setVisible(false);
         widget2baseColorMap.append(colorMap);
         grid->addWidget(colorMap, i / 2, i % 2);
     }
@@ -2271,6 +2271,12 @@ void RadarWidget::on_bt_showWave_clicked()
     else
     {
         running = false;
+
+        for(int i = 0; i < 4; i++)
+            widget2baseColorMap.at(i)->setVisible(true);
+
+        for(int i = 0; i < 4; i++)
+            widget2diffColorMap.at(i)->setVisible(true);
     }
     for(int i = start_index; i < total; i += interval_num)
     {

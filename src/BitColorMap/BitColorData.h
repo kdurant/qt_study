@@ -103,5 +103,10 @@ private:
     MOTOR_CNT_STATE state{MOTOR_CNT_STATE::IDLE};
 
     QVector<QImage *> image;
+    QImage            a;
+    QImage            b;
+    QImage            c;
+    QImage            d;
+    QVector<QImage *> baseImage;
 };
 #endif

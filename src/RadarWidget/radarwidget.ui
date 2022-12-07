@@ -848,7 +848,7 @@
              <property name="geometry">
               <rect>
                <x>0</x>
-               <y>0</y>
+               <y>-221</y>
                <width>315</width>
                <height>950</height>
               </rect>
@@ -1357,7 +1357,7 @@
                <x>0</x>
                <y>0</y>
                <width>287</width>
-               <height>470</height>
+               <height>612</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1492,7 +1492,7 @@
                  <item row="2" column="3">
                   <widget class="QSpinBox" name="spinBox_previewTimeInterval">
                    <property name="minimum">
-                    <number>10</number>
+                    <number>5</number>
                    </property>
                    <property name="maximum">
                     <number>5000</number>
