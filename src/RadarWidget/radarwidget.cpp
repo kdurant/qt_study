@@ -759,6 +759,14 @@ void RadarWidget::initSignalSlot()
         }
     });
 
+    connect(bitColorData, &BitColorData::roundDistanceReady, this, [this](QVector<double> angle, QVector<double> distance)
+            {
+        for(int i = 0; i < 2; i++)
+        {
+            widget2CRadar[i]->updateData(angle, distance);
+        }
+    });
+
     connect(ui->radioButton_showBase, &QRadioButton::toggled, [this]()
             {
         if(ui->radioButton_showBase->isChecked())
@@ -2285,12 +2293,6 @@ void RadarWidget::on_bt_showWave_clicked()
     else
     {
         running = false;
-
-        for(int i = 0; i < 3; i++)
-            widget2baseColorMap.at(i)->setVisible(true);
-
-        for(int i = 0; i < 3; i++)
-            widget2diffColorMap.at(i)->setVisible(true);
     }
     for(int i = start_index; i < total; i += interval_num)
     {

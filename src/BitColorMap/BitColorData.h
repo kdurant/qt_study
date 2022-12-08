@@ -55,7 +55,13 @@ public:
      */
     void updateData(const QVector<WaveExtract::WaveformInfo> &allCh, int status);
 
-    void generateDiff(QVector<QVector<WaveExtract::WaveformInfo>> &round);
+    /**
+     * @brief
+     * @param round
+     */
+    void   generateDiff(QVector<QVector<WaveExtract::WaveformInfo>> &round);
+    void   calcDistanceAndAngle(QVector<QVector<WaveExtract::WaveformInfo>> &round);
+    double calcDistance(int peek, QVector<WaveExtract::WaveformInfo> &data);
 
     int  data2rgb(int data, int *r, int *g, int *b);
     void drawLineWithAngle(QImage *img, const QVector<double> &data, double angle);
@@ -65,6 +71,7 @@ signals:
     //    void bitColorDataReady(QVector<QVector<SingleSampleData>> &result);
     void bitBaseImageReady(QVector<QImage *> image);
     void bitRealImageReady(QVector<QImage *> image);
+    void roundDistanceReady(QVector<double> angle, QVector<double> distance);
 
 private:
     /**
@@ -108,5 +115,9 @@ private:
     QImage            c;
     QImage            d;
     QVector<QImage *> baseImage;
+
+    double          peekPosition{0};
+    QVector<double> distance;
+    QVector<double> angle;
 };
 #endif

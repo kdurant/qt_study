@@ -49,6 +49,9 @@ void BitColorData::savingBase(void)
 
 void BitColorData::updateData(const QVector<WaveExtract::WaveformInfo> &allCh, int status)
 {
+    auto max     = std::max_element(std::begin(allCh[0].value), std::end(allCh[0].value));
+    peekPosition = std::distance(std::begin(allCh[0].value), max) + allCh[0].pos[0];
+
     //    qDebug() << "BitColorData::updateData() run in Thread = " << QThread::currentThreadId();
     QVector<WaveExtract::WaveformInfo> data;
 
@@ -86,9 +89,15 @@ void BitColorData::updateData(const QVector<WaveExtract::WaveformInfo> &allCh, i
         sampleNumber   = 0;
         tableTenisFlag = !tableTenisFlag;
         if(tableTenisFlag)
+        {
             generateDiff(tableTennis2);
+            calcDistanceAndAngle(tableTennis2);
+        }
         else
+        {
             generateDiff(tableTennis1);
+            calcDistanceAndAngle(tableTennis1);
+        }
         generateImage();
         emit bitRealImageReady(image);
     }
@@ -162,6 +171,39 @@ void BitColorData::generateDiff(QVector<QVector<WaveExtract::WaveformInfo>> &rou
             result[ch][cycle].angle = angle;
         }
     }
+}
+
+void BitColorData::calcDistanceAndAngle(QVector<QVector<WaveExtract::WaveformInfo>> &round)
+{
+    int len = round.length();
+    angle.clear();
+    angle.reserve(len);
+    distance.clear();
+    distance.reserve(len);
+    for(int i = 0; i < len; i++)
+    {
+        distance.append(calcDistance(peekPosition, round[i]));
+        angle.append(WaveExtract::calcAngle(round[i], TICK_PER_CYCLE));
+    }
+    emit roundDistanceReady(angle, distance);
+}
+
+double BitColorData::calcDistance(int peek, QVector<WaveExtract::WaveformInfo> &data)
+{
+    auto peakPosition = [&](int i)
+    {
+        auto max            = std::max_element(std::begin(data[i].value), std::end(data[i].value));
+        data[i].maxPosition = std::distance(std::begin(data[i].value), max) + data[i].pos[0];
+    };
+
+    peakPosition(1);
+    peakPosition(2);
+    peakPosition(3);
+    int ch1_result = data[1].maxPosition;
+    int ch2_result = data[2].maxPosition;
+    int ch3_result = data[3].maxPosition;
+
+    return (ch1_result - peek) * 0.15;
 }
 
 int BitColorData::data2rgb(int data, int *r, int *g, int *b)

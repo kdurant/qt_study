@@ -27,13 +27,14 @@ public:
     {
         resize(400, 400);
 
-        m_angle.append(0);
-        m_distance.append(111);
+//        m_angle.append(0);
+//        m_distance.append(111);
     }
     void updateData(QVector<double> &angle, QVector<double> &distance)
     {
         m_angle = angle;
         m_distance = distance;
+        update();
     }
 
     void clearUI(void)

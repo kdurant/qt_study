@@ -64,7 +64,40 @@ public:
      * 最后计算峰值点的距离
      * @param data
      */
-    double calcDistance(QVector<WaveExtract::WaveformInfo> &data);
+    static double calcDistance(QVector<WaveExtract::WaveformInfo> &data)
+    {
+        int len = data.size();
+        if(len != 8)
+            return -1;
+
+        /**
+         * 从value中找出最大值，判断这个最大值的位置，再加上pos[0]的数字
+         * 即是峰值点在采样序列中的时间(ns)
+         */
+        auto peakPosition = [&](int i)
+        {
+            auto max            = std::max_element(std::begin(data[i].value), std::end(data[i].value));
+            data[i].maxPosition = std::distance(std::begin(data[i].value), max) + data[i].pos[0];
+        };
+
+        peakPosition(0);
+        peakPosition(1);
+        peakPosition(3);
+        peakPosition(5);
+        peakPosition(7);
+        int main_start = data[0].maxPosition;
+        int ch0_result = data[1].maxPosition;
+        int ch1_result = data[3].maxPosition;
+        int ch2_result = data[5].maxPosition;
+        int ch3_result = data[7].maxPosition;
+
+        return (ch1_result - main_start) * 0.15;
+    }
+
+    static double calcAngle(QVector<WaveExtract::WaveformInfo> &data, int motorMaxValue)
+    {
+        return static_cast<double>(data[0].motorCnt * 360) / motorMaxValue;
+    }
 
     friend QDebug operator<<(QDebug debug, const WaveExtract &wave)
     {
