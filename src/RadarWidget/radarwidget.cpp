@@ -210,6 +210,8 @@ void RadarWidget::uiConfig()
     ui->rbtn_GLH->setVisible(false);
     ui->rbtn_POLARIZATION->setVisible(false);
     ui->groupBox_7->setVisible(false);
+
+    ui->label_targetDistance->setVisible(false);
     if(sysStatus.radarType == BspConfig::RADAR_TYPE_760)
     {
         ui->lineEdit_radarType->setText("760雷达");
@@ -435,6 +437,7 @@ void RadarWidget::uiConfig()
         ui->tabWidget_main->setCurrentIndex(1);
 
         ui->groupBox_7->setVisible(true);
+        ui->label_targetDistance->setVisible(true);
     }
     else
     {
@@ -742,19 +745,19 @@ void RadarWidget::initSignalSlot()
     });
     connect(bitColorData, &BitColorData::bitBaseImageReady, this, [this](QVector<QImage *> image)
             {
-        for(int i = 0; i < image.size(); i++)
+        for(int i = 1; i < image.size(); i++)
         {
-            widget2baseColorMap[i]->setImage(image[i]);
-            widget2baseColorMap[i]->refreshUI();
+            widget2baseColorMap[i - 1]->setImage(image[i]);
+            widget2baseColorMap[i - 1]->refreshUI();
         }
     });
 
     connect(bitColorData, &BitColorData::bitRealImageReady, this, [this](QVector<QImage *> image)
             {
-        for(int i = 0; i < image.size(); i++)
+        for(int i = 1; i < image.size(); i++)
         {
-            widget2diffColorMap[i]->setImage(image[i]);
-            widget2diffColorMap[i]->refreshUI();
+            widget2diffColorMap[i - 1]->setImage(image[i]);
+            widget2diffColorMap[i - 1]->refreshUI();
         }
     });
 
@@ -762,12 +765,12 @@ void RadarWidget::initSignalSlot()
             {
         if(ui->radioButton_showBase->isChecked())
         {
-            for(int i = 0; i < 4; i++)
+            for(int i = 0; i < 3; i++)
                 widget2baseColorMap.at(i)->setVisible(true);
         }
         else
         {
-            for(int i = 0; i < 4; i++)
+            for(int i = 0; i < 3; i++)
                 widget2baseColorMap.at(i)->setVisible(false);
         }
     });
@@ -775,12 +778,12 @@ void RadarWidget::initSignalSlot()
             {
         if(ui->radioButton_showRealTime->isChecked())
         {
-            for(int i = 0; i < 4; i++)
+            for(int i = 0; i < 3; i++)
                 widget2diffColorMap.at(i)->setVisible(true);
         }
         else
         {
-            for(int i = 0; i < 4; i++)
+            for(int i = 0; i < 3; i++)
                 widget2diffColorMap.at(i)->setVisible(false);
         }
     });
@@ -2115,15 +2118,15 @@ void RadarWidget::plotBitColorSettings()
     QGridLayout *grid = new QGridLayout;
     ui->widget->setLayout(grid);
 
-    for(int i = 0; i < 4; i++)
+    for(int i = 1; i < 4; i++)
     {
         BitColorMap *colorMap = new BitColorMap(this);
-        //        colorMap->setVisible(false);
+        colorMap->setVisible(false);
         widget2baseColorMap.append(colorMap);
         grid->addWidget(colorMap, i / 2, i % 2);
     }
 
-    for(int i = 4; i < 8; i++)
+    for(int i = 5; i < 8; i++)
     {
         BitColorMap *colorMap = new BitColorMap(this);
         widget2diffColorMap.append(colorMap);
@@ -2272,10 +2275,10 @@ void RadarWidget::on_bt_showWave_clicked()
     {
         running = false;
 
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < 3; i++)
             widget2baseColorMap.at(i)->setVisible(true);
 
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < 3; i++)
             widget2diffColorMap.at(i)->setVisible(true);
     }
     for(int i = start_index; i < total; i += interval_num)
@@ -2543,6 +2546,7 @@ void RadarWidget::showLineChart(const QVector<WaveExtract::WaveformInfo> &allCh,
         if(refreshUIFlag)
         {
             refreshUIFlag = false;
+            ui->label_targetDistance->setText("目标距离(m): " + QString::number(waveExtract->getDistance(), 'g', 5));
 
             // 刷新实时数据曲线
             if(sysStatus.radarType == BspConfig::RADAR_TYPE_LAND)

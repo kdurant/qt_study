@@ -543,8 +543,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>207</width>
-               <height>87</height>
+               <width>329</width>
+               <height>389</height>
               </rect>
              </property>
              <attribute name="label">
@@ -1828,13 +1828,23 @@
       <item>
        <widget class="QTabWidget" name="tabWidget_main">
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_3">
          <attribute name="title">
           <string>信号预览</string>
          </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_2" stretch="5,0">
+         <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,5,0">
+          <item>
+           <widget class="QLabel" name="label_targetDistance">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QCustomPlot" name="sampleDataPlot" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout_2"/>
