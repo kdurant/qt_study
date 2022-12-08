@@ -60,6 +60,7 @@
 #include "qcustomplot.h"
 #include "BitColorMap.h"
 #include "BitColorData.h"
+#include "CRadar.h"
 
 namespace Ui
 {
@@ -227,6 +228,7 @@ private:
     bool                   updateBaseFlag{false};
     QVector<BitColorMap *> widget2baseColorMap;
     QVector<BitColorMap *> widget2diffColorMap;
+    QVector<CRadar *>      widget2CRadar;
 
     int colorMap_X_max{512};
 

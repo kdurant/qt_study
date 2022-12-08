@@ -763,11 +763,13 @@ void RadarWidget::initSignalSlot()
             {
         if(ui->radioButton_showBase->isChecked())
         {
+            widget2CRadar.at(0)->setVisible(true);
             for(int i = 0; i < 3; i++)
                 widget2baseColorMap.at(i)->setVisible(true);
         }
         else
         {
+            widget2CRadar.at(0)->setVisible(false);
             for(int i = 0; i < 3; i++)
                 widget2baseColorMap.at(i)->setVisible(false);
         }
@@ -776,11 +778,13 @@ void RadarWidget::initSignalSlot()
             {
         if(ui->radioButton_showRealTime->isChecked())
         {
+            widget2CRadar.at(1)->setVisible(true);
             for(int i = 0; i < 3; i++)
                 widget2diffColorMap.at(i)->setVisible(true);
         }
         else
         {
+            widget2CRadar.at(1)->setVisible(false);
             for(int i = 0; i < 3; i++)
                 widget2diffColorMap.at(i)->setVisible(false);
         }
@@ -2115,6 +2119,15 @@ void RadarWidget::plotBitColorSettings()
 {
     QGridLayout *grid = new QGridLayout;
     ui->widget->setLayout(grid);
+
+    for(int i = 0; i < 2; i++)
+    {
+        CRadar *radar = new CRadar;
+        widget2CRadar.append(radar);
+    }
+    widget2CRadar[0]->setVisible(false);
+    grid->addWidget(widget2CRadar[0], 0, 0);
+    grid->addWidget(widget2CRadar[1], 2, 0);
 
     for(int i = 1; i < 4; i++)
     {
