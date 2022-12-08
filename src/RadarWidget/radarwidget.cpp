@@ -211,7 +211,6 @@ void RadarWidget::uiConfig()
     ui->rbtn_POLARIZATION->setVisible(false);
     ui->groupBox_7->setVisible(false);
 
-    ui->label_targetDistance->setVisible(false);
     if(sysStatus.radarType == BspConfig::RADAR_TYPE_760)
     {
         ui->lineEdit_radarType->setText("760雷达");
@@ -437,7 +436,6 @@ void RadarWidget::uiConfig()
         ui->tabWidget_main->setCurrentIndex(1);
 
         ui->groupBox_7->setVisible(true);
-        ui->label_targetDistance->setVisible(true);
     }
     else
     {
@@ -2546,7 +2544,6 @@ void RadarWidget::showLineChart(const QVector<WaveExtract::WaveformInfo> &allCh,
         if(refreshUIFlag)
         {
             refreshUIFlag = false;
-            ui->label_targetDistance->setText("目标距离(m): " + QString::number(waveExtract->getDistance(), 'g', 5));
 
             // 刷新实时数据曲线
             if(sysStatus.radarType == BspConfig::RADAR_TYPE_LAND)
