@@ -202,8 +202,8 @@ void RadarWidget::uiConfig()
     ui->groupBox_norFlashTest->hide();
     ui->tabWidget->setCurrentIndex(0);
 
-    ui->tabWidget_main->setTabEnabled(1, false);
     ui->tabWidget_main->setTabEnabled(2, false);
+    ui->tabWidget_main->setTabEnabled(3, false);
     ui->tabWidget_main->setCurrentIndex(0);
 
     ui->toolBox_motor->setItemEnabled(2, false);
@@ -388,9 +388,8 @@ void RadarWidget::uiConfig()
         ui->lineEdit_pmtDelayTime->show();
         ui->lineEdit_pmtGateTime->show();
 
-        // ui->tabWidget_main->setTabEnabled(0, false);
-        ui->tabWidget_main->setTabEnabled(1, true);
-        ui->tabWidget_main->setCurrentIndex(1);
+        ui->tabWidget_main->setTabEnabled(2, true);
+        ui->tabWidget_main->setCurrentIndex(2);
     }
     else if(sysStatus.radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE)
     {
@@ -431,9 +430,8 @@ void RadarWidget::uiConfig()
         ui->lineEdit_pmtDelayTime->show();
         ui->lineEdit_pmtGateTime->show();
 
-        // ui->tabWidget_main->setTabEnabled(0, false);
-        ui->tabWidget_main->setTabEnabled(1, true);
-        ui->tabWidget_main->setCurrentIndex(1);
+        ui->tabWidget_main->setTabEnabled(2, true);
+        ui->tabWidget_main->setCurrentIndex(2);
 
         ui->groupBox_7->setVisible(true);
     }
@@ -1342,7 +1340,7 @@ void RadarWidget::initSignalSlot()
             return;
         }
         ui->btn_ssdSearchSpace->setEnabled(false);
-        ui->tabWidget_main->setCurrentIndex(3);
+        ui->tabWidget_main->setCurrentIndex(1);
 
         ui->tableWidget_fileList->clearContents();
         ui->tableWidget_fileList->setRowCount(1);
