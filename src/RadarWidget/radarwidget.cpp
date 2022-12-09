@@ -771,11 +771,13 @@ void RadarWidget::initSignalSlot()
             {
         if(ui->radioButton_showBase->isChecked())
         {
+            label_info[0]->setVisible(true);
             for(int i = 0; i < 3; i++)
                 widget2baseColorMap.at(i)->setVisible(true);
         }
         else
         {
+            label_info[0]->setVisible(false);
             for(int i = 0; i < 3; i++)
                 widget2baseColorMap.at(i)->setVisible(false);
         }
@@ -784,13 +786,13 @@ void RadarWidget::initSignalSlot()
             {
         if(ui->radioButton_showRealTime->isChecked())
         {
-            widget2CRadar.at(1)->setVisible(true);
+            label_info[1]->setVisible(true);
             for(int i = 0; i < 3; i++)
                 widget2diffColorMap.at(i)->setVisible(true);
         }
         else
         {
-            widget2CRadar.at(1)->setVisible(false);
+            label_info[1]->setVisible(false);
             for(int i = 0; i < 3; i++)
                 widget2diffColorMap.at(i)->setVisible(false);
         }
@@ -2131,6 +2133,16 @@ void RadarWidget::plotBitColorSettings()
 
     QGridLayout *grid = new QGridLayout;
     ui->widget->setLayout(grid);
+
+    for(int i = 0; i < 2; i++)
+    {
+        QLabel *l = new QLabel;
+        l->setText("1. 右侧通道1 \n2.下方通道2 \n3. 右下通道3");
+        label_info.append(l);
+    }
+    grid->addWidget(label_info[0], 0, 0);
+    label_info[0]->setVisible(false);
+    grid->addWidget(label_info[1], 2, 0);
 
     for(int i = 1; i < 4; i++)
     {

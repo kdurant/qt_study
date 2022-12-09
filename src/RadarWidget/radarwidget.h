@@ -229,6 +229,7 @@ private:
     QVector<BitColorMap *> widget2baseColorMap;
     QVector<BitColorMap *> widget2diffColorMap;
     QVector<CRadar *>      widget2CRadar;
+    QVector<QLabel *>      label_info;
 
     int colorMap_X_max{512};
 
