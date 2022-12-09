@@ -1828,7 +1828,7 @@
       <item>
        <widget class="QTabWidget" name="tabWidget_main">
         <property name="currentIndex">
-         <number>3</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="tab_3">
          <attribute name="title">
@@ -2141,9 +2141,14 @@
           </item>
          </layout>
         </widget>
+        <widget class="QWidget" name="tab_onWaterMode">
+         <attribute name="title">
+          <string>水上模式</string>
+         </attribute>
+        </widget>
         <widget class="QWidget" name="tab_9">
          <attribute name="title">
-          <string>雷达格式预览</string>
+          <string>水下模式</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_14" stretch="10,1">
           <item>

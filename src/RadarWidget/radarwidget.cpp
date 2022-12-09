@@ -204,6 +204,7 @@ void RadarWidget::uiConfig()
 
     ui->tabWidget_main->setTabEnabled(2, false);
     ui->tabWidget_main->setTabEnabled(3, false);
+    ui->tabWidget_main->setTabEnabled(4, false);
     ui->tabWidget_main->setCurrentIndex(0);
 
     ui->toolBox_motor->setItemEnabled(2, false);
@@ -388,8 +389,8 @@ void RadarWidget::uiConfig()
         ui->lineEdit_pmtDelayTime->show();
         ui->lineEdit_pmtGateTime->show();
 
-        ui->tabWidget_main->setTabEnabled(2, true);
-        ui->tabWidget_main->setCurrentIndex(2);
+        ui->tabWidget_main->setTabEnabled(3, true);
+        ui->tabWidget_main->setCurrentIndex(3);
     }
     else if(sysStatus.radarType == BspConfig::RADAR_TYPE_SECOND_INSTITUDE)
     {
@@ -431,7 +432,8 @@ void RadarWidget::uiConfig()
         ui->lineEdit_pmtGateTime->show();
 
         ui->tabWidget_main->setTabEnabled(2, true);
-        ui->tabWidget_main->setCurrentIndex(2);
+        ui->tabWidget_main->setTabEnabled(3, true);
+        ui->tabWidget_main->setCurrentIndex(0);
 
         ui->groupBox_7->setVisible(true);
     }
@@ -759,9 +761,9 @@ void RadarWidget::initSignalSlot()
 
     connect(bitColorData, &BitColorData::roundDistanceReady, this, [this](QVector<double> angle, QVector<double> distance)
             {
-        for(int i = 0; i < 2; i++)
+        for(int i = 0; i < 1; i++)
         {
-            widget2CRadar[i]->updateData(angle, distance);
+            widget2CRadar[i]->updateData(angle, distance, 2000);
         }
     });
 
@@ -769,13 +771,11 @@ void RadarWidget::initSignalSlot()
             {
         if(ui->radioButton_showBase->isChecked())
         {
-            widget2CRadar.at(0)->setVisible(true);
             for(int i = 0; i < 3; i++)
                 widget2baseColorMap.at(i)->setVisible(true);
         }
         else
         {
-            widget2CRadar.at(0)->setVisible(false);
             for(int i = 0; i < 3; i++)
                 widget2baseColorMap.at(i)->setVisible(false);
         }
@@ -2123,17 +2123,14 @@ void RadarWidget::plotPseudoColorSettings()
 
 void RadarWidget::plotBitColorSettings()
 {
+    QVBoxLayout *v = new QVBoxLayout;
+    ui->tab_onWaterMode->setLayout(v);
+    CRadar *radar = new CRadar;
+    widget2CRadar.append(radar);
+    v->addWidget(widget2CRadar[0]);
+
     QGridLayout *grid = new QGridLayout;
     ui->widget->setLayout(grid);
-
-    for(int i = 0; i < 2; i++)
-    {
-        CRadar *radar = new CRadar;
-        widget2CRadar.append(radar);
-    }
-    widget2CRadar[0]->setVisible(false);
-    grid->addWidget(widget2CRadar[0], 0, 0);
-    grid->addWidget(widget2CRadar[1], 2, 0);
 
     for(int i = 1; i < 4; i++)
     {
