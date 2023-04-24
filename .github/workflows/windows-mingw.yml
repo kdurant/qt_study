@@ -28,6 +28,14 @@ jobs:
         id: date
         run: echo "::set-output name=today::$(date +'%Y-%m-%d')"
 
+      - name: Get version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
+      - name: Get Hash
+        id: git_hash
+        run: echo "git_hash=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_HASH
+
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
@@ -65,7 +73,7 @@ jobs:
       - name: package
         id: package      
         env:
-          archiveName: ${{ steps.date.outputs.today }}-${{ matrix.qt_target }}-${{ matrix.qt_arch }}
+          archiveName: ${{ github.sha }}-${{ steps.date.outputs.today }}-${{ matrix.qt_target }}-${{ matrix.qt_arch }}
         shell: pwsh
         run: |
           & scripts\windows-mingw-publish.ps1 ${env:archiveName} ${env:targetName}
