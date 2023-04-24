@@ -57,6 +57,6 @@ DEFINES += GIT_DATE=\\\"$$GIT_DATE\\\"
 
 
 
-unix: DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
+DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
 
 #include($$PWD/deploy.pri)
