@@ -17,10 +17,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - qt_arch: win32_mingw81
-            qt_ver: 5.15.2
-            qt_tools: "tools_mingw,8.1.0-1-202004170606,qt.tools.win32_mingw810"
-            qt_tools_mingw_install: mingw810_32
           - qt_arch: win64_mingw81
             qt_ver: 5.15.2
             qt_tools: "tools_mingw,8.1.0-1-202004170606,qt.tools.win64_mingw810"
@@ -28,6 +24,10 @@ jobs:
     env:
       targetName: Radar_release.exe
     steps:
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=today::$(date +'%Y-%m-%d')"
+
       - name: Install Qt
         uses: jurplel/install-qt-action@v2
         with:
@@ -65,7 +65,7 @@ jobs:
       - name: package
         id: package      
         env:
-          archiveName: ${{ matrix.qt_ver }}-${{ matrix.qt_target }}-${{ matrix.qt_arch }}
+          archiveName: ${{ steps.date.outputs.today }}-${{ matrix.qt_target }}-${{ matrix.qt_arch }}
         shell: pwsh
         run: |
           & scripts\windows-mingw-publish.ps1 ${env:archiveName} ${env:targetName}
