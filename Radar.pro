@@ -55,9 +55,8 @@ GIT_DATE = $$system(git --git-dir $$PWD/.git --work-tree $$PWD log -1 --format=%
 DEFINES += GIT_DATE=\\\"$$GIT_DATE\\\"
 
 
-Debug: TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH"_debug"
-Release: TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH"_release"
-#TARGET = Radar_$$VERSION
+; Debug: TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH"_debug"
+Release: TARGET = Radar_release
 
 unix: DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
 
