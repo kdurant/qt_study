@@ -7,7 +7,7 @@
  * @brief 擦除nor flash扇区时，好像可以输入本扇区内的任意地址都可以（有机会重新确认）
  * @param addr
  */
-void UpdateBin::flashErase(uint32_t addr)
+void UpdateBin::flashErase(uint32_t  addr)
 {
     addr /= 2;
     QByteArray ba = int2ba(addr);

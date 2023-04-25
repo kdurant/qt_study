@@ -6,13 +6,14 @@
 
 QT       += core gui
 QT       += network
-
+TARGET = Radar_release
+#Debug: TARGET = Radar_release
+#Release: TARGET = Radar_release
 
 QMAKE_CXXFLAGS += -std=c++17
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = Radar
 TEMPLATE = app
 
 VERSION = 0.131
@@ -55,8 +56,6 @@ GIT_DATE = $$system(git --git-dir $$PWD/.git --work-tree $$PWD log -1 --format=%
 DEFINES += GIT_DATE=\\\"$$GIT_DATE\\\"
 
 
-# Debug: TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH"_debug"
-Release: TARGET = Radar_release
 
 unix: DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
 
