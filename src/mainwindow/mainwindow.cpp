@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     setWindowState(Qt::WindowMaximized);
-    setWindowTitle("雷达控制软件v" + QString(SOFT_VERSION) + "_" + GIT_DATE + "_" + GIT_HASH);
+    setWindowTitle("雷达-控制软件v" + QString(SOFT_VERSION) + "_" + GIT_DATE + "_" + GIT_HASH);
 
     generateDefaultConfig();
     if(!checkConfigFile())
@@ -64,8 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
     pilotView = new Navigation;
     pilotView->setWindowTitle("PilotView");
 
-    connect(radar[0].device, &RadarWidget::sendGpsInfo, this, [this](BspConfig::Gps_Info &data)
-            {
+    connect(radar[0].device, &RadarWidget::sendGpsInfo, this, [this](BspConfig::Gps_Info &data) {
         if(engineerView->getLoadMapInfo())
             engineerView->updateGpsInfo(data);
         if(pilotView->getLoadMapInfo())
@@ -212,12 +211,10 @@ void MainWindow::setToolBar()
         ui->mainToolBar->addAction(act[i]);
     }
 
-    connect(act[0], &QAction::triggered, this, [this]()
-            {
+    connect(act[0], &QAction::triggered, this, [this]() {
         note->show();
     });
-    connect(act[1], &QAction::triggered, this, [this]()
-            {
+    connect(act[1], &QAction::triggered, this, [this]() {
         engineerView->show();
         pilotView->show();
         //        if(radarType == BspConfig::RADAR_TYPE_LAND)
