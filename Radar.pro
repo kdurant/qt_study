@@ -6,9 +6,6 @@
 
 QT       += core gui
 QT       += network
-TARGET = Radar_release
-#Debug: TARGET = Radar_release
-#Release: TARGET = Radar_release
 
 QMAKE_CXXFLAGS += -std=c++17
 
@@ -55,8 +52,7 @@ DEFINES += GIT_HASH=\\\"$$GIT_HASH\\\"
 GIT_DATE = $$system(git --git-dir $$PWD/.git --work-tree $$PWD log -1 --format=%cs )
 DEFINES += GIT_DATE=\\\"$$GIT_DATE\\\"
 
-
-
+TARGET = Radar_$$VERSION"_"$$GIT_DATE"_"$$GIT_HASH"_debug"
 DESTDIR = $$absolute_path($${_PRO_FILE_PWD_}/bin/)
 
 #include($$PWD/deploy.pri)

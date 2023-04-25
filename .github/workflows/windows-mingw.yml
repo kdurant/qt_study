@@ -1,15 +1,7 @@
 name: Windows MinGW
 on: 
-  push:
-    paths:
-      - '*.pro'
-      - 'src/**'
-      - '.github/workflows/windows-mingw.yml'
-  pull_request:
-    paths:
-      - '*.pro'
-      - 'src/**'
-      - '.github/workflows/windows-mingw.yml' 
+  tags: 
+    - "v*"
 jobs:
   build:
     name: Build
